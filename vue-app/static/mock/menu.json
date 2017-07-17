@@ -1,0 +1,90 @@
+
+[ 
+    {
+        "name":"数据管理",
+        "icon": "el-icon-document",
+        "permissionsId":"2",
+        "vRolePermissionCustom":[
+            {
+                "name":"用户列表",
+                "link": "userList"
+            },
+            {
+                "name":"商家列表",
+                "link": "shopList"
+            },
+            {
+                "name":"食品列表",
+                "link": "foodList"
+            },
+            {
+                "name":"订单列表",
+                "link": "orderList"
+            },
+            {
+                "name":"管理员列表",
+                "link": "adminList"
+            }
+        ]
+    },
+    {
+        "name":"添加数据",
+        "icon": "el-icon-plus",
+        "permissionsId":"3",
+        "vRolePermissionCustom":[
+            {
+            "name":"添加商铺",
+            "link": "addShop"
+            },
+            {
+            "name":"添加商品",
+            "link": "addGoods"
+            }
+        ]
+    },
+    {
+        "name":"图表",
+        "icon": "el-icon-star-on",
+        "permissionsId":"4",
+        "vRolePermissionCustom":[
+            {
+            "name":"用户分布",
+            "link": "visitor"
+            }
+        ]
+    },
+    {
+        "name":"编辑",
+        "icon": "el-icon-edit",
+        "permissionsId":"5",
+        "vRolePermissionCustom":[
+            {
+            "name":"文本编辑",
+            "link": "vueEdit"
+            }
+        ]
+    },
+    {
+        "name":"设置",
+        "icon": "el-icon-setting",
+        "permissionsId":"6",
+        "vRolePermissionCustom":[
+            {
+            "name":"管理员设置",
+            "link": "adminSet"
+            }
+        ]
+    },
+    {
+        "name":"说明",
+        "icon": "el-icon-warning",
+        "permissionsId":"7",
+        "vRolePermissionCustom":[
+            {
+            "name":"说明",
+            "link": "explain"
+            }
+        ]
+    }
+]
+  
