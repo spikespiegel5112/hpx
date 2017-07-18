@@ -1,0 +1,26 @@
+.acc-eid-content .ant-card-head{
+    height:40px;
+    background: #e9e9e9;
+};
+.acc-eid-content .ant-card-head-title{
+    font-weight:bolder;
+}
+.acc-eid-content .ant-form-item{
+    margin-bottom: 0;
+}
+.acc-eid-content .ant-card-extra{
+    top : 12px;
+}
+.acc-eid-content .ant-card{
+    margin-bottom: 24px;
+    border-radius: 10px;
+}
+
+.acc-text-span {
+    width : 100%;
+    padding-left : 15px;
+    border-bottom : 1px solid #e9e9e9;
+    height:32px;
+    line-height: 32px;
+    white-space: nowrap;
+}

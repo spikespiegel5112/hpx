@@ -34,7 +34,7 @@ module.exports = {
           pathRewrite: {
               '^/core': '/'
           }
-      }
+      },
     },
     context: [ //代理路径
         '/core',

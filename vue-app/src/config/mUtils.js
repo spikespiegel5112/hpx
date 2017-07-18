@@ -274,3 +274,28 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
         })
     }, 20);
 }
+
+
+const myJS = {
+    /**
+     * 检测输入内容
+     * @param {string}    str   必填 内容
+     * @param {string}    type  必填 要检测的类型 匹配case
+     */
+    checkType (str, type) {
+        switch (type) {
+            case 'email':
+                return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(str);
+            case 'phone': 
+                return /^1[3|4|5|7|8][0-9]{9}$/.test(str);
+            case 'tel':
+                return /^(0\d{2,3}-\d{7,8})(-\d{1,4})?$/.test(str);
+            case 'number':
+                return /^[0-9]$/.test(str);
+            default :
+                return true;
+        }
+    }
+};
+
+export default myJS 

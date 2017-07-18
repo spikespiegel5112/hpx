@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import hpxRouter from '../hpx-manager'
+import enterprisePlatformRouter from '../enterprise-platform'
 Vue.use(Router)
 
 
@@ -39,7 +40,7 @@ const routes = [
 	{
 		path: '/manage',
 		component: manage,
-		name: '',
+		name: 'manage',
 		children: [{
 			path: '',
 			component: home,
@@ -109,8 +110,10 @@ const routes = [
 	},
 
 	// hpx manager
-	hpxRouter
+	hpxRouter,
+
 	// enterprise manager
+	enterprisePlatformRouter,
 
 	// enterprise project
 ]

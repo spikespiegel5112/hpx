@@ -11,7 +11,6 @@ const serialize = (ob) => {
 function interceptor(resp) {
   //通用拦截处理
   const status = resp.status;
-  console.log(resp,666666666)
   let err = resp.headers.get('x-hpx-error-desc');
   err = decodeURIComponent(err);
   if(status >= 200 && status < 300){

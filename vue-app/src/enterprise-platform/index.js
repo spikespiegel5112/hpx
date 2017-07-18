@@ -1,14 +1,12 @@
 
 // WrapComponent
-const enterpriseIndex = r => require.ensure([], () => r(require('@/main')), 'enterprise-platform-index');
-
-
+const enterpriseIndex = r => require.ensure([], () => r(require('@/enterprise-platform/main')), 'enterprise-platform-index');
 
 export default {
-    path: '/manager',
+    path: '/platform',
     component: enterpriseIndex,
     name: '',
     children:[
-
+        
     ]
 };

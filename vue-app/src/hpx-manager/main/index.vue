@@ -4,7 +4,7 @@
 	  		<el-col :span="3"  style="min-height: 100%; background-color: #324057;">
 				<sider-bar index="manager"></sider-bar>
 			</el-col>
-			<el-col :span="21" style="height: 100%;overflow: auto;">
+			<el-col :span="21" class="router-container" style="height: 100%;overflow: auto;">
 				<keep-alive>
 				    <router-view></router-view>
 				</keep-alive>
@@ -23,6 +23,6 @@
 </script>
 
 
-<style lang="less" scoped>
+<style lang="less">
 	@import '../../style/mixin';
 </style>

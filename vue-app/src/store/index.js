@@ -41,11 +41,9 @@ const actions = {
 			const resp = await getLoginInfo()
 			if(resp.status === 200){
 				const res = await resp.json();
-				console.log(res,'6666')
 				commit('saveUserInfo', res);
 				return true
 			}else{
-				console.log(777)
 				return false;
 			}			
 		}catch(err){

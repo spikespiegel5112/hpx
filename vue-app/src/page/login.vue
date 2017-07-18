@@ -59,15 +59,17 @@
 			async submitForm(formName) {
 				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
-						(async () => {		
+						(async () => {
 							try{
-								const res = await login({username: this.loginForm.username, password: this.loginForm.password});									
+								const res = await login({username: this.loginForm.username, password: this.loginForm.password});
 									this.$message({
 										type: 'success',
 										message: '登录成功'
 									});
-									this.$router.push('manage')
-								
+									this.$router.push({
+                                        name:'manage'
+                                    })
+
 							}catch(e){
 								this.$message({
 									type: 'error',
@@ -93,7 +95,9 @@
                         type: 'success',
                         message: '检测到您之前登录过，将自动登录'
                     });
-					this.$router.push('manage')
+					this.$router.push({
+                        name:'manage'
+                    })
 				}
 			}
 		}
