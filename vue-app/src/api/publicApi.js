@@ -20,3 +20,18 @@ export const cities = (provCode) => fetch(`/core/core/api/v1/enterpriseAccountEn
 ** 获取县区
 */
 export const countries = (citycode) => fetch(`/core/core/api/v1/enterpriseAccountEntity/provinces/${citycode}/country`)
+
+/*
+** 获取支行
+*/
+export const bankdes = (bankclscode,citycode) => fetch(`/core/core/api/v1/enterpriseAccountEntity/banks/${bankclscode}/city/${citycode}/bankinfo/`)
+
+/*
+** 获取 认证文件
+*/
+export const filesTypes = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/dictionary`,{code:'enterpris_file'});
+
+/*
+** 上传文件
+*/
+export const uploadAction = (eid,code) => `/core/core/api/v1/enterpriseFiles/enterprise/${eid}/dictionary/${code}/enterpriseFiles`;

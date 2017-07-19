@@ -16,7 +16,7 @@
                         <bank-tab></bank-tab>
                     </template>
                     <template v-else-if="i === 2">
-                        test2
+                        <upload-tab></upload-tab>
                     </template>
                     <template v-else-if="i === 3">
                         tetst3
@@ -32,6 +32,7 @@
     // 基本信息填写
     import infoTab from './infoTab';
     import bankTab from './bankTab';
+    import uploadTab from './uploadTab';
     export default {
         data() {
             return {
@@ -56,6 +57,7 @@
             cerSteps,
             infoTab,
             bankTab,
+            uploadTab,
         }
     }
 </script>

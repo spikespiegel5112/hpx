@@ -9,7 +9,7 @@
                 <el-form :model="bankInfoForm" :rules="bankRules" ref="bankInfoForm" label-width="30%">
                     <el-row>
                         <el-col :span="12">
-                            <el-form-item label="省份" prop="bankProvince" required>
+                            <el-form-item label="省份" prop="bankProvince">
                                 <el-select 
                                     v-show="!isEdite" 
                                     v-model="bankInfoForm.bankProvince"
@@ -28,13 +28,17 @@
                         </el-col>
 
                         <el-col :span="12">
-                            <el-form-item label="开户行" prop="bankName" required>
-                                <el-select v-show="!isEdite" v-model="bankInfoForm.bankName">
+                            <el-form-item label="开户行" prop="bankName">
+                                <el-select 
+                                    v-show="!isEdite" 
+                                    v-model="bankInfoForm.bankName"
+                                    filterable
+                                >
                                     <el-option 
-                                        v-for="item in city" 
-                                        :value="item.value" 
-                                        :key="item.value"
-                                        :label="item.label"
+                                        v-for="item in bankde" 
+                                        :value="item.bankname" 
+                                        :key="item.bankno"
+                                        :label="item.bankname"
                                     >
                                     </el-option>
                                 </el-select>
@@ -43,8 +47,12 @@
                         </el-col>
 
                         <el-col :span="12">
-                            <el-form-item label="城市" prop="bankCity" required>
-                                <el-select v-show="!isEdite" v-model="bankInfoForm.bankCity">
+                            <el-form-item label="城市" prop="bankCity">
+                                <el-select 
+                                    v-show="!isEdite" 
+                                    v-model="bankInfoForm.bankCity"
+                                    @change="getCountry"
+                                >
                                     <el-option 
                                         v-for="item in city" 
                                         :value="item.cityAreacode" 
@@ -58,20 +66,24 @@
                         </el-col>
 
                         <el-col :span="12">
-                            <el-form-item label="开户名" prop="accountName" required>
+                            <el-form-item label="开户名" prop="accountName">
                                 <el-input v-show="!isEdite" v-model="bankInfoForm.accountName"  placeholder="请输入纳税类型"></el-input>
                                 <div class='cer-text-div' v-show="isEdite">{{bankInfoForm.accountName}}</div>
                             </el-form-item>
                         </el-col>
 
                         <el-col :span="12">
-                            <el-form-item label="县区" prop="bankCountry" required>
-                                <el-select v-show="!isEdite" v-model="bankInfoForm.bankCountry">
+                            <el-form-item label="县区" prop="bankCountry">
+                                <el-select 
+                                    v-show="!isEdite" 
+                                    v-model="bankInfoForm.bankCountry"
+                                    @change="getBankde"
+                                >
                                     <el-option 
                                         v-for="item in country" 
-                                        :value="item.value" 
-                                        :key="item.value"
-                                        :label="item.label"
+                                        :value="item.cityAreacode" 
+                                        :key="item.cityAreacode"
+                                        :label="item.cityAreaname"
                                     >
                                     </el-option>
                                 </el-select>
@@ -80,15 +92,19 @@
                         </el-col>
 
                         <el-col :span="12">
-                            <el-form-item label="开户账号" prop="bankAccount" required>
+                            <el-form-item label="开户账号" prop="bankAccount">
                                 <el-input v-show="!isEdite" v-model="bankInfoForm.bankAccount"  placeholder="请输入开户账号"></el-input>
                                 <div class='cer-text-div' v-show="isEdite">{{bankInfoForm.bankAccount}}</div>
                             </el-form-item>
                         </el-col>
 
                         <el-col :span="12">
-                            <el-form-item label="银行" prop="bankCode" required>
-                                <el-select v-show="!isEdite" v-model="bankInfoForm.bankCode">
+                            <el-form-item label="银行" prop="bankCode">
+                                <el-select 
+                                    v-show="!isEdite" 
+                                    v-model="bankInfoForm.bankCode"
+                                    @change="getBankde"
+                                >
                                     <el-option 
                                         v-for="item in bank" 
                                         :value="item.sbankcode" 
@@ -113,7 +129,7 @@
         </el-card>
 </template>
 <script>
-    import {provinces ,bankTypes ,cities ,countries} from '../../api/publicApi'
+    import {provinces ,bankTypes ,cities ,countries,bankdes} from '../../api/publicApi'
     export default {
         data() {
             return {
@@ -170,7 +186,7 @@
                     const resp = await cities(this.bankInfoForm.bankProvince)
                     const res = await resp.json();
                     this.bankInfoForm.bankCity = res[0].cityAreacode;
-                    this.country = res;
+                    this.city = res;
                 }catch(e){
 
                 }
@@ -180,17 +196,28 @@
                     const resp = await countries(this.bankInfoForm.bankCity)
                     const res = await resp.json();
                     this.bankInfoForm.bankCountry = res[0].cityAreacode;
-                    this.city = res;
+                    this.country = res;
+                }catch(e){
+
+                }
+            },
+            async getBankde(){
+                if(!this.bankInfoForm.bankCity || !this.bankInfoForm.bankCode)return;
+                try{
+                    const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
+                    const resp = await bankdes(bankclscode,citycode)
+                    const res = await resp.json();
+                    
+                    // this.bankInfoForm.bankCountry = res[0].cityAreacode;
+                    this.bankde = res;
                 }catch(e){
 
                 }
             },
             edite(){
-                console.log(7)
                 this.isEdite = false;
             },
             editeDone(){
-                console.log(6)
                 this.isEdite = true;
             }
         }

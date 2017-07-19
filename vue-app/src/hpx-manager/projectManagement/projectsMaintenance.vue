@@ -109,8 +109,8 @@
 <script>
 import headTop from '@/components/headTop'
 import myPagination from '@/components/myPagination'
-import myPagination from '@/components/myPagination'
-import * as moment from '@/components/myPagination'
+import * as moment from 'moment'
+
 import {
 	getProjectList
 } from '@/api/getData'
@@ -126,7 +126,8 @@ export default {
 			columns: [{
 				label: '产品编码',
 				prop: 'productCode',
-				sortable: true
+				sortable: true,
+
 			}, {
 				label: '项目编号',
 				prop: 'code',
@@ -145,6 +146,7 @@ export default {
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
+				formatter:'convertDate'
 			}, {
 				label: '项目终止时间',
 				prop: 'endTime',
@@ -241,7 +243,12 @@ export default {
 		}
 	},
 	methods: {
+		convertDate(row, column){
+			alert('date')
+			// var date = row[column.property];
 
+			// return moment.unix(timestamp)
+		},
 		async initData() {
 			this.listLoading = true;
 			try {

@@ -520,6 +520,7 @@
         padding-left:10px;
     }
     .cer-text-div{
+        padding-left:10px;
         height:34px; 
         line-height:34px;
         border-bottom : 1px solid #e9e9e9; 

@@ -57,8 +57,7 @@
                 highlight-current-row
                 style="width: 100%">
                 <el-table-column
-                  type="index"
-                  width="100">
+                  type="index">
                 </el-table-column>
                 <el-table-column 
                     v-for="(value,i) in columns" 
@@ -248,8 +247,7 @@
                     this.listLoading = false;
                 }
             },
-            async getList(){
-                
+            async getList(){             
                 const pageParams = {
                     page : this.page,
                     size : this.size,
