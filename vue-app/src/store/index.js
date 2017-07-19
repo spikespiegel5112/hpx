@@ -19,7 +19,10 @@ const mutations = {
 	},
 	saveUserInfo(state,loginInfo){
 		state.loginInfo = loginInfo;
-		state.islogin = true;
+		state.isLogin = true;
+	},
+	changeLoginState(state){
+		state.isLogin = false;
 	}
 }
 
@@ -45,12 +48,17 @@ const actions = {
 				return true
 			}else{
 				return false;
-			}			
+			}
 		}catch(err){
 			console.log('您尚未登陆或者session失效');
 			return false;
 		}
+	},
+	revisePsw(store){
+		const test = store.commit('changeLoginState');
+		console.log(test)
 	}
+
 }
 
 export default new Vuex.Store({

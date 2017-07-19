@@ -34,8 +34,8 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                    </el-col> 
-                    <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))"> 
+                    </el-col>
+                    <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))">
                         <el-form-item>
                             <el-button type="primary" icon="search" @click="search">查询</el-button>
                         </el-form-item>
@@ -50,7 +50,7 @@
 			</el-form>
 		</el-col>
         </section>
-        
+
         <section class="main-table-container">
             <el-table
                 row-key="id"
@@ -63,8 +63,8 @@
                   type="index"
                   width="100">
                 </el-table-column>
-                <el-table-column 
-                    v-for="(value,i) in columns" 
+                <el-table-column
+                    v-for="(value,i) in columns"
                     :key="i"
                     :label="value.label"
                     :prop="value.prop"
@@ -72,7 +72,7 @@
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
-                >             
+                >
                 </el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
@@ -82,19 +82,7 @@
                 </el-table-column>
             </el-table>
             <section class="main-pagination">
-                <!-- 特殊情况分页自己按注释的  -->
-                 <!-- <el-pagination
-                    :current-page="page"
-                    :page-size="size"
-                    :total="total"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :page-sizes="pageSizes"
-                    @current-change="currentChange"
-                    @size-change="pageSizeChange"  
-                >
-                </el-pagination> -->
-                <!-- page租组件  -->
-                <my-Pagination :callback="getList" :query="query" :total="total">
+                <my-Pagination :callback="getList" :total="total">
                 </my-Pagination>
             </section>
         </section>
@@ -157,29 +145,24 @@
                     label : '企业状态',
                     prop  : 'activated',
                     sortable : true,
-                    formatter : (row,column) => row.activated === 'T' ? "状态1" : "状态2"  
+                    formatter : (row,column) => row.activated === 'T' ? "状态1" : "状态2"
                     },{
                     label : '地址',
                     prop  : 'address',
                     sortable : true,
-                    minWidth : 200 
+                    minWidth : 200
                     },{
                     label : '联系方式',
                     prop  : 'contactsNumber',
                     sortable : true,
                     }
                 ],
-
+                //总页数
+                total : 0,
                 //table
                 tableList: [],
                 listLoading:false,
                 emptyText:"暂无数据",
-
-                //分页
-                page: 1, //当前页
-                size: 2,//每页个数
-                total: 0,//总数
-                pageSizes : [2, 4, 6],
 
                 //search params
                 query : {
@@ -207,9 +190,6 @@
                         auditState : 'F'
                     }
                 ],
-                rules :{
-					
-                },
                 //搜索条件的个数
                 criteriaNum : 3,
 
@@ -244,7 +224,6 @@
             ...mapState(["loginInfo"])
         },
         methods: {
-
             async initData(){
                 this.listLoading = true;
                 try{
@@ -270,7 +249,7 @@
                 try{
                     this.getList();
                 }catch(e){
-                    
+
                 }
             },
 
@@ -279,9 +258,7 @@
             },
 
             check (index,row){
-                console.log(this.$route.path)
                 this.$router.push({path: this.$route.path + '/detail/' + row.id})
-                console.log(index,row)
             },
             edite (index,row) {
                 this.editeModalVisible = true;

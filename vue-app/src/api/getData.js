@@ -5,7 +5,7 @@ import fetch from '@/config/fetch'
  */
 
 // export const login = data => fetch('/admin/login', data, 'POST');
-export const login = data => fetch('/core/api/v1/login',data,'form');
+export const login = data => fetch('/core/api/v1/login', data, 'form');
 /**
  * 退出
  */
@@ -88,7 +88,7 @@ export const adminCount = () => fetch('/admin/count');
  */
 
 export const cityGuess = () => fetch('/v1/cities', {
-	type: 'guess'
+    type: 'guess'
 });
 
 /**
@@ -102,9 +102,9 @@ export const addShop = data => fetch('/shopping/addShop', data, 'POST');
  */
 
 export const searchplace = (cityid, value) => fetch('/v1/pois', {
-	type: 'search',
-	city_id: cityid,
-	keyword: value
+    type: 'search',
+    city_id: cityid,
+    keyword: value
 });
 
 /**
@@ -241,3 +241,15 @@ export const getAddressById = address_id => fetch('/v1/addresse/' + address_id);
  */
 
 export const getUserCity = () => fetch('/v1/user/city/count');
+
+/**
+ * 项目信息Rest服务
+ */
+
+export const getProjectList = () => fetch('/core/core/api/v1/projects');
+
+/**
+ * 取得企业项目邀请记录列表
+ */
+
+export const projectsAuditList = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);

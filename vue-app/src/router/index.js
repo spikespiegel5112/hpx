@@ -105,8 +105,7 @@ const routes = [
 			path: '/template',
 			component: template,
 			meta: ['模板', 'test'],
-		}
-		]
+		}]
 	},
 
 	// hpx manager

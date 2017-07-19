@@ -32,7 +32,7 @@
 			return {
 				loginForm: {
 					username: '13333333333',
-					password: '123456',
+					password: '111qqq',
 				},
 				rules: {
 					username: [
@@ -67,9 +67,8 @@
 										message: '登录成功'
 									});
 									this.$router.push({
-                                        name:'manage'
+                                        name:'hpxManagerIndex'
                                     })
-
 							}catch(e){
 								this.$message({
 									type: 'error',

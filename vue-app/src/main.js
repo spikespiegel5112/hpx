@@ -14,9 +14,10 @@ router.beforeEach ( async (to, from, next) => {
 	if(isLogin){
 		res = true;
 	}else{
+		console.log(store.state)
 		res = await store.dispatch("getUserData");
 	}
-	
+
 	if(!res && to.path != '/'){
 		next({path : "/"})
 	}else{
@@ -26,6 +27,7 @@ router.beforeEach ( async (to, from, next) => {
 } )
 
 Vue.use(ElementUI);
+
 
 new Vue({
 	el: '#app',

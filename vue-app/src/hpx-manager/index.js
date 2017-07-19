@@ -1,16 +1,16 @@
+
 const hpxManagerIndex = r => require.ensure([], () => r(require('@/hpx-manager/main')), 'hpx-manager-index');
 const home = r => require.ensure([], () => r(require('@/hpx-manager/home')), 'hpx-manager-home');
 const detail = r => require.ensure([], () => r(require('@/hpx-manager/detail')), 'hpx-manager-test');
 const template = r => require.ensure([], () => r(require('@/hpx-manager/template')), 'hpx-manager-template');
 const securitySetting = r => require.ensure([], () => r(require('@/hpx-manager/securitySetting')), 'securitySetting');
-const certification = r => require.ensure([], () => r(require('@/hpx-manager/certification-ep')), 'certification-ep');
 const inviteAudit = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/inviteAudit')), 'inviteAudit');
 const projectsMaintenance = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectsMaintenance')), 'projectsMaintenance');
 
 const router = {
     path: '/hpx2',
     component: hpxManagerIndex,
-    name: '',
+    name: 'hpxManagerIndex',
     children: [{
             path: '',
             component: home,
@@ -23,10 +23,6 @@ const router = {
         },{
             path: 'template/detail/:id',
             component: detail,
-            meta: ["test", "test"],
-        },{
-            path: 'certification',
-            component: certification,
             meta: ["test", "test"],
         },{
             path: '/securitySetting',

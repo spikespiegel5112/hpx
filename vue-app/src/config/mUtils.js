@@ -1,3 +1,11 @@
+const hpxUtil={};
+hpxUtil.install=function(vue){
+	Vue.prototype.$moment=(options)=>{
+		
+	}
+}
+
+
 /**
  * 存储localStorage
  */
@@ -31,16 +39,16 @@ export const removeStore = name => {
 export const getStyle = (element, attr, NumberMode = 'int') => {
     let target;
     // scrollTop 获取方式不同，没有它不属于style，而且只有document.body才能用
-    if (attr === 'scrollTop') { 
+    if (attr === 'scrollTop') {
         target = element.scrollTop;
     }else if(element.currentStyle){
-        target = element.currentStyle[attr]; 
-    }else{ 
-        target = document.defaultView.getComputedStyle(element,null)[attr]; 
+        target = element.currentStyle[attr];
+    }else{
+        target = document.defaultView.getComputedStyle(element,null)[attr];
     }
     //在获取 opactiy 时需要获取小数 parseFloat
     return  NumberMode == 'float'? parseFloat(target) : parseInt(target);
-} 
+}
 
 /**
  * 页面到达底部，加载更多
@@ -75,7 +83,7 @@ export const loadMore = (element, callback) => {
        	oldScrollTop = document.body.scrollTop;
        	moveEnd();
     },{passive: true})
-    
+
     const moveEnd = () => {
         requestFram = requestAnimationFrame(() => {
             if (document.body.scrollTop != oldScrollTop) {
@@ -120,7 +128,7 @@ export const showBack = callback => {
         oldScrollTop = document.body.scrollTop;
         moveEnd();
     },{passive: true})
-    
+
     const moveEnd = () => {
         requestFram = requestAnimationFrame(() => {
             if (document.body.scrollTop != oldScrollTop) {
@@ -172,7 +180,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
 
     //获取dom样式
     const attrStyle = attr => {
-        if (attr === "opacity") { 
+        if (attr === "opacity") {
             return Math.round(getStyle(element, attr, 'float') * 100);
         } else {
             return getStyle(element, attr);
@@ -214,7 +222,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
             let speedBase = 0; //目标点需要减去的基础值，三种运动状态的值都不同
             let intervalTime; //将目标值分为多少步执行，数值越大，步长越小，运动时间越长
             switch(mode){
-                case 'ease-out': 
+                case 'ease-out':
                     speedBase = iCurrent;
                     intervalTime = duration*5/400;
                     break;
@@ -229,7 +237,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
                     break;
                 default:
                     speedBase = iCurrent;
-                    intervalTime = duration*5/400; 
+                    intervalTime = duration*5/400;
             }
             if (mode !== 'ease-in') {
                 iSpeed = (target[attr] - speedBase) / intervalTime;
@@ -237,8 +245,8 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
             }
             //判断是否达步长之内的误差距离，如果到达说明到达目标点
             switch(mode){
-                case 'ease-out': 
-                    status = iCurrent != target[attr]; 
+                case 'ease-out':
+                    status = iCurrent != target[attr];
                     break;
                 case 'linear':
                     status = Math.abs(Math.abs(iCurrent) - Math.abs(target[attr])) > Math.abs(iSpeed);
@@ -247,11 +255,11 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
                     status = Math.abs(Math.abs(iCurrent) - Math.abs(target[attr])) > Math.abs(iSpeed);
                     break;
                 default:
-                    status = iCurrent != target[attr]; 
+                    status = iCurrent != target[attr];
             }
 
             if (status) {
-                flag = false; 
+                flag = false;
                 //opacity 和 scrollTop 需要特殊处理
                 if (attr === "opacity") {
                     element.style.filter = "alpha(opacity:" + (iCurrent + iSpeed) + ")";
@@ -275,6 +283,29 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
     }, 20);
 }
 
+// 验证密码
+export function checkPassword(strPassword) {//6到16位，需包含数字，字母，符号中两种
+    strPassword = strPassword || '';
+    var num = 0;
+    if (strPassword.search(/[A-Z]/) != -1) {
+        num += 1;
+    }
+    if (strPassword.search(/[0-9]/) != -1) {
+        num += 1;
+    }
+    if (strPassword.search(/[a-z]/) != -1) {
+        num += 1;
+    }
+    if (strPassword.search(/[^A-Za-z0-9]/) != -1) {
+        num += 1;
+    }
+    if (num >= 2 && (strPassword.length >= 6 && strPassword.length <= 16 )) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 const myJS = {
     /**
@@ -286,16 +317,18 @@ const myJS = {
         switch (type) {
             case 'email':
                 return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(str);
-            case 'phone': 
+            case 'phone':
                 return /^1[3|4|5|7|8][0-9]{9}$/.test(str);
             case 'tel':
                 return /^(0\d{2,3}-\d{7,8})(-\d{1,4})?$/.test(str);
             case 'number':
-                return /^[0-9]$/.test(str);
+                return /^[0-9]+$/.test(str);
+            case 'cardNo':
+                return  /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(str);
             default :
                 return true;
         }
     }
 };
 
-export default myJS 
+export default myJS
