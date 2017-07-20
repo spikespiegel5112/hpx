@@ -1,7 +1,7 @@
 <template>
     <section class="main-table-container">
             <el-table
-                row-key="id"
+                row-key="code"
                 :empty-text="emptyText"
                 :data="tableList"
                 v-loading="listLoading"
@@ -11,28 +11,26 @@
                   type="index"
                   width="60">
                 </el-table-column>
-                <el-table-column 
-                    v-for="(value,i) in columns" 
-                    :key="i"
+                <el-table-column
+                    v-for="(value,i) in columns"
+                    :key="'f::'+i"
                     :label="value.label"
                     :prop="value.prop"
                     :sortable="value.sortable"
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
-                >             
+                >
                 </el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-upload
-                            name="file"
-                            ref="upload"
-                            action="https://jsonplaceholder.typicode.com/posts/"
+                         <el-upload
+                            :action="uploadActionUrl(scope.row.code)"
                             list-type="picture"
                             :auto-upload="false"
                         >
-                            <el-button icon="upload" type="primary" size="small">选取</el-button>
-                        </el-upload>
+                            <el-button icon="upload" type="primary" size="small">上传文件</el-button>
+                         </el-upload>
                     </template>
                 </el-table-column>
             </el-table>
@@ -50,7 +48,7 @@
                 columns : [{
                     label : '文件类型',
                     prop  : 'name',
-                    minWidth : 150, 
+                    minWidth : 150,
                     },{
                     label : '文件名称',
                     prop  : 'filesname',
@@ -85,11 +83,10 @@
                 async () => {
                     this.getFilesTypes();
                 }
-            )
+            );
         },
         computed : {
             ...mapState(['loginInfo']),
-            
         },
         methods : {
             async getFilesTypes () {
@@ -100,6 +97,9 @@
                 }catch(e){
 
                 }
+            },
+            uploadActionUrl (code) {
+                return uploadAction(this.loginInfo.enterpriseId,code)
             },
         },
     }

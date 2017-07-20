@@ -10,18 +10,18 @@ const home = r => require.ensure([], () => r(require('@/hpx-manager/home')), 'hp
 export default {
     path: '/platform',
     component: enterpriseIndex,
-    name: '',
+    name: 'platform',
     children:[
         {
-			path: 'securitySetting',
+			path: 'secure',
 			component: securitySetting,
 			meta: ['设置', '安全设置'],
 		},{
-			path: 'securitySetting/editPhone',
+			path: 'secure/editPhone',
 			component: editPhone,
 			meta: ['设置', '修改手机号码'],
 		},{
-			path: 'securitySetting/editPwd',
+			path: 'secure/editPwd',
 			component: editPwd,
 			meta: ['设置', '修改密码'],
 		},{
@@ -31,7 +31,7 @@ export default {
         {
             path: 'certification',
             component: certification,
-            meta: ["企业认证", "企业认证"],
+            meta: ["企业管理", "企业认证"],
         },
     ]
 };

@@ -109,6 +109,7 @@
 <script>
 import headTop from '@/components/headTop'
 import myPagination from '@/components/myPagination'
+import moment from 'moment'
 import {
 	projectsAuditList
 } from '@/api/getData'
@@ -116,15 +117,15 @@ import {
 	mapState
 } from 'vuex'
 
-
 export default {
 	data() {
+		const dateFormat = "YYYY-MM-DD";
 		return {
 			//table columns
 			columns: [{
 				label: '产品',
 				prop: 'productName',
-				sortable: true
+				sortable: true,
 			}, {
 				label: '项目名称',
 				prop: 'projectName',
@@ -138,11 +139,13 @@ export default {
 				label: '项目起始日',
 				prop: 'startTime',
 				sortable: true,
-				minWidth: 200
+				minWidth: 200,
+				formatter : (row,column) => moment(column.startTime).format(dateFormat)
 			}, {
 				label: '项目结束日',
 				prop: 'endTime',
 				sortable: true,
+				formatter : (row,column) => moment(column.endTime).format(dateFormat)
 			}],
 
 			//table

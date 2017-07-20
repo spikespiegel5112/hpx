@@ -35,12 +35,11 @@
 						<el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
 					</el-form-item>
 					<el-form-item>
-						<el-button icon="plus" type="primary">新增</el-button>
+						<el-button icon="plus" type="primary" @click='createProject'>新增</el-button>
 					</el-form-item>
 				</el-col>
 			</el-row>
 		</el-form>
-		</el-col>
 	</section>
 
 	<section class="main-table-container">
@@ -51,11 +50,13 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-					<el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
-					<el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
+					<el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button>
+					<el-button type="text" size="small" @click="deleteProject(scope.$index, scope.row)">删除</el-button>
+					<el-button type="text" size="small" @click="audit(scope.$index, scope.row)">审核</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
+
 		<section class="main-pagination">
 			<!-- 特殊情况分页自己按注释的  -->
 			<!-- <el-pagination
@@ -109,8 +110,8 @@
 <script>
 import headTop from '@/components/headTop'
 import myPagination from '@/components/myPagination'
-import * as moment from 'moment'
-
+// import projectCreate from '@/components/projectCreate'
+import moment from 'moment'
 import {
 	getProjectList
 } from '@/api/getData'
@@ -120,7 +121,12 @@ import {
 
 
 export default {
+	components: {
+		headTop,
+		myPagination,
+	},
 	data() {
+		const dateFormat = "YYYY-MM-DD";
 		return {
 			//table columns
 			columns: [{
@@ -146,11 +152,12 @@ export default {
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
-				formatter:'convertDate'
+				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
 				label: '项目终止时间',
 				prop: 'endTime',
 				sortable: true,
+				formatter: (row, column) => moment(column.endTime).format(dateFormat)
 			}, {
 				label: '建立人',
 				prop: 'creator',
@@ -163,6 +170,7 @@ export default {
 				label: '记录时间',
 				prop: 'createTime',
 				sortable: true,
+				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
 				label: '更新人',
 				prop: 'modifiedBy',
@@ -171,6 +179,7 @@ export default {
 				label: '最后更新',
 				prop: 'modifiedTime',
 				sortable: true,
+				formatter: (row, column) => moment(column.modifiedTime).format(dateFormat)
 			}],
 
 			//table
@@ -227,10 +236,7 @@ export default {
 			}
 		}
 	},
-	components: {
-		headTop,
-		myPagination,
-	},
+
 	created() {
 		this.initData();
 	},
@@ -243,11 +249,37 @@ export default {
 		}
 	},
 	methods: {
-		convertDate(row, column){
+		createProject() {
+			this.$router.push({
+				name: 'projectCreate'
+			})
+		},
+		deleteProject() {
+			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+
+				this.$message({
+					type: 'success',
+					message: '删除成功!'
+				});
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+		},
+		dialogVisible() {
+
+		},
+		convertDate(row, column) {
 			alert('date')
 			// var date = row[column.property];
-
-			// return moment.unix(timestamp)
+			return 'aaa'
+			// return this.$moment.unix(1498276589000)
 		},
 		async initData() {
 			this.listLoading = true;
@@ -270,11 +302,10 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}, pagination);
 			const response = await getProjectList();
-
-			console.log(response.json)
 			const res = await response.json();
 			const total = response.headers.get('x-total-count')
 			this.tableList = [...res];
+			console.log(this.tableList)
 			this.total = parseInt(total);
 		},
 		async search() {
@@ -284,11 +315,9 @@ export default {
 
 			}
 		},
-
 		resetForm(formName) {
 			this.$refs[formName].resetFields();
 		},
-
 		check(index, row) {
 			console.log(this.$route.path)
 			this.$router.push({
@@ -296,7 +325,7 @@ export default {
 			})
 			console.log(index, row)
 		},
-		edite(index, row) {
+		edit(index, row) {
 			this.editeModalVisible = true;
 			this.editeData = Object.assign({}, { ...row
 			})

@@ -50,9 +50,9 @@
         computed : {
             ...mapState(['loginInfo']),
             defaultActive: function(){
-                return this.$route.path.replace('/', '');
+                return this.$route.path;
             },
-        }
+        },
     }
 </script>
 <style lang="less">

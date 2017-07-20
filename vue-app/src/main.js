@@ -8,6 +8,7 @@ import {
     mapActions,
     mapState
 } from 'vuex'
+import baobao from './config/mUtils'
 
 Vue.config.productionTip = false;
 
@@ -19,10 +20,9 @@ router.beforeEach(async(to, from, next) => {
     if (isLogin) {
         res = true;
     } else {
-        console.log(store.state)
+        // console.log(store.state)
         res = await store.dispatch("getUserData");
     }
-
     if (!res && to.path != '/') {
         next({
             path: "/"
@@ -30,8 +30,8 @@ router.beforeEach(async(to, from, next) => {
     } else {
         next()
     }
-
 })
+
 
 Vue.use(ElementUI);
 

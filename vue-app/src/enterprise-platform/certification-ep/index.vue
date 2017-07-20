@@ -1,5 +1,6 @@
 <template>
-    <div> 
+    <div>
+        <head-top></head-top> 
         <section class="up-section">
             <div class="cer-steps">  
                 <cer-steps></cer-steps>
@@ -27,6 +28,7 @@
     </div>  
 </template>
 <script>
+    import headTop from '@/components/headTop'
     // 步骤条
     import cerSteps from './cer-steps';
     // 基本信息填写
@@ -54,6 +56,7 @@
             }
         },
         components : {
+            headTop,
             cerSteps,
             infoTab,
             bankTab,

@@ -61,14 +61,22 @@
 					if (valid) {
 						(async () => {
 							try{
-								const res = await login({username: this.loginForm.username, password: this.loginForm.password});
+								const resp = await login({username: this.loginForm.username, password: this.loginForm.password});
+									const res = await resp.json();
 									this.$message({
 										type: 'success',
 										message: '登录成功'
 									});
-									this.$router.push({
-                                        name:'hpxManagerIndex'
-                                    })
+									if(res.id == 1){
+										this.$router.push({
+											name : 'hpxManagerIndex'
+										})
+									}else{
+										this.$router.push({
+                                        	name:'platform'
+                                    	})
+									}
+									
 							}catch(e){
 								this.$message({
 									type: 'error',
@@ -95,7 +103,7 @@
                         message: '检测到您之前登录过，将自动登录'
                     });
 					this.$router.push({
-                        name:'manage'
+                        name:'platform'
                     })
 				}
 			}

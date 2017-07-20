@@ -208,7 +208,7 @@
                     const resp = await bankdes(bankclscode,citycode)
                     const res = await resp.json();
                     
-                    // this.bankInfoForm.bankCountry = res[0].cityAreacode;
+                    this.bankInfoForm.bankName = res[0].bankname;
                     this.bankde = res;
                 }catch(e){
 

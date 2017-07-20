@@ -42,3 +42,15 @@ export const getEnterpriseInfo = (eid) => fetch(`/core/core/api/v1/enterprises/$
 ** 更改企业信息
 */
 export const patchEnterpriseInfo = (eid,body) => fetch(`/core/core/api/v1/enterprises/${eid}`,body,'patch')
+
+/*
+** 认证企业 审核
+*/
+export const auithcertification = (id,type,nodes) => fetch(`/core/core/api/v1/enterprises/enterprise/${id}/auditState/${type}?nodes=${nodes}`,{},'PATCH')
+
+/*
+** 获取 增值服务列表
+*/
+export const servicesList = (params) => fetch(`/core` + `/core/api/v1/vEnterpriseServiceApplication`,params)
+
+export const servicesAidth = (id,type) => fetch(`/core` + `/core/api/v1/serviceApplication/${id}/approval?approval=${type}`,{},'patch')

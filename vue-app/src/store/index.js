@@ -21,7 +21,7 @@ const mutations = {
 		state.loginInfo = loginInfo;
 		state.isLogin = true;
 	},
-	changeLoginState(state){
+	signOut(state){
 		state.isLogin = false;
 	}
 }
@@ -53,6 +53,9 @@ const actions = {
 			console.log('您尚未登陆或者session失效');
 			return false;
 		}
+	},
+	loginNot({commit}){
+		commit('signOut');
 	},
 	revisePsw(store){
 		const test = store.commit('changeLoginState');

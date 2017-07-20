@@ -35,3 +35,7 @@ export const filesTypes = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/di
 ** 上传文件
 */
 export const uploadAction = (eid,code) => `/core/core/api/v1/enterpriseFiles/enterprise/${eid}/dictionary/${code}/enterpriseFiles`;
+/*
+** 下载指定文件
+*/
+export const loadUrl = (id) => `/core` + `/core/api/v1/download/attachfiles/${id}`;

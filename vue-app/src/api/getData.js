@@ -253,3 +253,15 @@ export const getProjectList = () => fetch('/core/core/api/v1/projects');
  */
 
 export const projectsAuditList = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);
+
+/**
+ * 删除项目
+ */
+
+// export const projectsAuditList = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);
+
+/**
+ * 获取产品列表
+ */
+
+export const getProductList = () => fetch('/core/core/api/v1/products');
