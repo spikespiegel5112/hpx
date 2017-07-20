@@ -265,3 +265,9 @@ export const projectsAuditList = data => fetch('/core/core/api/v1/enterprise/pro
  */
 
 export const getProductList = () => fetch('/core/core/api/v1/products');
+
+/**
+ * 获取企业角色信息
+ */
+
+export const getEntRolesList = product_code => fetch('/core/core/api/v1/products/' + product_code + '/ent_roles');

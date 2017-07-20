@@ -2,45 +2,45 @@
 <div>
 	<head-top></head-top>
 	<div class="search-criteria-container">
+		<el-row type="flex" class="row-bg">
+			<el-col :span="3">
+			</el-col>
+			<el-col :span="14">
+				<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+					<el-form-item label="企业名称" prop="name">
+						<el-select v-model="formData.enterpriseName" placeholder="请选择">
+							<el-option v-for="item in enterpriseList" :key="item.name" :label="item.name" :value="item.name">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="产品类型" prop="name">
+						<el-select v-model="formData.productType" @change='chooseEntRoles' placeholder="请选择">
+							<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.name">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="企业角色" prop="name">
+						<el-select v-model="formData.enterpriseRole" placeholder="请选择">
+							<el-option v-for="item in enterpriseRoleList" :key="item.name" :label="item.name" :value="item.name">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="项目名称">
+						<el-input v-model="formData.projectName"></el-input>
+					</el-form-item>
+					<el-form-item label="项目说明">
+						<el-input type="textarea" v-model="formData.projectDesc"></el-input>
+					</el-form-item>
+					<el-form-item label="">
+						<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+					</el-form-item>
+				</el-form>
+			</el-col>
 
+			<el-col :span="3"></el-col>
+		</el-row>
 	</div>
-	<el-row type="flex" class="row-bg">
-		<el-col :span="3">
-		</el-col>
-		<el-col :span="14">
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-				<el-form-item label="企业名称" prop="name">
-					<el-select v-model="formData.enterpriseName" placeholder="请选择">
-						<el-option v-for="item in enterpriseList" :key="item.name" :label="item.name" :value="item.name">
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="产品类型" prop="name">
-					<el-select v-model="formData.productType" placeholder="请选择">
-						<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.name">
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="企业角色" prop="name">
-					<el-select v-model="formData.enterpriseRole" placeholder="请选择">
-						<el-option v-for="item in enterpriseRole" :key="item.value" :label="item.label" :value="item.value">
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="项目名称">
-					<el-input v-model="formData.projectName"></el-input>
-				</el-form-item>
-				<el-form-item label="项目说明">
-					<el-input type="textarea" v-model="formData.projectDesc"></el-input>
-				</el-form-item>
-				<el-form-item label="">
-					<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-				</el-form-item>
-			</el-form>
-		</el-col>
 
-		<el-col :span="3"></el-col>
-	</el-row>
 
 </div>
 </template>
@@ -50,14 +50,17 @@ import {
 	getEnterprisesList
 } from '@/api/coreApi'
 import {
-	getProductList
+	getProductList,
+	getEntRolesList
 } from '@/api/getData'
 export default {
 	data() {
 		return {
 			enterpriseList: [],
 			productList: [],
-			enterpriseRole: [],
+			productTypeCode: '',
+			enterpriseRoleList: [],
+
 			formData: {
 				enterpriseName: '',
 				productType: '',
@@ -77,16 +80,15 @@ export default {
 			},
 			rules: {
 				name: [{
-						required: true,
-						message: '请输入活动名称',
-						trigger: 'blur'
-					},{
-						min: 3,
-						max: 5,
-						message: '长度在 3 到 5 个字符',
-						trigger: 'blur'
-					}
-				],
+					required: true,
+					message: '请输入活动名称',
+					trigger: 'blur'
+				}, {
+					min: 3,
+					max: 5,
+					message: '长度在 3 到 5 个字符',
+					trigger: 'blur'
+				}],
 				region: [{
 					required: true,
 					message: '请选择活动区域',
@@ -134,17 +136,30 @@ export default {
 			this.getEnterprisesList();
 			this.getProductList();
 		},
-		async getEnterprisesList(){
+		async getEnterprisesList() {
 			let response = await getEnterprisesList();
 			let result = await response.json();
-			this.enterpriseList = [...result]
-			// console.log(this.enterpriseList)
+			this.enterpriseList = [...result];
 		},
-		async getProductList(){
+		async getProductList() {
 			let response = await getProductList();
 			let result = await response.json();
-			this.productList = [...result]
-			console.log(this.productList)
+			this.productList = [...result];
+		},
+		chooseEntRoles(productTypeCode) {
+			this.productTypeCode = this.formData.productType;
+			for (var item in this.productList) {
+				if (this.productList[item].name == this.formData.productType) {
+					this.getEntRoles(this.productList[item].code);
+					this.formData.enterpriseRole = '';
+				}
+			}
+		},
+		async getEntRoles(productTypeCode) {
+			let response = await getEntRolesList(productTypeCode);
+			let result = await response.json();
+			this.enterpriseRoleList = [...result];
+			console.log(this.enterpriseRoleList)
 		},
 		submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
