@@ -276,7 +276,6 @@ export default {
 				type: 'warning'
 			}).then(() => {
 				deleteProject(scope.row.id);
-				alert(scope.row.id)
 				this.getList();
 				this.$message({
 					type: 'success',

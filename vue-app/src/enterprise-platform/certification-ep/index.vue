@@ -64,7 +64,7 @@
         }
     }
 </script>
-<style scope>
+<style scoped>
     .cer-steps>.is-horizontal{
         padding-left:16.6%;
     }

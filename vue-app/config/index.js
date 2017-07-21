@@ -29,7 +29,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/core': {
-          target: 'http://10.38.42.245:9000/',
+          // target: 'http://10.38.8.48:9000/',
+          target : 'http://10.38.42.245:9000/',
           changeOrigin: true,
           pathRewrite: {
               '^/core': ''

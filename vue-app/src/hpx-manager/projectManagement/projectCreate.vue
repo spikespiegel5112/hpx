@@ -165,7 +165,7 @@ export default {
 		getEnterpriseType(value) {
 			this.typeValue = value;
 		},
-		async submitForm(formName) {
+		submitForm(formName) {
 			let that = this;
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
@@ -173,12 +173,13 @@ export default {
 					let type = this.typeValue;
 					console.log(eid)
 					console.log(type)
-
-					this.formData.startTime = moment(this.formData.startTime).format(this.dateFormat)
-					this.formData.endTime = moment(this.formData.endTime).format(this.dateFormat)
+					this.formData.startTime =this.formData.startTime? moment(this.formData.startTime).format(this.dateFormat):'';
+					this.formData.endTime =this.formData.endTime!=''? moment(this.formData.endTime).format(this.dateFormat):'';
 					console.log(this.formData)
 					createProject(eid, type, this.formData);
-
+					this.$router.push({
+						name: projectsMaintenance
+					})
 				} else {
 					console.log('error submit!!');
 					return false;

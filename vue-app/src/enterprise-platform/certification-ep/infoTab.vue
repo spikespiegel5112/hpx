@@ -1,6 +1,6 @@
 <template>
     <div class="cer-baseInfo-container">
-        <el-card class="cer-base-card">
+        <el-card class="cer-base-card" header="test">
             <div slot="header" class="card-header">
                 <span>基本信息</span>
                 <a v-show="isEdite.base" href="javascript:void(0);" style="float:right;" @click="edite('base')">{{doneText.editeText}}</a>
@@ -514,7 +514,7 @@
         }
     }
 </script>
-<style scope>
+<style scoped>
     .cer-baseInfo-container .el-form-item__content{
         width:60%;
         padding-left:10px;
@@ -528,5 +528,8 @@
     }
     .cer-base-card{
         margin:20px 0;
+    }
+    .cer-base-card>div:first{
+        background : #e9e9e9;
     }
 </style>

@@ -55,15 +55,15 @@ const router = {
         },{
             path: 'enterpriseSignature',
             component: enterpriseSignature,
-            meta: ['企业签章'],
+            meta: ['企业签章','签章'],
         },{
             path: 'enterpriseSignature/addSignature',
             component: addSignature,
-            meta: ['新增签章'],
+            meta: ['新增签章','新增签章'],
         },{
             path: 'product',
             component: product,
-            meta: ['产品管理'],
+            meta: ['产品管理','产品管理'],
         },{
             path: 'accreditation',
             component: accreditation,

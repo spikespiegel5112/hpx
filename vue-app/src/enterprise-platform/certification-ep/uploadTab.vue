@@ -5,8 +5,9 @@
                 :empty-text="emptyText"
                 :data="tableList"
                 v-loading="listLoading"
-                highlight-current-row
-                style="width: 100%">
+                :row-style="{height:'100px'}"
+                :stripe="true"
+                style="width: 100%;margin-top:30px;">
                 <el-table-column
                   type="index"
                   width="60">
@@ -20,9 +21,10 @@
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
-                >
+                    :align="value.align ? value.align : 'left'"
+                >             
                 </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column label="操作" align="center">
                     <template scope="scope">
                          <el-upload
                             :action="uploadActionUrl(scope.row.code)"
@@ -67,7 +69,8 @@
                     },{
                     label : '文件信息',
                     prop  : 'info',
-                    minWidth : 120
+                    minWidth : 120,
+                    align:'center'
                     // formatter : (row,column) => moment(column.modifiedTime).format(dateFormat)
                     }
                 ],

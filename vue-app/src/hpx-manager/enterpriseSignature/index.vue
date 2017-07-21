@@ -83,6 +83,10 @@ export default {
             const eid = this.loginInfo.enterpriseId;
             const resp = await abledSignature(name, id, eid, abled);
             if(resp.status === 200) {
+                this.$message({
+                        message: '修改状态成功！',
+                        type: 'success'
+                    });
                 this.getList();
             } else {
                 this.$message.error('修改状态失败！');

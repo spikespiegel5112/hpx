@@ -31,8 +31,8 @@
             <el-table-column prop="action" label="操作">
                 <template scope="scope">
                     <el-button type="text" size="small" @click="abled(scope.row.name, scope.row.id, scope.row.enabled)" >{{scope.row.enabled === "T" ? "禁用" : "启用"}}</el-button>
-                    <!--<el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>-->
-                    <el-popover
+                    <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
+                    <!--<el-popover
                         ref="popover{{$index}}"
                         placement="top"
                         width="160"
@@ -43,7 +43,7 @@
                             <el-button type="primary" size="mini" @click="visible2=false">确定</el-button>
                         </div>
                     </el-popover>
-                    <el-button type="text" v-popover:popover{{$index}}>删除</el-button>
+                    <el-button type="text" v-popover:popover{{$index}}>删除</el-button>-->
                 </template>
             </el-table-column>
         </el-table>
@@ -61,7 +61,7 @@ export default {
         return {
             visible2: false,
             searchInput: '',
-            total: 100,
+            total: 0,
             pic: {
                  dialogVisible: false,
                  picSrc: ''
@@ -106,8 +106,7 @@ export default {
                 Object.keys(this.tableList).forEach( (k) => {
                         this.tableList[k].visible2 = false;
                 })
-                console.log(this.tableList)
-                this.total = parseInt(total);
+                this.total = parseInt(total - 0);
             },
         async search () {
                 try{
@@ -120,6 +119,10 @@ export default {
             const abled = enabled === "T" ? "F" : "T"; 
             const resp = await abledEpSignature(name, id, abled);
             if(resp.status === 200) {
+                this.$message({
+                        message: '修改状态成功！',
+                        type: 'success'
+                    });
                 this.getList();
             } else {
                 this.$message.error('修改状态失败！');
