@@ -14,7 +14,7 @@
             </el-table-column>
             <el-table-column prop="enterpriseName" label="公司名称" >
             </el-table-column>
-            <el-table-column prop="name" label="签章名字">
+            <el-table-column prop="name" label="签章名字" align="center">
             </el-table-column>
             <el-table-column prop="picData" label="签章图片">
                 <template scope="scope">
@@ -31,7 +31,19 @@
             <el-table-column prop="action" label="操作">
                 <template scope="scope">
                     <el-button type="text" size="small" @click="abled(scope.row.name, scope.row.id, scope.row.enabled)" >{{scope.row.enabled === "T" ? "禁用" : "启用"}}</el-button>
-                    <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
+                    <!--<el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>-->
+                    <el-popover
+                        ref="popover{{$index}}"
+                        placement="top"
+                        width="160"
+                        v-model="visible2">
+                        <p>确定删除吗？</p>
+                        <div style="text-align: right; margin: 0">
+                            <el-button size="mini" type="text" @click="!visible2">取消</el-button>
+                            <el-button type="primary" size="mini" @click="visible2=false">确定</el-button>
+                        </div>
+                    </el-popover>
+                    <el-button type="text" v-popover:popover{{$index}}>删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -47,6 +59,7 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
+            visible2: false,
             searchInput: '',
             total: 100,
             pic: {
@@ -90,6 +103,10 @@ export default {
                 const res = await resp.json();
                 const total = resp.headers.get('x-total-count')
                 this.tableList = [...res];
+                Object.keys(this.tableList).forEach( (k) => {
+                        this.tableList[k].visible2 = false;
+                })
+                console.log(this.tableList)
                 this.total = parseInt(total);
             },
         async search () {
@@ -110,7 +127,6 @@ export default {
             
         },
         async del(id) {
-            console.log("删除");
             const  resp = await delEpSignature(id);
             if(resp.status === 200) {
                 this.getList();

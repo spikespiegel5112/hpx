@@ -14,7 +14,7 @@
             </el-table-column>
             <el-table-column prop="name" label="签章名字">
             </el-table-column>
-            <el-table-column prop="picData" label="签章图片">
+            <el-table-column prop="picData" label="签章图片" align="center">
                 <template scope="scope">
                     <img :src="'data:image/png;base64,' + scope.row.picData" style='width: 100px' />
                 </template>

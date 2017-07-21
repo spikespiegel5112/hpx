@@ -54,7 +54,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item mar>
-                    <el-button type="primary" @click="onSubmit">确定</el-button>
+                    <el-button type="primary" @click.native="onSubmit('form')">确定</el-button>
                     <el-button>取消</el-button>
                 </el-form-item>
                 </el-form>
@@ -81,8 +81,15 @@ export default {
         ...mapState(['loginInfo'])
     },
     methods: {
-
-     async onSubmit() {
+     async onSubmit(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            return true;
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
         const eid = this.loginInfo.enterpriseId;
         const color = this.form.color === '红色' ? 'RED' : 'BLUE';
         const shape = this.form.shape === '圆形' ? 'STAR' : 'OVAL';
@@ -93,7 +100,8 @@ export default {
                 message: '添加成功！',
                 type: 'success'
             });
-            history.back();
+            this.form = {};
+            this.$router.replace('/manager/enterpriseSignature')
         } else {
              this.$message.error('添加失败！');
         }
@@ -102,14 +110,16 @@ export default {
 }
 </script>
 
-<style lang="less" scope>
+<style lang="less" scoped>
 .box-card {
     width: 60%;
     margin: 0 auto;
     box-shadow: none;
     transition: box-shadow .5s;
 }
-
+.el-card__header{
+    background:red;
+}
 .box-card:hover {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .12), 0 0 6px 0 rgba(0, 0, 0, .04);
     transition: box-shadow .5s;

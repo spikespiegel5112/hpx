@@ -32,7 +32,7 @@ module.exports = {
           target: 'http://10.38.42.245:9000/',
           changeOrigin: true,
           pathRewrite: {
-              '^/core': '/'
+              '^/core': ''
           }
       },
     },

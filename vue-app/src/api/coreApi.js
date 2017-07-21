@@ -44,6 +44,48 @@ export const getEnterpriseInfo = (eid) => fetch(`/core/core/api/v1/enterprises/$
 export const patchEnterpriseInfo = (eid,body) => fetch(`/core/core/api/v1/enterprises/${eid}`,body,'patch')
 
 /*
+** 管理签章 -- 获取企业电子签章列表
+*/
+export const getEpSignatureList = (query, eid) => fetch(`/core/core/api/v1/venterprise/${eid}/esigns`, query);
+
+/*
+** 管理签章 -- 禁用企业电子签章
+*/
+export const abledEpSignature = (name, id, enabled) => fetch(`/core/core/api/v1/venterprise/{name}esigns/${id}/enabled/{enabled}?name=${name}&enabled=${enabled}`,{}, 'patch');
+
+/*
+** 管理签章 -- 删除企业电子签章
+*/
+export const delEpSignature = (id) => fetch(`/core/core/api/v1/venterprise/esigns/${id}`,{}, 'delete');
+
+/*
+** 获取企业电子签章列表
+*/
+export const getSignatureList = (query, eid) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns`, query);
+
+/*
+** 添加企业电子签章列表
+*/
+export const addSignature = (eid, query) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns`, query, 'put');
+
+
+/**
+ * 获取产品列表
+ */
+export const getProductList = (query) => fetch('/core/core/api/v1/products',query);
+
+/*
+** 禁用企业电子签章
+*/
+export const abledSignature = (name, id, eid, enabled) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns/${id}?name=${name}&enabled=${enabled}`,{}, 'patch');
+
+/*
+** 删除企业电子签章
+*/
+export const delSignature = (id, eid) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns/${id}`,{}, 'delete');
+
+
+/*
 ** 认证企业 审核
 */
 export const auithcertification = (id,type,nodes) => fetch(`/core/core/api/v1/enterprises/enterprise/${id}/auditState/${type}?nodes=${nodes}`,{},'PATCH')

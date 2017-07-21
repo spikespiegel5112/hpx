@@ -32,7 +32,7 @@
 			return {
 				loginForm: {
 					username: '13333333333',
-					password: '111qqq',
+					password: '123456',
 				},
 				rules: {
 					username: [
@@ -76,7 +76,7 @@
                                         	name:'platform'
                                     	})
 									}
-									
+
 							}catch(e){
 								this.$message({
 									type: 'error',

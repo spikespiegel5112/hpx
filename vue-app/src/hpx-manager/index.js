@@ -10,7 +10,7 @@ const projectCreate = r => require.ensure([], () => r(require('@/hpx-manager/pro
 const signatureManager =  r => require.ensure([], () => r(require('@/hpx-manager/signatureManager')), 'signatureManager');
 const enterpriseSignature =  r => require.ensure([], () => r(require('@/hpx-manager/enterpriseSignature')), 'enterpriseSignature');
 const addSignature =  r => require.ensure([], () => r(require('@/hpx-manager/enterpriseSignature/addSignature')), 'addSignature');
-const productManage =  r => require.ensure([], () => r(require('@/hpx-manager/productManage')), 'productManage');
+const product =  r => require.ensure([], () => r(require('@/hpx-manager/product')), 'product');
 
 const accreditation = r => require.ensure([], () => r(require('@/hpx-manager/accreditation')), 'hpx-manager-accreditation');
 const addedServices = r => require.ensure([], () => r(require('@/hpx-manager/added-services')), 'hpx-manager-addedServices');
@@ -61,8 +61,8 @@ const router = {
             component: addSignature,
             meta: ['新增签章'],
         },{
-            path: 'productManage',
-            component: productManage,
+            path: 'product',
+            component: product,
             meta: ['产品管理'],
         },{
             path: 'accreditation',

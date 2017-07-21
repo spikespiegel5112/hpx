@@ -8,31 +8,12 @@
 			<el-row>
 				<el-col :span="5">
 					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="企业名称"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="5">
-					<el-form-item prop="activated">
-						<el-select v-model="query.activated" size="large" placeholder="激活状态">
-							<el-option v-for="item in activatedOptions" :key="item.activated" :label="item.value" :value="item.activated">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="6">
-					<el-form-item prop="auditState">
-						<el-select v-model="query.auditState" size="large" placeholder="认证状态">
-							<el-option v-for="item in auditStateOptions" :key="item.auditState" :label="item.value" :value="item.auditState">
-							</el-option>
-						</el-select>
+						<el-input v-model="query.name" size="large" placeholder="项目名称"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="7" :offset="6 * (3 - (criteriaNum % 4))">
 					<el-form-item>
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
 					</el-form-item>
 					<el-form-item>
 						<el-button icon="plus" type="primary" @click='createProject'>新增</el-button>
@@ -44,13 +25,22 @@
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			<el-table-column type="index" width="100">
+			<!-- <el-table-column type="index" width="100"></el-table-column> -->
+			<el-table-column type="expand">
+				<template scope="props">
+					<el-form label-position="left" class="demo-table-expand">
+						<el-form-item v-for="(value,i) in expand" :key="i" :label="value.label" :prop="value.prop" :formatter="value.formatter">
+							<span>{{ props.row[value.prop] }}</span>
+						</el-form-item>
+					</el-form>
+				</template>
 			</el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-					<el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button>
+					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
+					<el-button type="text" size="small" @click='editProjet(scope.$index, scope.row)'>修改</el-button>
 					<el-button type="text" size="small" @click="deleteProject(scope.$index, scope.row)">删除</el-button>
 					<el-button type="text" size="small" @click="audit(scope.$index, scope.row)">审核</el-button>
 				</template>
@@ -75,33 +65,27 @@
 		</section>
 	</section>
 	<!--编辑界面-->
-	<el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
-		<el-form :model="editeData" label-width="80px" :rules="editRules" ref="editeData">
-			<el-form-item label="企业编号" prop="id" readonly>
-				<el-input v-model="editeData.id" auto-complete="off"></el-input>
+	<el-dialog title="修改项目" v-model="dialogFormVisible" :close-on-click-modal="false">
+		<el-form :model="editData" label-width="120px" :rules="editRules" ref="editData">
+			<el-form-item label="产品类型" prop="productCode">
+				<el-input v-model="editData.productCode" auto-complete="off" readonly></el-input>
 			</el-form-item>
-			<el-form-item label="企业名称" prop="name">
-				<el-input v-model="editeData.name" auto-complete="off"></el-input>
+			<el-form-item label="项目名称" prop="name">
+				<el-input v-model="editData.name" auto-complete="off"></el-input>
 			</el-form-item>
-			<el-form-item label='激活状态' prop="activated">
-				<el-select v-model="editeData.activated">
-					<el-option v-for="item in activatedOptions" :key="item.activated" :label="item.value" :value="item.activated">
-					</el-option>
-				</el-select>
+			<el-form-item label="项目说明">
+				<el-input v-model="editData.remark"></el-input>
 			</el-form-item>
-			<el-form-item label="联系方式">
-				<el-input v-model="editeData.contactsNumber"></el-input>
+			<el-form-item label="项目开始时间">
+				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
 			</el-form-item>
-			<el-form-item label="更新时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editeData.birth"></el-date-picker>
-			</el-form-item>
-			<el-form-item label="地址">
-				<el-input type="textarea" v-model="editeData.address"></el-input>
+			<el-form-item label="项目终止时间">
+				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime"></el-date-picker>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="editeModalVisible = false">取消</el-button>
-			<el-button type="primary" @click.native="editSubmit">提交</el-button>
+			<el-button @click.native="dialogFormVisible = false">取消</el-button>
+			<el-button type="primary" @click.native="editProjetSubmit">提交</el-button>
 		</div>
 	</el-dialog>
 </div>
@@ -133,7 +117,6 @@ export default {
 				label: '产品编码',
 				prop: 'productCode',
 				sortable: true,
-
 			}, {
 				label: '项目编号',
 				prop: 'code',
@@ -148,7 +131,8 @@ export default {
 				prop: 'remark',
 				sortable: true,
 				minWidth: 200
-			}, {
+			}],
+			expand: [{
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
@@ -181,7 +165,6 @@ export default {
 				sortable: true,
 				formatter: (row, column) => moment(column.modifiedTime).format(dateFormat)
 			}],
-
 			//table
 			tableList: [],
 			listLoading: false,
@@ -218,19 +201,26 @@ export default {
 			criteriaNum: 3,
 
 			//模态框
-			editeModalVisible: false,
-			editeData: {
-				id: '',
+			dialogFormVisible: false,
+			editData: {
+				productCode: '',
 				name: '',
-				activated: '',
-				address: '',
-				contactsNumber: '',
-				birth: ''
+				remark: '',
+				startTime: '',
+				endTime: ''
 			},
 			editRules: {
+				productCode: [{
+					required: true
+				}],
+				createTime: [{
+					required: true,
+					message: '请输入项目创建时间',
+					trigger: 'blur'
+				}],
 				name: [{
 					required: true,
-					message: '请输入姓名',
+					message: '请输入项目名称',
 					trigger: 'blur'
 				}]
 			}
@@ -249,6 +239,13 @@ export default {
 		}
 	},
 	methods: {
+		editProjet(index, row) {
+			this.dialogFormVisible = true;
+			this.editData.productCode = row.productCode
+		},
+		editProjetSubmit(){
+			
+		},
 		createProject() {
 			this.$router.push({
 				name: 'projectCreate'
@@ -271,9 +268,6 @@ export default {
 					message: '已取消删除'
 				});
 			});
-		},
-		dialogVisible() {
-
 		},
 		convertDate(row, column) {
 			alert('date')
@@ -324,11 +318,6 @@ export default {
 				path: this.$route.path + '/detail/' + row.id
 			})
 			console.log(index, row)
-		},
-		edit(index, row) {
-			this.editeModalVisible = true;
-			this.editeData = Object.assign({}, { ...row
-			})
 		}
 	},
 }
