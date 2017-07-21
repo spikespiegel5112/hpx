@@ -6,30 +6,36 @@
 			<el-col :span="3">
 			</el-col>
 			<el-col :span="14">
-				<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-					<el-form-item label="企业名称" prop="name">
-						<el-select v-model="formData.enterpriseName" placeholder="请选择">
-							<el-option v-for="item in enterpriseList" :key="item.name" :label="item.name" :value="item.name">
+				<el-form :model="formData" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm">
+					<el-form-item label="企业名称" prop="ownerEnterpriseId">
+						<el-select v-model="formData.ownerEnterpriseId" placeholder="请选择">
+							<el-option v-for="item in enterpriseList" :key="item.name" :label="item.name" :value="item.id.toString()">
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="产品类型" prop="name">
-						<el-select v-model="formData.productType" @change='chooseEntRoles' placeholder="请选择">
-							<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.name">
+					<el-form-item label="产品类型" prop="productCode">
+						<el-select v-model="formData.productCode" @change='chooseEntRoles' placeholder="请选择">
+							<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.id.toString()">
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="企业角色" prop="name">
-						<el-select v-model="formData.enterpriseRole" placeholder="请选择">
-							<el-option v-for="item in enterpriseRoleList" :key="item.name" :label="item.name" :value="item.name">
+					<el-form-item label="企业角色" prop="type">
+						<el-select v-model="formData.type" @change='getEnterpriseType' placeholder="请选择">
+							<el-option v-for="item in typeList" :key="item.name" :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="项目名称">
-						<el-input v-model="formData.projectName"></el-input>
+					<el-form-item label="项目名称" prop="name">
+						<el-input v-model="formData.name"></el-input>
 					</el-form-item>
 					<el-form-item label="项目说明">
-						<el-input type="textarea" v-model="formData.projectDesc"></el-input>
+						<el-input type="textarea" v-model="formData.remark"></el-input>
+					</el-form-item>
+					<el-form-item label="项目开始时间" prop="startTime">
+						<el-date-picker type="date" placeholder="选择日期" v-model="formData.startTime"></el-date-picker>
+					</el-form-item>
+					<el-form-item label="项目终止时间">
+						<el-date-picker type="date" placeholder="选择日期" format v-model="formData.endTime"></el-date-picker>
 					</el-form-item>
 					<el-form-item label="">
 						<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
@@ -46,8 +52,10 @@
 </template>
 <script>
 import headTop from '@/components/headTop'
+import moment from 'moment'
 import {
-	getEnterprisesList
+	getEnterprisesList,
+	createProject
 } from '@/api/coreApi'
 import {
 	getProductList,
@@ -56,71 +64,54 @@ import {
 export default {
 	data() {
 		return {
+			dateFormat: "YYYY-MM-DD",
 			enterpriseList: [],
 			productList: [],
-			productTypeCode: '',
-			enterpriseRoleList: [],
-
+			productCodeCode: '',
+			typeList: [],
+			typeValue: '',
 			formData: {
-				enterpriseName: '',
-				productType: '',
-				enterpriseRole: '',
-				projectName: '',
-				projectDesc: ''
+				ownerEnterpriseId: '',
+				productCode: '',
+				type: '',
+				name: '',
+				remark: '',
+				startTime: '',
+				endTime: ''
 			},
 			ruleForm: {
+				ownerEnterpriseId: '',
+				productCode: '',
+				type: '',
 				name: '',
-				region: '',
-				date1: '',
-				date2: '',
-				delivery: false,
-				type: [],
-				resource: '',
-				desc: ''
+				startTime: ''
 			},
 			rules: {
-				name: [{
+				ownerEnterpriseId: [{
 					required: true,
-					message: '请输入活动名称',
-					trigger: 'blur'
-				}, {
-					min: 3,
-					max: 5,
-					message: '长度在 3 到 5 个字符',
-					trigger: 'blur'
-				}],
-				region: [{
-					required: true,
-					message: '请选择活动区域',
+					message: '请选择企业名称',
 					trigger: 'change'
 				}],
-				date1: [{
+				productCode: [{
+					required: true,
+					message: '请选择产品类型',
+					trigger: 'change'
+				}],
+				type: [{
+					required: true,
+					message: '请选择企业角色',
+					trigger: 'change'
+				}],
+				name: [{
+					required: true,
+					message: '请输入项目名称',
+					trigger: 'change'
+				}],
+				startTime: [{
 					type: 'date',
 					required: true,
 					message: '请选择日期',
 					trigger: 'change'
-				}],
-				date2: [{
-					type: 'date',
-					required: true,
-					message: '请选择时间',
-					trigger: 'change'
-				}],
-				type: [{
-					type: 'array',
-					required: true,
-					message: '请至少选择一个活动性质',
-					trigger: 'change'
-				}],
-				resource: [{
-					required: true,
-					message: '请选择活动资源',
-					trigger: 'change'
-				}],
-				desc: [{
-					required: true,
-					message: '请填写活动形式',
-					trigger: 'blur'
 				}]
 			}
 		};
@@ -140,31 +131,54 @@ export default {
 			let response = await getEnterprisesList();
 			let result = await response.json();
 			this.enterpriseList = [...result];
+			console.log(this.enterpriseList)
 		},
 		async getProductList() {
 			let response = await getProductList();
 			let result = await response.json();
 			this.productList = [...result];
+
 		},
-		chooseEntRoles(productTypeCode) {
-			this.productTypeCode = this.formData.productType;
+		getOwnerEnterpriseId(value) {
+			for (var item in this.enterpriseList) {
+				if (this.enterpriseList[item].name == this.formData.ownerEnterpriseId) {
+					this.formData.ownerEnterpriseId = this.enterpriseList[item].id.toString();
+					console.log(this.formData.ownerEnterpriseId)
+				}
+			}
+			alert(typeof this.formData.ownerEnterpriseId)
+		},
+		chooseEntRoles(productCodeCode) {
+			this.productCodeCode = this.formData.productCode;
 			for (var item in this.productList) {
-				if (this.productList[item].name == this.formData.productType) {
-					this.getEntRoles(this.productList[item].code);
-					this.formData.enterpriseRole = '';
+				if (this.productList[item].id == this.formData.productCode) {
+					this.getTypes(this.productList[item].code);
+					this.formData.type = '';
 				}
 			}
 		},
-		async getEntRoles(productTypeCode) {
-			let response = await getEntRolesList(productTypeCode);
+		async getTypes(productCodeCode) {
+			let response = await getEntRolesList(productCodeCode);
 			let result = await response.json();
-			this.enterpriseRoleList = [...result];
-			console.log(this.enterpriseRoleList)
+			this.typeList = [...result];
 		},
-		submitForm(formName) {
+		getEnterpriseType(value) {
+			this.typeValue = value;
+		},
+		async submitForm(formName) {
+			let that = this;
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					alert('submit!');
+					let eid = this.$store.state.loginInfo.enterpriseId;
+					let type = this.typeValue;
+					console.log(eid)
+					console.log(type)
+
+					this.formData.startTime = moment(this.formData.startTime).format(this.dateFormat)
+					this.formData.endTime = moment(this.formData.endTime).format(this.dateFormat)
+					console.log(this.formData)
+					createProject(eid, type, this.formData);
+
 				} else {
 					console.log('error submit!!');
 					return false;

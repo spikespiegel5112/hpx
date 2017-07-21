@@ -40,8 +40,8 @@
 			<el-table-column label="操作">
 				<template scope="scope">
 					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
-					<el-button type="text" size="small" @click='editProjet(scope.$index, scope.row)'>修改</el-button>
-					<el-button type="text" size="small" @click="deleteProject(scope.$index, scope.row)">删除</el-button>
+					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
+					<el-button type="text" size="small" @click="deleteProject(scope)">删除</el-button>
 					<el-button type="text" size="small" @click="audit(scope.$index, scope.row)">审核</el-button>
 				</template>
 			</el-table-column>
@@ -99,6 +99,10 @@ import moment from 'moment'
 import {
 	getProjectList
 } from '@/api/getData'
+import {
+	modifyProjectInfo,
+	deleteProject
+} from '@/api/coreApi'
 import {
 	mapState
 } from 'vuex'
@@ -194,14 +198,11 @@ export default {
 				value: '未认证',
 				auditState: 'F'
 			}],
-			rules: {
-
-			},
 			//搜索条件的个数
 			criteriaNum: 3,
-
 			//模态框
 			dialogFormVisible: false,
+			editProjetEid: 0,
 			editData: {
 				productCode: '',
 				name: '',
@@ -226,7 +227,6 @@ export default {
 			}
 		}
 	},
-
 	created() {
 		this.initData();
 	},
@@ -239,25 +239,45 @@ export default {
 		}
 	},
 	methods: {
-		editProjet(index, row) {
+		editProjet(scope) {
+			this.editProjetEid = scope.row.id;
 			this.dialogFormVisible = true;
-			this.editData.productCode = row.productCode
+			this.editData.productCode = scope.row.productCode;
+			this.editData = {
+				productCode: scope.row.productCode,
+				name: scope.row.name,
+				remark: scope.row.remark,
+				startTime: scope.row.startTime,
+				endTime: scope.row.endTime
+			}
 		},
-		editProjetSubmit(){
-			
+		async editProjetSubmit() {
+			this.$refs['editData'].validate(async(valid) => {
+				if (valid) {
+					try {
+						const response = await modifyProjectInfo(this.editProjetEid, this.editData);
+						this.dialogFormVisible = false;
+						this.initData();
+					} catch (e) {
+						this.$message.error(e)
+					}
+				}
+			})
 		},
 		createProject() {
 			this.$router.push({
 				name: 'projectCreate'
 			})
 		},
-		deleteProject() {
+		deleteProject(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
-
+				deleteProject(scope.row.id);
+				alert(scope.row.id)
+				this.getList();
 				this.$message({
 					type: 'success',
 					message: '删除成功!'
@@ -268,12 +288,6 @@ export default {
 					message: '已取消删除'
 				});
 			});
-		},
-		convertDate(row, column) {
-			alert('date')
-			// var date = row[column.property];
-			return 'aaa'
-			// return this.$moment.unix(1498276589000)
 		},
 		async initData() {
 			this.listLoading = true;
