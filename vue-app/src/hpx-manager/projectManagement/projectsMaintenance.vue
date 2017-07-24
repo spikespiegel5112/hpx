@@ -41,7 +41,7 @@
 				<template scope="scope">
 					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
-					<el-button type="text" size="small" @click="deleteProject(scope)">删除</el-button>
+					<el-button type="text" size="small" @click="deleteProjectFunction(scope)">删除</el-button>
 					<el-button type="text" size="small" @click="audit(scope.$index, scope.row)">审核</el-button>
 				</template>
 			</el-table-column>
@@ -227,11 +227,8 @@ export default {
 			}
 		}
 	},
-	created() {
+	activated() {
 		this.initData();
-	},
-	mounted() {
-
 	},
 	computed: {
 		loginInfo() {
@@ -269,18 +266,21 @@ export default {
 				name: 'projectCreate'
 			})
 		},
-		deleteProject(scope) {
+		deleteProjectFunction(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
-				deleteProject(scope.row.id);
-				this.getList();
-				this.$message({
-					type: 'success',
-					message: '删除成功!'
-				});
+				deleteProject(scope.row.id).then(() => {
+					this.tableList = [];
+					this.getList();
+					this.$message({
+						type: 'success',
+						message: '删除成功!'
+					});
+				})
+
 			}).catch(() => {
 				this.$message({
 					type: 'info',

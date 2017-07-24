@@ -144,7 +144,8 @@
                     nodes : [
 						{ required: true, message: '请输入审核说明' }
 					]
-                }
+                },
+                noticeHide : ''
             }
         },
     	components: {
@@ -186,10 +187,10 @@
 
             //提示信息
             open() {
-                 this.$notify.info({
+                 this.noticeHide = this.$notify.info({
                     title: '消息',
                     message: '审核前请先下载授权书检验',
-                    duration:3000,
+                    duration: 3000,
                     offset: 100
                 });
             },
@@ -230,9 +231,7 @@
             load(id){
                 (async () => {
                     try{
-                        console.log(888)
                         window.location.href = loadUrl(id);
-    
                         this.$message({
                             type:'success',
                             message : '下载成功'
@@ -275,6 +274,11 @@
                 })
             }
         },
+        //n路由离开即提示消失
+        beforeRouteLeave(to,from,next){
+            this.noticeHide.close();
+            next();
+        }
     }
 </script>
 

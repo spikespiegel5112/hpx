@@ -173,13 +173,20 @@ export default {
 					let type = this.typeValue;
 					console.log(eid)
 					console.log(type)
-					this.formData.startTime =this.formData.startTime? moment(this.formData.startTime).format(this.dateFormat):'';
-					this.formData.endTime =this.formData.endTime!=''? moment(this.formData.endTime).format(this.dateFormat):'';
+					this.formData.startTime = this.formData.startTime != '' ? moment(this.formData.startTime).format(this.dateFormat) : '';
+					this.formData.endTime = this.formData.endTime != '' ? moment(this.formData.endTime).format(this.dateFormat) : '';
 					console.log(this.formData)
-					createProject(eid, type, this.formData);
-					this.$router.push({
-						name: projectsMaintenance
+					createProject(eid, type, this.formData).then((response)=>{
+						console.log(response.status)
+						if (response.status==200) {
+							// this.$router.push({
+							// 	name: 'projectsMaintenance'
+							// })
+							this.$router.push('/manager/item')
+						}
+
 					})
+
 				} else {
 					console.log('error submit!!');
 					return false;

@@ -7,7 +7,7 @@
 		  		</div>
 		    	<el-form :model="loginForm" :rules="rules" ref="loginForm">
 					<el-form-item prop="username">
-						<el-input v-model="loginForm.username" placeholder="用户名"><span>dsfsf</span></el-input>
+						<el-input v-model="loginForm.username" placeholder="用户名"></el-input>
 					</el-form-item>
 					<el-form-item prop="password">
 						<el-input type="password" placeholder="密码" v-model="loginForm.password"></el-input>
@@ -61,22 +61,23 @@
 					if (valid) {
 						(async () => {
 							try{
-								const resp = await login({username: this.loginForm.username, password: this.loginForm.password});
-									const res = await resp.json();
-									this.$message({
-										type: 'success',
-										message: '登录成功'
-									});
-									if(res.id == 1){
-										this.$router.push({
-											name : 'hpxManagerIndex'
-										})
-									}else{
-										this.$router.push({
-                                        	name:'platform'
-                                    	})
-									}
-
+								console.log(666)
+								const resp = await login(this.loginForm);
+								console.log(resp)
+								const res = await resp.json();
+								this.$message({
+									type: 'success',
+									message: '登录成功'
+								});
+								if(res.id == 1){
+									this.$router.push({
+										name : 'hpxManagerIndex'
+									})
+								}else{
+									this.$router.push({
+										name:'platform'
+									})
+								}
 							}catch(e){
 								this.$message({
 									type: 'error',
@@ -84,13 +85,6 @@
 								});
 							}
 						})()
-					} else {
-						this.$notify.error({
-							title: '错误',
-							message: '请输入正确的用户名密码',
-							offset: 100
-						});
-						return false;
 					}
 				});
 			},

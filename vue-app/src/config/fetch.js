@@ -11,6 +11,7 @@ const serialize = (ob) => {
 function interceptor(resp) {
   //通用拦截处理
   const status = resp.status;
+
   let err = resp.headers.get('x-hpx-error-desc');
   err = decodeURIComponent(err);
   if(status >= 200 && status < 300){
@@ -24,6 +25,7 @@ function interceptor(resp) {
     }else if(status == 403){//没有权限
       	throw err;
     }else if(status >= 500){
+	
 		err = decodeURIComponent( resp.headers.get('x-error-alert'))
 		
 		throw err;
@@ -68,7 +70,7 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 			})
 		}
 		
-		if(type == 'POST' || type == 'PATCH' || type == 'PUT'){
+		if(type == 'POST' || type == 'PATCH' || type == 'PUT' || type == 'DELETE'){
 			Object.defineProperty(requestConfig, 'body', {
 				value: JSON.stringify(data)
 			})

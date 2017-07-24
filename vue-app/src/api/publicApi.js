@@ -32,10 +32,15 @@ export const bankdes = (bankclscode,citycode) => fetch(`/core/core/api/v1/enterp
 export const filesTypes = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/dictionary`,{code:'enterpris_file'});
 
 /*
-** 上传文件
+** 上传认证指定文件
 */
 export const uploadAction = (eid,code) => `/core/core/api/v1/enterpriseFiles/enterprise/${eid}/dictionary/${code}/enterpriseFiles`;
 /*
 ** 下载指定文件
 */
 export const loadUrl = (id) => `/core` + `/core/api/v1/download/attachfiles/${id}`;
+
+/*
+** 上传文件
+*/
+export const uploadUrl = () => `/core/core/api/v1/attachfiles`;

@@ -51,8 +51,7 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-					<el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
-					<el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
+					<el-button type="text" size="small" @click="auditProject(scope)" >审核</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -73,35 +72,13 @@
 			</my-Pagination>
 		</section>
 	</section>
-	<!--编辑界面-->
-	<el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
-		<el-form :model="editeData" label-width="80px" :rules="editRules" ref="editeData">
-			<el-form-item label="企业编号" prop="id" readonly>
-				<el-input v-model="editeData.id" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="企业名称" prop="name">
-				<el-input v-model="editeData.name" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label='激活状态' prop="activated">
-				<el-select v-model="editeData.activated">
-					<el-option v-for="item in activatedOptions" :key="item.activated" :label="item.value" :value="item.activated">
-					</el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item label="联系方式">
-				<el-input v-model="editeData.contactsNumber"></el-input>
-			</el-form-item>
-			<el-form-item label="更新时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editeData.birth"></el-date-picker>
-			</el-form-item>
-			<el-form-item label="地址">
-				<el-input type="textarea" v-model="editeData.address"></el-input>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="editeModalVisible = false">取消</el-button>
-			<el-button type="primary" @click.native="editSubmit">提交</el-button>
-		</div>
+	<!--审核对话框-->
+	<el-dialog title="提示" :visible.sync="auditModalVisible" size="tiny">
+		<span>请确认审核是否通过?</span>
+		<span slot="footer" class="dialog-footer">
+    		<el-button @click="auditModalVisible = false">取 消</el-button>
+    		<el-button type="primary" @click="commitAudit">通过</el-button>
+  		</span>
 	</el-dialog>
 </div>
 </template>
@@ -111,8 +88,11 @@ import headTop from '@/components/headTop'
 import myPagination from '@/components/myPagination'
 import moment from 'moment'
 import {
-	projectsAuditList
+	projectsAuditListRequest
 } from '@/api/getData'
+import {
+	auditProjectRequest
+} from '@/api/coreApi'
 import {
 	mapState
 } from 'vuex'
@@ -140,12 +120,12 @@ export default {
 				prop: 'startTime',
 				sortable: true,
 				minWidth: 200,
-				formatter : (row,column) => moment(column.startTime).format(dateFormat)
+				formatter: (row, column) => moment(column.startTime).format(dateFormat)
 			}, {
 				label: '项目结束日',
 				prop: 'endTime',
 				sortable: true,
-				formatter : (row,column) => moment(column.endTime).format(dateFormat)
+				formatter: (row, column) => moment(column.endTime).format(dateFormat)
 			}],
 
 			//table
@@ -163,8 +143,8 @@ export default {
 			query: {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				pid: '',
-				inviteStatus: '',
-				state: ''
+				inviteStatus: 'T',
+				state: 'S'
 			},
 			activatedOptions: [{
 				value: '激活',
@@ -186,23 +166,11 @@ export default {
 			//搜索条件的个数
 			criteriaNum: 3,
 
-			//模态框
-			editeModalVisible: false,
-			editeData: {
-				id: '',
-				name: '',
-				activated: '',
-				address: '',
-				contactsNumber: '',
-				birth: ''
-			},
-			editRules: {
-				name: [{
-					required: true,
-					message: '请输入姓名',
-					trigger: 'blur'
-				}]
-			}
+			//审核模态框
+			auditModalVisible: false,
+			auditEid:null,
+			auditPid: null,
+			AuditState:''
 		}
 	},
 	components: {
@@ -221,7 +189,6 @@ export default {
 		}
 	},
 	methods: {
-
 		async initData() {
 			this.listLoading = true;
 			try {
@@ -239,13 +206,10 @@ export default {
 			page: 1,
 			size: 10
 		}) {
-            console.log(this.query)
 			const params = Object.assign(this.query, pagination);
-
-			const response = await projectsAuditList(params);
-
-			console.log(response)
+			const response = await projectsAuditListRequest(params);
 			const res = await response.json();
+			console.log(res)
 			const total = response.headers.get('x-total-count')
 			this.tableList = [...res];
 			this.total = parseInt(total);
@@ -261,17 +225,17 @@ export default {
 		resetForm(formName) {
 			this.$refs[formName].resetFields();
 		},
-
-		check(index, row) {
-			console.log(this.$route.path)
-			this.$router.push({
-				path: this.$route.path + '/detail/' + row.id
-			})
-			console.log(index, row)
+		auditProject(scope) {
+			this.auditModalVisible = true;
+			this.auditEid=scope.row.epId;
+			this.auditPid=scope.row.epId;
+			this.auditState=scope.row.state;
 		},
-		edite(index, row) {
-			this.editeModalVisible = true;
-			this.editeData = Object.assign({}, { ...row
+		commitAudit(scope) {
+			console.log(this.auditEid)
+			auditProjectRequest(this.auditEid, this.auditPid, this.auditState).then(response=>{
+				// alert('dsds')
+				this.auditModalVisible=false;
 			})
 		}
 	},

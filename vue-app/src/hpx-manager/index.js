@@ -14,12 +14,12 @@ const product =  r => require.ensure([], () => r(require('@/hpx-manager/product'
 
 const accreditation = r => require.ensure([], () => r(require('@/hpx-manager/accreditation')), 'hpx-manager-accreditation');
 const addedServices = r => require.ensure([], () => r(require('@/hpx-manager/added-services')), 'hpx-manager-addedServices');
+const enterpriseManager = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-manager')), 'hpx-manager-enterprise-manager');
 
 
 const router = {
     path: '/manager',
     component: hpxManagerIndex,
-    name: 'hpxManagerIndex',
     children: [{
             path: '',
             component: home,
@@ -72,6 +72,10 @@ const router = {
             path: 'added-services',
             component: addedServices,
             meta: ['企业管理', '增值服务管理'],
+        },{
+            path: 'maintain',
+            component: enterpriseManager,
+            meta: ['企业管理', '企业维护'],
         }
     ]
 }

@@ -1,6 +1,6 @@
 <template>
-    <div v-if="menuList.length">
-        <el-menu :default-active="defaultActive" style="min-height: 100%;" theme="dark" unique-opened router>
+    <div v-if="menuList.length" style="height:100%;">
+        <el-menu :default-active="$route.path" mode='vertical' style="min-height: 100%;" theme="dark" unique-opened router>
             <el-menu-item :index="index"><i class="el-icon-menu"></i>首页</el-menu-item>
             <template v-for="(subMenu,i) in menuList">
                 <template v-if="subMenu.vRolePermissionCustom.length">
@@ -19,7 +19,7 @@
             </template>
         </el-menu>
     </div>
-    <div v-else>
+    <div v-else  style="height:100%;">
         <div></div>
     </div>
 </template>

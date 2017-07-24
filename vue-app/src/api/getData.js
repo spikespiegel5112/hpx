@@ -249,10 +249,18 @@ export const getUserCity = () => fetch('/v1/user/city/count');
 export const getProjectList = () => fetch('/core/core/api/v1/projects');
 
 /**
+ * 取得企业项目信息列表, 支持分页
+ */
+
+export const enterpriseProjectListRequest = (eid) =>{
+    return fetch(`/core/core/api/v1/enterprise/projects/vo`);
+}
+
+/**
  * 取得企业项目邀请记录列表
  */
 
-export const projectsAuditList = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);
+export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);
 
 /**
  * 删除项目

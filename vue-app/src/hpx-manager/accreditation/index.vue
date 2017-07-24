@@ -182,10 +182,18 @@
         },
         methods: {
             async initData(){
+                this.getList();
+            },
+            async getList(pagination={page:1,size:10}){
                 this.listLoading = true;
                 try{
-                    this.getList();
                     this.listLoading = false;
+                    const params = Object.assign({},this.query,pagination);
+                    const resp = await getEnterprisesList(params);
+                    const res = await resp.json();
+                    const total = resp.headers.get('x-total-count')
+                    this.tableList = [...res];
+                    this.total = parseInt(total);
                     if(!this.tableList.length){
                         this.emptyText = "暂无数据";
                     }
@@ -194,20 +202,8 @@
                     this.listLoading = false;
                 }
             },
-            async getList(pagination={page:1,size:10}){
-                const params = Object.assign({},this.query,pagination);
-                const resp = await getEnterprisesList(params);
-                const res = await resp.json();
-                const total = resp.headers.get('x-total-count')
-                this.tableList = [...res];
-                this.total = parseInt(total);
-            },
             async search () {
-                try{
-                    this.getList();
-                }catch(e){
-
-                }
+                this.getList();
             },
 
             resetForm(formName) {

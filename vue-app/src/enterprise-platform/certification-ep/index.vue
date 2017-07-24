@@ -32,6 +32,9 @@
     // 步骤条
     import cerSteps from './cer-steps';
     // 基本信息填写
+    // const infoTab = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep/infoTab')), 'enterprise-platform-infoTab');
+    // const bankTab = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep/bankTab')), 'enterprise-platform-bankTab');
+    // const uploadTab = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep/uploadTab')), 'enterprise-platform-uploadTab');
     import infoTab from './infoTab';
     import bankTab from './bankTab';
     import uploadTab from './uploadTab';

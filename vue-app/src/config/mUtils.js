@@ -336,11 +336,4 @@ var myJS = {
     }
 };
 
-var baobao={}
-baobao.install = function(Vue) {
-    Vue.prototype.$moment = function(){
-		return 'aaa'
-	}
-}
-export default baobao
-// export default myJS
+export default myJS

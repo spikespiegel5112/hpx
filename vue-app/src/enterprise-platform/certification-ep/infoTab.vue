@@ -1,6 +1,6 @@
 <template>
     <div class="cer-baseInfo-container">
-        <el-card class="cer-base-card" header="test">
+        <el-card class="cer-base-card">
             <div slot="header" class="card-header">
                 <span>基本信息</span>
                 <a v-show="isEdite.base" href="javascript:void(0);" style="float:right;" @click="edite('base')">{{doneText.editeText}}</a>

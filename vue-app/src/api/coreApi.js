@@ -95,13 +95,27 @@ export const auithcertification = (id, type, nodes) => fetch(`/core/core/api/v1/
  */
 export const servicesList = (params) => fetch(`/core` + `/core/api/v1/vEnterpriseServiceApplication`, params)
 
+
+/*
+ **  增值服务审核
+ */
 export const servicesAidth = (id, type) => fetch(`/core` + `/core/api/v1/serviceApplication/${id}/approval?approval=${type}`, {}, 'patch')
+/*
+ ** 获取 增值服务申请
+ */
+export const servicesOpen = (eid, data) => fetch('/core' + `/core/api/v1/enterprise/${eid}/serviceApplication`, data, 'put')
+/*
+ ** 获取 修改企业状态
+ */
+export const eidStatus = (eid) => fetch('/core' + `/core/api/v1/enterprises/palt/enterprise/status/${eid}`)
 
 /**
  * 创建项目信息
  */
 
-export const createProject = (eid, type, formData) => fetch(`/core/core/api/v1/projects/${eid}/product/${type}`, formData, 'put');
+export const createProject = (eid, type, formData) => {
+    return fetch(`/core/core/api/v1/projects/${eid}/product/${type}`, formData, 'put');
+}
 
 /**
  * 修改项目信息
@@ -113,4 +127,14 @@ export const modifyProjectInfo = (id, formData) => fetch(`/core/core/api/v1/proj
  * 删除项目信息
  */
 
-export const deleteProject = (id) => fetch(`/core/core/api/v1/projects/${id}`,{}, 'delete');
+export const deleteProject = (id) => {
+    return fetch(`/core/core/api/v1/projects/${id}`, {}, 'delete');
+}
+
+/**
+ * 审核项目
+ */
+
+export const auditProjectRequest = (eid, pid, state) => {
+    return fetch(`/core/core/api/v1/enterprise/${eid}/projects/${pid}/state/${state}`, {}, 'patch');
+}

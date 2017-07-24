@@ -8,6 +8,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../manage'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/manage/',
+    staticPath:'/static/',
     productionSourceMap: false,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
@@ -29,11 +30,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/core': {
-          // target: 'http://10.38.8.48:9000/',
-          target : 'http://10.38.42.245:9000/',
+          // target: 'http://10.38.8.54:9000',
+          target : 'http://10.38.42.245:9000',
           changeOrigin: true,
           pathRewrite: {
-              '^/core': ''
+              '^/core': '/'
           }
       },
     },
