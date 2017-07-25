@@ -16,8 +16,8 @@ const addedServices = r => require.ensure([], () => r(require('@/hpx-manager/add
 const enterpriseManager = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-manager')), 'hpx-manager-enterprise-manager');
 // 平台基础管理
 const product = r => require.ensure([], () => r(require('@/hpx-manager/product')), 'index');
-const newsList = r => require.ensure([], () => r(require('@/hpx-manager/product')), 'newsList');
-const newsPublish = r => require.ensure([], () => r(require('@/hpx-manager/product')), 'newsPublish');
+const newsList = r => require.ensure([], () => r(require('@/hpx-manager/product/newsList')), 'newsList');
+const newsPublish = r => require.ensure([], () => r(require('@/hpx-manager/product/newsPublish')), 'newsPublish');
 
 
 const router = {

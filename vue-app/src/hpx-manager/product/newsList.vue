@@ -37,8 +37,8 @@
 			</el-table-column>
 			<el-table-column align="center" label="操作">
 				<template scope="scope">
-                        <el-button type="text" size="small" @click="abled(scope.row.id)">{{scope.row.available === 'T' ? '禁用' : '启用'}}</el-button>
-                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
+                        <el-button type="text" size="small" @click="abled(scope.row.id)">查询</el-button>
+                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">修改</el-button>
                         <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
                     </template>
 			</el-table-column>
@@ -56,36 +56,30 @@
 import headTop from '../../components/headTop'
 import myPagination from '../../components/myPagination'
 import {
-	getProductList,
-	abledProduct,
-	delProduct,
-	getProductEpRoleList,
-	addProduct,
-	editProduct
-} from '@/api/coreApi'
+	noticeRequest
+} from '@/api/getData'
 import {
 	mapState
 } from 'vuex'
-import {
-	moment
-} from 'moment'
+import moment from 'moment'
 export default {
 	data() {
+		const dateFormat = "YYYY-MM-DD";
 		return {
 			//table columns
 			columns: [{
-				label: '产品编码',
-				prop: 'code',
-			}, {
 				label: '标题',
 				prop: 'title',
+				sortable: true,
 			}, {
 				label: '发布时间',
 				prop: 'createTime',
+				sortable: true,
+				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
 				label: '发布者',
 				prop: 'creator',
-				// formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')
+				sortable: true,
 			}],
 			//总页数
 			total: 0,
@@ -96,8 +90,7 @@ export default {
 
 			//search params
 			query: {
-				name: '',
-				code: ''
+
 			},
 			enabledOptions: [{
 					value: '启用',
@@ -137,11 +130,8 @@ export default {
 		headTop,
 		myPagination,
 	},
-	created() {
+	activated(){
 		this.initData();
-	},
-	mounted() {
-        alert('dsadsadsdsds')
 	},
 	computed: {
 		...mapState(["loginInfo"])
@@ -165,7 +155,7 @@ export default {
 			size: 10
 		}) {
 			const params = Object.assign({}, this.query, pagination);
-			const resp = await getProductList(params);
+			const resp = await noticeRequest(params);
 			const res = await resp.json();
 			const total = resp.headers.get('x-total-count')
 			this.tableList = [...res];
@@ -180,7 +170,6 @@ export default {
 		},
 
 		addNews() {
-            alert('dsdsds')
 			this.$router.push({
                 name: 'newsPublish'
             })

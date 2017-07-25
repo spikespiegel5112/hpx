@@ -285,5 +285,5 @@ export const getEntRolesList = product_code => fetch(`/core/core/api/v1/products
  */
 
 export const noticeRequest = data => {
-    return fetch(`/core/core/api/v1/products/ent_roles`, data);
+    return fetch(`/core/core/api/v1/notice`, data);
 }
