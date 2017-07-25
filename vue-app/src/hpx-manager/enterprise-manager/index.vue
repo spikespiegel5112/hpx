@@ -1,0 +1,259 @@
+<template>
+    <div class="fillcontain">
+        <head-top></head-top>
+
+        <!--  搜索条件  -->
+        <section class='search-criteria-container'>
+			<el-form :inline="true" :model="query"  ref="query">
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item prop="name">
+                            <el-input v-model="query.name" size="large" placeholder="企业名称"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item prop="activated">
+                            <el-select v-model="query.activated" size="large" placeholder="激活状态">
+                                <el-option
+                                    v-for="item in activatedOptions"
+                                    :key="item.activated"
+                                    :label="item.value"
+                                    :value="item.activated">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style='text-align:right;'>
+                        <el-form-item>
+                            <el-button type="primary" icon="search" @click="search">查询</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+			</el-form>
+		</el-col>
+        </section>
+
+        <section class="main-table-container">
+            <el-table
+                row-key="id"
+                :empty-text="emptyText"
+                :data="tableList"
+                v-loading="listLoading"
+                style="width: 100%">
+                <el-table-column
+                  type="index">
+                </el-table-column>
+                <el-table-column
+                    v-for="(value,i) in columns"
+                    :key="i"
+                    :label="value.label"
+                    :prop="value.prop"
+                    :sortable="value.sortable"
+                    :width="value.width ? value.width : 'auto'"
+                    :formatter="value.formatter"
+                    :min-width="value.minWidth ? value.minWidth : 'auto'"
+                >
+                </el-table-column>
+                <el-table-column label="状态" prop="enterpriseStatus">
+                    <template scope="scope">
+                        <el-tag :type="scope.row.enterpriseStatus === 'T'?'success':'danger'">{{scope.row.enterpriseStatus === 'T' ? '启用' : '停用' }}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" :min-width="100">
+                    <template scope="scope">
+                        <el-button type="info" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
+                        <el-button v-if="scope.row.enterpriseStatus === 'F'" type="success" size="small" @click="del(scope.$index, scope.row,'T')">启用</el-button>
+                        <el-button v-if="scope.row.enterpriseStatus === 'T'" type="danger" size="small" @click="del(scope.$index, scope.row,'F')">停用</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <section class="main-pagination">
+                <my-Pagination :callback="getList" :total="total">
+                </my-Pagination>
+            </section>
+        </section>
+        <!--编辑界面-->
+		<el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
+			<el-form :model="editeData" label-width="80px" :rules="editRules" ref="editeData">
+                <el-form-item label="企业编号" prop="id" readonly>
+					<el-input v-model="editeData.id" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="企业名称" prop="name">
+					<el-input v-model="editeData.name" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label='激活状态' prop="activated">
+                    <el-select v-model="editeData.activated">
+                        <el-option
+                            v-for="item in activatedOptions"
+                            :key="item.activated"
+                            :label="item.value"
+                            :value="item.activated">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+				<el-form-item label="联系方式">
+					<el-input v-model="editeData.contactsNumber"></el-input>
+				</el-form-item>
+				<el-form-item label="更新时间">
+					<el-date-picker type="date" placeholder="选择日期" v-model="editeData.birth"></el-date-picker>
+				</el-form-item>
+				<el-form-item label="地址">
+					<el-input type="textarea" v-model="editeData.address"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="editeModalVisible = false">取消</el-button>
+				<el-button type="primary" @click.native="editSubmit">提交</el-button>
+			</div>
+		</el-dialog>
+    </div>
+</template>
+
+<script>
+    import headTop from '../../components/headTop'
+    import myPagination from '../../components/myPagination'
+    import { getEnterprisesList ,eidStatus } from '@/api/coreApi'
+    import { mapState } from 'vuex'
+    export default {
+        data(){
+            return {
+                //table columns
+                columns : [{
+                    label : '企业编号',
+                    prop  : 'id',
+                    sortable : true,
+                    },{
+                    label : '企业名称',
+                    prop  : 'name',
+                    sortable : true,
+                    minWidth : 120,
+                    },{
+                    label : '企业状态',
+                    prop  : 'activated',
+                    sortable : true,
+                    formatter : (row,column) => row.activated === 'T' ? "已注册" : "未注册"
+                    },{
+                    label : '行业',
+                    prop  : 'industry',
+                    sortable : true,
+                    },{
+                    label : '地址',
+                    prop  : 'address',
+                    sortable : true,
+                    minWidth : 200
+                    },{
+                    label : '联系方式',
+                    prop  : 'contactsNumber',
+                    sortable : true,
+                    minWidth:100
+                    }
+                ],
+                //总页数
+                total : 0,
+                //table
+                tableList: [],
+                listLoading:false,
+                emptyText:"暂无数据",
+
+                //search params
+                query : {
+                    name : '',
+                    activated : '',
+                },
+                activatedOptions : [
+                    {
+                        value : '已注册',
+                        activated : 'T'
+                    },
+                    {
+                        value : '未注册',
+                        activated : 'F'
+                    }
+                ],
+                //搜索条件的个数
+                criteriaNum : 2,
+
+                //模态框
+                editeModalVisible : false,
+                editeData : {
+                    id : '',
+                    name : '',
+                    activated : '',
+                    address : '',
+                    contactsNumber : '',
+                    birth:''
+                },
+                editRules : {
+                    name : [
+						{ required: true, message: '请输入姓名', trigger: 'blur' }
+					]
+                }
+            }
+        },
+    	components: {
+            headTop,
+            myPagination,
+    	},
+        created(){
+            this.initData();
+        },
+        mounted(){
+
+        },
+        computed : {
+            ...mapState(["loginInfo"])
+        },
+        methods: {
+            async initData(){
+                this.getList();
+            },
+            async getList(pagination={page:1,size:10}){
+                this.listLoading = true;
+                try{
+                    this.listLoading = false;
+                    const params = Object.assign({},this.query,pagination);
+                    const resp = await getEnterprisesList(params);
+                    const res = await resp.json();
+                    const total = resp.headers.get('x-total-count')
+                    this.tableList = [...res];
+                    this.total = parseInt(total);
+                    if(!this.tableList.length){
+                        this.emptyText = "暂无数据";
+                    }
+                }catch(e){
+                    this.emptyText = "获取数据失败";
+                    this.listLoading = false;
+                }
+            },
+            async search () {
+                this.getList();
+            },
+
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+
+            check (index,row){
+                this.$router.push({path: this.$route.path + '/detail/' + row.id})
+            },
+            async del (index,row,type) {
+                try{
+                    const resp = await eidStatus(this.loginInfo.enterpriseId)
+                    console.log(resp)
+                }catch(e){
+
+                }
+            }
+        },
+    }
+</script>
+
+<style lang="less">
+    @import '../../style/mixin';
+    .table_container{
+        padding: 20px;
+    }
+</style>

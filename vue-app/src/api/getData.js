@@ -278,4 +278,12 @@ export const getProductList = () => fetch('/core/core/api/v1/products');
  * 获取企业角色信息
  */
 
-export const getEntRolesList = product_code => fetch('/core/core/api/v1/products/' + product_code + '/ent_roles');
+export const getEntRolesList = product_code => fetch(`/core/core/api/v1/products/${product_code}/ent_roles`);
+
+/**
+ * 获取新闻公告列表
+ */
+
+export const noticeRequest = data => {
+    return fetch(`/core/core/api/v1/products/ent_roles`, data);
+}

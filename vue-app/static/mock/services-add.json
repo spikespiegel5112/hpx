@@ -1,0 +1,19 @@
+{
+  "name": "AppServiceInfo",
+  "data": [
+    {
+      "code": "24",
+      "pic": "/static/img/signature.jpg",
+      "name": "签章服务",
+      "remark": "点击开通平台电子签章服务，开通后可在平台与贸易对手进行线上签章，安全、快捷、便利！",
+      "templet": "http://xxxxxxxx"
+    },
+    {
+      "code": "23",
+      "pic": "/static/img/onlineOpen.jpg",
+      "name": "线上开户",
+      "remark": "点击在线开通平台电子账户，享受银行托管资金管理，\n保障交易资金安全！",
+       "templet": "http://xxxxxxxx"
+    }
+  ]
+}

@@ -40,7 +40,6 @@ const routes = [
 	{
 		path: '/manager',
 		component: manage,
-		name: 'hpxManagerIndex',
 		children: [{
 			path: '',
 			component: home,
