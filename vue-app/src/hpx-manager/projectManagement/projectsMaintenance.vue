@@ -273,7 +273,7 @@ export default {
 				type: 'warning'
 			}).then(() => {
 				deleteProject(scope.row.id).then(() => {
-					this.tableList = [];
+
 					this.getList();
 					this.$message({
 						type: 'success',

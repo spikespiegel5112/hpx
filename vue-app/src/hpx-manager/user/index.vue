@@ -4,10 +4,27 @@
         <!--  搜索条件  -->
         <section class='search-criteria-container'>
 			<el-form :inline="true" :model="query"  ref="query">
-                <el-row>
+               <el-row>
                     <el-col :span="6">
                         <el-form-item prop="name">
-                            <el-input v-model="query.name" size="large" placeholder="协议名称"></el-input>
+                            <el-input v-model="query.name" size="large" placeholder="企业名称"></el-input>
+                        </el-form-item>
+                    </el-col>
+                     <el-col :span="6">
+                        <el-form-item prop="phone">
+                            <el-input v-model="query.phone" size="large" placeholder="手机号码"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item prop="locked">
+                            <el-select v-model="query.locked" size="large" placeholder="锁定状态">
+                                <el-option
+                                    v-for="item in lockedOptions"
+                                    :key="item.locked"
+                                    :label="item.value"
+                                    :value="item.locked">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style="float: right"> 
@@ -197,7 +214,7 @@
                     },{
                     label : '注册时间',
                     prop  : 'registerTime',
-                    // formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')                    
+                    formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')                    
                     },
                 ],
                 //总页数
@@ -244,7 +261,7 @@
                     }
                 ],
                 //搜索条件的个数
-                criteriaNum : 2,
+                criteriaNum : 3,
 
                 //模态框
                 modalTitle: '' ,
@@ -355,7 +372,7 @@
                     const id = this.editeData.id;
                     try{
                         const resp = id
-                        ? await editProduct(id, this.editeData)
+                        ? await editUser(id, eid, this.editeData)
                         : await addUser(eid, this.editeData);
                         this.$message({
                             message: '提交成功！',

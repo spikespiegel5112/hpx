@@ -87,7 +87,7 @@
                     { required: true, message: '关联产品不能为空'},
                     ]"
                 >
-					<el-input v-model="editeData.productCode" auto-complete="off"></el-input>
+					<el-input-number v-model="editeData.productCode" :min="1" auto-complete="off"></el-input-number>
 				</el-form-item>
                 <el-form-item 
                 label="协议名称" 
@@ -120,9 +120,7 @@
     import headTop from '../../components/headTop'
     import myPagination from '../../components/myPagination'
     import { getAgreementList, delAgreement, addAgreement, editAgreement } from '@/api/coreApi'
-    import { mapState } from 'vuex'
     import moment from 'moment'
-    import { checkEmail, checkPhone } from '../../config/mUtils'
     export default {
         data(){
             return {
@@ -184,12 +182,6 @@
         created(){
             this.initData();
         },
-        mounted(){
-
-        },
-        computed : {
-            ...mapState(["loginInfo"])
-        },
         methods: {
             async initData(){
                 this.listLoading = true;
@@ -222,19 +214,6 @@
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
-            async abled (id){
-                const eid = this.loginInfo.enterpriseId;
-                try{
-                    const resp = await abledUser(id, eid);
-                    this.$message({
-                        message: '修改状态成功！',
-                        type: 'success'
-                    });
-                    this.getList();
-                }catch(e) {
-                    this.$message.error(e);
-                }
-            },
            add () {
                this.modalTitle = '新增',
                this.editeModalVisible = true; 
@@ -247,7 +226,7 @@
            async editSubmit (formName) {
                 this.$refs[formName].validate(async (valid) => {
                     if (!valid) return false;
-                    
+                
                     const id = this.editeData.id;
                     try{
                         const resp = id

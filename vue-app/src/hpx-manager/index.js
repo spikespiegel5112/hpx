@@ -17,7 +17,7 @@ const enterpriseManager = r => require.ensure([], () => r(require('@/hpx-manager
 // 平台基础管理
 const product = r => require.ensure([], () => r(require('@/hpx-manager/product')), 'index');
 const newsList = r => require.ensure([], () => r(require('@/hpx-manager/product/newsList')), 'newsList');
-const newsPublish = r => require.ensure([], () => r(require('@/hpx-manager/product/newsPublish')), 'newsPublish');
+const editNotice = r => require.ensure([], () => r(require('@/hpx-manager/product/editNotice')), 'editNotice');
 
 
 const router = {
@@ -73,9 +73,9 @@ const router = {
         name: 'newsList',
         meta: ['平台基础管理', '平台新闻公告'],
     }, {
-        path: 'news-notice/newsPublish',
-        component: newsPublish,
-        name: 'newsPublish',
+        path: 'news-notice/editNotice',
+        component: editNotice,
+        name: 'editNotice',
         meta: ['平台基础管理', '平台新闻公告', '发布新闻'],
     }, {
         path: 'accreditation',

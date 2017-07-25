@@ -68,12 +68,6 @@ export const getSignatureList = (query, eid) => fetch(`/core/core/api/v1/enterpr
  */
 export const addSignature = (eid, query) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns`, query, 'put');
 
-
-/**
- * 获取产品列表
- */
-export const getProductList = (query) => fetch('/core/core/api/v1/products', query);
-
 /*
  ** 禁用企业电子签章
  */
@@ -83,7 +77,6 @@ export const abledSignature = (name, id, eid, enabled) => fetch(`/core/core/api/
  ** 删除企业电子签章
  */
 export const delSignature = (id, eid) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns/${id}`, {}, 'delete');
-
 
 /*
  ** 认证企业 审核
@@ -95,11 +88,11 @@ export const auithcertification = (id, type, nodes) => fetch(`/core/core/api/v1/
  */
 export const servicesList = (params) => fetch(`/core` + `/core/api/v1/vEnterpriseServiceApplication`, params)
 
-
 /*
  **  增值服务审核
  */
 export const servicesAidth = (id, type) => fetch(`/core` + `/core/api/v1/serviceApplication/${id}/approval?approval=${type}`, {}, 'patch')
+
 /*
  ** 获取 增值服务申请
  */
@@ -108,6 +101,36 @@ export const servicesOpen = (eid, data) => fetch('/core' + `/core/api/v1/enterpr
  ** 获取 修改企业状态
  */
 export const eidStatus = (eid) => fetch('/core' + `/core/api/v1/enterprises/palt/enterprise/status/${eid}`)
+
+/**
+ * 产品管理--获取产品列表
+ */
+export const getProductList = (query) => fetch('/core/core/api/v1/products',query);
+
+/*
+** 产品管理--禁用
+*/
+export const abledProduct = (id) => fetch(`/core/core/api/v1/products/${id}/available`,{}, 'patch');
+
+/*
+** 产品管理--删除
+*/
+export const delProduct= (id) => fetch(`/core/core/api/v1/eproducts/${id}`,{}, 'delete');
+
+/*
+** 产品管理--获取产品企业类型
+*/
+export const getProductEpRoleList= (code) => fetch(`/core/core/api/v1/dictionary/${code}/children`, {});
+
+/*
+** 产品管理--添加
+*/
+export const addProduct= (params) => fetch(`/core/core/api/v1/products`,params, 'put');
+
+/*
+** 产品管理--编辑
+*/
+export const editProduct= (id, params) => fetch(`/core/core/api/v1/products/${id}`,params, 'patch');
 
 /**
  * 创建项目信息
@@ -126,10 +149,29 @@ export const modifyProjectInfo = (id, formData) => fetch(`/core/core/api/v1/proj
 /**
  * 删除项目信息
  */
-
 export const deleteProject = (id) => {
     return fetch(`/core/core/api/v1/projects/${id}`, {}, 'delete');
 }
+
+/**
+ * 用户管理--获取用户列表
+ */
+export const getUserList = (eid, params) => fetch(`/core/core/api/v1/enterprise/${eid}/users`,params);
+
+/*
+** 用户管理--禁用
+*/
+export const abledUser = (id, eid) => fetch(`/core/core/api/v1/enterprise/${eid}/users/${id}/enabled`,{}, 'patch');
+
+/*
+** 用户管理--添加
+*/
+export const addUser= (eid, params) => fetch(`/core/core/api/v1/enterprise/${eid}/users`,params, 'put');
+
+/*
+** 用户管理--编辑
+*/
+export const editUser= (id, eid, params) => fetch(`/core/core/api/v1/enterprise/${eid}/users/${id}`,params, 'patch');
 
 /**
  * 审核项目
@@ -138,3 +180,44 @@ export const deleteProject = (id) => {
 export const auditProjectRequest = (eid, pid, state) => {
     return fetch(`/core/core/api/v1/enterprise/${eid}/projects/${pid}/state/${state}`, {}, 'patch');
 }
+
+
+/**
+ * 协议授权管理--获取用户列表
+ */
+export const getAgreementList = (params) => fetch(`/core/core/api/v1/agreements`,params);
+
+/*
+** 协议授权管理--删除
+*/
+export const delAgreement = (id) => fetch(`/core/core/api/v1/agreements/${id}`,{}, 'delete');
+
+/*
+** 协议授权管理--添加
+*/
+export const addAgreement = (params) => fetch(`/core/core/api/v1/agreements`,params, 'put');
+
+/*
+** 协议授权管理--编辑
+*/
+export const editAgreement = (id, params) => fetch(`/core/core/api/v1/agreements/${id}`,params, 'patch');
+
+/**
+ * 字典管理--获取用户列表
+ */
+export const getDictionaryList = (params) => fetch('/core/core/api/v1/dictionary',params);
+
+/*
+** 字典管理--删除
+*/
+export const delDictionary = (code) => fetch(`/core/core/api/v1/dictionary/${code}`,{}, 'delete');
+
+/*
+** 字典管理--添加
+*/
+export const addDictionary = (params) => fetch('/core/core/api/v1/dictionary',params, 'put');
+
+/*
+** 字典管理--编辑
+*/
+export const editDictionary = (id, params) => fetch(`/core/core/api/v1/dictionary/${id}`,params, 'patch');

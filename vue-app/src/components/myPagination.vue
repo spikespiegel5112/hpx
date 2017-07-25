@@ -7,9 +7,9 @@
             layout="total, sizes, prev, pager, next, jumper"
             :page-sizes="pageSizes"
             @current-change="currentChange"
-            @size-change="pageSizeChange"  
+            @size-change="pageSizeChange"
         >
-        </el-pagination> 
+        </el-pagination>
     </section>
 </template>
 <script>
@@ -41,4 +41,3 @@ export default {
 <style>
 
 </style>
-

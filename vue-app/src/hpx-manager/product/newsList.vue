@@ -21,7 +21,7 @@
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
 					<el-form-item>
-						<el-button icon="plus" type="primary" @click="addNotice" style="float: right; margin-bottom: 5px;">新增</el-button>
+						<el-button icon="plus" type="primary" @click="addNotice()" style="float: right; margin-bottom: 5px;">新增</el-button>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -37,29 +37,25 @@
 			</el-table-column>
 			<el-table-column align="center" label="操作">
 				<template scope="scope">
-                    <el-button type="text" size="small" @click="abled(scope.row.id)">查询</el-button>
-                    <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">修改</el-button>
-                    <el-button type="text" size="small" @click="deleteNotice=true">删除</el-button>
+                    <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
+                    <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
+					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
                 </template>
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">
-			<el-pagination :current-page="1" :page-size="10" :total="total" layout="total, sizes, prev, pager, next, jumper" @current-change="getList()">
-			</el-pagination>
+			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
+			</my-Pagination>
 		</section>
 	</section>
-	<el-dialog title="提示" :visible.sync="deleteDialog" size="tiny">
-		<span>确认删除吗</span>
-		<span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="deleteNotice()">确 定</el-button>
-  </span>
+	</span>
 	</el-dialog>
 </div>
 </template>
 
 <script>
 import headTop from '../../components/headTop'
+import myPagination from '@/components/myPagination'
 import {
 	noticeRequest,
 } from '@/api/getData'
@@ -91,7 +87,11 @@ export default {
 				sortable: true,
 			}],
 			//总页数
-			total: 0,
+			pagination: {
+				total: 0,
+				page: 1,
+				size: 10,
+			},
 			//table
 			tableList: [],
 			listLoading: false,
@@ -101,23 +101,15 @@ export default {
 			query: {
 
 			},
-			enabledOptions: [{
-					value: '启用',
-					available: 'T'
-				},
-				{
-					value: '禁用',
-					available: 'F'
-				}
-			],
 			//搜索条件的个数
 			criteriaNum: 3,
 			//模态框
-			deleteDialog: false,
+			deleteNoticeFlag: false,
 		}
 	},
 	components: {
 		headTop,
+		myPagination
 	},
 	activated() {
 		this.initData();
@@ -128,6 +120,7 @@ export default {
 	methods: {
 		async initData() {
 			this.listLoading = true;
+			this.pagination.page = 1;
 			try {
 				this.getList();
 				this.listLoading = false;
@@ -141,14 +134,16 @@ export default {
 		},
 		async getList(pagination = {
 			page: 1,
-			size: 10
+			size: 10,
 		}) {
+			console.log(pagination);
 			const params = Object.assign({}, this.query, pagination);
+			console.log(params)
 			const resp = await noticeRequest(params);
 			const res = await resp.json();
 			const total = resp.headers.get('x-total-count')
 			this.tableList = [...res];
-			this.total = parseInt(total);
+			this.pagination.total = parseInt(total);
 		},
 		async search() {
 			try {
@@ -157,19 +152,41 @@ export default {
 
 			}
 		},
-
 		addNotice() {
 			this.$router.push({
-				name: 'newsPublish'
+				name: 'editNotice',
+				params: 0
 			})
 		},
-		deleteNotice(id) {
-			deleteNoticeRequest(id).then(() => {
-				this.tableList = [];
-				this.getList();
-				this.deleteDialog = false;
+		modifyNotice(scope) {
+			this.$router.push({
+				name: 'editNotice',
+				params: scope.row.id
 			})
-
+		},
+		reviewNotice(scope) {
+			this.$router.push({
+				name: 'editNotice',
+				params: scope.row.id
+			})
+		},
+		deleteNotice(scope) {
+			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				deleteNoticeRequest(scope.row.id).then(() => {
+					this.tableList = [];
+					this.getList();
+					this.deleteNoticeFlag = false;
+				})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
 
 		}
 
