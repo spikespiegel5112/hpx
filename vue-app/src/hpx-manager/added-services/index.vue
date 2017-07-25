@@ -154,6 +154,8 @@
     	},
         created(){
             this.initData();
+        },
+        activated(){
             setTimeout(this.open,1000)
         },
         computed: {

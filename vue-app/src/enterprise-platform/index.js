@@ -1,20 +1,27 @@
+//content children router 
+import modelRouter from '@/risk-management/model/index';
+import labelRouter from '@/risk-management/label/index';
 // WrapComponent
+const home = r => require.ensure([], () => r(require('@/hpx-manager/home')), 'hpx-manager-home');
 
 const enterpriseIndex = r => require.ensure([], () => r(require('@/enterprise-platform/main')), 'enterprise-platform-index');
-const securitySetting = r => require.ensure([], () => r(require('@/enterprise-platform/securitySetting')), 'securitySetting');
-const editPhone = r => require.ensure([], () => r(require('@/enterprise-platform/securitySetting/editPhone')), 'editPhone');
-const editPwd = r => require.ensure([], () => r(require('@/enterprise-platform/securitySetting/editPwd')), 'editPwd');
+const securitySetting = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting')), 'security-setting');
+const editPhone = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting/edit-phone')), 'edit-phone');
+const editPwd = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting/edit-pwd')), 'edit-pwd');
 const certification = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep')), 'certification-ep');
 const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platform/services-open')), 'enterprise-platform-serivces');
 
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
-
 
 export default {
     path: '/platform',
     component: enterpriseIndex,
     name:'platform',
     children:[{
+			path: '',
+			component: home,
+			meta: ['eee', 'yyy'],
+		},{
 			path: 'project',
 			component: myProject,
 			meta: ['项目管理', '我的项目'],
@@ -41,5 +48,7 @@ export default {
             component: servicesOpen,
             meta: ["服务开通"],
         },
+		modelRouter,
+		labelRouter,
     ]
 };

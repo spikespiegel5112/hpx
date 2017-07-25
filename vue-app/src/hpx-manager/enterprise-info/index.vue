@@ -272,7 +272,6 @@
     </div> 
 </template>
 <script>
-    import { mapState } from 'vuex';
     import { getEnterpriseInfo , patchEnterpriseInfo } from '../../api/coreApi';
     import myJs from '../../config/mUtils'
     import moment from 'moment';
@@ -307,6 +306,9 @@
                     editeText : "编辑",
                     sureText : "保存",
                 },
+                
+                errorFetch : false,
+
                 // 编辑状态
                 isEdite : {
                     base : true,
@@ -439,18 +441,23 @@
             }
         },
         components : {
-            headTop
+            headTop 
         },
         created(){
             this.getBaseData();
         },
         computed : {
-            ...mapState(["loginInfo"])
+            //select没数据是显示处理
+            isCode31(){
+
+            }
         },
         methods : {
             async getBaseData(){
                 try{
-                    const resp = await getEnterpriseInfo(this.loginInfo.enterpriseId);
+                    this.errorFetch = true;
+                    const { eid } = this.$route.params;
+                    const resp = await getEnterpriseInfo(eid);
                     const res = await resp.json();
                     Object.keys(this.baseInfoForm).forEach( (key) => {
                         this.baseInfoForm[key] = res[key];
@@ -468,7 +475,7 @@
                         this.taxRegistrationInfoForm[key] = res[key];
                     } );
                 }catch(e){
-                    
+                    this.errorFetch = true;
                 }
             },
             async updateBaseInfo(type){

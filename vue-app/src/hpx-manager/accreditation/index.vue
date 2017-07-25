@@ -59,8 +59,11 @@
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >
                 </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column label="操作" min-width="100" align="center">
                     <template scope="scope">
+                        <el-button type="text" size="small">
+                            <router-link :to="`/manager/etpde/${scope.row.id}`">查看</router-link>
+                        </el-button>
                         <el-button type="text" size="small" @click="del(scope.row.id,'T')" >通过</el-button>
                         <el-button type="text" size="small" @click="del(scope.row.id, 'F')">拒绝</el-button>
                     </template>
@@ -116,7 +119,7 @@
                     label : '地址',
                     prop  : 'address',
                     sortable : true,
-                    minWidth : 200
+                    minWidth : 150
                     },{
                     label : '联系人',
                     prop  : 'contacts',

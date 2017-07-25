@@ -79,7 +79,6 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 		return interceptor(response);
 	} else {
 		return new Promise((resolve, reject) => {
-			alert(6666)
 			let requestObj;
 			if (window.XMLHttpRequest) {
 				requestObj = new XMLHttpRequest();

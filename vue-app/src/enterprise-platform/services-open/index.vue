@@ -9,14 +9,14 @@
                 <ul class="section-serviceType">
                     <li v-for="(item , i) in serviceList" :key="i+''" style="position:relative;">
                         <dl>
-                            <dt><img :src="item.pic" /></dt>
+                            <dt @click="modelShow(item.code)"><img :src="item.pic" /></dt>
                             <dd>
                                 <h4>{{item.name}}</h4>
                                 <p class="service-remark">{{item.remark}}</p>
                                 <el-button type="text" @click="loadText(item.code)">下载授权书</el-button>
                             </dd>
                         </dl>
-                        <span class="icon-seivices" @click="modelShow(item.code)">
+                        <span class="icon-services" @click="modelShow(item.code)">
                             <i class="el-icon-arrow-right"></i>
                         </span>                
                     </li>
@@ -140,10 +140,10 @@ export default {
             })
         },
         errorUplaod(response){
+            console.log(response)
             this.$message.error(response)          
         },
         delSubmit(){
-            console.log(this.fileId)
             if(!this.fileId){
                 this.$message({
                     type:'warning',
@@ -159,19 +159,17 @@ export default {
                             code : this.serviceCode,
                             fileId :  this.fileId,
                         }
-                    )
-                    
-                        console.log('shengqing',resp)
-                        if(resp.status === 200){
-                            const msg = decodeURI(resp.headers.get('x-hpx-alert'));
-                            this.$message({
-                                type:'success',
-                                message:msg
-                            })
-                        }
-                        
-                    }catch(e){
-                        this.$message.error(e)
+                    );
+                    if(resp.status === 200){
+                        const msg = decodeURI(resp.headers.get('x-hpx-alert'));
+                        this.$message({
+                            type:'success',
+                            message:`${msg}  ,  请等待审核!`
+                        });
+                        this.modalVisible = false;
+                    }        
+                }catch(e){
+                    this.$message.error(e)
                 }           
             })()
         }
@@ -194,11 +192,12 @@ export default {
     .section-serviceType dt {
         float:left;
         margin-right:20px;
+        cursor: pointer;
     }
     .section-serviceType dd{
         padding:10px 0;
     }
-    .icon-seivices{
+    .icon-services{
         color:#999;
         position:absolute;
         font-size:18x;

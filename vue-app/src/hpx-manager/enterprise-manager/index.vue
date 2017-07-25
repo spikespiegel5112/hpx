@@ -64,7 +64,9 @@
                 </el-table-column>
                 <el-table-column label="操作" :min-width="100">
                     <template scope="scope">
-                        <el-button type="info" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
+                        <el-button type="text" size="small">
+                            <router-link :to="`/manager/etpde/${scope.row.id}`">查看</router-link>
+                        </el-button>                        
                         <el-button v-if="scope.row.enterpriseStatus === 'F'" type="success" size="small" @click="del(scope.$index, scope.row,'T')">启用</el-button>
                         <el-button v-if="scope.row.enterpriseStatus === 'T'" type="danger" size="small" @click="del(scope.$index, scope.row,'F')">停用</el-button>
                     </template>
@@ -235,14 +237,16 @@
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
-
-            check (index,row){
-                this.$router.push({path: this.$route.path + '/detail/' + row.id})
-            },
             async del (index,row,type) {
                 try{
                     const resp = await eidStatus(this.loginInfo.enterpriseId)
-                    console.log(resp)
+                    if(resp.status === 200){
+                        this.$message({
+                            type:'success',
+                            message:'操作成功'
+                        })
+                        this.tableList[index].enterpriseStatus = type;
+                    }
                 }catch(e){
 
                 }

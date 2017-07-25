@@ -111,7 +111,7 @@ const routes = [
 	hpxRouter,
 
 	// enterprise manager
-	enterprisePlatformRouter,
+	// enterprisePlatformRouter,
 
 	// enterprise project
 ]
