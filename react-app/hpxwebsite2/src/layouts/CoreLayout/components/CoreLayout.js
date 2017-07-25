@@ -25,7 +25,7 @@ class CoreLayout extends React.Component {
   render() {
     const { auditState, menu, children, clearSignInErr, signIn, logOut ,loading , routes , params ,route , paths} = this.props;
     console.log(auditState,typeof(auditState));
-    let siderView = <MySider menu={menu} fetchMenu={this.props.fetchMenu} />
+    let siderView = auditState !== 'T' ? null : <MySider menu={menu} fetchMenu={this.props.fetchMenu} />
     let view= <Layout style={{ flexDirection: 'row'}}>
                   { siderView }
                   {/*<MySider menu={menu} fetchMenu={this.props.fetchMenu} isS={5}  />*/}

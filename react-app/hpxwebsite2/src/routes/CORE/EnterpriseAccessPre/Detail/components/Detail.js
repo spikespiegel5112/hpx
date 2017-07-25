@@ -21,10 +21,20 @@ class Detail extends React.Component {
       loading:false,
       cardCss:'cardShow',
       done:0,
+      pid:0,
+      cid:0
     };
   }
 
   componentWillMount() {
+
+    var pid =this.props.location.query.pid;
+    var cid =this.props.params.id;
+    this.setState({
+        pid:pid,
+        cid:cid
+    });
+
     this.props.fetchIndustryList();
     if(this.state.modelData == '请选择'){
       //清空
@@ -152,7 +162,7 @@ class Detail extends React.Component {
     reportInfo.badRate =  this.state.badRate;
     reportInfo.labels = targetInfo;
     reportInfo.mid = modelValue;
-    reportInfo.pid = '2';
+    reportInfo.pid = this.state.pid;
     this.props.saveReport(reportInfo);
 
     let timer =setInterval(() => {
@@ -168,6 +178,8 @@ class Detail extends React.Component {
           let projectId = reportReturnInfo.projectid
           let userId = reportReturnInfo.userid;
           
+          this.props.updateCreditsStatus(this.state.pid,this.state.cid);
+
           //跳转至报告预览
           //self.href='';
           browserHistory.push('/hpx2/core/enterprise-reporting/{}/admittance/?id='+reportId);

@@ -21,7 +21,7 @@
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
 					<el-form-item>
-						<el-button icon="plus" type="primary" @click="addNews" style="float: right; margin-bottom: 5px;">新增</el-button>
+						<el-button icon="plus" type="primary" @click="addNotice" style="float: right; margin-bottom: 5px;">新增</el-button>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -37,27 +37,36 @@
 			</el-table-column>
 			<el-table-column align="center" label="操作">
 				<template scope="scope">
-                        <el-button type="text" size="small" @click="abled(scope.row.id)">查询</el-button>
-                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">修改</el-button>
-                        <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
-                    </template>
+                    <el-button type="text" size="small" @click="abled(scope.row.id)">查询</el-button>
+                    <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">修改</el-button>
+                    <el-button type="text" size="small" @click="deleteNotice=true">删除</el-button>
+                </template>
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">
-			<my-Pagination :callback="getList" :total="total">
-			</my-Pagination>
+			<el-pagination :current-page="1" :page-size="10" :total="total" layout="total, sizes, prev, pager, next, jumper" @current-change="getList()">
+			</el-pagination>
 		</section>
 	</section>
-
+	<el-dialog title="提示" :visible.sync="deleteDialog" size="tiny">
+		<span>确认删除吗</span>
+		<span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="deleteNotice()">确 定</el-button>
+  </span>
+	</el-dialog>
 </div>
 </template>
 
 <script>
 import headTop from '../../components/headTop'
-import myPagination from '../../components/myPagination'
 import {
-	noticeRequest
+	noticeRequest,
 } from '@/api/getData'
+import {
+	publishNoticeRequest,
+	deleteNoticeRequest
+} from '@/api/noticeApi'
 import {
 	mapState
 } from 'vuex'
@@ -102,35 +111,15 @@ export default {
 				}
 			],
 			//搜索条件的个数
-			criteriaNum: 2,
-
+			criteriaNum: 3,
 			//模态框
-			modalTitle: '',
-			editeModalVisible: false,
-			productEnterpriseRoleList: [],
-			editeData: {
-				id: '',
-				code: '',
-				name: '',
-				entryUrl: '',
-				available: '',
-				modifiedTime: '',
-				productEnterpriseRole: [],
-			},
-			editRules: {
-				name: [{
-					required: true,
-					message: '请输入姓名',
-					trigger: 'blur'
-				}]
-			}
+			deleteDialog: false,
 		}
 	},
 	components: {
 		headTop,
-		myPagination,
 	},
-	activated(){
+	activated() {
 		this.initData();
 	},
 	computed: {
@@ -169,10 +158,19 @@ export default {
 			}
 		},
 
-		addNews() {
+		addNotice() {
 			this.$router.push({
-                name: 'newsPublish'
-            })
+				name: 'newsPublish'
+			})
+		},
+		deleteNotice(id) {
+			deleteNoticeRequest(id).then(() => {
+				this.tableList = [];
+				this.getList();
+				this.deleteDialog = false;
+			})
+
+
 		}
 
 

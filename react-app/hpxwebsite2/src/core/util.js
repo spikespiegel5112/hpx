@@ -1,4 +1,5 @@
 import moment from 'moment'
+import fetch, { formPostReq , postReq, getReq, deleteReq, putReq, patchReq }  from './fetch';
 var toString = (v) => v+'';
 export function mul(a, b) {
   let c = 0;
@@ -163,4 +164,10 @@ export function precisionFormat(precisionLen, src) {
 export function getMoment(v,format){
   if(!v) return null;
   return moment(v,format);//需要format，否则会有警告
+}
+
+export async function getDicData(type){
+    const resp = await getReq('/core'+'/core/api/v1/dictionary/'+type+'/children');
+    const result = await resp.json();
+    return result;
 }

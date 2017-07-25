@@ -3,14 +3,8 @@ import {
     updateFields,
     save, 
     fetchDetail, 
-    clearErr ,
-    fetchModelList,
-    fetchIndustryList,
-    fetchScoringmodel,
-    saveReport,
-    clearSmInfo,
-    clearModelInfo,
-    updateCreditsStatus
+    clearErr,
+    fetchDic, fetchDic2
 } from '../../modules/module'
 
 /*  This is a container component. Notice it does not contain any JSX,
@@ -29,31 +23,20 @@ const mapDispatchToProps = {
     updateFields,
     save,
     fetchDetail,
-    fetchModelList,
-    fetchIndustryList,
-    fetchScoringmodel,
-    saveReport,
-    clearSmInfo,
-    clearModelInfo,
-    updateCreditsStatus
+    fetchDic, fetchDic2
 }
 
 const mapStateToProps = (state) => ({
-    err: state.enterpriseAccessPreModule.err,
-    isShow: state.enterpriseAccessPreModule.isShow,
-    fields: state.enterpriseAccessPreModule.fields,
-    saveStatus: state.enterpriseAccessPreModule.saveStatus,
-    fetchDetailStatus: state.enterpriseAccessPreModule.fetchDetailStatus,
-    fieldsConfig: state.enterpriseAccessPreModule.fieldsConfig,
-    detailList :state.enterpriseAccessPreModule.detailList,
-    modelList:state.enterpriseAccessPreModule.modelList,
-    industryList:state.enterpriseAccessPreModule.industryList,
-    industryStatus:state.enterpriseAccessPreModule.industryStatus,
-    scoringmodel:state.enterpriseAccessPreModule.scoringmodel,
-    smStatus:state.enterpriseAccessPreModule.smStatus,
-    smSaveStatus:state.enterpriseAccessPreModule.smSaveStatus,
-    reportReturnInfo:state.enterpriseAccessPreModule.reportReturnInfo,
-    creditState : state.enterpriseAccessPreModule.creditState
+    err: state.noticeModule.err,
+    fields: state.noticeModule.fields,
+    saveStatus: state.noticeModule.saveStatus,
+    fetchDetailStatus: state.noticeModule.fetchDetailStatus,
+    detailData: state.noticeModule.detailData,
+    fieldsConfig: state.noticeModule.fieldsConfig,
+    dicStatus: state.noticeModule.dicStatus,
+    dicList: state.noticeModule.dicList,
+    dicStatus2: state.noticeModule.dicStatus2,
+    dicList2: state.noticeModule.dicList2,
 })
 
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:

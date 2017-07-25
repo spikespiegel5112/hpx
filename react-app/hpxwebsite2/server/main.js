@@ -7,8 +7,8 @@ const project = require('../config/project.config')
 const compress = require('compression')
 var proxy = require('express-http-proxy');
 
-const app = express()
-
+const app = express();
+const serverApi = 'http://10.38.8.46:9000';
 // Apply gzip compression
 app.use(compress())
 
@@ -39,16 +39,12 @@ if (project.env === 'development') {
   app.use(express.static(project.paths.public()))
 
   //__DEV__ 开发模式资源代理转发
-  app.use('/proxy', proxy('http://120.26.80.59:3005/'));
-
-  app.use('/core', proxy('http://10.38.42.245:9000/'));
-  app.use('/proxyBiMai', proxy('http://10.38.8.87:9000/'));
-  // app.use('/proxy', proxy('http://localhost:3005/'));
-
-  app.use('/proxyCore', proxy('http://10.38.8.86:9000/'));
-  app.use('/proxyWarn', proxy('http://10.38.8.86:9003/'));
-  app.use('/proxyHq', proxy('http://10.38.8.86:9000/'));
-  app.use('/coreR', proxy('http://10.38.8.86:9001/'));
+  app.use('/proxy', proxy('http://120.26.80.87:3005/'));
+  app.use('/core', proxy(serverApi));
+  app.use('/proxyBiMai', proxy(serverApi));
+  app.use('/proxyCore', proxy(serverApi));
+  app.use('/proxyWarn', proxy(serverApi));
+  app.use('/proxyHq', proxy(serverApi));
 
   // app.use('/proxy', proxy('http://pc66898.hna.net:8084/'));
   // app.use('/proxy', proxy('http://120.132.124.88:8084/'));

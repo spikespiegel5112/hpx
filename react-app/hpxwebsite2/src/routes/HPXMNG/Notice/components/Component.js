@@ -15,54 +15,90 @@ class Compo extends React.Component {
       selectedRowKeys: [],  // Check here to configure the default column
     };
     this.columns = [{
-        key: 'enterpriseName',
-        title: '企业名称',
-        dataIndex: 'enterpriseName',
+        key: 'title',
+        title: '标题',
+        dataIndex: 'title',
       },{
-        key: 'projectName',
-        title: '项目名称',
-        dataIndex: 'projectName',
+        key: 'endTime',
+        title: '有效期',
+        dataIndex: 'endTime',
+        render: (text) => <span>{moment(text).format('YYYY-MM-DD')}</span>
+      },{
+        key: 'createTime',
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text) => <span>{moment(text).format('YYYY-MM-DD')}</span>
+      },{
+        key: 'modifiedTime',
+        title: '修改时间',
+        dataIndex: 'modifiedTime',
+        render: (text) => <span>{moment(text).format('YYYY-MM-DD')}</span>
       }/*,{
-        key: 'roleName',
-        title: '项目中角色',
-        dataIndex: 'roleName',
-      }*/,{
-        key: 'codeOrg',
-        title: '组织机构代码',
-        dataIndex: 'codeOrg',
+        key: 'creator',
+        title: '创建人',
+        dataIndex: 'creator',
       },{
-        key: 'city',
-        title: '城市',
-        dataIndex: 'city',
+        key: 'modifiedBy',
+        title: '修改人',
+        dataIndex: 'modifiedBy',
       },{
-        key: 'contacts',
-        title: '联系人',
-        dataIndex: 'contacts',
+        key: 'url',
+        title: '路径',
+        dataIndex: 'url',
       },{
-        key: 'contactsPhone',
-        title: '电话',
-        dataIndex: 'contactsPhone',
+        key: 'picPath',
+        title: '图片路径',
+        dataIndex: 'picPath',
       },{
-        key: 'creditState',
-        title: '状态',
-        dataIndex: 'creditState',
+        key: 'enterpriseId',
+        title: '企业id',
+        dataIndex: 'enterpriseId',
+      }*/,
+      {
+        key: 'istop',
+        title: '是否置顶',
+        dataIndex: 'istop',
         render: (text, record) => 
           <span>{
-            [{"value":"F","name":"未申请"},{"value":"T","name":"已申请"}]
+            [{"value":"0","name":"否"},{"value":"1","name":"是"}]
               .filter((v)=> v.value == text).map((v)=>v.name) || ''
           }</span>
-      },{
+      },
+      {
+        key: 'publishState',
+        title: '发布状态',
+        dataIndex: 'publishState',
+        render: (text, record) => 
+          <span>{
+            [{"value":"T","name":"已发布"},{"value":"F","name":"未发布"}]
+              .filter((v)=> v.value == text).map((v)=>v.name) || ''
+          }</span>
+      },
+      {
         title: '操作',
         key: 'action',
         render: (text, record) => (
-          record.creditState == 'F' ?
           <span>
-              <Link to={`${this.getUrlQueryParams()}/detail/${record.creditId}?pid=${record.projectId}`}> 
-                  <a href="#">企业准入</a>
-              </Link> 
+            <Link to={`${this.getUrlQueryParams()}/detail/${record.id}`}>
+              查看
+            </Link>
+            <span className="ant-divider" />
+            <Link to={`${this.getUrlQueryParams()}/edit/${record.id}`}>
+              修改
+            </Link>
+            <span className="ant-divider" />
+            <Popconfirm title="确定删除?" onConfirm={() => this.props.del(record.id)}>
+              <a href="#">删除</a>
+            </Popconfirm>
+              <span className="ant-divider" />
+            <Link to={`${this.getUrlQueryParams()}/detail/${record.id}`}>
+              置顶
+            </Link>
+            <span className="ant-divider" />
+            <Link to={`${this.getUrlQueryParams()}/detail/${record.id}`}>
+              发布
+            </Link>
           </span>
-          :         
-          <span></span>
         ),
       }];
   }
@@ -120,14 +156,9 @@ class Compo extends React.Component {
   search() {
     let queryParams = this.props.list.queryParams;
     let arr = [{
-        key: 'projectName',
+        key: 'title',
         value: {
-          value: queryParams.projectName ? queryParams.projectName.value : null
-        }
-      },{
-        key: 'creditState',
-        value: {
-          value: queryParams.creditState ? queryParams.creditState.value : null
+          value: queryParams.title ? queryParams.title.value : null
         }
       }];
     let obj = {};
@@ -143,7 +174,7 @@ class Compo extends React.Component {
     }catch(e){
       console.log(e)
     }
-    return '/hpx2/core/enterpriseAccessPre/' + encodeURI(JSON.stringify(v || {}));
+    return '/hpx2/hpxmng/news-notice/' + encodeURI(JSON.stringify(v || {}));
   }
   render() {
     const { selectedRowKeys } = this.state;
@@ -164,8 +195,6 @@ class Compo extends React.Component {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
-    console.log('data rows',list.rows); 
-
     let view = <div>
       <div style={{ marginBottom: 16 }}>
         <Search
@@ -175,19 +204,19 @@ class Compo extends React.Component {
           clear={this.props.clearQueryParams}
           loading={listStatus.loading}
         />
-        {/*<Link 
-          to={`${this.getUrlQueryParams()}/detail`} 
+        <Link 
+          to={`${this.getUrlQueryParams()}/edit`} 
           style={{ marginRight: '16px' }}
         >
           <Button type="primary">新增</Button>
-        </Link>*/}
+        </Link>
         <span style={{ marginLeft: 8 }}>
           {hasSelected ? `选择了 ${selectedRowKeys.length} 项` : ''}
         </span>
       </div>
       <Table
         rowKey="id"
-        
+        rowSelection={rowSelection}
         columns={this.columns}
         dataSource={list.rows}
         pagination={list.queryParams.pagination}

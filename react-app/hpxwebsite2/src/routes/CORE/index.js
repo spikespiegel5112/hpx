@@ -22,7 +22,7 @@ export default (store)=>({
         // 平台
         require('./Home').default(store),
         require('./MyProject').default(store),
-        require('./ItemBind').default(store),
+        //require('./ItemBind').default(store),
         require('./companyInformation').default(store),
         require('./IncrementService').default(store),
         require('./EnterpriseAccessPre').default(store),

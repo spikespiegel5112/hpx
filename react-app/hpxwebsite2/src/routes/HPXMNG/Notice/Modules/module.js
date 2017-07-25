@@ -3,7 +3,7 @@ import fetch, { formPostReq , postReq, getReq, deleteReq, putReq, patchReq }  fr
 // ------------------------------------
 // Constants
 // ------------------------------------
-const ACTION_PREFIX = 'enterpriseAccessPreModule::';
+const ACTION_PREFIX = 'noticeModule::';
 export const UPDATE_QUERY_PARAMS = ACTION_PREFIX + 'UPDATE_QUERY_PARAMS'
 export const CLEAR_QUERY_PARAMS = ACTION_PREFIX + 'CLEAR_QUERY_PARAMS'
 
@@ -29,33 +29,16 @@ export const DELETE_REQUEST = ACTION_PREFIX + 'DELETE_REQUEST'
 export const DELETE_FAILURE = ACTION_PREFIX + 'DELETE_FAILURE'
 export const DELETE_SUCCESS = ACTION_PREFIX + 'DELETE_SUCCESS'
 
-export const INDUSTRY_NOT = ACTION_PREFIX + 'INDUSTRY_NOT'
-export const INDUSTRY_REQUEST = ACTION_PREFIX + 'INDUSTRY_REQUEST'
-export const INDUSTRY_FAILURE = ACTION_PREFIX + 'INDUSTRY_FAILURE'
-export const INDUSTRY_SUCCESS = ACTION_PREFIX + 'INDUSTRY_SUCCESS'
+export const DIC_NOT = ACTION_PREFIX + 'DIC_NOT'
+export const DIC_REQUEST = ACTION_PREFIX + 'DIC_REQUEST'
+export const DIC_FAILURE = ACTION_PREFIX + 'DIC_FAILURE'
+export const DIC_SUCCESS = ACTION_PREFIX + 'DIC_SUCCESS'
 
-export const MODEL_NOT = ACTION_PREFIX + 'MODEL_NOT'
-export const MODEL_REQUEST = ACTION_PREFIX + 'MODEL_REQUEST'
-export const MODEL_FAILURE = ACTION_PREFIX + 'MODEL_FAILURE'
-export const MODEL_SUCCESS = ACTION_PREFIX + 'MODEL_SUCCESS'
-export const MODEL_CLEAR = ACTION_PREFIX + 'MODEL_CLEAR'
+export const DIC2_NOT = ACTION_PREFIX + 'DIC2_NOT'
+export const DIC2_REQUEST = ACTION_PREFIX + 'DIC2_REQUEST'
+export const DIC2_FAILURE = ACTION_PREFIX + 'DIC2_FAILURE'
+export const DIC2_SUCCESS = ACTION_PREFIX + 'DIC2_SUCCESS'
 
-
-export const SM_NOT = ACTION_PREFIX + 'SM_NOT'
-export const SM_REQUEST = ACTION_PREFIX + 'SM_REQUEST'
-export const SM_FAILURE = ACTION_PREFIX + 'SM_FAILURE'
-export const SM_SUCCESS = ACTION_PREFIX + 'SM_SUCCESS'
-export const SM_CLEAR = ACTION_PREFIX + 'SM_CLEAR'
-
-export const SM_SAVE_NOT = ACTION_PREFIX + 'SM_SAVE_NOT'
-export const SM_SAVE_REQUEST = ACTION_PREFIX + 'SM_SAVE_REQUEST'
-export const SM_SAVE_FAILURE = ACTION_PREFIX + 'SM_SAVE_FAILURE'
-export const SM_SAVE_SUCCESS = ACTION_PREFIX + 'SM_SAVE_SUCCESS'
-
-export const CREDITSTATE_SAVE_NOT = ACTION_PREFIX + 'CREDITSTATE_SAVE_NOT'
-export const CREDITSTATE_SAVE_REQUEST = ACTION_PREFIX + 'CREDITSTATE_SAVE_REQUEST'
-export const CREDITSTATE_SAVE_FAILURE = ACTION_PREFIX + 'CREDITSTATE_SAVE_FAILURE'
-export const CREDITSTATE_SAVE_SUCCESS = ACTION_PREFIX + 'CREDITSTATE_SAVE_SUCCESS'
 
 export const UPDATE_FIELDS = ACTION_PREFIX + 'UPDATE_FIELDS'//更新表单里的值
 
@@ -95,17 +78,12 @@ export const fetchList =  () => {
     dispatch({
       type    : FETCH_LIST_REQUEST,
     })
-    let enterpriseId = getState().login.userInfo.enterpriseId;
-    let list = getState().enterpriseAccessPreModule.list;
+    let list = getState().noticeModule.list;
     let queryParams = Object.assign({},list.queryParams);
     
-    let projectName = queryParams.projectName ? queryParams.projectName.value : null;
-    if(projectName) queryParams.projectName = queryParams.projectName.value;
-    else delete queryParams.projectName;
-      
-    let creditState = queryParams.creditState ? queryParams.creditState.value : null;
-    if(creditState) queryParams.creditState = queryParams.creditState.value;
-    else delete queryParams.creditState;
+    let title = queryParams.title ? queryParams.title.value : null;
+    if(title) queryParams.title = queryParams.title.value;
+    else delete queryParams.title;
       
     let pagination = queryParams.pagination;
     queryParams.page = pagination.current;
@@ -113,7 +91,7 @@ export const fetchList =  () => {
     delete queryParams.pagination;
     try{
       const resp = await getReq(
-        '/core'+'/core/api/v1/enterprises/veyiterpriseAccess/'+enterpriseId,//-----------------企业编号怎么获取
+        '/core'+'/core/api/v1/notice',
         queryParams
       )
       const total = resp.headers.get('x-total-count');
@@ -143,33 +121,29 @@ export const fetchList =  () => {
 
 export  const fetchDetail =  (id) => {
   return async (dispatch, getState) => {
-    // if(!id){//没有id，就是新增
-    //   dispatch({
-    //     type: UPDATE_FIELDS,
-    //     payload: {
-    //       ...initialState.fields
-    //     }
-    //   })
-    //   return;
-    // }
+    if(!id){//没有id，就是新增
+      dispatch({
+        type: UPDATE_FIELDS,
+        payload: {
+          ...initialState.fields
+        }
+      })
+      return;
+    }
     dispatch({
       type    : DETAIL_REQUEST,
     })
     try{
-      let userId = getState().login.userInfo.id;
-      let enterpriseId = getState().login.userInfo.enterpriseId;
       const resp = await getReq(
-        '/core'+'/credit/api/v1/tp/report/'+ enterpriseId + '/' + userId + '/' +id,
+        '/core'+'/core/api/v1/notice/'+id,
         {
         }
       )
       const result = await resp.json();
-      let data = result;
-      console.log(data)
-      // console.log('哈哈',data.riskPricingRatio);
+      console.log("suju",result)
       dispatch({
         type    : DETAIL_SUCCESS,
-        payload : data || null
+        payload: result
       })
     }catch(e) {
       dispatch({
@@ -187,7 +161,7 @@ export  const del =  (id) => {
     })
     try{
       const resp = await deleteReq(
-        '/core'+'undefined/'+id,
+        '/core'+'/core/api/v1/notice/dictionary/'+id,
         {
         }
       )
@@ -212,13 +186,13 @@ export  const save =  (values, id) => {
       const resp = 
         id 
         ? await patchReq(
-            '/core'+'undefined/'+id,
+            '/core'+'/core/api/v1/notice/'+id,
             {
                 ...values,
             }
           )
         : await putReq(
-            '/core'+'undefined',
+            '/core'+'/core/api/v1/notice',
             {
                 ...values,
                 id: id || '',
@@ -242,188 +216,71 @@ export const updateFields = (fields,type) => {
     dispatch({
       type: UPDATE_FIELDS,
       payload: {
-        ...getState().enterpriseAccessPreModule.fields,
+        ...getState().noticeModule.fields,
         ...fields
       }
     })
   }
 }
 
-export const fetchIndustryList =  () => {
+
+export const fetchDic = (type) => {
+
   return async (dispatch, getState) => {
-    dispatch({
-      type    : INDUSTRY_REQUEST,
+     dispatch({
+      type    : DIC_REQUEST,
     })
     try{
-
-      let industryList = getState().enterpriseAccessPreModule.industryList;
-
       const resp = await getReq(
-        '/core'+'/credit/api/v1/industry/all',
+        '/core'+'/core/api/v1/dictionary/'+type+'/children',
         {
         }
       )
       const result = await resp.json();
-      console.log('行业',result);
-      
+      console.log("第一条",result)
       dispatch({
-        type    : INDUSTRY_SUCCESS,
-        payload : {
-          data:result
-        } 
-      })
-    }catch(e) {
-      dispatch({
-        type    : INDUSTRY_FAILURE,
-        payload : e
-      })
-    }
-  }
-}
-
-export const fetchModelList =  (id) => {
-  return async (dispatch, getState) => {
-    dispatch({
-      type    : MODEL_REQUEST,
-    })
-    try{
-      let enterpriseId = getState().login.userInfo.enterpriseId;
-      const resp = await getReq(
-        '/core'+'/credit/api/v1/tp/scoringmodel/'+enterpriseId+'/model/'+id,
-        {
-        }
-      )
-      const result = await resp.json();
-      let data = result;
-      console.log('模型',data);
-      
-      dispatch({
-        type    : MODEL_SUCCESS,
-        payload : {
-          data:result
-        } 
-      })
-    }catch(e) {
-      dispatch({
-        type    : MODEL_FAILURE,
-        payload : e
-      })
-    }
-  }
-}
-
-export const fetchScoringmodel =  (id) => {
-  return async (dispatch, getState) => {
-    dispatch({
-      type    : SM_REQUEST,
-    })
-    try{
-      let enterpriseId = getState().login.userInfo.enterpriseId;
-      const resp = await getReq(
-        '/core'+'/credit/api/v1/tp/scoringmodel/'+enterpriseId+'/'+id,
-        {
-        }
-      )
-      const result = await resp.json();
-      let data = result;
-      console.log('打分卡',data);
-      
-      dispatch({
-        type    : SM_SUCCESS,
+        type    :  DIC_SUCCESS,
         payload : {
           data: result
         } 
       })
     }catch(e) {
       dispatch({
-        type    : SM_FAILURE,
+        type    :  DIC_FAILURE,
         payload : e
       })
     }
   }
 }
 
-export const saveReport =  (values) => {
-    return async (dispatch, getState) => {
-    dispatch({
-      type    : SM_SAVE_REQUEST,
+
+export const fetchDic2 = (type) => {
+
+  return async (dispatch, getState) => {
+     dispatch({
+      type    : DIC2_REQUEST,
     })
     try{
-      let enterpriseId = getState().login.userInfo.enterpriseId;
-      const resp = 
-        await putReq(
-            '/core'+'/credit/api/v1/tp/report/'+enterpriseId,
-            {
-                ...values
-            }
-          )
+      const resp = await getReq(
+        '/core'+'/core/api/v1/dictionary/'+type+'/children',
+        {
+        }
+      )
       const result = await resp.json();
       dispatch({
-        type    : SM_SAVE_SUCCESS,
+        type    :  DIC2_SUCCESS,
         payload : {
           data: result
         } 
       })
-    }catch(e){
+    }catch(e) {
       dispatch({
-        type    : SM_SAVE_FAILURE,
+        type    :  DIC2_FAILURE,
         payload : e
       })
     }
   }
-}
-
-export const clearSmInfo = (data) =>{
-  return (dispatch, action) => {
-    dispatch({
-      type    : SM_CLEAR,
-      payload : {
-        scoringmodel: data,
-      }
-    })
   }
-}
-
-export const clearModelInfo = (data) => {
-  return (dispatch, action) => {
-    dispatch({
-      type    : MODEL_CLEAR,
-      payload : {
-        data: data,
-      }
-    })
-  }
-}
-
-export const updateCreditsStatus = (pid,cid) =>{
-   return async (dispatch, getState) => {
-    dispatch({
-      type    : CREDITSTATE_SAVE_REQUEST,
-    })
-    try{
-      let enterpriseId = getState().login.userInfo.enterpriseId;
-      const resp = 
-        await patchReq(
-            '/core'+'/core/api/v1/enterpriseAccess/'+enterpriseId+'/projects/'+pid+'/credits/'+cid,
-            {
-              
-            }
-          )
-      const result = await resp.json();
-      dispatch({
-        type    : CREDITSTATE_SAVE_SUCCESS,
-        payload : {
-          data: result
-        } 
-      })
-    }catch(e){
-      dispatch({
-        type    : CREDITSTATE_SAVE_FAILURE,
-        payload : e
-      })
-    }
-  }
-}
 
 export const actions = {
   clearQueryParams,
@@ -434,12 +291,8 @@ export const actions = {
   del,
   save,
   updateFields,
-  fetchIndustryList,
-  fetchModelList,
-  fetchScoringmodel,
-  saveReport,
-  clearSmInfo,
-  updateCreditsStatus
+  fetchDic,
+  fetchDic2
 }
 
 // ------------------------------------
@@ -527,7 +380,7 @@ const ACTION_HANDLERS = {
         type: DETAIL_SUCCESS,
         loading: false,
       },
-      detailList :action.payload
+       detailData:{...action.payload}
     }),
   [DETAIL_FAILURE] : (state, action) => 
     ({ 
@@ -588,170 +441,67 @@ const ACTION_HANDLERS = {
         loading: false,
       }
     }),
-
-    [INDUSTRY_REQUEST] : (state, action) => 
-    ({ 
-      ...state, 
-      industryStatus:{
-        type: INDUSTRY_REQUEST,
-        loading: true,
-      }
-    }),
-  [INDUSTRY_SUCCESS] : (state, action) => 
-    ({ 
-      ...state, 
-      industryStatus:{
-        type: INDUSTRY_SUCCESS,
-        loading: true,
-      },
-      industryList:{
-        data:action.payload.data
-      }
-    }),
-  [INDUSTRY_FAILURE] : (state, action) => 
-    ({ 
-      ...state, 
-      err: action.payload,
-      industryStatus:{
-        type: INDUSTRY_FAILURE,
-        loading: false,
-      }
-    }),
-
-    [MODEL_REQUEST] : (state, action) => 
-    ({ 
-      ...state, 
-      modelStatus:{
-        type: MODEL_REQUEST,
-        loading: true,
-      }
-    }),
-  [MODEL_SUCCESS] : (state, action) => 
-    ({ 
-      ...state, 
-      modelStatus:{
-        type: MODEL_SUCCESS,
-        loading: false,
-      },
-      modelList:{
-        data:action.payload.data
-      }
-    }),
-  [MODEL_FAILURE] : (state, action) => 
-    ({ 
-      ...state, 
-      err: action.payload,
-      modelStatus:{
-        type: MODEL_FAILURE,
-        loading: false,
-      }
-    }),
-  
   [UPDATE_FIELDS] : (state, action) => 
     ({ 
       ...state, 
       fields: action.payload
     }),
-  [SM_FAILURE] : (state, action) => 
+  [DIC_REQUEST] : (state, action) => 
+    ({ 
+      ...state, 
+      dicStatus:{
+        type: DIC_REQUEST,
+        loading: true,
+      }
+    }),
+  [DIC_SUCCESS] : (state, action) => 
+    ({ 
+      ...state, 
+      dicStatus:{
+        type: DIC_SUCCESS,
+        loading: false,
+      },
+      dicList:{
+        data:action.payload.data
+      }
+    }),
+  [DIC_FAILURE] : (state, action) => 
     ({ 
       ...state, 
       err: action.payload,
-      smStatus:{
-        type: SM_FAILURE,
+      dicStatus:{
+        type: DIC_FAILURE,
+        loading: false,
+      }
+    }),
+    [DIC2_REQUEST] : (state, action) => 
+    ({ 
+      ...state, 
+      dicStatus2:{
+        type: DIC2_REQUEST,
         loading: true,
       }
     }),
-  [SM_SUCCESS] : (state, action) => 
+  [DIC2_SUCCESS] : (state, action) => 
     ({ 
       ...state, 
-      isShow: true,
-      smStatus:{
-        type: SM_SUCCESS,
+      dicStatus:{
+        type: DIC2_SUCCESS,
         loading: false,
       },
-      scoringmodel:{
-        gradeCardName:action.payload.data.gradeCardName,
-        gradeCardDescribe:action.payload.data.gradeCardDescribe,
-        labelInfos:action.payload.data.labelInfos
+      dicList2:{
+        data:action.payload.data
       }
     }),
-  [SM_REQUEST] : (state, action) => 
+  [DIC2_FAILURE] : (state, action) => 
     ({ 
       ...state, 
-      saveStatus:{
-        type: SM_REQUEST,
-        loading: true,
-      }
-    }),
-  [SM_SAVE_REQUEST] : (state, action) => 
-    ({ 
-      ...state, 
-      smSaveStatus:{
-        type: SM_SAVE_REQUEST,
-        loading: true,
-      },
-    }),
-  [SM_SAVE_FAILURE] : (state, action) => 
-    ({ 
-      ...state, 
-      smSaveStatus:{
-        type: SM_SAVE_FAILURE,
-        loading: false,
-      },
-    }),
-  [SM_SAVE_SUCCESS] : (state, action) =>
-   ({ 
-      ...state, 
-      smSaveStatus:{
-        type: SM_SAVE_SUCCESS,
-        loading: false,
-      },
-      reportReturnInfo:{
-        id:action.payload.data.id,
-        modelid:action.payload.data.modelid,
-        userid:action.payload.data.userid,
-        projectid:action.payload.data.projectid
-      }
-    }),
-  [SM_CLEAR] : (state, action) => 
-    ({ 
-      ...state, 
-      isShow: false,
-      scoringmodel:action.payload.scoringmodel
-    }),
-  [MODEL_CLEAR] : (state, action) => 
-    ({ 
-      ...state, 
-       modelList:{
-          data:action.payload.data
-        }
-    }),
-  
-  [CREDITSTATE_SAVE_REQUEST] : (state, action) => 
-    ({ 
-      ...state, 
-      creditState:{
-        type: CREDITSTATE_SAVE_REQUEST,
-        loading: true,
-      }
-    }),
-  [CREDITSTATE_SAVE_SUCCESS] : (state, action) => 
-    ({ 
-      ...state, 
-      creditState:{
-        type: CREDITSTATE_SAVE_SUCCESS,
+      err: action.payload,
+      dicStatus2:{
+        type: DIC2_FAILURE,
         loading: false,
       }
     }),
-  [CREDITSTATE_SAVE_FAILURE] : (state, action) => 
-   ({ 
-      ...state, 
-      creditState:{
-        type: CREDITSTATE_SAVE_FAILURE,
-        loading: false,
-      }
-    }),
-  
 }
 
 // ------------------------------------
@@ -759,7 +509,6 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 const initialState = {
   err:'',
-  isShow: false,
   deleteStatus:{
     type:DELETE_NOT,
     loading: false,
@@ -776,25 +525,44 @@ const initialState = {
     type:FETCH_LIST_NOT,
     loading: false,
   },
-  industryStatus:{
-    type: INDUSTRY_NOT,
+  dicStatus:{
+    type:DIC_NOT,
     loading: false,
   },
-  modelStatus:{
-    type: MODEL_NOT,
-    loading: false,
-  },
-  smStatus:{
-    type:SM_NOT,
-    loading: false,
-  },
-  smSaveStatus:{
-    type:SM_SAVE_NOT,
+  dicStatus2:{
+    type:DIC2_NOT,
     loading: false,
   },
   fields:{
     id: null,//id,添加的时候为空，修改的时候有值
     
+    title: {
+      value: null
+    },
+    content: {
+      value: null
+    },
+    createTime: {
+      value: null
+    },
+    modifiedTime: {
+      value: null
+    },
+    creator: {
+      value: null
+    },
+    modifiedBy: {
+      value: null
+    },
+    url: {
+      value: null
+    },
+    picPath: {
+      value: null
+    },
+    enterpriseId: {
+      value: null
+    },
   },//表单数据
   list:{
     rows:[],
@@ -805,42 +573,18 @@ const initialState = {
         pageSize:10,
       },
       
-      projectName: {
-        value: null
-      },
-      creditState: {
+      title: {
         value: null
       },
     },
   },
-  detailList:{
-    tpGradeModelInfoHistoryExtend : {
-      tpLabelInfoHistoryExtend:[]
-    }
-  }
-  ,
-  industryList:{
-     data:[]
-  }
-  ,
-  modelList:{
-     data:[]
+  dicList:{
+    data:[]
   },
-  scoringmodel:{
-     gradeCardName:'',
-     gradeCardDescribe:'',   
-     labelInfos:[]
+  dicList2:{
+    data:[]
   },
-  reportReturnInfo:{
-      id:'',
-      modelid:'',
-      userid:'',
-      projectid:''
-  },
-  creditState:{
-     type:CREDITSTATE_SAVE_NOT,
-     loading: false,
-  }
+  detailData:{ },
 }
 
 export default function reducer (state = initialState, action) {
