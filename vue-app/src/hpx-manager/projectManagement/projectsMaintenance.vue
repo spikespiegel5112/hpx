@@ -227,7 +227,7 @@ export default {
 			}
 		}
 	},
-	activated() {
+	mounted() {
 		this.initData();
 	},
 	computed: {
@@ -291,6 +291,7 @@ export default {
 		async initData() {
 			this.listLoading = true;
 			try {
+
 				this.getList();
 				this.listLoading = false;
 				if (!this.tableList.length) {

@@ -167,7 +167,7 @@ export default {
 			this.$refs['formData'].validate((valid) => {
 				console.log(valid);
 				if (valid) {
-					alert('submit!');
+					// alert('submit!');
 					this.mergePublishDirection();
 					this.convertDateObjToDateString();
 					modifyNoticeRequest({
@@ -191,14 +191,8 @@ export default {
 					response.json().then(result => {
 						this.formData = Object.assign(this.formData, result)
 						console.log(this.formData);
-						// this.convertData(result.direction)
-
 						this.publishDirection = result.direction.split(',');
 						this.formData.direction = this.publishDirection;
-						// this.convertDateStringToDateObj(result.endTime);
-
-
-						// this.formData.endTime = DateObj.toISOString().substr(0, 10);
 					})
 				})
 			}
@@ -207,8 +201,7 @@ export default {
 			this.formData.direction = this.formData.direction.sort().join(',');
 			console.log(this.formData.direction);
 		},
-		convertDateStringToDateObj(value) {
-			alert(value)
+		convertDateStringToDateObj() {
 			let dateObj = new Date(Date.parse(this.endTimeString.replace(/-/g, "/")));
 			this.formData.endTime = dateObj;
 			console.log(this.formData);

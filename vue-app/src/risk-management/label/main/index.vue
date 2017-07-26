@@ -82,7 +82,7 @@
                         <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >禁用</el-button>
-                        <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >删除</el-button>
+                        <el-button type="text" size="small" @click="remove(scope.row.id)" >删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -119,7 +119,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { labelList } from '@/api/riskApi'
+    import { labelList ,labelDelete } from '@/api/riskApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -232,7 +232,9 @@
             },
 
             resetForm(formName) {
-                this.$refs[formName].resetFields();
+                this.$refs[formName].resetFields(
+
+                );
             },
             datePick(value){
                 if(value){
@@ -250,6 +252,23 @@
             edite (index,row) {
                 this.modalVisible = true;
                 this.upInfo = Object.assign({},{...row})
+            },
+            loadModule(){
+
+            },
+            async remove(id){
+                try{
+                    const resp = await labelDelete(this.loginInfo.enterpriseId,id)
+                    if(resp.status === 200){
+                        this.$message({
+                            type:'success',
+                            message:'删除成功'
+                        });
+                        this.getList()
+                    }
+                }catch(e){
+                    this.$message.error(e)
+                }
             }
         },
     }

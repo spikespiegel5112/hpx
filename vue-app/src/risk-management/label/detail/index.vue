@@ -2,17 +2,17 @@
     <div class="fillcontain">
         <head-top></head-top>
         <section class='search-criteria-container'>
-			<el-form :inline="true" :model="query"  ref="query">
+			<el-form :inline="true" :model="query" :rules="queryRules" ref="query">
                 <el-row>
                     <el-col :span="6">
-                        <el-form-item label="标签名称" prop="name">
-                            <el-input v-model="query.name" placeholder="标签名称"></el-input>
+                        <el-form-item label="标签名称" prop="scoreCardName">
+                            <el-input v-model="query.scoreCardName" placeholder="标签名称"></el-input>
                         </el-form-item>
                     </el-col>
                     </el-col>
                     <el-col :span="6">
                         <el-button type="primary" icon="plus" @click="addNew">添加</el-button>
-                        <el-button type="primary" icon="check" @click="addNew">提交</el-button>
+                        <el-button type="primary" icon="check" @click="delSubmit">提交</el-button>
                     </el-col>
                 </el-row>
 			</el-form>
@@ -41,14 +41,14 @@
                     align="center"
                 >
                     <template scope="scope">
-                        <el-input v-if="scope.row.isEdite" v-model="tableList[scope.$index][value.prop]" size="small"></el-input>
+                        <el-input v-if="scope.row.isEdite" v-model="tableList[scope.$index][value.prop]" size="small" style="max-width:120px;"></el-input>
                         <div v-if="!scope.row.isEdite" >{{tableList[scope.$index][value.prop]}}</div>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center" width='180'>
                     <template scope="scope">
                         <el-button v-if="scope.row.isEdite" type="text" size="small" @click="save(scope.$index, scope.row)" >保存</el-button>
-                        <el-button v-if="scope.row.isEdite" type="text" size="small" @click="edite(scope.$index, scope.row)">撤销</el-button>
+                        <!-- <el-button v-if="scope.row.isEdite" type="text" size="small" @click="edite(scope.$index, scope.row)">撤销</el-button> -->
                         <el-button v-if="!scope.row.isEdite" type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" size="small" @click="remove(scope.$index, scope.row)" >删除</el-button>
                     </template>
@@ -60,6 +60,8 @@
 
 <script>
 import headTop from '@/components/headTop'
+import { labelAdd } from '@/api/riskApi'
+import { mapState } from 'vuex'
 export default {
     data(){
         this.columns = [
@@ -98,19 +100,44 @@ export default {
         };
         return {         
             query : {
-                name : ''
+                scoreCardName : ''
             },
-            tableList : []
+            queryRules:{
+                scoreCardName: [
+                    { required : true, message:'请输入标签名称'}
+                ],
+            },
+            tableList : [],
+            listLoading : false,
+            emptyText:''
         }
     },
     components : {
         headTop
+    },
+    computed : {
+        ...mapState(['loginInfo']),
+        getParams(){
+            return {
+                scoreCardName : this.query.scoreCardName,
+                modelTargetInfos : [...this.tableList]
+            }
+        }
     },
     methods : {
         addNew(){
             this.tableList.push({...this.newData})
         },
         save(index,row){
+            for ( let key of Object.keys(this.newData)){
+                if(key !== 'isEdite' && !row[key]){
+                    this.$message({
+                        type:'warning',
+                        message:'数据不能为空!'
+                    });
+                    return;
+                }
+            };
             this.tableList[index].isEdite = false;
         },
         edite(index,row){
@@ -118,6 +145,51 @@ export default {
         },
         remove(index,row){
             this.tableList.splice(index,1);
+        },
+        delSubmit(){
+            this.$refs['query'].validate(      
+                async (valid) => {
+                    if(valid){
+                        if(!this.tableList.length){
+                            this.$message({
+                                message: '请先添加标签',
+                                type: 'warning'
+                            });
+                            return;
+                        };
+
+                        for( let key of Object.keys(this.tableList)){
+                            if(this.tableList[key].isEdite){
+                                this.$message({
+                                    message: '请先保存数据',
+                                    type: 'warning'
+                                });
+                                return;
+                            };
+                        }
+                        try{
+                            const params = {
+                                scoreCardName : this.query.scoreCardName,
+                                modelTargetInfos : this.tableList
+                            };
+                            const resp = await labelAdd(this.loginInfo.enterpriseId,params);
+                            if(resp.status === 200){
+                                this.$message({
+                                    message: '保存成功',
+                                    type: 'success'
+                                });
+                                history.go(-1)
+                                return true
+                            }
+                        }catch(e){
+                            this.$message.error(e);
+                            return false;
+                        }
+                    }else{
+                        return false;
+                    }
+                }
+            )
         }
     }
 }

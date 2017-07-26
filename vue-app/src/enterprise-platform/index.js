@@ -19,7 +19,8 @@ const fairParameter = r => require.ensure([], () => r(require('@/risk-management
 
 export default {
     path: '/platform',
-    component: enterpriseIndex,
+	component: enterpriseIndex,
+	name:"platform",
     children:[{
 			path: '',
 			component: home,

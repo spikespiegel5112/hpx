@@ -42,7 +42,7 @@ module.exports = {
         // target: 'http://10.38.8.46:9000',
         changeOrigin: true,
         pathRewrite: {
-            '^/credit': '/credit/api/v1/tp/'
+            '^/credit': '/credit/api/v1/'
         }
     },
     },

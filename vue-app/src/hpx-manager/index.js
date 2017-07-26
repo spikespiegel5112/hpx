@@ -2,8 +2,11 @@ const hpxManagerIndex = r => require.ensure([], () => r(require('@/hpx-manager/m
 const home = r => require.ensure([], () => r(require('@/hpx-manager/home')), 'hpx-manager-home');
 const detail = r => require.ensure([], () => r(require('@/hpx-manager/detail')), 'hpx-manager-test');
 const template = r => require.ensure([], () => r(require('@/hpx-manager/template')), 'hpx-manager-template');
+
+// 项目管理路由
 const inviteAudit = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/inviteAudit')), 'inviteAudit');
 const projectsMaintenance = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectsMaintenance')), 'projectsMaintenance');
+const projectRoleManagement = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectRoleManagement')), 'projectRoleManagement');
 const projectEdit = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectEdit')), 'projectEdit');
 const projectCreate = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectCreate')), 'projectCreate');
 
@@ -23,6 +26,7 @@ const noticeEdit = r => require.ensure([], () => r(require('@/hpx-manager/produc
 
 const user = r => require.ensure([], () => r(require('@/hpx-manager/user')), 'user');
 const agreement = r => require.ensure([], () => r(require('@/hpx-manager/agreement')), 'agreement');
+const dictionary = r => require.ensure([], () => r(require('@/hpx-manager/dictionary')), 'dictionary');
 
 const router = {
     path: '/manager',
@@ -46,6 +50,11 @@ const router = {
             name: 'projectsMaintenance',
             component: projectsMaintenance,
             meta: ['项目管理', '项目维护'],
+        }, {
+            path: 'pro-role',
+            name: 'projectRoleManagement',
+            component: projectRoleManagement,
+            meta: ['项目管理', '项目角色管理'],
         },{
             path: 'create-pro',
             name: 'projectCreate',
@@ -99,15 +108,17 @@ const router = {
             path: 'news-notice',
             component: noticeList,
             name: 'noticeList',
-            meta: {
-                breadcrumb:['平台基础管理', '平台新闻公告'],
-                keepAlive: false
-            }
+            meta: ['平台基础管理', '平台新闻公告']
         }, {
             path: 'news-notice/noticeEdit/:noticeId',
             component: noticeEdit,
             name: 'noticeEdit',
             meta: ['平台基础管理', '平台新闻公告', '发布新闻'],
+        }, {
+            path: 'dictionary',
+            component: dictionary,
+            name: 'dictionary',
+            meta: ['平台基础管理', '字典项'],
         }]
 }
 

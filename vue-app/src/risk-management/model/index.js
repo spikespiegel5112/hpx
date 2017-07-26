@@ -9,7 +9,7 @@ const router = {
         {
             path : '',
             component :model,
-            meta:["test","test"]
+            meta:["模型管理","test"]
 		}
     ]
 }
