@@ -38,8 +38,9 @@ const routes = [
 	},
 	//model
 	{
-		path: '/manager',
+		path: '/manage',
 		component: manage,
+		name: 'hpxManagerIndex',
 		children: [{
 			path: '',
 			component: home,
@@ -111,7 +112,7 @@ const routes = [
 	hpxRouter,
 
 	// enterprise manager
-	// enterprisePlatformRouter,
+	enterprisePlatformRouter,
 
 	// enterprise project
 ]

@@ -13,10 +13,13 @@ const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platf
 
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
 
+//风控
+const fairParameter = r => require.ensure([], () => r(require('@/risk-management/fair-parameter')), 'fairParameter');
+
+
 export default {
     path: '/platform',
     component: enterpriseIndex,
-    name:'platform',
     children:[{
 			path: '',
 			component: home,
@@ -50,5 +53,10 @@ export default {
         },
 		modelRouter,
 		labelRouter,
+		{
+			path:'fair-parameter',
+			component : fairParameter,
+			meta:["风控管理","公允参数"]
+		}
     ]
 };

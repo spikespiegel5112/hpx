@@ -5,9 +5,10 @@
 				<sider-bar index="/manager"></sider-bar>
 			</el-col>
 			<el-col :span="21" class="router-container" style="height: 100%;overflow: auto;">
-				<keep-alive>
+				<keep-alive v-if='$route.meta.useKeepAlive'>
 				    <router-view></router-view>
 				</keep-alive>
+				<router-view></router-view>
 			</el-col>
 		</el-row>
   	</div>

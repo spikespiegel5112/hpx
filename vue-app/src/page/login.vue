@@ -71,7 +71,7 @@
 								});
 								if(res.id == 1){
 									this.$router.push({
-										path : 'manager'
+										path : '/manager'
 									})
 								}else{
 									this.$router.push({
