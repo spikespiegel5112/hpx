@@ -68,7 +68,7 @@
                 </el-table-column>
             </el-table>
             <section class="main-pagination">
-                <my-Pagination :callback="getList" :total="total">
+                <my-Pagination :total="total" @pageChange="pageChange">
                 </my-Pagination>
             </section>
         </section>
@@ -108,6 +108,7 @@
                 ],
                 //总页数
                 total : 0,
+                pagination : {},
                 //table
                 tableList: [],
                 listLoading:false,
@@ -162,14 +163,17 @@
             ...mapState(["loginInfo"]),
         },
         methods: {
+            pageChange(data){
+                this.pagination = data;
+            },
             async initData(){
                 this.getList();
             },
-            async getList(pagination={page:1,size:10}){
+            async getList(){
                 this.listLoading = true;
                 try{
                     this.listLoading = false;
-                    const params = Object.assign({},this.query,pagination);
+                    const params = Object.assign({},this.query,this.pagination);
                     const resp = await servicesList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
@@ -186,7 +190,6 @@
             async search () {
                 this.getList();
             },
-
             //提示信息
             open() {
                  this.noticeHide = this.$notify.info({
@@ -280,6 +283,14 @@
         beforeRouteLeave(to,from,next){
             this.noticeHide.close();
             next();
+        },
+        watch : {
+            pagination : {
+                handler : function(){
+                    this.getList();
+                },
+                deep:true,
+            }
         }
     }
 </script>

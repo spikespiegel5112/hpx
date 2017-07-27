@@ -81,10 +81,11 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <section class="main-pagination">
-                <my-Pagination :callback="getList" :total="total">
-                </my-Pagination>
-            </section>
+           <!-- 
+            分页需改4
+            -->
+            <my-Pagination @pageChange="pageChange" :total="total">
+            </my-Pagination>
         </section>
         <!--编辑界面-->
 		<el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
@@ -159,6 +160,11 @@
                 ],
                 //总页数
                 total : 0,
+                //分页
+                /*
+                ** 分页需改1
+                */
+                pagination : {},
                 //table
                 tableList: [],
                 listLoading:false,
@@ -224,10 +230,27 @@
             ...mapState(["loginInfo"])
         },
         methods: {
+            /*
+            ** 分页需改2
+            */
+            pageChange(data){
+                this.pagination = data;
+            },
             async initData(){
+                this.getList();
+            },
+            async getList(){
+                /*
+                ** 分页需改5
+                */
                 this.listLoading = true;
                 try{
-                    this.getList();
+                    const params = Object.assign({},this.query,this.pagination);
+                    const resp = await getEnterprisesList(params);
+                    const res = await resp.json();
+                    const total = resp.headers.get('x-total-count')
+                    this.tableList = [...res];
+                    this.total = parseInt(total);
                     this.listLoading = false;
                     if(!this.tableList.length){
                         this.emptyText = "暂无数据";
@@ -237,20 +260,8 @@
                     this.listLoading = false;
                 }
             },
-            async getList(pagination={page:1,size:10}){
-                const params = Object.assign({},this.query,pagination);
-                const resp = await getEnterprisesList(params);
-                const res = await resp.json();
-                const total = resp.headers.get('x-total-count')
-                this.tableList = [...res];
-                this.total = parseInt(total);
-            },
             async search () {
-                try{
-                    this.getList();
-                }catch(e){
-
-                }
+                this.getList();
             },
 
             resetForm(formName) {
@@ -265,12 +276,21 @@
                 this.editeData = Object.assign({},{...row})
             }
         },
+        /*
+        ** 分页需改3
+        */
+        watch : {
+            pagination : {
+                handler : function(){
+                    this.getList();
+                },
+                deep:true,
+            }
+        }
     }
 </script>
 
 <style lang="less">
     @import '../../style/mixin';
-    .table_container{
-        padding: 20px;
-    }
+
 </style>

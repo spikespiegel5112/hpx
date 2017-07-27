@@ -6,12 +6,12 @@
 		</el-form-item>
 		<el-form-item label="新闻类型" prop='type'>
 			<el-select v-model="formData.type" placeholder="请选择">
-				<el-option v-for='elem in newsType' :label='elem.name' :value="elem.code"></el-option>
+				<el-option v-for='elem in newsType' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
 			</el-select>
 		</el-form-item>
 		<el-form-item label="发布方向" prop='direction'>
 			<el-checkbox-group v-model="formData.direction">
-				<el-checkbox v-for="elem in publishDirectionList" :label='elem.code' name='publishDirection'>{{elem.name}}</el-checkbox>
+				<el-checkbox v-for="elem in publishDirectionList" :key="elem.code" :label='elem.code' name='publishDirection'>{{elem.name}}</el-checkbox>
 			</el-checkbox-group>
 		</el-form-item>
 		<el-form-item label="有效期" prop='endTime'>

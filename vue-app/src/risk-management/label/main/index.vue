@@ -79,30 +79,36 @@
                 </el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
-                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >禁用</el-button>
-                        <el-button type="text" size="small" @click="remove(scope.row.id)" >删除</el-button>
+                        <el-button type="text" size="small" @click="check(scope.row.id)">查看</el-button>
+                        <el-button type="text" size="small" @click="edite(scope.row.id)">编辑</el-button>
+                        <el-button type="text" size="small" @click="deal(scope.$index,scope.row.id,scope.row.labelState)">{{scope.row.labelState === '0'? '启用' : '禁用'}}</el-button>
+                        <el-button type="text" size="small" @click="remove(scope.row.id)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <section class="main-pagination">
-                <my-Pagination :callback="getList" :total="total">
+                <my-Pagination :total="total" @pageChange="pageChange">
                 </my-Pagination>
             </section>
         </section>
         <!--上传弹窗-->
 		<el-dialog custom-class="up-modal" title="编辑" v-model="modalVisible" :close-on-click-modal="false">
 			<el-form :model="upInfo" label-width="80px" :rules="editRules" ref="upInfo">
-                <el-form-item label="标签名称" prop="id">
-					<el-input v-model="upInfo.id" auto-complete="off"></el-input>
+                <el-form-item label="标签名称" prop="name">
+					<el-input v-model="upInfo.name" auto-complete="on"></el-input>
 				</el-form-item>
-				<el-form-item label="导入说明" prop="name">
-					<el-input v-model="upInfo.name" auto-complete="off"></el-input>
+				<el-form-item label="导入说明" prop="describe">
+					<el-input v-model="upInfo.describe" auto-complete="on"></el-input>
 				</el-form-item>
                 <el-form-item label="上传文件" prop="name">
 					<el-upload
-                        action=""
+                        :action="excelAction"
+                        data:excelData
+                        :file-list="excelList"
+                        :on-change="excelChange"
+                        :before-upload="excelBefore"
+                        :on-success="excelSuccess"
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                     >
                         <el-button size="small" icon="upload2" type="primary">点击上传</el-button>
                     </el-upload>
@@ -110,7 +116,7 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="modalVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="editSubmit">提交</el-button>
+				<el-button type="primary" @click.native="importLabel">提交</el-button>
 			</div>
 		</el-dialog>
     </div>
@@ -119,7 +125,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { labelList ,labelDelete } from '@/api/riskApi'
+    import { labelList ,labelDelete , labelImport , labelImportSubmit , labelStatusAction } from '@/api/riskApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -161,6 +167,11 @@
                 ],
                 //总页数
                 total : 0,
+                //分页 设置接收
+                pagination : {
+                    // page: 1, //当前页
+                    // size: 1,//每页个数
+                },
                 //table
                 tableList: [],
                 listLoading:false,
@@ -181,16 +192,13 @@
                 //模态框
                 modalVisible : false,
                 upInfo : {
-                    id : '',
                     name : '',
-                    activated : '',
-                    address : '',
-                    contactsNumber : '',
-                    birth:''
+                    describe:''
                 },
+                excelList : [],
                 editRules : {
                     name : [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
+						{ required: true, message: '请输入标签名称', trigger: 'blur' }
 					]
                 }
             }
@@ -199,20 +207,32 @@
             headTop,
             myPagination,
     	},
-        created(){
+        activated(){
             this.initData();
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo"]),
+            excelData(){
+                return {
+                    id:this.labelId,
+                    eid:this.loginInfo.enterpriseId
+                }
+            },
+            excelAction(){
+                return labelImport();
+            }
         },
         methods: {
+            pageChange(data){
+                this.pagination = data;
+            },
             async initData(){
                 this.getList();
             },
-            async getList(pagination={page:1,size:10}){
+            async getList(){
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({},this.query,pagination);
+                    const params = Object.assign({},this.query,this.pagination);
                     const resp = await labelList(this.loginInfo.enterpriseId,params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
@@ -230,11 +250,8 @@
             async search () {
                 this.getList();
             },
-
             resetForm(formName) {
-                this.$refs[formName].resetFields(
-
-                );
+                this.$refs[formName].resetFields();
             },
             datePick(value){
                 if(value){
@@ -246,13 +263,31 @@
                     this.query.endTime = '';
                 }
             },
-            check (index,row){
-                this.$router.push({path: this.$route.path + '/detail/' + row.id})
+            check (id){
+                this.$router.push({path: this.$route.path + '/detail/check_' + id})
             },
-            edite (index,row) {
-                this.modalVisible = true;
-                this.upInfo = Object.assign({},{...row})
+            edite (id) {
+                this.$router.push({path: this.$route.path + '/detail/edite_' + id})
             },
+            async deal(index,id,type){
+                try{
+                    const resp = await labelStatusAction(this.loginInfo.enterpriseId,id);
+                    if(resp.status === 200){
+                        this.$message({
+                            type : 'success',
+                            message:'操作成功'
+                        });
+                        if(type === '0'){
+                            this.tableList[index].labelState = '1'
+                        }else{
+                            this.tableList[index].labelState = '0'
+                        }
+                        
+                    }
+                }catch(e){
+                    this.$message.error(e)
+                }
+            },  
             loadModule(){
 
             },
@@ -269,8 +304,44 @@
                 }catch(e){
                     this.$message.error(e)
                 }
+            },
+            excelChange(file,list){
+                this.excelList = list;
+            },
+            excelBefore(){
+                if(this.excelList.length > 1){
+                    this.$message({
+                        type:'info',
+                        message:'每次只能上传一个 '
+                    });
+                    return false;
+                }
+            },
+            excelSuccess(response,f,l){
+                console.log(response,f,l)
+            },
+            importLabel(){
+                this.$refs['upInfo'].validate(
+                    async (valid) => {
+                        if(valid){
+                            try{
+                                const resp = await labelImportSubmit(this.loginInfo.enterpriseId)
+                            }catch(e){
+
+                            }
+                        }
+                    }
+                )
             }
         },
+        watch : {
+            pagination : {
+                handler : function(){
+                    this.getList();
+                },
+                deep:true,
+            }
+        }
     }
 </script>
 

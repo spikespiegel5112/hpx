@@ -73,7 +73,7 @@
                 </el-table-column>
             </el-table>
             <section class="main-pagination">
-                <my-Pagination :callback="getList" :total="total">
+                <my-Pagination @pageChange="pageChange" :total="total">
                 </my-Pagination>
             </section>
         </section>
@@ -209,14 +209,17 @@
             ...mapState(["loginInfo"])
         },
         methods: {
+            pageChange(data){
+                this.pagination = data;
+            },
             async initData(){
                 this.getList();
             },
-            async getList(pagination={page:1,size:10}){
+            async getList(){
                 this.listLoading = true;
                 try{
                     this.listLoading = false;
-                    const params = Object.assign({},this.query,pagination);
+                    const params = Object.assign({},this.query,this.pagination);
                     const resp = await getEnterprisesList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
@@ -252,6 +255,14 @@
                 }
             }
         },
+        watch : {
+            pagination : {
+                handler : function(){
+                    this.getList();
+                },
+                deep:true,
+            }
+        }
     }
 </script>
 

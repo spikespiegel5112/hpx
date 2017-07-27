@@ -2,8 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import hpxRouter from '../hpx-manager'
 import enterprisePlatformRouter from '../enterprise-platform'
-Vue.use(Router)
+import riskManagementRouter from '../risk-management'
 
+Vue.use(Router)
 
 /*
 **	model template
@@ -114,7 +115,8 @@ const routes = [
 	// enterprise manager
 	enterprisePlatformRouter,
 
-	// enterprise project
+	// 风控相关路由x
+	riskManagementRouter
 ]
 
 export default new Router({

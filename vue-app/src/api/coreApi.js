@@ -100,7 +100,7 @@ export const servicesOpen = (eid, data) => fetch('/core' + `/core/api/v1/enterpr
 /*
  ** 获取 修改企业状态
  */
-export const eidStatus = (eid) => fetch('/core' + `/core/api/v1/enterprises/palt/enterprise/status/${eid}`)
+export const eidStatus = (eid) => fetch('/core' + `/core/api/v1/enterprises/palt/enterprise/status/${eid}`,{},'patch')
 
 /**
  * 产品管理--获取产品列表
