@@ -19,7 +19,7 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="企业角色" prop="type">
+					<el-form-item label="产品企业类型" prop="type">
 						<el-select v-model="formData.type" @change='getEnterpriseType' placeholder="请选择">
 							<el-option v-for="item in typeList" :key="item.name" :label="item.name" :value="item.code">
 							</el-option>
@@ -55,11 +55,11 @@ import headTop from '@/components/headTop'
 import moment from 'moment'
 import {
 	getEnterprisesList,
+	enterpriseRolesList,
 	createProject
 } from '@/api/coreApi'
 import {
-	getProductList,
-	getEntRolesList
+	getProductList
 } from '@/api/getData'
 export default {
 	data() {
@@ -67,7 +67,7 @@ export default {
 			dateFormat: "YYYY-MM-DD",
 			enterpriseList: [],
 			productList: [],
-			productCodeCode: '',
+			productCode: '',
 			typeList: [],
 			typeValue: '',
 			formData: {
@@ -99,7 +99,7 @@ export default {
 				}],
 				type: [{
 					required: true,
-					message: '请选择企业角色',
+					message: '请选择产品企业类型',
 					trigger: 'change'
 				}],
 				name: [{
@@ -148,8 +148,8 @@ export default {
 			}
 			alert(typeof this.formData.ownerEnterpriseId)
 		},
-		chooseEntRoles(productCodeCode) {
-			this.productCodeCode = this.formData.productCode;
+		chooseEntRoles(productCode) {
+			this.productCode = this.formData.productCode;
 			for (var item in this.productList) {
 				if (this.productList[item].id == this.formData.productCode) {
 					this.getTypes(this.productList[item].code);
@@ -157,10 +157,12 @@ export default {
 				}
 			}
 		},
-		async getTypes(productCodeCode) {
-			let response = await getEntRolesList(productCodeCode);
-			let result = await response.json();
-			this.typeList = [...result];
+		getTypes(productCode) {
+			enterpriseRolesList(productCode).then(response => {
+				response.json().then(result => {
+					this.typeList = result;
+				})
+			})
 		},
 		getEnterpriseType(value) {
 			this.typeValue = value;
@@ -176,9 +178,9 @@ export default {
 					this.formData.startTime = this.formData.startTime != '' ? moment(this.formData.startTime).format(this.dateFormat) : '';
 					this.formData.endTime = this.formData.endTime != '' ? moment(this.formData.endTime).format(this.dateFormat) : '';
 					console.log(this.formData)
-					createProject(eid, type, this.formData).then((response)=>{
+					createProject(eid, type, this.formData).then((response) => {
 						console.log(response.status)
-						if (response.status==200) {
+						if (response.status == 200) {
 							// this.$router.push({
 							// 	name: 'projectsMaintenance'
 							// })

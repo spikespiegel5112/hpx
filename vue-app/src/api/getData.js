@@ -252,7 +252,15 @@ export const getProjectList = () => fetch('/core/core/api/v1/projects');
  * 取得企业项目信息列表, 支持分页
  */
 
-export const enterpriseProjectListRequest = (eid) =>{
+export const enterpriseListRequest = query =>{
+    return fetch(`/core/core/api/v1/enterprises`, query);
+}
+
+/**
+ * 取得企业项目信息列表, 支持分页
+ */
+
+export const enterpriseProjectListRequest = () =>{
     return fetch(`/core/core/api/v1/enterprise/projects/vo`);
 }
 
@@ -274,11 +282,7 @@ export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterpr
 
 export const getProductList = () => fetch('/core/core/api/v1/products');
 
-/**
- * 获取企业角色信息
- */
 
-export const getEntRolesList = product_code => fetch(`/core/core/api/v1/products/${product_code}/ent_roles`);
 
 /**
  * 获取新闻公告列表

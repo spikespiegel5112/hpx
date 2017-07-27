@@ -4,15 +4,12 @@
         <el-tabs type="border-card">
           <el-tab-pane label="我的项目">
               <el-table row-key="id" :empty-text="emptyText" :data="myProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
-      			<!-- <el-table-column type="index" width="100"></el-table-column> -->
-
       			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
       			</el-table-column>
       			<el-table-column label="操作">
       				<template scope="scope">
-      					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
       					<el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
-      					<el-button type="text" size="small" @click="deleteProjectFunction(scope)">邀请</el-button>
+      					<el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
       					<el-button type="text" size="small" @click="audit(scope)">邀请记录</el-button>
       				</template>
       			</el-table-column>
@@ -30,10 +27,9 @@
       			</el-table-column>
       			<el-table-column label="操作">
       				<template scope="scope">
-      					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
       					<el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
-      					<el-button type="text" size="small" @click="deleteProjectFunction(scope)">邀请</el-button>
-      					<el-button type="text" size="small" @click="audit(scope)">邀请记录</el-button>
+      					<el-button type="text" size="small" @click="acceptInvite(scope)">接受</el-button>
+      					<el-button type="text" size="small" @click="rejectInvite(scope)">拒绝</el-button>
       				</template>
       			</el-table-column>
       		</el-table>
@@ -43,6 +39,28 @@
     		</section>
           </el-tab-pane>
         </el-tabs>
+        <el-dialog title='选择企业及角色' :visible.sync='inviteEnterpriseFlag'>
+            <el-form :model="inviteData" :rules="rules" ref='ruleForm' label-width="110px">
+                <el-form-item label="企业名称" prop='inviteDataEid'>
+                    <el-select v-model="inviteData.eid" placeholder="请选择">
+                        <el-option
+                          v-for="item in enterpriseList" :key='item.name' :label="item.name" :value="item.id">
+                        </el-option>
+                      </el-select>
+                </el-form-item>
+                <el-form-item label="企业类型" prop='inviteDataPid'>
+                    <el-select v-model="inviteData.pid" placeholder="请选择">
+                        <el-option
+                          v-for="item in roleList" :key='item.name' :label="item.name" :value="item.id" @change='aaa'>
+                        </el-option>
+                      </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="inviteEnterpriseFlag = false">取 消</el-button>
+              <el-button type="primary" @click="submitInvite('ruleForm')">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 
   </template>
@@ -51,8 +69,13 @@
   import moment from 'moment'
   import myPagination from '@/components/myPagination'
   import {
+      enterpriseListRequest,
       enterpriseProjectListRequest
   } from '@/api/getData'
+  import {
+      enterpriseRolesList,
+      modifyProjectRequest
+  } from '@/api/coreApi'
   export default{
       components: {
         headTop,
@@ -62,6 +85,40 @@
           const dateFormat = "YYYY-MM-DD";
           return{
               eid:this.$store.state.loginInfo.enterpriseId,
+              inviteData:{
+                  eid:null,
+                  pid:null
+              },
+              ruleForm:{
+                  inviteDataEid: '',
+  				inviteDataPid: ''
+              },
+              rules: {
+  				inviteDataEid: [{
+  					required: true,
+  					message: '请选择企业名称',
+  					trigger: 'blur'
+  				}],
+  				inviteDataPid: [{
+  					required: true,
+  					message: '请选择产品类型',
+  					trigger: 'blur'
+  				}]
+  			},
+              //table
+              myProjectList: [],
+                myProjectListTotal: 0, //总数
+                invitedProjectList: [],
+                invitedProjectTotal: 0, //总数
+                  listLoading: false,
+                  enterpriseList:[],
+                  roleList:[],
+                pagination: {
+                  page: 1,
+                  size: 10
+              },
+              emptyText: "暂无数据",
+            inviteEnterpriseFlag:false,
              	//table columns
               columns: [{
   				label: '产品',
@@ -89,17 +146,6 @@
   				minWidth: 60,
                 formatter: (row, column) => moment(column.endTime).format(dateFormat)
   			}],
-              //table
-  			myProjectList: [],
-            myProjectListTotal: 0, //总数
-            invitedProjectList: [],
-            invitedProjectTotal: 0, //总数
-  			listLoading: false,
-            pagination: {
-    			page: 1,
-    			size: 10
-    		},
-  			emptyText: "暂无数据",
           }
       },
       activated(){
@@ -118,6 +164,7 @@
                     for (var item in result) {
                         if (result[item].inviteStatus=='F') {
                             that.myProjectList.push(result[item]);
+                            console.log(that.myProjectList);
                         }
                         this.myProjectListTotal=result.length
                     }
@@ -130,6 +177,45 @@
                     }
                 })
             })
+        },
+        inviteEnterprise(scope){
+            console.log(scope);
+            // this.inviteData.pid=scope.
+            this.inviteEnterpriseFlag=true;
+            this.getEnterpriseList();
+            this.getEnterpriseRolesList(scope.row.priductCode);
+        },
+        submitInvite(formRule){
+            console.log(this.inviteData);
+            this.$refs[formRule].validate((valid) => {
+                modifyProjectRequest(this.inviteData).then(response=>{
+                    response.json().then(result=>{
+                        console.log(result);
+                        this.getList();
+                    })
+                })
+            })
+
+        },
+        getEnterpriseList(){
+            enterpriseListRequest().then(response=>{
+                response.json().then(result=>{
+                    console.log(result);
+                    this.enterpriseList=result;
+                })
+            })
+        },
+        getEnterpriseRolesList(priductCode){
+            // alert(priductCode)
+            enterpriseRolesList(priductCode).then(response=>{
+                response.json().then(result=>{
+                    console.log(result);
+                    this.roleList=result;
+                })
+            })
+        },
+        aaa(){
+            alert(this.inviteData.pid)
         }
       }
   }

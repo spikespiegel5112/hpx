@@ -133,6 +133,14 @@ export const addProduct= (params) => fetch(`/core/core/api/v1/products`,params, 
 export const editProduct= (id, params) => fetch(`/core/core/api/v1/products/${id}`,params, 'patch');
 
 /**
+ * 根据产品code获取所有企业角色信息
+ */
+
+export const enterpriseRolesList = product_code =>{
+    return fetch(`/core/core/api/v1/products/${product_code}/ent_roles`);
+}
+
+/**
  * 创建项目信息
  */
 
@@ -179,6 +187,14 @@ export const editUser= (id, eid, params) => fetch(`/core/core/api/v1/enterprise/
 
 export const auditProjectRequest = (eid, pid, state) => {
     return fetch(`/core/core/api/v1/enterprise/${eid}/projects/${pid}/state/${state}`, {}, 'patch');
+}
+
+/**
+ * 新增企业项目信息
+ */
+
+export const modifyProjectRequest = (options) => {
+    return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}`, {}, 'put');
 }
 
 
