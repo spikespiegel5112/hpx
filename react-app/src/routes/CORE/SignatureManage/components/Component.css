@@ -1,0 +1,44 @@
+/*.ant-advanced-search-form {
+  padding: 24px;
+  background: #fbfbfb;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}*/
+.remark {
+  padding: 8px 25px 15px;
+}
+
+.name {
+   font-weight:700; 
+   font-size:14px;
+}
+
+.service {
+  border: 1px solid #ccc;
+  height: 93px;
+  width: 60%;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.icon {
+  float: right;
+  position: absolute;
+  right: 10px;
+  top: 46px;
+  font-size: 18px;
+}
+
+.img {
+  float: left;
+  margin-right: 10px
+}
+
+.signature-col {
+  vertical-align: middle;
+}
+
+.signature-pic {
+  width: 80px;
+  height: 80px;
+}

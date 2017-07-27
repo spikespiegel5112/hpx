@@ -1,0 +1,28 @@
+.mobileBefore {
+  width: 60px !important;
+}
+
+.ant-upload-select-picture-card .ant-upload-text {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.ant-upload-select-picture-card i {
+  font-size: 28px;
+  color: #999;
+}
+
+.scoreCardName {
+  height: 40px;
+  padding: 0 0 6px 6px;
+  margin: 20px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.scoreCardName span {
+  display: inline-block;
+  line-height: 40px;
+  font-size: 16px;
+  font-weight: 700;
+}

@@ -1,0 +1,27 @@
+.sideFooter{
+    /*border: 1px solid #000;*/
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    text-align: center;
+}
+
+.sideFooter a{
+    display: block;
+    color: #444;
+    font-size: 12px;
+}
+.ant-layout-sider-collapsed .nav-text{
+    display: none;
+}
+.ant-menu-submenu-vertical > .ant-menu-submenu-title:after{
+    display: none;
+}
+.ant-layout-sider-collapsed .anticon{
+    font-size: 16px;
+    margin-left: 8px;
+}
+.ant-layout-sider-has-trigger{
+    padding-top:40px;
+    padding-bottom: 0;
+}

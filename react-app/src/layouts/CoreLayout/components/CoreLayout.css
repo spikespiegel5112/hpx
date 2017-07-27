@@ -1,0 +1,21 @@
+#layout {
+  position: absolute;
+  top:0;
+  right:0;
+  left:0;
+  bottom:0;
+}
+
+.transitionAnima {
+  position: absolute;
+  top: 0;
+}
+
+.breadcrumb-setion{
+  margin:20px 0 20px 40px;
+}
+.breadcrumb-setion:after{
+  content: '';
+  display:block;
+  clear: both;
+}

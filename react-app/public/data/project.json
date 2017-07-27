@@ -1,0 +1,8 @@
+[
+{"name":"化纤供应商","route":"myProject/{}/supplier/","id":"p1"},
+{"name":"化纤需方","route":"demander","id":"p2"},
+{"name":"票据融资(融资方)","route":"My","id":"p3"},
+{"name":"贸易管理(贸易商)","route":"My","id":"p4"},
+{"name":"票据融资(资金方)","route":"My","id":"p5"},
+{"name":"票据融资(资金方)","route":"My","id":"p6"}
+]

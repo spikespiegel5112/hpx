@@ -1,0 +1,37 @@
+[ 
+      {
+        "name":"模型管理",
+        "icon": "caret-down",
+        "permissionsId":"menu2",
+        "vRolePermissionCustom":[
+         {
+            "name":"模型",
+            "link": "/SupplierContract"
+          },
+          {
+            "name":"标签",
+            "link": "/label-info"
+          },
+          {
+            "name":"公允参数",
+            "link": "/PurchaseContract"
+          }
+        ]
+      },
+      {
+        "name":"准入管理",
+        "icon": "caret-down",
+        "permissionsId":"menu3",
+        "vRolePermissionCustom":[
+          {
+            "name":"准入企业",
+            "link": "/enterpriseAccessPre"
+          },
+          {
+            "name":"准入报告",
+            "link": "/AfterSale/F"
+          }
+        ]
+      }
+    ]
+  
