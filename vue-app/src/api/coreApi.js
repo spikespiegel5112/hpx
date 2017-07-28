@@ -136,7 +136,7 @@ export const editProduct= (id, params) => fetch(`/core/core/api/v1/products/${id
  * 根据产品code获取所有企业角色信息
  */
 
-export const enterpriseRolesList = product_code =>{
+export const enterpriseRolesListRequest = product_code =>{
     return fetch(`/core/core/api/v1/products/${product_code}/ent_roles`);
 }
 

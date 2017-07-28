@@ -41,14 +41,14 @@
         </el-tabs>
         <el-dialog title='选择企业及角色' :visible.sync='inviteEnterpriseFlag'>
             <el-form :model="inviteData" :rules="rules" ref='ruleForm' label-width="110px">
-                <el-form-item label="企业名称" prop='inviteDataEid'>
+                <el-form-item label="企业名称" prop='eid'>
                     <el-select v-model="inviteData.eid" placeholder="请选择">
                         <el-option
-                          v-for="item in enterpriseList" :key='item.name' :label="item.name" :value="item.id">
+                          v-for="item in enterpriseList" :key='item.id' :label="item.name" :value="item.id">
                         </el-option>
                       </el-select>
                 </el-form-item>
-                <el-form-item label="企业类型" prop='inviteDataPid'>
+                <el-form-item label="企业类型" prop='pid'>
                     <el-select v-model="inviteData.pid" placeholder="请选择">
                         <el-option
                           v-for="item in roleList" :key='item.name' :label="item.name" :value="item.id" @change='aaa'>
@@ -73,7 +73,7 @@
       enterpriseProjectListRequest
   } from '@/api/getData'
   import {
-      enterpriseRolesList,
+      enterpriseRolesListRequest,
       modifyProjectRequest
   } from '@/api/coreApi'
   export default{
@@ -90,16 +90,16 @@
                   pid:null
               },
               ruleForm:{
-                  inviteDataEid: '',
-  				inviteDataPid: ''
+                  eid: '',
+  				  pid: ''
               },
               rules: {
-  				inviteDataEid: [{
+  				eid: [{
   					required: true,
   					message: '请选择企业名称',
   					trigger: 'blur'
   				}],
-  				inviteDataPid: [{
+  				pid: [{
   					required: true,
   					message: '请选择产品类型',
   					trigger: 'blur'
@@ -198,16 +198,22 @@
 
         },
         getEnterpriseList(){
+            this.enterpriseList=[];
             enterpriseListRequest().then(response=>{
                 response.json().then(result=>{
                     console.log(result);
-                    this.enterpriseList=result;
+                    for (var item in result) {
+                        this.$set(this.enterpriseList, item, result[item])
+                    }
+
+                    // this.enterpriseList=result;
+
                 })
             })
         },
         getEnterpriseRolesList(priductCode){
-            // alert(priductCode)
-            enterpriseRolesList(priductCode).then(response=>{
+            this.roleList=[];
+            enterpriseRolesListRequest(priductCode).then(response=>{
                 response.json().then(result=>{
                     console.log(result);
                     this.roleList=result;
