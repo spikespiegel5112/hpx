@@ -2,11 +2,11 @@
 <div class="fillcontain">
 	<head-top></head-top>
 	<!-- <div class="header_container">
-		<el-breadcrumb separator="/">
-			<el-breadcrumb-item :to="{ name: 'manager' }">首页</el-breadcrumb-item>
-			<el-breadcrumb-item v-for="(item, index) in $route.meta.breadcrumb" key="index">{{item}}</el-breadcrumb-item>
-		</el-breadcrumb>
-	</div> -->
+			<el-breadcrumb separator="/">
+				<el-breadcrumb-item :to="{ name: 'manager' }">首页</el-breadcrumb-item>
+				<el-breadcrumb-item v-for="(item, index) in $route.meta.breadcrumb" key="index">{{item}}</el-breadcrumb-item>
+			</el-breadcrumb>
+		</div> -->
 
 	<!--  搜索条件  -->
 	<section class='search-criteria-container'>
@@ -37,21 +37,16 @@
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
-			<el-table-column label="序号" type="index" prop="num" width="80" align="center">
-			</el-table-column>
 			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
 			<el-table-column align="center" label="操作">
-				<template scope="scope">
-                    <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
-                    <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
-					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
-                </template>
+				<el-button type="text" size="small">企业ddd填报信息</el-button>
+				<el-button type="text" size="small">企业准入</el-button>
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">
-			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
-			</my-Pagination>
+			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+			</el-pagination>
 		</section>
 	</section>
 	</span>
@@ -63,12 +58,8 @@
 import headTop from '../../components/headTop'
 import myPagination from '@/components/myPagination'
 import {
-	noticeRequest,
-} from '@/api/getData'
-import {
-	publishNoticeRequest,
-	deleteNoticeRequest
-} from '@/api/noticeApi'
+	templateReportListRequest,
+} from '@/api/templateApi'
 import {
 	mapState
 } from 'vuex'
@@ -77,26 +68,57 @@ export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
+			eid: this.$store.state.loginInfo.enterpriseId,
 			//table columns
 			columns: [{
-				label: '标题',
-				prop: 'title',
+				label: '企业名称',
+				prop: 'enterpriseName',
 				sortable: true,
 			}, {
-				label: '发布时间',
-				prop: 'createTime',
+				label: '企业ID',
+				prop: 'id',
 				sortable: true,
 				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
-				label: '发布者',
+				label: '项目名称',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '企业类型',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '组织机构代码',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '城市',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '联系人',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '电话',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '状态',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '操作',
 				prop: 'creator',
 				sortable: true,
 			}],
 			//总页数
 			pagination: {
-				total: 0,
-				page: 1,
-				size: 10,
+				params: {
+					page: 1,
+					size: 10
+				},
+				total: 0
 			},
 			//table
 			tableList: [],
@@ -127,8 +149,9 @@ export default {
 		async initData() {
 			this.listLoading = true;
 			this.pagination.page = 1;
+			this.getList();
 			try {
-				this.getList();
+
 				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
@@ -138,18 +161,22 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		async getList(pagination = {
-			page: 1,
-			size: 10,
-		}) {
-			console.log(pagination);
-			const params = Object.assign({}, this.query, pagination);
+		flipPage(pageIndex) {
+			this.pagination.params.page = pageIndex;
+			this.getList();
+		},
+		getList() {
+			let params = Object.assign(this.pagination.params)
 			console.log(params)
-			const resp = await noticeRequest(params);
-			const res = await resp.json();
-			const total = resp.headers.get('x-total-count')
-			this.tableList = [...res];
-			this.pagination.total = parseInt(total);
+			templateReportListRequest(this.eid, params).then(response => {
+				this.pagination.total = Number(response.headers.get('x-total-count'))
+
+				response.json().then(result => {
+					console.log(result)
+					this.tableList = result;
+				})
+			})
+
 		},
 		async search() {
 			try {
@@ -158,49 +185,7 @@ export default {
 
 			}
 		},
-		addNotice() {
-			this.$router.push({
-				name: 'noticeEdit',
-				params: {
-					noticeId: 'add&'
-				}
-			})
-		},
-		modifyNotice(scope) {
-			this.$router.push({
-				name: 'noticeEdit',
-				params: {
-					noticeId: 'modify&' +scope.row.id
-				}
-			})
-		},
-		reviewNotice(scope) {
-			this.$router.push({
-				name: 'noticeEdit',
-				params: {
-					noticeId: 'review&' + scope.row.id
-				}
-			})
-		},
-		deleteNotice(scope) {
-			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-				deleteNoticeRequest(scope.row.id).then(() => {
-					this.tableList = [];
-					this.getList();
-					this.deleteNoticeFlag = false;
-				})
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: '已取消删除'
-				});
-			});
 
-		}
 
 
 	}
@@ -210,6 +195,6 @@ export default {
 <style lang="less">
 @import '../../style/mixin';
 .table_container {
-    padding: 20px;
+	padding: 20px;
 }
 </style>

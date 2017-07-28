@@ -11,7 +11,14 @@ const editPwd = r => require.ensure([], () => r(require('@/enterprise-platform/s
 const certification = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep')), 'certification-ep');
 const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platform/services-open')), 'enterprise-platform-serivces');
 
+// 项目管理
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
+
+//账户总览
+const accountManagement = r => require.ensure([], () => r(require('@/enterprise-platform/account/accountManagement')), 'accountManagement');
+
+//交易明细
+const transactionDetail = r => require.ensure([], () => r(require('@/enterprise-platform/account/transactionDetail')), 'transactionDetail');
 
 //公共参数
 const fairParameter = r => require.ensure([], () => r(require('@/risk-management/fair-parameter')), 'fairParameter');
@@ -35,6 +42,14 @@ export default {
 			path: 'project',
 			component: myProject,
 			meta: ['项目管理', '我的项目'],
+		},{
+			path: 'account-management',
+			component: accountManagement,
+			meta: ['资金管理', '账户总览'],
+		},{
+			path: 'transaction-detail',
+			component: transactionDetail,
+			meta: ['资金管理', '交易明细'],
 		},{
 			path: 'secure',
 			component: securitySetting,
