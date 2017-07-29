@@ -9,7 +9,7 @@
 		</div> -->
 
 	<!--  搜索条件  -->
-	<section class='search-criteria-container'>
+	<!-- <section class='search-criteria-container'>
 		<el-form :inline="true" :model="query" ref="query">
 			<el-row>
 				<el-col :span="6">
@@ -33,17 +33,37 @@
 			</el-row>
 		</el-form>
 		</el-col>
-	</section>
+	</section> -->
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
 			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
 			<el-table-column align="center" label="操作">
-				<el-button type="text" size="small">企业ddd填报信息</el-button>
-				<el-button type="text" size="small">企业准入</el-button>
+				<template scope='scope'>
+					<el-button type="text" size="small" @click='getEnterpriseReport(scope)'>企业填报信息</el-button>
+					<el-button type="text" size="small" @click='evaluateEnterprise(scope)'>企业准入</el-button>
+				</template>
 			</el-table-column>
 		</el-table>
+		<el-dialog title="请选择评估模型" :visible.sync="evaluateEnterpriseDialogFlag">
+			<el-form :inline="true">
+				<el-form-item label="请选择行业" inline>
+					<el-select v-model="industryType" placeholder="请选择" @change='selectIndustry'>
+						<el-option v-for="item in industryList" :label="item.industryName" :value="item.id"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="请选择模型" inline>
+					<el-select v-model="modelType" placeholder="请选择">
+						<el-option v-for="item in modelList" :label="item.gradeCardName" :value="item.id"></el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="evaluateEnterpriseDialogFlag = false">取 消</el-button>
+				<el-button type="primary" @click="toEvaluate()">确 定</el-button>
+			</div>
+		</el-dialog>
 		<section class="main-pagination">
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
@@ -58,8 +78,13 @@
 import headTop from '../../components/headTop'
 import myPagination from '@/components/myPagination'
 import {
-	templateReportListRequest,
+	allIndustryListRequest,
+	scoringmodelNameByIndustryRequest,
+	templateReportRequest,
 } from '@/api/templateApi'
+import {
+	veyiterpriseAccessRequest,
+} from '@/api/enterpriseApi'
 import {
 	mapState
 } from 'vuex'
@@ -81,35 +106,31 @@ export default {
 				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
 				label: '项目名称',
-				prop: 'creator',
+				prop: 'projectName',
 				sortable: true,
 			}, {
 				label: '企业类型',
-				prop: 'creator',
+				prop: 'roleName',
 				sortable: true,
 			}, {
 				label: '组织机构代码',
-				prop: 'creator',
+				prop: 'codeOrg',
 				sortable: true,
 			}, {
 				label: '城市',
-				prop: 'creator',
+				prop: 'city',
 				sortable: true,
 			}, {
 				label: '联系人',
-				prop: 'creator',
+				prop: 'contacts',
 				sortable: true,
 			}, {
 				label: '电话',
-				prop: 'creator',
+				prop: 'contactsPhone',
 				sortable: true,
 			}, {
 				label: '状态',
-				prop: 'creator',
-				sortable: true,
-			}, {
-				label: '操作',
-				prop: 'creator',
+				prop: 'creditState',
 				sortable: true,
 			}],
 			//总页数
@@ -124,15 +145,15 @@ export default {
 			tableList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
-
-			//search params
-			query: {
-
-			},
 			//搜索条件的个数
 			criteriaNum: 3,
-			//模态框
-			deleteNoticeFlag: false,
+			//选择模型模态框
+			evaluateEnterpriseDialogFlag: false,
+			industryList: [],
+			industryType: '',
+			modelList: [],
+			modelType: ''
+
 		}
 	},
 	components: {
@@ -151,7 +172,6 @@ export default {
 			this.pagination.page = 1;
 			this.getList();
 			try {
-
 				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
@@ -166,9 +186,14 @@ export default {
 			this.getList();
 		},
 		getList() {
-			let params = Object.assign(this.pagination.params)
+			let params = {
+				params: this.pagination.params
+			}
+			let options = Object.assign({
+				id: this.eid
+			}, params)
 			console.log(params)
-			templateReportListRequest(this.eid, params).then(response => {
+			veyiterpriseAccessRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 
 				response.json().then(result => {
@@ -176,16 +201,61 @@ export default {
 					this.tableList = result;
 				})
 			})
-
 		},
-		async search() {
-			try {
-				this.getList();
-			} catch (e) {
-
+		getEnterpriseReport(scope) {
+			console.log(scope);
+			let options = {
+				eid: scope.row.employerId,
+				// params:{}
 			}
-		},
+			console.log(options);
+			templateReportRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
 
+				})
+			})
+		},
+		getIndustryList() {
+			let options = {}
+			allIndustryListRequest().then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.industryList = result;
+
+				})
+			})
+		},
+		getModelList() {
+			let options = {
+				params: {
+					eid: this.eid,
+					hid: this.industryType
+				}
+			}
+			scoringmodelNameByIndustryRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.modelList = result;
+				})
+			})
+		},
+		evaluateEnterprise() {
+			this.evaluateEnterpriseDialogFlag = true;
+			this.getIndustryList();
+		},
+		selectIndustry() {
+			this.getModelList();
+		},
+		toEvaluate() {
+			console.log(this.industryType);
+			this.$router.push({
+				name: 'admittanceEvaluating',
+				params: {
+					modelId: this.modelType
+				}
+			})
+		}
 
 
 	}
@@ -195,6 +265,6 @@ export default {
 <style lang="less">
 @import '../../style/mixin';
 .table_container {
-	padding: 20px;
+    padding: 20px;
 }
 </style>

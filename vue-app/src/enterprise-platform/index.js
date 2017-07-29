@@ -26,6 +26,9 @@ const fairParameter = r => require.ensure([], () => r(require('@/risk-management
 //企业准入
 const admittanceManagement = r => require.ensure([], () => r(require('@/enterprise-platform/admittance/admittanceManagement')), 'admittanceManagement');
 
+//准入评估
+const admittanceEvaluating = r => require.ensure([], () => r(require('@/enterprise-platform/admittance/admittanceEvaluating')), 'admittanceEvaluating');
+
 //准入报告
 const admittanceReport = r => require.ensure([], () => r(require('@/enterprise-platform/admittance/admittanceReport')), 'admittanceReport');
 
@@ -78,6 +81,11 @@ export default {
 			path:'enterprise-access-pre',
 			component : admittanceManagement,
 			meta:["风控管理","企业准入"]
+		},{
+			path:'evaluating/:modelId',
+            name:'admittanceEvaluating',
+			component : admittanceEvaluating,
+			meta:["风控管理",'企业准入',"准入评估"]
 		},{
 			path:'report',
 			component : admittanceReport,
