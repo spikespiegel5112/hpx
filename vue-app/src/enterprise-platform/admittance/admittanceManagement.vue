@@ -94,6 +94,7 @@ export default {
 		const dateFormat = "YYYY-MM-DD";
 		return {
 			eid: this.$store.state.loginInfo.enterpriseId,
+			pid: '',
 			//table columns
 			columns: [{
 				label: '企业名称',
@@ -195,14 +196,14 @@ export default {
 			console.log(params)
 			veyiterpriseAccessRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
-
+				
 				response.json().then(result => {
 					console.log(result)
 					this.tableList = result;
 				})
 			})
 		},
-		getEnterpriseReport(scope) {
+		getEnterpriseReport(scope) {modelId
 			console.log(scope);
 			let options = {
 				eid: scope.row.employerId,
@@ -240,7 +241,9 @@ export default {
 				})
 			})
 		},
-		evaluateEnterprise() {
+		evaluateEnterprise(scope) {
+			console.log(this.pid);
+			this.pid=scope.row.projectId;
 			this.evaluateEnterpriseDialogFlag = true;
 			this.getIndustryList();
 		},
@@ -253,7 +256,8 @@ export default {
 			this.$router.push({
 				name: 'admittanceEvaluating',
 				params: {
-					modelId: this.modelType
+					modelId: this.modelType,
+					projectId: this.pid
 				}
 			})
 		}
