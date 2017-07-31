@@ -3,13 +3,12 @@
 	<head-top></head-top>
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" name="1">
-			<el-form ref="form" :model="formData[index]" label-width="60%">
-				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition">
-					<el-select v-model="formData[index2]" placeholder="请选择" @change='selectScore()' style="width: 100px;">
-
+			<el-form ref="form" label-width="60%">
+				<!-- <el-form-item v-model='tempData' v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition">
+					<el-select v-model='tempData[index2]' placeholder="请选择" @change='selectScore()' style="width: 100px;">
 						<el-option v-for="(item, key) in scoreItem.modelTargetInfos" :key='item.key' :label="item.threeLevel" :value="item.id"></el-option>
 					</el-select>
-				</el-form-item>
+				</el-form-item> -->
 			</el-form>
 		</el-collapse-item>
 	</el-collapse>
@@ -22,6 +21,7 @@ import {
 	allIndustryListRequest,
 	scoringmodelByIndustryRequest,
 	templateReportRequest,
+	commitTemplateReportRequest
 } from '@/api/templateApi'
 import {
 	veyiterpriseAccessRequest,
@@ -47,7 +47,7 @@ export default {
 				desc: ''
 			},
 			formData: [],
-			tempdata:{}
+			tempData:[]
 		}
 	},
 	computed: {
@@ -92,8 +92,9 @@ export default {
 				})
 			})
 		},
-		selectScore(){
-			console.log(this.formData);
+		selectScore(element){
+			// alert('dsds')
+			console.log(element.target.value);
 
 		}
 	}

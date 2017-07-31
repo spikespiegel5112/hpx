@@ -4,7 +4,7 @@
         <section class='search-criteria-container'>
 			<el-form :inline="true" :model="query" :rules="queryRules" ref="query">
                 <el-row>
-                    <el-col :span="6">
+                    <el-col :span="8">
                         <el-form-item label="标签名称 :" prop="scoreCardName">
                             <el-input v-if="showType" v-model="query.scoreCardName" placeholder="标签名称"></el-input>
                             <div v-else style="border-bottom:1px solid #e9e9e9;min-width:140px;">{{query.scoreCardName}}</div>

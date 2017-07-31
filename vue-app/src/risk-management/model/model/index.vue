@@ -4,7 +4,7 @@
 
         <!--搜索条件-->
         <section class='search-criteria-container'>
-            <el-form :inline="true" :model="query"  ref="query">
+            <el-form :inline="true" :model="query" ref="query">
                 <el-row>
                     <el-col :span="4">
                         <el-form-item prop="modelName">
@@ -168,6 +168,8 @@ export default {
         myPagination,
     },
     created() {
+    },
+    activated(){
         this.initData();
     },
     computed: {

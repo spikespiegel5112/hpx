@@ -10,9 +10,9 @@ const projectRoleManagement = r => require.ensure([], () => r(require('@/hpx-man
 const projectEdit = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectEdit')), 'projectEdit');
 const projectCreate = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectCreate')), 'projectCreate');
 
-const signatureManager = r => require.ensure([], () => r(require('@/hpx-manager/signature-manager')), 'signatureManager');
-const enterpriseSignature = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-signature')), 'enterpriseSignature');
-const addSignature = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-signature/add-signature')), 'addSignature');
+const signatureManager = r => require.ensure([], () => r(require('@/hpx-manager/signature-manager')), 'signature-manager');
+const enterpriseSignature = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-signature')), 'enterprise-signature');
+const addSignature = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-signature/add-signature')), 'add-signature');
 
 const accreditation = r => require.ensure([], () => r(require('@/hpx-manager/accreditation')), 'hpx-manager-accreditation');
 const addedServices = r => require.ensure([], () => r(require('@/hpx-manager/added-services')), 'hpx-manager-addedServices');

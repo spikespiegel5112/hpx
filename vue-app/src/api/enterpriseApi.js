@@ -1,11 +1,19 @@
 import fetch from '@/config/fetch'
 
 /**
- * 项目信息列白
+ * 获取企业子账户信息
  */
 
 export const accountInfosListRequest = () =>{
     return fetch(`/core/core/api/v1/financialManager/accountInfos`);
+}
+
+/**
+ * 获取企业子账户信息
+ */
+
+export const accountStatementListRequest = (options) =>{
+    return fetch(`/core/core/api/v1/financialManager/${options.accountId}/accountStatement`);
 }
 
 /**

@@ -243,16 +243,16 @@ export const getAddressById = address_id => fetch('/v1/addresse/' + address_id);
 export const getUserCity = () => fetch('/v1/user/city/count');
 
 /**
- * 项目信息Rest服务
+ * 取得项目信息列表, 支持分页
  */
 
 export const getProjectList = () => fetch('/core/core/api/v1/projects');
 
 /**
- * 取得企业项目信息列表, 支持分页
+ * 取得企业列表, 支持分页
  */
 
-export const enterpriseListRequest = query =>{
+export const enterpriseListRequest = query =>{ 
     return fetch(`/core/core/api/v1/enterprises`, query);
 }
 

@@ -63,12 +63,14 @@ export default {
 <style lang="less">
 @import '../style/mixin';
 .header_container {
+	margin: 0 0 30px 0;
     background-color: #EFF2F7;
     height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-left: 20px;
+	border: 1px solid #d1dbe5;
 }
 .avator {
     .wh(36px, 36px);

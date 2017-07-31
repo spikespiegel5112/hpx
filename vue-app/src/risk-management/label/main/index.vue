@@ -8,12 +8,12 @@
                 <el-row>
                     <el-col :span="6">
                         <el-form-item prop="name">
-                            <el-input v-model="query.name" size="large" placeholder="标签名称"></el-input>
+                            <el-input v-model="query.name" placeholder="标签名称"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
                         <el-form-item prop="labelState">
-                            <el-select v-model="query.labelState" size="large" placeholder="标签状态">
+                            <el-select v-model="query.labelState" placeholder="标签状态">
                                 <el-option
                                     v-for="item in status"
                                     :key="item.value"
@@ -26,7 +26,6 @@
                      <el-col :span="6">
                         <el-form-item prop="dateRange">
                             <el-date-picker
-                                size="large"
                                 v-model="query.dateRange"
                                 type="daterange"
                                 align="right"

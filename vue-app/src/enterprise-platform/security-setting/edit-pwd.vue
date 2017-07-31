@@ -1,9 +1,9 @@
 <template>
     <div class="edit-pwd">
         <el-card class="box-card">
-            <div slot="header" class="clearfix">
-                <span style="line-height: 20px;">修改密码</span>
-                <el-button style="float: right;margin-top: -5px;" type="text">取消</el-button>
+            <div slot="header" class="clearfix card-title">
+                <span >修改密码</span>
+                <el-button style="float: right;margin: 8px 8px 0 0;" type="text">取消</el-button>
             </div>
             <el-form :model="pwdForm" ref="pwdForm" :rules="rules" label-width="100px" class="pwdForm">
                 <el-form-item label="旧密码" prop="oldPwd">
@@ -16,7 +16,7 @@
                     <el-input type="password" v-model="pwdForm.confirmPwd" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitForm('pwdForm')">提交</el-button>
+                    <el-button style="margin-left: 50%;" type="primary" @click="submitForm('pwdForm')">提交</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -145,6 +145,13 @@ export default {
 
 .clearfix:after {
     clear: both
+}
+
+.card-title {
+    height: 50px;
+    line-height: 50px;
+    font-size: 16px;
+    margin-left: 8px;
 }
 
 .box-card {

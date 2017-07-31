@@ -18,7 +18,7 @@
         
         <!--模型分数部分-->
         <section :model="modelData" class="model-table">
-            <p style="margin-top: 30px; border-bottom: 1px solid #ccc;padding-bottom: 10px; margin: 40px 0 10px 0">模型分数</p>
+            <p style="margin-top: 30px; text-align: center;width: 70px; padding-bottom: 10px; margin: 40px 0 10px 0">模型分数</p>
             <el-table
                 row-key="id"
                 :data="modelData.labelInfos"
@@ -45,7 +45,7 @@
 
         <!--评分等级部分-->
         <section :model="modelData" class="model-table">
-           <p style="margin-top: 30px; border-bottom: 1px solid #ccc;padding-bottom: 10px; margin: 40px 0 10px 0">评分等级</p>
+           <p style="margin-top: 30px; text-align: center;width: 70px; padding-bottom: 10px; margin: 40px 0 10px 0">评分等级</p>
             <el-table
                 row-key="id"
                 :data="modelData.scoreGrades"
@@ -72,7 +72,7 @@
 
         <!--模型详情部分-->
         <section :model="modelData" class="model-table">
-            <p style="margin-top: 30px; border-bottom: 1px solid #ccc;padding-bottom: 10px; margin: 40px 0 10px 0">模型详情</p>
+            <p style="margin-top: 30px; text-align: center;width: 70px;padding-bottom: 10px; margin: 40px 0 10px 0">模型详情</p>
             <el-card 
              v-for="(value,index) in modelData.labelInfos" 
              :key="index"

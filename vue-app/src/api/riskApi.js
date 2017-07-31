@@ -71,3 +71,4 @@ export const addParameter = (eid) => fetch(`/credit/tp/parameter/${eid}`,{},'put
 export const parameterInfo = (eid) => fetch(`/credit/tp/parameter/${eid}`);
     //修改
 export const patchParameter = (eid,id,params) => fetch(`/credit/tp/parameter/${eid}/${id}`,params,'patch');
+

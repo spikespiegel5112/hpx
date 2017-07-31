@@ -82,7 +82,7 @@
                 prop="code" 
                 readonly
                 :rules="[
-                { required: true, message: '请输入产品编码'},
+                { required: true, message: '请输入产品编码',trigger:'blur'},
                 ]">
 					<el-input v-model="editeData.code" auto-complete="off"></el-input>
 				</el-form-item>
@@ -90,14 +90,14 @@
                 label="产品名称" 
                 prop="name"
                 :rules="[
-                { required: true, message: '请输入产品名称'},
+                { required: true, message: '请输入产品名称',trigger:'blur'},
                 ]">
 					<el-input v-model="editeData.name" auto-complete="off"></el-input>
 				</el-form-item>
                 <el-form-item 
                 label="产品企业类型"
                 :rules="[
-                { required: true, message: '请选择产品企业类型'},
+                { required: true, message: '请选择产品企业类型',trigger:'blur'},
                 ]">
                     <el-select
                         v-model="editeData.productEnterpriseRole"
@@ -117,7 +117,7 @@
                 label='启用状态' 
                 prop="available"
                 :rules="[
-                { required: true, message: '请选择启用状态'},
+                { required: true, message: '请选择启用状态',trigger:'blur'},
                 ]">
                     <el-select v-model="editeData.available">
                         <el-option
@@ -132,7 +132,7 @@
                 label="产品入口地址" 
                 prop="entryUrl"
                 :rules="[
-                { required: true, message: '请输入产品入口地址'},
+                { required: true, message: '请输入产品入口地址',trigger:'blur'},
                 ]">
 					<el-input v-model="editeData.entryUrl"><template slot="prepend">Http://</template></el-input>
 				</el-form-item>
@@ -142,7 +142,7 @@
                 :rules="[
                 { required: true, message: '请选择最后更新时间'},
                 ]">
-					<el-date-picker type="date" placeholder="选择日期" v-model="editeData.modifiedTime"></el-date-picker>
+					<el-date-picker type="date" placeholder="选择日期"  v-model="editeData.modifiedTime"></el-date-picker>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -161,6 +161,7 @@
     import { moment } from 'moment'
     export default {
         data(){
+            this.t = '7'
             return {
                 //table columns
                 columns : [{
@@ -295,6 +296,7 @@
                })
             },
            add () {
+               Object.assign(this.$data.editeData, this.$options.data().editeData)
                this.modalTitle = '新增',
                this.editeModalVisible = true; 
                this.getPERList();
@@ -307,6 +309,7 @@
                 this.editeData = Object.assign({},row, {available: enabled},{productEnterpriseRole:this.tmp});
             },
             async editSubmit (formName) {
+                console.log("此次", this.editeData )
                 this.$refs[formName].validate(async (valid) => {
                     if (!valid) return false;
 
@@ -328,6 +331,10 @@
                         });
                          this.editeModalVisible = false;
                          this.getList();
+                        //  console.log("呵呵00",editePostData )
+                        //  this.editeData = {}
+                        //  this.$refs[formName].resetFields();
+                        //  console.log("呵呵",this.editeData )
                     } catch(e) {
                         this.$message.error(e);
                     }

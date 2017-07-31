@@ -8,6 +8,13 @@ export const allIndustryListRequest = () => {
 }
 
 /**
+ * 第三方企业填报
+ */
+export const commitTemplateReportRequest = (options) => {
+    return fetch(`core/credit/tp/report/${options.eid}`, options.params);
+}
+
+/**
  * 第三方企业填报信息查询
  */
 export const templateReportRequest = (options) => {

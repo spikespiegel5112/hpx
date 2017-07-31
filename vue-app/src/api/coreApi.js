@@ -7,7 +7,7 @@ import fetch from '@/config/fetch'
 export const getEnterprisesList = (query) => fetch('/core/core/api/v1/enterprises', query);
 
 /**
- * 安全设置，修改密码
+ * 安全设置，修改密码 
  */
 export const changePwd = (oldPwd, newPwd) => fetch('/core/core/api/v1/changePassword?oldPwd=' + oldPwd + '&newPwd=' + newPwd, {}, 'post')
 

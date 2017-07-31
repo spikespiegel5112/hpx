@@ -64,14 +64,11 @@
                             <router-link to="/platform/certification">更多项目</router-link>
                         </el-button>
                     </div>
-                    <dl>
-                        <dd>公司名称 ：</dd>
-                        <dt>上海广信诚保理有限公司已认证</dt>
-                        <dd>参与项目 ：</dd>
-                        <dt>6</dt>
-                        <dd>账户余额 ：</dd>
-                        <dt>100,000.00元</dt>
-                    </dl>
+                    <ul class="home-project-list">
+                        <li v-for="(item,i) in projectList" :key="i+''" @click="toProject">
+                                {{item.projectName}}
+                        </li>
+                    </ul>
                 </el-card>
             </el-col>
         </el-row>
@@ -80,7 +77,8 @@
 
 <script>
 import headTop from '@/components/headTop';
-import { getProjectList } from '@/api/getData';
+import { projectsAuditListRequest } from '@/api/getData';
+import { mapState } from 'vuex'
 export default {
     components : {
         headTop
@@ -93,21 +91,34 @@ export default {
     activated(){
         this.initProjectList()
     },
+    computed : {
+        ...mapState(['loginInfo']),
+    },
     methods:{
         initProjectList(){
             (async () => {
                 try{
-                    const resp = await getProjectList();
+                    const params = {
+                        eid : this.loginInfo.enterpriseId,
+                        page : 1,
+                        size : 6,
+                    };
+                    const resp = await projectsAuditListRequest(params);
+                    const res = await resp.json();
+                    this.projectList = res;
                 }catch(e){
 
                 }
             })()
+        },
+        toProject(){
+            this.$route.path('/')
         }
     }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
     .paltform-home-container>div{
         margin-top:40px;
         
@@ -121,5 +132,17 @@ export default {
     }
     .paltform-home-container .card-header{
         background : #fff;
+    }
+    .home-project-list{
+        li{
+            background:#58B7FF;
+            float : left;
+            color:#fff;
+            margin:10px 20px;
+            width:180px;
+            height:50px;
+            line-height:50px;
+            text-align: center;
+        }
     }
 </style>

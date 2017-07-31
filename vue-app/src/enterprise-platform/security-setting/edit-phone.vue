@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-steps :space="500" :active="active" finish-status="success" class="step">
+        <el-steps :space="'90%'" :active="active" finish-status="success" class="step">
             <el-step title="验证身份"></el-step>
             <el-step title="修改手机号码"></el-step>
         </el-steps>
@@ -28,7 +28,7 @@
                     </el-col>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitOld('oldForm')">确定</el-button>
+                    <el-button style="margin: 20px 0 0  18%" type="primary" @click="submitOld('oldForm')">确定</el-button>
                 </el-form-item>
                 </el-form>
         </div>
@@ -59,7 +59,7 @@
                     </el-col>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitNew('newForm')">完成</el-button>
+                    <el-button style="margin: 20px 0 0  18%"  type="primary" @click="submitNew('newForm')">完成</el-button>
                 </el-form-item>
                 </el-form>
         </div>
@@ -241,7 +241,7 @@
     .old-code-title {
         font-size: 14px;
         border-bottom: 1px solid #ccc;
-        width: 100%;
+        width: 90%;
         padding: 8px;
         margin-bottom: 50px;
     }

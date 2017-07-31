@@ -50,7 +50,7 @@
         computed : {
             ...mapState(['loginInfo']),
             defaultActive: function(){
-                return this.$route.path.split('/').slice(0,2).join('/');
+                return this.$route.path.split('/').slice(0,3).join('/');
             },
         },
     }
@@ -59,11 +59,11 @@
     @import '../style/mixin';
     .menu-wrap{
         height: 100%;
-        position: absolute;
+        position: relative;
         bottom: 0;
         top: 0;
         left: 0;
-        width: 200px;
+        // width: 200px;
         overflow-y: scroll
     }
 </style>

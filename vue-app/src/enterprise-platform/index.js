@@ -58,11 +58,11 @@ export default {
 			component: securitySetting,
 			meta: ['设置', '安全设置'],
 		},{
-			path: 'secure/editPhone',
+			path: 'secure/edit-phone',
 			component: editPhone,
 			meta: ['设置', '修改手机号码'],
 		},{
-			path: 'secure/editPwd',
+			path: 'secure/edit-pwd',
 			component: editPwd,
 			meta: ['设置', '修改密码'],
 		},{

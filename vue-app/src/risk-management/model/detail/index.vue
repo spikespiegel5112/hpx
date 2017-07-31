@@ -1,15 +1,17 @@
 <template>
     <div class="fillcontain">
-        <head-top></head-top>
+        <head-top></head-top><br/>
+        <!--<el-tag type="gray" style="font-size: 16px; height: 30px; line-height: 30px;">{{modelMsg}} <i class="el-icon-edit"></i> </el-tag>-->
+        <p style="color:rgba(0, 0, 0, .65); margin-top: 30px;">{{modelMsg}} <i class="el-icon-edit"></i></p>
         <!--添加模型名称部分-->
-        <section class='search-criteria-container model-container'>
+        <section class='main-table-container model-container'>
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
                     <span style="line-height:  56px; font-seize: 18px; margin-left: 20px">基础信息</span>
                 </div>
                 <el-form :inline="true" :model="addForm" label-width="80px" ref="addForm">
                     <el-form-item label="选择行业" prop="industryid" :rules="[
-                                            { required: true, message: '行业不能为空'},
+                                            { required: true, message: '行业不能为空', trigger: 'blur'},
                                             ]">
                         <el-select v-model="addForm.industryid" placeholder="请选择行业">
                             <el-option v-for="item in industryList" :key="item.id" :label="item.industryName" :value="item.id">
@@ -17,13 +19,13 @@
                         </el-select>
                     </el-form-item><br/>
                     <el-form-item label="模型名称" prop="gradeCardName" :rules="[
-                                            { required: true, message: '模型名称不能为空'},
+                                            { required: true, message: '模型名称不能为空', trigger: 'blur'},
                                             ]">
                         <el-input v-model="addForm.gradeCardName" placeholder="请输入模型名称"></el-input>
                     </el-form-item>
                     <br/>
                     <el-form-item label="模型描述" prop="gradeCardDescribe" :rules="[
-                                            { required: true, message: '模型描述不能为空'},
+                                            { required: true, message: '模型描述不能为空', trigger: 'blur'},
                                             ]">
                         <el-input type='textarea'  v-model="addForm.gradeCardDescribe" placeholder="请输入模型描述"></el-input>
                     </el-form-item>
@@ -33,10 +35,11 @@
     
         <!--标签列表部分-->
         <section class='main-table-container'>
-            <el-card class="box-card">
+            <p style="margin-top: 30px; text-align: center;width: 70px;padding-bottom: 10px; margin: 40px 0 10px 0">标签列表</p>
+            <!--<el-card class="box-card">
                 <div slot="header" class="clearfix">
                     <span style="line-height:  56px; font-seize: 18px; margin-left: 20px">标签列表</span>
-                </div>
+                </div>-->
                 <el-button @click="dialogVisible = true" icon="plus" style="margin-bottom:20px">选择标签</el-button>
                 <el-dialog title="所有标签" :visible.sync="dialogVisible" :before-close="handleClose">
                     <el-input placeholder="请输入标签名称" icon="search" v-model="searchInput" style="margin-bottom: 10px" :on-icon-click="handleIconClick">
@@ -48,7 +51,7 @@
                     </el-table>
                     <el-button style="margin: 10px 0; float:right;" @click="selectLabel">选取</el-button>
                 </el-dialog>
-                <el-table row-key="id" :data="selectLabelList" v-loading="listLoading" style="width: 100%;">
+                <el-table row-key="id" :data="selectLabelList" border v-loading="listLoading" style="width: 90%;">
                     <el-table-column label="序号" type="index" width="80px" align="center">
                     </el-table-column>
                     <el-table-column prop="scoreCardName" label="已选标签名称" align="center">
@@ -69,34 +72,36 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button style="margin: 10px 0; float:right;" @click="mark">打分</el-button>
-            </el-card>
+                <el-button style="margin: 10px 0; float:right;margin-right: 10%" @click="mark">打分</el-button>
+            <!--</el-card>-->
         </section>
     
         <!--模型分数部分-->
         <section class='main-table-container'>
-            <el-card class="box-card">
+            <p style="margin-top: 30px; text-align: center;width: 70px;padding-bottom: 10px; margin: 40px 0 10px 0">模型分数</p>
+            <!--<el-card class="box-card">
                 <div slot="header" class="clearfix">
                     <span style="line-height: 56px; font-seize: 18px; margin-left: 20px;font-size: 16px">模型分数</span>
-                </div>
-                <el-table row-key="id" :data="scoreList" v-loading="listLoading" style="width: 100%">
-                    <el-table-column label="序号" type="index" width="80px" align="center">
+                </div>-->
+                <el-table row-key="id" :data="scoreList" border v-loading="listLoading" style="width: 90%">
+                    <el-table-column label="序号"  type="index" width="80px" align="center">
                     </el-table-column>
                     <el-table-column prop="scoreCardName" label="标签" align="center">
                     </el-table-column>
                     <el-table-column prop="maxScore" label="分数" align="center">
                     </el-table-column>
                 </el-table>
-            </el-card>
+            <!--</el-card>-->
         </section>
     
         <!--评分等级部分-->
         <section class='main-table-container'>
-            <el-card class="box-card">
+            <p style="margin-top: 30px; text-align: center;width: 70px;padding-bottom: 10px; margin: 40px 0 10px 0">评分等级</p>
+            <!--<el-card class="box-card">
                 <div slot="header" class="clearfix">
                     <span style="line-height:  56px; font-seize: 18px; margin-left: 20px">评分等级</span>
-                </div>
-                <el-table row-key="id" :data="gradeList" v-loading="listLoading" style="width: 100%;">
+                </div>-->
+                <el-table row-key="id" :data="gradeList" border v-loading="listLoading" style="width: 90%;">
                     <el-table-column label="序号" type="index" width="80px" align="center">
                     </el-table-column>
                     <el-table-column prop="gradeName" label="等级" align="center">
@@ -125,13 +130,14 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button :disabled="addGradeBtn" style="float: right; margin: 10px 0" @click="addGrade()">新增</el-button>
-            </el-card>
+                <el-button :disabled="addGradeBtn" style="float: right; margin: 10px 0; margin-right: 10%" @click="addGrade()">新增</el-button>
+            <!--</el-card>-->
         </section>
     
         <!--提交部分-->
         <section>
             <el-button type="primary" style="margin:  30px 0 50px 40%" @click="subModel('addForm')">提交</el-button>
+            <el-button type="primary" style="margin:  30px 0 50px 40%" @click="subModel('addForm')">取消</el-button>
         </section>
     </div>
 </template>
@@ -149,6 +155,7 @@ export default {
             isEdite: true,
         };
         return {
+            modelMsg: '新增模型信息',
             searchInput: '',
             listLoading: false,
             dialogVisible: false,
@@ -171,6 +178,7 @@ export default {
         headTop
     },
     activated() {
+        Object.assign(this.$data, this.$options.data())
         this.initData();
         this.getIndustry();
     },
@@ -197,6 +205,7 @@ export default {
             const res = await resp.json();
             this.labelList = [...res];
             if (!id) return;
+            this.modelMsg = '编辑模型信息';
             const result = await modelData(id, eid);
             const resu = await result.json();
             this.addForm.gradeCardName = resu.gradeCardName;
@@ -308,7 +317,6 @@ export default {
                     }
                 })
                 try {
-                    console.log("最后的", id)
                     const resp = id ? await modelEdit(id, eid, newData) : await modelAdd(eid, newData);
                     this.$message({
                         message: '提交成功！',
@@ -316,6 +324,10 @@ export default {
                     });
                     this.$router.push('/platform/model');
                     const response = await modelList({ page: 1, size: 10 });
+                    this.addForm = {};
+                    this.selectLabelList = [];
+                    this.scoreList = [];
+                    this.gradeList = [];
                     console.log("提交后", response)
                 } catch (e) {
                     this.$message.error(e);
@@ -348,6 +360,10 @@ export default {
 .box-card:hover {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .12), 0 0 6px 0 rgba(0, 0, 0, .04);
     transition: box-shadow .5s;
+}
+
+.model-container {
+    margin-top: 20px;
 }
 
 .model-container .el-select>.el-input {
