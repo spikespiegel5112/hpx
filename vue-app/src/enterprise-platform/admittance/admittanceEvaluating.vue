@@ -1,12 +1,13 @@
 <template>
 <div class="fillcontain">
 	<head-top></head-top>
-	<el-collapse v-for="(tagItem, index) in treeData.labelInfos">
+	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" name="1">
-			<el-form ref="form" :model="form" label-width="100%">
-				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :label="scoreItem.name" style="width: 40%;" :label-position="labelPosition">
-					<el-select v-model="formData" placeholder="请选择" style="width: 100px;">
-						<el-option v-for="item in scoreItem.modelTargetInfos" :label="item.threeLevel" :value="item.id"></el-option>
+			<el-form ref="form" :model="formData[index]" label-width="60%">
+				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition">
+					<el-select v-model="formData[index2]" placeholder="请选择" @change='selectScore()' style="width: 100px;">
+
+						<el-option v-for="(item, key) in scoreItem.modelTargetInfos" :key='item.key' :label="item.threeLevel" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
 			</el-form>
@@ -45,7 +46,8 @@ export default {
 				resource: '',
 				desc: ''
 			},
-			formData: {}
+			formData: [],
+			tempdata:{}
 		}
 	},
 	computed: {
@@ -74,20 +76,25 @@ export default {
 			}
 			scoringmodelByIndustryRequest(params).then(response => {
 				response.json().then(result => {
-					console.log(result);
+
 					this.treeData = result;
+					console.log(this.treeData);
 					let index = 0;
-					for (var firstItem in this.treeData) {
-						for (var secondItem in this.treeData[firstItem]) {
-							if (secondItem > firstItem) {
+					for (var labelItem in this.treeData.labelInfos) {
+						for (var modelTargetItem in this.treeData.labelInfos[labelItem].modelTargetInfos) {
+							if (modelTargetItem > labelItem) {
 								continue;
 							} else {
-								this.selectModelTree[index].push(this.treeData[secondItem].modelTargetInfos.threeLevel)
+								this.selectModelTree.push(this.treeData[modelTargetItem].modelTargetInfos.threeLevel)
 							}
 						}
 					}
 				})
 			})
+		},
+		selectScore(){
+			console.log(this.formData);
+
 		}
 	}
 }

@@ -107,9 +107,9 @@
                         placeholder="请选择产品企业类型">
                         <el-option
                         v-for="item in productEnterpriseRoleList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code">
                         </el-option>
                     </el-select>
 				</el-form-item>
@@ -207,6 +207,7 @@
                 modalTitle: '' ,
                 editeModalVisible : false,
                 productEnterpriseRoleList: [],
+                tmp : [],
                 editeData : {
                     id: '',
                     code : '',
@@ -269,7 +270,6 @@
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
-
             async abled (id){
                 const resp = await abledProduct(id);
                 if(resp.status === 200) {
@@ -290,9 +290,9 @@
                }
                const res = await resp.json();
                res.map((v) => {
-                   this.productEnterpriseRoleList.push({label: v.name, value: v.code});
+                   this.productEnterpriseRoleList.push(v);
+                   this.tmp.push(v.code)
                })
-               console.log("产品企业类型", this.productEnterpriseRoleList)
             },
            add () {
                this.modalTitle = '新增',
@@ -304,7 +304,7 @@
                 this.editeModalVisible = true;
                 this.getPERList();
                 const enabled = row.available === "T" ? "启用" : "禁用";
-                this.editeData = Object.assign({...row}, {available: enabled});
+                this.editeData = Object.assign({},row, {available: enabled},{productEnterpriseRole:this.tmp});
             },
             async editSubmit (formName) {
                 this.$refs[formName].validate(async (valid) => {
@@ -316,20 +316,20 @@
                     proRole.map((v) => {
                         newProRole.push({code: v});
                     })
-                    this.editeData = Object.assign({...this.editeData}, {productEnterpriseRole: newProRole});
-                    console.log("提交", this.editeData);
-                    const resp = id
-                    ? await editProduct(id, this.editeData)
-                    : await addProduct(this.editeData);
-                    if(resp.status === 200 || resp.status === 204) {
+                    this.editeData.available === "禁用" ? this.editeData.available = 'F' : this.editeData.available = 'T';
+                    const editePostData = Object.assign({},{...this.editeData}, {productEnterpriseRole: newProRole});
+                    try{
+                        const resp = id
+                        ? await editProduct(id, editePostData)
+                        : await addProduct(editePostData);
                         this.$message({
                             message: '提交成功！',
                             type: 'success'
                         });
-                        this.editeModalVisible = false;
-                        this.getList();
-                    } else {
-                        this.$message.error('提交失败！');
+                         this.editeModalVisible = false;
+                         this.getList();
+                    } catch(e) {
+                        this.$message.error(e);
                     }
                 });
             },

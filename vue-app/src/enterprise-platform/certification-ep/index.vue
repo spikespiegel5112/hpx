@@ -20,7 +20,7 @@
                         <upload-tab></upload-tab>
                     </template>
                     <template v-else-if="i === 3">
-                        tetst3
+                        <identification-tab></identification-tab>
                     </template>     
                 </el-tab-pane>
             </el-tabs>
@@ -38,6 +38,7 @@
     import infoTab from './infoTab';
     import bankTab from './bankTab';
     import uploadTab from './uploadTab';
+    import identificationTab from './identificationTab'
     export default {
         data() {
             return {
@@ -64,6 +65,7 @@
             infoTab,
             bankTab,
             uploadTab,
+            identificationTab
         }
     }
 </script>

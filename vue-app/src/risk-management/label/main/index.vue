@@ -46,7 +46,7 @@
                         </router-link>
                     </el-col>
                     <el-col :span="24" style="text-align:right;margin-bottom:12px;">
-                        <el-button type='info' icon="caret-top" @click="modalVisible = true">导入标签</el-button>
+                        <el-button type='info' icon="caret-top" @click="modalShow">导入标签</el-button>
                         <el-button type='info' icon="caret-bottom" @click="loadModule">下载导入模板</el-button> 
                     </el-col>
                 </el-row>
@@ -92,7 +92,7 @@
             </section>
         </section>
         <!--上传弹窗-->
-		<el-dialog custom-class="up-modal" title="编辑" v-model="modalVisible" :close-on-click-modal="false">
+		<el-dialog custom-class="label-import-modal" title="编辑" v-model="modalVisible" :close-on-click-modal="false">
 			<el-form :model="upInfo" label-width="80px" :rules="editRules" ref="upInfo">
                 <el-form-item label="标签名称" prop="name">
 					<el-input v-model="upInfo.name" auto-complete="on"></el-input>
@@ -100,10 +100,9 @@
 				<el-form-item label="导入说明" prop="describe">
 					<el-input v-model="upInfo.describe" auto-complete="on"></el-input>
 				</el-form-item>
-                <el-form-item label="上传文件" prop="name">
+                <el-form-item label="上传文件" prop="excelPath">
 					<el-upload
                         :action="excelAction"
-                        data:excelData
                         :file-list="excelList"
                         :on-change="excelChange"
                         :before-upload="excelBefore"
@@ -126,6 +125,7 @@
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
     import { labelList ,labelDelete , labelImport , labelImportSubmit , labelStatusAction } from '@/api/riskApi'
+    import { loadUrl } from '@/api/publicApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -193,13 +193,17 @@
                 modalVisible : false,
                 upInfo : {
                     name : '',
-                    describe:''
+                    describe:'',
+                    excelPath:'',
                 },
                 excelList : [],
                 editRules : {
                     name : [
-						{ required: true, message: '请输入标签名称', trigger: 'blur' }
-					]
+						{ required: true, message: '请输入标签名称'}
+                    ],
+                    excelPath :[
+                        { required: true, message: '未上传EXCEL文件'}
+                    ]
                 }
             }
         },
@@ -214,7 +218,7 @@
             ...mapState(["loginInfo"]),
             excelData(){
                 return {
-                    id:this.labelId,
+                    // id:this.labelId,
                     eid:this.loginInfo.enterpriseId
                 }
             },
@@ -263,6 +267,14 @@
                     this.query.endTime = '';
                 }
             },
+            modalShow(){
+                this.upInfo = {
+                    name : '',
+                    describe:'',
+                    excelPath:''
+                };
+                this.modalVisible = true;
+            },
             check (id){
                 this.$router.push({path: this.$route.path + '/detail/check_' + id})
             },
@@ -289,7 +301,7 @@
                 }
             },  
             loadModule(){
-
+                window.location.href = loadUrl('labelExcelId')
             },
             async remove(id){
                 try{
@@ -317,17 +329,22 @@
                     return false;
                 }
             },
-            excelSuccess(response,f,l){
-                console.log(response,f,l)
+            excelSuccess(response){
+                console.log(response)
+                this.excelPath = response
+                this.$message({
+                    type : 'success',
+                    message : '上传成功'
+                })
             },
             importLabel(){
                 this.$refs['upInfo'].validate(
                     async (valid) => {
                         if(valid){
                             try{
-                                const resp = await labelImportSubmit(this.loginInfo.enterpriseId)
+                                const resp = await labelImportSubmit(this.loginInfo.enterpriseId,this.upInfo)
                             }catch(e){
-
+                                this.$message.error(e)
                             }
                         }
                     }

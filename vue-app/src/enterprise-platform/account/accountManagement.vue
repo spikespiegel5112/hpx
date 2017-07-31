@@ -5,7 +5,21 @@
 		<div class="enterprise_accountoverview_wrapper">
 			<ul>
 				<li>
-
+					<div class="title">
+						<label for="">中信银行</label>
+						<span>尾号：4545</span>
+						<i>1</i>
+					</div>
+					<div class="detail">
+						<div class="balance">
+							<label for="">可用余额（元）：</label>
+							<span>121212</span>
+						</div>
+						<div class="operation">
+							<el-button type="primary" size="small">转入</el-button>
+							<el-button type="success" size="small">转出</el-button>
+						</div>
+					</div>
 				</li>
 			</ul>
 		</div>
@@ -18,6 +32,7 @@
 </template>
 
 <script>
+import swiper from '../../assets/js/swiper'
 import headTop from '../../components/headTop'
 import myPagination from '@/components/myPagination'
 import {
@@ -63,6 +78,7 @@ export default {
 	},
 	mounted() {
 		this.initData();
+		this.carousel()
 	},
 	computed: {
 		...mapState(["loginInfo"])
@@ -100,6 +116,9 @@ export default {
 			})
 
 		},
+		carousel(){
+			let swiper=new Swiper('.enterprise_accountoverview_wrapper ul')
+		},
 		async search() {
 			try {
 				this.getList();
@@ -117,6 +136,7 @@ export default {
 <style lang="less">
 @import '../../style/mixin';
 @import "../../style/enterprise";
+@import "../../assets/css/swiper.css";
 .table_container {
 	padding: 20px;
 }

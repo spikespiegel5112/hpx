@@ -89,7 +89,7 @@
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >
                 </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column label="操作" align="center">
                     <template scope="scope">
                         <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
@@ -153,6 +153,7 @@ export default {
                 modelName: '',
                 enabledState:'',
                 industryId:'',
+                dateRange: '',
                 startTime : '',
                 endTime:'',
             },
@@ -180,7 +181,7 @@ export default {
         async getList(pagination={page:1,size:10}){
             this.listLoading = true;
             try{
-                const params = Object.assign({},pagination);
+                const params = Object.assign({},pagination, this.query);
                 const resp = await modelList(this.loginInfo.enterpriseId,params);
                 const res = await resp.json();
                 const total = resp.headers.get('x-total-count')

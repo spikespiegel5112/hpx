@@ -1,6 +1,6 @@
 import { baseUrl } from './env'
 
-const serialize = (ob) => {
+export const serialize = (ob) => {
   let output = '';
   for (var k in ob) {
     output += encodeURIComponent(k) + '=' + encodeURIComponent(ob[k]) + '&'

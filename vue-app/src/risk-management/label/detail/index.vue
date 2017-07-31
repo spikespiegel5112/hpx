@@ -48,10 +48,21 @@
                 </el-table-column>
                 <el-table-column v-if="showType" label="操作" align="center" width='180'>
                     <template scope="scope">
-                        <el-button v-show="scope.row.isEdite" type="text" size="small" @click="save(scope.$index, scope.row)" >保存</el-button>
-                        <!-- <el-button v-if="scope.row.isEdite" type="text" size="small" @click="edite(scope.$index, scope.row)">撤销</el-button> -->
+                        <el-button v-show="scope.row.isEdite" type="text" size="small" @click="editeDone(scope.$index, scope.row,'save')" >保存</el-button>
+                         <!-- <pop-confirm v-show="scope.row.isEdite" :onconfirm="() => editeDone(scope.$index, scope.row,'cancel')"> 
+                             <el-button type="text" size="small">撤销</el-button> 
+                         </pop-confirm>  -->
+                        <el-button v-show="scope.row.isEdite" type="text" size="small" @click="scope.row.confirmVisible = true">撤销</el-button> 
                         <el-button v-show="!scope.row.isEdite" type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" size="small" @click="remove(scope.$index, scope.row)" >删除</el-button>
+                        <el-popover
+                            v-model="scope.row.confirmVisible">
+                        <p><i style="color:#ffbf00" class="el-icon-information"></i> 确定撤销？</p>
+                        <div style="margin-top:15px;">
+                            <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
+                            <el-button type="primary" size="mini" @click="editeDone(scope.$index, scope.row,'cancel')">确定</el-button>
+                        </div>
+                        </el-popover> 
                     </template>
                 </el-table-column>
             </el-table>
@@ -62,6 +73,7 @@
 
 <script>
 import headTop from '@/components/headTop'
+// import popConfirm from '@/components/popConfirm'
 import { labelAdd , labelDetail , labelRevise } from '@/api/riskApi'
 import { mapState } from 'vuex'
 export default {
@@ -90,6 +102,7 @@ export default {
                 prop  : 'targetFloatParameter',
             }
         ];
+        this.addCount = 0;
         this.newData = {
             oneLevel:'',
             twoLevel:'',
@@ -98,7 +111,8 @@ export default {
             targetGradeWeight:'',
             targetPricingWeight:'',
             targetFloatParameter:'',
-            isEdite:true
+            isEdite:true,
+            confirmVisible:false
         };
         return {
             labelId : '',
@@ -112,19 +126,21 @@ export default {
                 ],
             },
             tableList : [],
+            beforeList : [],
+            tmp : [],
             listLoading : false,
             emptyText:''
         }
     },
     components : {
-        headTop
+        headTop,
+        // popConfirm
     },
     activated(){
         this.tableList = [];
         this.query.scoreCardName = '';
         const paramsId = this.$route.params.id;
         this.judgePageType(paramsId);
-        console.log(this.labelId);
         if(this.pageType === 'edite' || this.pageType === 'check'){
             this.getDetail();
         }
@@ -158,6 +174,8 @@ export default {
                     let listTmp = [...res.modelTargetInfos];
                     for( let i = 0 , len = listTmp.length; i < len; i++){
                         listTmp[i].isEdite = false;
+                        listTmp[i].confirmVisible = false;
+                        listTmp[i].ref = `label${i}`;
                     };     
                     this.tableList = [...listTmp];
                 }catch(e){
@@ -166,14 +184,21 @@ export default {
             })()
         },
         addNew(){
-            this.tableList.push({...this.newData})
+            this.tableList.push({...this.newData});
+            this.beforeList.push({...this.newData})
+            this.addCount++;
         },
         back(){
             window.history.go(-1)
         },
-        save(index,row){
+        editeDone(index,row,type){
+            console.log(row)
+            let tmp = row;
+            if(type === 'cancel'){
+                tmp = this.beforeList[index]
+            };
             for ( let key of Object.keys(this.newData)){
-                if(key !== 'isEdite' && !row[key]){
+                if(key !== 'isEdite' && key !== 'confirmVisible' && !tmp[key]){
                     this.$message({
                         type:'warning',
                         message:'数据不能为空!'
@@ -181,10 +206,15 @@ export default {
                     return;
                 }
             };
+            
+            if(type === 'cancel'){
+                this.tableList = JSON.parse(JSON.stringify(this.beforeList));
+                this.tableList[index].confirmVisible = false;
+            };
             this.tableList[index].isEdite = false;
         },
         edite(index,row){
-            console.log(index,row)
+            this.beforeList = JSON.parse(JSON.stringify(this.tableList)); 
             this.tableList[index].isEdite = true;
         },
         remove(index,row){
@@ -235,8 +265,8 @@ export default {
                     }
                 }
             )
-        }
-    }
+        },
+    },
 }
 </script>
 

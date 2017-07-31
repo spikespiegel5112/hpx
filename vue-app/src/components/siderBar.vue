@@ -1,6 +1,6 @@
 <template>
-    <div v-if="menuList.length" style="height:100%;">
-        <el-menu :default-active="$route.path" mode='vertical' style="min-height: 100%;" theme="dark" unique-opened router>
+    <div v-if="menuList.length" class="menu-wrap">
+        <el-menu :default-active="defaultActive" mode='vertical' style="min-height: 100%;" theme="dark" unique-opened router>
             <el-menu-item :index="index"><i class="el-icon-menu"></i>首页</el-menu-item>
             <template v-for="(subMenu,i) in menuList">
                 <template v-if="subMenu.vRolePermissionCustom.length">
@@ -50,11 +50,20 @@
         computed : {
             ...mapState(['loginInfo']),
             defaultActive: function(){
-                return this.$route.path;
+                return this.$route.path.split('/').slice(0,2).join('/');
             },
         },
     }
 </script>
 <style lang="less">
     @import '../style/mixin';
+    .menu-wrap{
+        height: 100%;
+        position: absolute;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        width: 200px;
+        overflow-y: scroll
+    }
 </style>

@@ -73,6 +73,7 @@
 									this.$router.push({
 										path : '/manager'
 									})
+
 								}else{
 									this.$router.push({
 										name:'platform'

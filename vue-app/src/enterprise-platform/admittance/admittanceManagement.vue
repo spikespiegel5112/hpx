@@ -50,12 +50,12 @@
 			<el-form :inline="true">
 				<el-form-item label="请选择行业" inline>
 					<el-select v-model="industryType" placeholder="请选择" @change='selectIndustry'>
-						<el-option v-for="item in industryList" :label="item.industryName" :value="item.id"></el-option>
+						<el-option v-for="item in industryList" :key='item.key' :label="item.industryName" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="请选择模型" inline>
 					<el-select v-model="modelType" placeholder="请选择">
-						<el-option v-for="item in modelList" :label="item.gradeCardName" :value="item.id"></el-option>
+						<el-option v-for="item in modelList" :key='item.key' :label="item.gradeCardName" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
 			</el-form>
@@ -249,6 +249,7 @@ export default {
 		},
 		toEvaluate() {
 			console.log(this.industryType);
+			this.evaluateEnterpriseDialogFlag = false;
 			this.$router.push({
 				name: 'admittanceEvaluating',
 				params: {

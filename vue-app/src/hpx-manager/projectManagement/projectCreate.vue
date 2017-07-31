@@ -55,7 +55,7 @@ import headTop from '@/components/headTop'
 import moment from 'moment'
 import {
 	getEnterprisesList,
-	enterpriseRolesList,
+	enterpriseRolesListRequest,
 	createProject
 } from '@/api/coreApi'
 import {
@@ -158,7 +158,7 @@ export default {
 			}
 		},
 		getTypes(productCode) {
-			enterpriseRolesList(productCode).then(response => {
+			enterpriseRolesListRequest(productCode).then(response => {
 				response.json().then(result => {
 					this.typeList = result;
 				})

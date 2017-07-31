@@ -2,7 +2,7 @@
 import modelRouter from '@/risk-management/model/index';
 import labelRouter from '@/risk-management/label/index';
 // WrapComponent
-const home = r => require.ensure([], () => r(require('@/hpx-manager/home')), 'hpx-manager-home');
+const home = r => require.ensure([], () => r(require('@/enterprise-platform/home')), 'enterprise-platform-home');
 
 const enterpriseIndex = r => require.ensure([], () => r(require('@/enterprise-platform/main')), 'enterprise-platform-index');
 const securitySetting = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting')), 'security-setting');
