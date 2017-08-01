@@ -24,7 +24,7 @@
     </div>
 </template>
 <script>
-    import { getMenuList } from '../api/getData';
+    import { getMenuList,getProjectMenuList } from '../api/getData';
 	import { mapState } from 'vuex';
     export default {
         data : () => ({
@@ -36,7 +36,7 @@
             this.$nextTick(
                 async () => {
                     this.loading = true;
-                    try{
+                    try{                       
                         const resp = await getMenuList(this.loginInfo.enterpriseId);
                         const res = await resp.json();
                         this.menuList = res;
@@ -59,9 +59,9 @@
     @import '../style/mixin';
     .menu-wrap{
         height: 100%;
-        position: absolute;
+        position: fixed;
+        top: 50px;
         bottom: 0;
-        top: 0;
         left: 0;
         width: 200px;
         overflow-y: scroll

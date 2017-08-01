@@ -23,6 +23,7 @@ const mutations = {
 	},
 	signOut(state){
 		state.isLogin = false;
+		// state.loginInfo = null;
 	}
 }
 

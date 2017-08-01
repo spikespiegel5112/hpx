@@ -24,6 +24,9 @@ export const signout = () => fetch('/core/api/v1/logout');
 
 export const getMenuList = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/permissions`)
 
+// 项目菜单
+export const getProjectMenuList = (eid,pid) => fetch(`/core/core/api/v1/enterprise/{eid}/projects/${pid}/permissions`)
+
 /**
  * 获取用户信息
  */

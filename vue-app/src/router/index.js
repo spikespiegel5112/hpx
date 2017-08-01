@@ -7,6 +7,7 @@ import orderRouter from '../purchase-order-financing'
 
 Vue.use(Router)
 
+const App = r => require.ensure([], () => r(require('@/App')), 'appContainer');
 /*
 **	model template
 */
@@ -36,7 +37,7 @@ const template = r => require.ensure([], () => r(require('@/view/template')), 't
 
 const routes = [
 	{
-		path: '/',
+		path: '/login',
 		component: login
 	},
 	// {
@@ -115,13 +116,22 @@ const routes = [
 		}]
 	},
 
-	// hpx manager
-	hpxRouter,
 
-	// enterprise manager
-	enterprisePlatformRouter,
+	{
+		path : '',
+		component : App,
+		children : [
+			// hpx manager
+			hpxRouter,
 
-	orderRouter,
+			// enterprise manager
+			enterprisePlatformRouter,
+
+			//order
+			orderRouter,			
+		]
+	},
+
 
 ]
 

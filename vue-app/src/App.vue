@@ -1,12 +1,16 @@
 <template>
-<!-- <div id="app" class="fillcontain">
-	<router-view></router-view>
-</div> -->
+	<div>
+		<header-top></header-top>
+		<router-view></router-view>
+	</div>
 </template>
 
 <script>
+import headerTop from '@/components/headerTop'
 export default {
-
+	components : {
+		headerTop
+	}
 }
 </script>
 

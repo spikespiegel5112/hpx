@@ -61,7 +61,6 @@
 					if (valid) {
 						(async () => {
 							try{
-								console.log(666)
 								const resp = await login(this.loginForm);
 								console.log(resp)
 								const res = await resp.json();

@@ -112,7 +112,7 @@ export default {
             })()
         },
         toProject(){
-            this.$route.path('/')
+            this.$router.push({path : '/porderf/demander'})
         }
     }
 }
@@ -143,6 +143,12 @@ export default {
             height:50px;
             line-height:50px;
             text-align: center;
+            cursor: pointer;
+            z-index: 666;
+            -webkit-transition: -webkit-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+            -moz-transition: -moz-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+            -o-transition: -o-transform 0.3s ease-in-out, width 0.3s ease-in-out;
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
         }
     }
 </style>
