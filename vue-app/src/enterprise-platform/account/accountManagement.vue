@@ -88,7 +88,7 @@ export default {
 			enterpriseName: this.$store.state.loginInfo.enterpriseName,
 			//table columns
 			columns: [],
-			//总页数
+			//分页信息
 			pagination: {
 				params: {
 					page: 1,

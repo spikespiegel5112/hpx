@@ -80,7 +80,7 @@ import myPagination from '@/components/myPagination'
 import {
 	allIndustryListRequest,
 	scoringmodelNameByIndustryRequest,
-	templateReportRequest,
+	templateReportListRequest,
 } from '@/api/templateApi'
 import {
 	veyiterpriseAccessRequest,
@@ -134,7 +134,7 @@ export default {
 				prop: 'creditState',
 				sortable: true,
 			}],
-			//总页数
+			//分页信息
 			pagination: {
 				params: {
 					page: 1,
@@ -196,7 +196,6 @@ export default {
 			console.log(params)
 			veyiterpriseAccessRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
-				
 				response.json().then(result => {
 					console.log(result)
 					this.tableList = result;
@@ -210,7 +209,7 @@ export default {
 				// params:{}
 			}
 			console.log(options);
-			templateReportRequest(options).then(response => {
+			templateReportListRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);
 

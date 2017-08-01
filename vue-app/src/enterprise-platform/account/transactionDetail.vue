@@ -112,7 +112,7 @@ export default {
 				prop: 'creator',
 				sortable: true,
 			}],
-			//总页数
+			//分页信息
 			pagination: {
 				params: {
 					page: 1,

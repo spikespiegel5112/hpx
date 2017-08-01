@@ -4,9 +4,8 @@
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" name="1">
 			<el-form ref="form" label-width="60%">
-				{{tagItem.targetInfos.length}}
 				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition">
-					<el-select v-model='formData.labels[index].subitems[index2].subItem' placeholder="请选择" @change='selectScore()' style="width: 100px;">
+					<el-select v-model='formData.labels[index].subitems[index2].subItem' placeholder="请选择" style="width: 100px;">
 						<el-option v-for="(item, index3) in scoreItem.modelTargetInfos" :key='item.key' :label="item.threeLevel" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
@@ -31,8 +30,8 @@ import headTop from '../../components/headTop'
 import {
 	allIndustryListRequest,
 	scoringmodelByIndustryRequest,
-	templateReportRequest,
-	submitTemplateReportRequest
+	templateReportListRequest,
+	submitTemplateReportListRequest
 } from '@/api/templateApi'
 import {
 	veyiterpriseAccessRequest,
@@ -104,17 +103,13 @@ export default {
 				})
 			})
 		},
-		selectScore(element) {
-			// console.log(this.formData);
-			// console.log(element.target.value);
-		},
 		submitEvaluation() {
 			let options = {
 				params: this.formData,
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			console.log(this.formData);
-			submitTemplateReportRequest(options).then(response => {
+			submitTemplateReportListRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);
 				})

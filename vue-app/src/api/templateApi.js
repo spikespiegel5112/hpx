@@ -8,17 +8,24 @@ export const allIndustryListRequest = () => {
 }
 
 /**
+ * 第三方企业填报信息查询
+ */
+export const templateReportListRequest = options => {
+    return fetch(`core/credit/api/v1/tp/report/${options.eid}`, options.params);
+}
+
+/**
  * 第三方企业填报
  */
-export const submitTemplateReportRequest = options => {
+export const submitTemplateReportListRequest = options => {
     return fetch(`core/credit/api/v1/tp/report/${options.eid}`, options.params, 'put');
 }
 
 /**
- * 第三方企业填报信息查询
+ * 第三方企业填报详情
  */
-export const templateReportRequest = (options) => {
-    return fetch(`core/credit/tp/report/${options.eid}/${options.id}`, options.params);
+export const templateReportDetailRequest = options => {
+    return fetch(`core/credit/api/v1/tp/report/${options.eid}/${options.id}`, options.params);
 }
 
 /**

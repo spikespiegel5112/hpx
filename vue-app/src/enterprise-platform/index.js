@@ -29,8 +29,11 @@ const admittanceManagement = r => require.ensure([], () => r(require('@/enterpri
 //准入评估
 const admittanceEvaluating = r => require.ensure([], () => r(require('@/enterprise-platform/admittance/admittanceEvaluating')), 'admittanceEvaluating');
 
-//准入报告
-const admittanceReport = r => require.ensure([], () => r(require('@/enterprise-platform/admittance/admittanceReport')), 'admittanceReport');
+//准入报告列表
+const admittanceReportList = r => require.ensure([], () => r(require('@/enterprise-platform/admittance/admittanceReportList')), 'admittanceReportList');
+
+//准入报告详情
+const admittanceReportDetail = r => require.ensure([], () => r(require('@/enterprise-platform/admittance/admittanceReportDetail')), 'admittanceReportDetail');
 
 
 export default {
@@ -88,8 +91,13 @@ export default {
 			meta:["风控管理",'企业准入',"准入评估"]
 		},{
 			path:'report',
-			component : admittanceReport,
-			meta:["风控管理","准入报告"]
+			component : admittanceReportList,
+			meta:["风控管理","准入报告列表"]
+		},{
+			path:'report/report-detail/:reportId',
+            name: 'reportDetail',
+			component : admittanceReportDetail,
+			meta:["风控管理","准入报告列表","准入报告详情"]
 		},
 		modelRouter,
 		labelRouter,

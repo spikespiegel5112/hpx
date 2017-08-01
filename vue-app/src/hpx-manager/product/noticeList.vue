@@ -90,7 +90,7 @@ export default {
 				prop: 'creator',
 				sortable: true,
 			}],
-			//总页数
+			//分页信息
 			pagination: {
 				total: 0,
 				page: 1,
@@ -197,10 +197,7 @@ export default {
 					message: '已取消删除'
 				});
 			});
-
 		}
-
-
 	}
 }
 </script>
