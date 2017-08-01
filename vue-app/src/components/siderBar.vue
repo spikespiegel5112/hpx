@@ -59,11 +59,11 @@
     @import '../style/mixin';
     .menu-wrap{
         height: 100%;
-        position: relative;
+        position: absolute;
         bottom: 0;
         top: 0;
         left: 0;
-        // width: 200px;
+        width: 200px;
         overflow-y: scroll
     }
 </style>
