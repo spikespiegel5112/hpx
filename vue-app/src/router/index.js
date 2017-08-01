@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import hpxRouter from '../hpx-manager'
 import enterprisePlatformRouter from '../enterprise-platform'
 
+import orderRouter from '../purchase-order-financing'
+
 Vue.use(Router)
 
 /*
@@ -118,6 +120,8 @@ const routes = [
 
 	// enterprise manager
 	enterprisePlatformRouter,
+
+	orderRouter,
 
 ]
 

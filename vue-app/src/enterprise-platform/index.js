@@ -43,7 +43,7 @@ export default {
     children:[{
 			path: '',
 			component: home,
-			meta: ['eee', 'yyy'],
+			meta: ['', ''],
 		},{
 			path: 'project',
 			component: myProject,

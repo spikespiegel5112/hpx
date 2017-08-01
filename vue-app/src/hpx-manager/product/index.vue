@@ -136,14 +136,14 @@
                 ]">
 					<el-input v-model="editeData.entryUrl"><template slot="prepend">Http://</template></el-input>
 				</el-form-item>
-				<el-form-item 
+				<!--<el-form-item 
                 label="最后更新时间" 
                 prop="modifiedTime"
                 :rules="[
                 { required: true, message: '请选择最后更新时间'},
                 ]">
 					<el-date-picker type="date" placeholder="选择日期"  v-model="editeData.modifiedTime"></el-date-picker>
-				</el-form-item>
+				</el-form-item>-->
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="editeModalVisible = false">取消</el-button>
@@ -158,7 +158,7 @@
     import myPagination from '../../components/myPagination'
     import { getProductList, abledProduct, delProduct, getProductEpRoleList, addProduct, editProduct } from '@/api/coreApi'
     import { mapState } from 'vuex'
-    import { moment } from 'moment'
+    import moment from 'moment'
     export default {
         data(){
             this.t = '7'
@@ -176,7 +176,7 @@
                     },{
                     label : '最后更新时间',
                     prop  : 'modifiedTime',
-                    // formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')
+                    formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')
                     }
                 ],
                 //总页数
@@ -215,7 +215,6 @@
                     name : '',
                     entryUrl : '',
                     available: '',
-                    modifiedTime : '',
                     productEnterpriseRole: [],
                 },
                 editRules : {
@@ -296,6 +295,7 @@
                })
             },
            add () {
+               this.productEnterpriseRoleList = [];
                Object.assign(this.$data.editeData, this.$options.data().editeData)
                this.modalTitle = '新增',
                this.editeModalVisible = true; 

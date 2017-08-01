@@ -41,7 +41,7 @@ if (project.env === 'development') {
   //__DEV__ 开发模式资源代理转发
   app.use('/proxy', proxy('http://120.26.80.59:3005/'));
 
-  app.use('/core', proxy('http://10.38.42.245:9000/'));
+  app.use('/core', proxy('http://10.38.8.75:9000/'));
   app.use('/proxyBiMai', proxy('http://10.38.8.87:9000/'));
   // app.use('/proxy', proxy('http://localhost:3005/'));
 

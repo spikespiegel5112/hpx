@@ -1,18 +1,18 @@
 <template>
 <div class="fillcontain">
-    <head-top></head-top>
-    <el-tabs type="border-card">
-        <el-tab-pane label="我的项目">
-            <el-table row-key="id" :empty-text="emptyText" :data="myProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
-                <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-                </el-table-column>
-                <el-table-column label="操作">
-                    <template scope="scope">
+	<head-top></head-top>
+	<el-tabs type="border-card">
+		<el-tab-pane label="我的项目">
+			<el-table row-key="id" :empty-text="emptyText" :data="myProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
+				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+				</el-table-column>
+				<el-table-column label="操作">
+					<template scope="scope">
                             <el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
                             <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
                             <el-button type="text" size="small" @click="audit(scope)">邀请记录</el-button>
-</template>
-                    </el-table-column>
+                    </template>
+                </el-table-column>
                 </el-table>
                 <section class="main-pagination">
                     <my-Pagination :callback="getList" :total="myProjectListTotal">
@@ -28,7 +28,7 @@
                     <el-table-column label="操作">
 <template scope="scope">
 <el-button type="text" size="small" @click='editProjet(scope)'>
-    进入项目</el-button>
+	进入项目</el-button>
 <el-button type="text" size="small" @click="acceptInvite(scope)">接受</el-button>
 <el-button type="text" size="small" @click="rejectInvite(scope)">拒绝</el-button>
 </template>
@@ -71,170 +71,170 @@ import headTop from '../../components/headTop'
 import moment from 'moment'
 import myPagination from '@/components/myPagination'
 import {
-    enterpriseListRequest,
-    enterpriseProjectListRequest
+	enterpriseListRequest,
+	enterpriseProjectListRequest
 } from '@/api/getData'
 import {
-    enterpriseRolesListRequest,
-    modifyProjectRequest
+	enterpriseRolesListRequest,
+	modifyProjectRequest
 } from '@/api/coreApi'
 export default {
-    components: {
-        headTop,
-        myPagination
-    },
-    data() {
-        const dateFormat = "YYYY-MM-DD";
-        return {
-            eid: this.$store.state.loginInfo.enterpriseId,
-            inviteData: {
-                eid: null,
-                pid: null
-            },
-            ruleForm: {
-                eid: '',
-                pid: ''
-            },
-            rules: {
-                eid: [{
-                    required: true,
-                    message: '请选择企业名称',
-                    trigger: 'blur'
-                }],
-                pid: [{
-                    required: true,
-                    message: '请选择产品类型',
-                    trigger: 'blur'
-                }]
-            },
-            //table
-            myProjectList: [],
-            myProjectListTotal: 0, //总数
-            invitedProjectList: [],
-            invitedProjectTotal: 0, //总数
-            listLoading: false,
-            enterpriseList: [],
-            roleList: [],
-            //分页信息
-            pagination: {
-                params: {
-                    page: 1,
-                    size: 10
-                },
-                total: 0
-            },
-            emptyText: "暂无数据",
-            inviteEnterpriseFlag: false,
-            //table columns
-            columns: [{
-                label: '产品',
-                prop: 'productName',
-                sortable: true,
-            }, {
-                label: '项目名称',
-                prop: 'projectName',
-                sortable: true,
-                minWidth: 100,
-            }, {
-                label: '参与角色',
-                prop: 'enterpriseRole',
-                sortable: true,
-            }, {
-                label: '项目起始日',
-                prop: 'startTime',
-                sortable: true,
-                minWidth: 60,
-                formatter: (row, column) => moment(column.startTime).format(dateFormat)
-            }, {
-                label: '项目结束日',
-                prop: 'endTime',
-                sortable: true,
-                minWidth: 60,
-                formatter: (row, column) => moment(column.endTime).format(dateFormat)
-            }],
-        }
-    },
-    activated() {
-        this.getList();
-    },
-    methods: {
-        getList() {
-            let that = this;
-            let params = Object.assign({
-                eid: this.eid
-            }, this.pagination)
-            enterpriseProjectListRequest(that.eid).then(response => {
-                response.json().then(result => {
-                    this.myProjectList = [];
-                    this.invitedProjectList = [];
-                    for (var item in result) {
-                        if (result[item].inviteStatus == 'F') {
-                            that.myProjectList.push(result[item]);
-                            console.log(that.myProjectList);
-                        }
-                        this.myProjectListTotal = result.length
-                    }
+	components: {
+		headTop,
+		myPagination
+	},
+	data() {
+		const dateFormat = "YYYY-MM-DD";
+		return {
+			eid: this.$store.state.loginInfo.enterpriseId,
+			inviteData: {
+				eid: null,
+				pid: null
+			},
+			ruleForm: {
+				eid: '',
+				pid: ''
+			},
+			rules: {
+				eid: [{
+					required: true,
+					message: '请选择企业名称',
+					trigger: 'blur'
+				}],
+				pid: [{
+					required: true,
+					message: '请选择产品类型',
+					trigger: 'blur'
+				}]
+			},
+			//table
+			myProjectList: [],
+			myProjectListTotal: 0, //总数
+			invitedProjectList: [],
+			invitedProjectTotal: 0, //总数
+			listLoading: false,
+			enterpriseList: [],
+			roleList: [],
+			//分页信息
+			pagination: {
+				params: {
+					page: 1,
+					size: 10
+				},
+				total: 0
+			},
+			emptyText: "暂无数据",
+			inviteEnterpriseFlag: false,
+			//table columns
+			columns: [{
+				label: '产品',
+				prop: 'productName',
+				sortable: true,
+			}, {
+				label: '项目名称',
+				prop: 'projectName',
+				sortable: true,
+				minWidth: 100,
+			}, {
+				label: '参与角色',
+				prop: 'enterpriseRole',
+				sortable: true,
+			}, {
+				label: '项目起始日',
+				prop: 'startTime',
+				sortable: true,
+				minWidth: 60,
+				formatter: (row, column) => moment(column.startTime).format(dateFormat)
+			}, {
+				label: '项目结束日',
+				prop: 'endTime',
+				sortable: true,
+				minWidth: 60,
+				formatter: (row, column) => moment(column.endTime).format(dateFormat)
+			}],
+		}
+	},
+	activated() {
+		this.getList();
+	},
+	methods: {
+		getList() {
+			let that = this;
+			let params = Object.assign({
+				eid: this.eid
+			}, this.pagination)
+			enterpriseProjectListRequest(that.eid).then(response => {
+				response.json().then(result => {
+					this.myProjectList = [];
+					this.invitedProjectList = [];
+					for (var item in result) {
+						if (result[item].inviteStatus == 'F') {
+							that.myProjectList.push(result[item]);
+							console.log(that.myProjectList);
+						}
+						this.myProjectListTotal = result.length
+					}
 
-                    for (var item in result) {
-                        if (result[item].inviteStatus == 'T') {
-                            that.invitedProjectList.push(result[item]);
-                        }
-                        this.invitedProjectTotal = result.length
-                    }
-                })
-            })
-        },
-        inviteEnterprise(scope) {
-            console.log(scope);
-            // this.inviteData.pid=scope.
-            this.inviteEnterpriseFlag = true;
-            this.getEnterpriseList();
-            this.getEnterpriseRolesList(scope.row.priductCode);
-        },
-        submitInvite(formRule) {
-            console.log(this.inviteData);
-            this.$refs[formRule].validate((valid) => {
-                modifyProjectRequest(this.inviteData).then(response => {
-                    response.json().then(result => {
-                        console.log(result);
-                        this.getList();
-                    })
-                })
-            })
+					for (var item in result) {
+						if (result[item].inviteStatus == 'T') {
+							that.invitedProjectList.push(result[item]);
+						}
+						this.invitedProjectTotal = result.length
+					}
+				})
+			})
+		},
+		inviteEnterprise(scope) {
+			console.log(scope);
+			// this.inviteData.pid=scope.
+			this.inviteEnterpriseFlag = true;
+			this.getEnterpriseList();
+			this.getEnterpriseRolesList(scope.row.priductCode);
+		},
+		submitInvite(formRule) {
+			console.log(this.inviteData);
+			this.$refs[formRule].validate((valid) => {
+				modifyProjectRequest(this.inviteData).then(response => {
+					response.json().then(result => {
+						console.log(result);
+						this.getList();
+					})
+				})
+			})
 
-        },
-        flipPage(pageIndex) {
-            this.pagination.params.page = pageIndex;
-            this.getEnterpriseList();
-        },
-        getEnterpriseList() {
-            this.enterpriseList = [];
-            enterpriseListRequest().then(response => {
-                response.json().then(result => {
-                    console.log(result);
+		},
+		flipPage(pageIndex) {
+			this.pagination.params.page = pageIndex;
+			this.getEnterpriseList();
+		},
+		getEnterpriseList() {
+			this.enterpriseList = [];
+			enterpriseListRequest().then(response => {
+				response.json().then(result => {
+					console.log(result);
 
-                    this.enterpriseList = result;
-                    // for (var item in result) {
-                    //     this.$set(this.enterpriseList, item, result[item])
-                    // }
+					this.enterpriseList = result;
+					// for (var item in result) {
+					//     this.$set(this.enterpriseList, item, result[item])
+					// }
 
-                    // this.enterpriseList=result;
+					// this.enterpriseList=result;
 
-                })
-            })
-        },
-        getEnterpriseRolesList(priductCode) {
-            this.roleList = [];
-            enterpriseRolesListRequest(priductCode).then(response => {
-                response.json().then(result => {
-                    console.log(result);
-                    this.roleList = result;
-                })
-            })
-        },
-        aaa() {
-            alert(this.inviteData.pid)
-        }
-    }
+				})
+			})
+		},
+		getEnterpriseRolesList(priductCode) {
+			this.roleList = [];
+			enterpriseRolesListRequest(priductCode).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.roleList = result;
+				})
+			})
+		},
+		aaa() {
+			alert(this.inviteData.pid)
+		}
+	}
 }
 </script>
