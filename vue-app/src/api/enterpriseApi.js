@@ -25,6 +25,14 @@ export const enterpriseProjectListRequest = (options) =>{
 }
 
 /**
+ * 根据产品code获取所有企业角色信息
+ */
+
+export const enterpriseRolesListRequest = options =>{
+    return fetch(`/core/core/api/v1/products/${options.productCode}/ent_roles`);
+}
+
+/**
  * 取得企业列表, 支持分页
  */
 

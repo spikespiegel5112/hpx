@@ -4,8 +4,8 @@ import wrapComponent from './container'
 // 需方首页
 import homeDemander from '@/purchase-order-financing/home-demander'
 import testD from '@/purchase-order-financing/test-demander'
-import zfdenabderList from '@/purchase-order-financing/ZF/customerManagement/demanderList'
-import zfsupplierList from '@/purchase-order-financing/ZF/customerManagement/supplierList'
+import zfdenabderList from '@/purchase-order-financing/investors/customerManagement/demanderList'
+import zfsupplierList from '@/purchase-order-financing/investors/customerManagement/supplierList'
 // 路径path 1 以purchase-order-financing为标准 2 需方 命名 前面 加上xf_  资方 zf_ 供应商 gf_
 
 export default {

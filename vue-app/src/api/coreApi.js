@@ -7,7 +7,7 @@ import fetch from '@/config/fetch'
 export const getEnterprisesList = (query) => fetch('/core/core/api/v1/enterprises', query);
 
 /**
- * 安全设置，修改密码 
+ * 安全设置，修改密码
  */
 export const changePwd = (oldPwd, newPwd) => fetch('/core/core/api/v1/changePassword?oldPwd=' + oldPwd + '&newPwd=' + newPwd, {}, 'post')
 
@@ -131,14 +131,6 @@ export const addProduct= (params) => fetch(`/core/core/api/v1/products`,params, 
 ** 产品管理--编辑
 */
 export const editProduct= (id, params) => fetch(`/core/core/api/v1/products/${id}`,params, 'patch');
-
-/**
- * 根据产品code获取所有企业角色信息
- */
-
-export const enterpriseRolesListRequest = product_code =>{
-    return fetch(`/core/core/api/v1/products/${product_code}/ent_roles`);
-}
 
 /**
  * 创建项目信息

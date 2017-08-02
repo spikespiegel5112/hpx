@@ -60,7 +60,7 @@
                 >
                 </el-pagination> -->
 			<!-- page租组件  -->
-			<my-Pagination :callback="getList" :query="query" :total="total">
+			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
 			</my-Pagination>
 		</section>
 	</section>
@@ -174,12 +174,14 @@ export default {
 			listLoading: false,
 			emptyText: "暂无数据",
 
-			//分页
-			page: 1, //当前页
-			size: 2, //每页个数
-			total: 0, //总数
-			pageSizes: [2, 4, 6],
-
+			//分页信息
+			pagination: {
+				params: {
+					page: 1,
+					size: 10
+				},
+				total: 0
+			},
 			//search params
 			query: {
 				eid: this.$store.state.loginInfo.enterpriseId
@@ -288,10 +290,9 @@ export default {
 				});
 			});
 		},
-		async initData() {
+		initData() {
 			this.listLoading = true;
 			try {
-
 				this.getList();
 				this.listLoading = false;
 				if (!this.tableList.length) {
@@ -302,19 +303,23 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		async getList(pagination = {
-			page: 1,
-			size: 10
-		}) {
-			const params = Object.assign({
-				eid: this.$store.state.loginInfo.enterpriseId
-			}, pagination);
-			const response = await getProjectList();
-			const res = await response.json();
-			const total = response.headers.get('x-total-count')
-			this.tableList = [...res];
-			console.log(this.tableList)
-			this.total = parseInt(total);
+		getList() {
+			let options = {
+				params: {}
+			}
+			options.params = this.pagination.params;
+			console.log(options);
+			getProjectList(options).then(response => {
+				this.pagination.total = Number(response.headers.get('x-total-count'))
+				response.json().then(result => {
+					console.log(result);
+					this.tableList = result
+				})
+			})
+		},
+		flipPage(pageIndex) {
+			this.pagination.params.page = pageIndex;
+			this.getList();
 		},
 		async search() {
 			try {

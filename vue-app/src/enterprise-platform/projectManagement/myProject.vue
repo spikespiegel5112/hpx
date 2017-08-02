@@ -72,10 +72,10 @@ import moment from 'moment'
 import myPagination from '@/components/myPagination'
 import {
 	enterpriseListRequest,
-	enterpriseProjectListRequest
+	enterpriseProjectListRequest,
+	enterpriseRolesListRequest
 } from '@/api/enterpriseApi'
 import {
-	enterpriseRolesListRequest,
 	modifyProjectRequest
 } from '@/api/coreApi'
 export default {
@@ -159,8 +159,8 @@ export default {
 	methods: {
 		getList() {
 			let that = this;
-			let options= {
-				params:{
+			let options = {
+				params: {
 					eid: this.$store.state.loginInfo.enterpriseId
 				}
 			}
@@ -172,13 +172,13 @@ export default {
 					this.myProjectList = [];
 					this.invitedProjectList = [];
 					for (var item in result) {
-						if (result[item].inviteStatus == 'F') {
+						if (result[item].inviteStatus == 'T' && result[item].state == 'T') {
 							that.myProjectList.push(result[item]);
 						}
 						this.pagination.total = result.length;
 					}
 					for (var item in result) {
-						if (result[item].inviteStatus == 'T') {
+						if (result[item].inviteStatus == 'I' && result[item].state == 'F') {
 							that.invitedProjectList.push(result[item]);
 						}
 						this.pagination.total = result.length;
@@ -188,7 +188,7 @@ export default {
 		},
 		inviteEnterprise(scope) {
 			console.log(scope);
-			// this.inviteData.pid=scope.
+			alert(scope.row.priductCode)
 			this.inviteEnterpriseFlag = true;
 			this.getEnterpriseList();
 			this.getEnterpriseRolesList(scope.row.priductCode);
@@ -215,9 +215,9 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.enterpriseList = result;
-					// for (var item in result) {
-					//     this.$set(this.enterpriseList, item, result[item])
-					// }
+					for (var item in result) {
+					    this.$set(this.enterpriseList, item, result[item])
+					}
 
 					// this.enterpriseList=result;
 
@@ -226,7 +226,10 @@ export default {
 		},
 		getEnterpriseRolesList(priductCode) {
 			this.roleList = [];
-			enterpriseRolesListRequest(priductCode).then(response => {
+			let options={
+				priductCode:priductCode
+			}
+			enterpriseRolesListRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);
 					this.roleList = result;

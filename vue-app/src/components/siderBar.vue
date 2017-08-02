@@ -35,7 +35,7 @@
         created () {
 			(() => {
 				const pjId = this.$route.query.pj_id;
-				console.log(pjId)
+				// console.log(pjId)
 				this.getCurrentProjectId(pjId);
 			})()
         },
@@ -61,7 +61,7 @@
                             }
                         }else{
                             resp = await getMenuList(this.loginInfo.enterpriseId);
-                        }               
+                        }
 
                         const res = await resp.json();
                         this.menuList = res;

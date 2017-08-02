@@ -249,7 +249,9 @@ export const getUserCity = () => fetch('/v1/user/city/count');
  * 取得项目信息列表, 支持分页
  */
 
-export const getProjectList = () => fetch('/core/core/api/v1/projects');
+export const getProjectList = options =>{
+    return fetch('/core/core/api/v1/projects', options.params);
+}
 
 /**
  * 取得企业项目邀请记录列表
