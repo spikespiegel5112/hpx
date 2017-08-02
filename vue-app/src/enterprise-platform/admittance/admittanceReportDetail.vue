@@ -1,12 +1,18 @@
 <template>
 <div class="fillcontain">
 	<head-top></head-top>
-
 	<section class="admittance_report_container">
 		<h1 class='maintitle'>{{reportData.enterpriseName}}</h1>
-		<div class="summarize">
+		<div class="summarize block_wrapper">
 			<div class="chart_wrapper">
+				<div class="evaluatechart_wrapper" id='evaluatechart'></div>
+				<div class="gradechart_wrapper">
+					<label>评分：</label>
+					<div>
+						<span class='indicator' :style="{left:scoreIndicatorValue.left+'px'}"></span>
+					</div>
 
+				</div>
 			</div>
 			<div class="block_wrapper">
 				<div class="title">综合评定</div>
@@ -25,44 +31,39 @@
 				<li>项目名称：{{reportData.score}}</li>
 			</ul>
 		</div>
-		<div class="block_wrapper" v-for="(item, gradeDataIndex) in gradeData" :key="item.key">
+		<div class="block_wrapper" v-for="(item, evaluatingDataIndex) in evaluatingData" :key="item.key">
 			<div class="title">{{item.scoreCardName}}</div>
 			<ul>
-				<li v-for="tpModelItem in tpModelData[gradeDataIndex]" :key="tpModelItem.key">
+				<li v-for="tpModelItem in tpModelData[evaluatingDataIndex]" :key="tpModelItem.key">
 					{{tpModelItem.oneLevel}}-{{tpModelItem.twoLevel}}：{{tpModelItem.threeLevel}}
 				</li>
 			</ul>
 		</div>
-		<!-- <div class="block_wrapper">
 
-			<ul>
-				<li>债务风险状况---资产负债率民营企业负债率≤60%{{reportData.score}}</li>
-			</ul>
-		</div>
-		<div class="block_wrapper">
-			<div class="title">贸易背景</div>
-			<ul>
-				<li>贸易背景---供应链管理（采购执行）模式，核心企业销售模式现款现货{{reportData.score}}</li>
-			</ul>
-		</div> -->
 	</section>
 </div>
 </template>
 
 <script>
-// import echarts from '../../assets/js/echarts'
+import echarts from '../../assets/js/echarts.common.min'
+// import echarts from 'echarts'
 import headTop from '../../components/headTop'
 import {
 	templateReportDetailRequest,
 } from '@/api/templateApi'
 import moment from 'moment'
+// import echarts from 'echarts'
 export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
 			reportData: {},
-			gradeData: [],
-			tpModelData:[]
+			evaluatingData: [],
+			tpModelData: [],
+			chartData: [],
+			scoreIndicatorValue: {
+				left: 0
+			}
 		}
 	},
 	components: {
@@ -82,14 +83,88 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.reportData = result;
-					this.gradeData = this.reportData.tpGradeModelInfoHistoryExtend.tpLabelInfoHistoryExtend;
-					for (var item in this.gradeData) {
-						this.tpModelData[item] = this.gradeData[item].tpModelTargetInfoHistory;
+					this.scoreData = this.reportData.tpScoreGradeHistory;
+					console.log(this.scoreData);
+					this.evaluatingData = this.reportData.tpGradeModelInfoHistoryExtend.tpLabelInfoHistoryExtend;
+					for (var item in this.evaluatingData) {
+						this.tpModelData[item] = this.evaluatingData[item].tpModelTargetInfoHistory;
+						this.chartData.push({
+							name: this.evaluatingData[item].scoreCardName,
+							value: this.evaluatingData[item].totalScore,
+						})
 					}
-					console.log(this.tpModelData);
+					this.chart();
+					this.scoreIndicatorValue.left =370* result.score*0.01;
+					console.log(this.scoreIndicatorValue);
 				})
 			})
 		},
+		chart() {
+			var evaluatechart = echarts.init(document.getElementById('evaluatechart'));
+			evaluatechart.setOption({
+				color:'#323232',
+				title: {
+					text: '',
+					left: 'center',
+					top: 0,
+					textStyle: {
+						color: '#333'
+					}
+				},
+				tooltip: {
+					trigger: 'item',
+					formatter: "{a} <br/>{b} : {c} ({d}%)"
+				},
+				visualMap: {
+					show: false,
+					min: 80,
+					max: 600,
+					inRange: {
+						colorLightness: [0, 1]
+					}
+				},
+				series: [{
+					name: '访问来源',
+					type: 'pie',
+					radius: '55%',
+					center: ['50%', '50%'],
+					data: this.chartData,
+					// roseType: 'radius',
+					label: {
+						normal: {
+							textStyle: {
+								color: '#333'
+							}
+						}
+					},
+					labelLine: {
+						normal: {
+							lineStyle: {
+								color: 'rgba(255, 255, 255, 0.3)'
+							},
+							smooth: 0.2,
+							length: 10,
+							length2: 20
+						}
+					},
+					itemStyle: {
+						normal: {
+							color: '#C1232B',
+							shadowBlur: 200,
+							shadowColor: 'rgba(255, 255, 255, 0.5)'
+						},
+						radius:['100%']
+					},
+					animationType: 'scale',
+					animationEasing: 'elasticOut',
+					animationDelay: function(idx) {
+						return Math.random() * 200;
+					}
+				}]
+			})
+
+
+		}
 	}
 }
 </script>
