@@ -11,6 +11,8 @@ const state = {
 	},
 	loginInfo : null,
 	isLogin : false,
+	projectId:null,
+	projectInfo :null
 }
 
 const mutations = {
@@ -24,6 +26,9 @@ const mutations = {
 	signOut(state){
 		state.isLogin = false;
 		// state.loginInfo = null;
+	},
+	saveProjectId(state,pjId){
+		state.projectId = pjId;
 	}
 }
 
@@ -57,6 +62,15 @@ const actions = {
 	},
 	loginNot({commit}){
 		commit('signOut');
+	},
+	async getCurrentProjectId({commit},pjId){
+		try{
+			commit('saveProjectId', pjId);
+			return true
+		}catch(err){
+			this.$message.error(err);
+			return false;
+		}
 	},
 	revisePsw(store){
 		const test = store.commit('changeLoginState');

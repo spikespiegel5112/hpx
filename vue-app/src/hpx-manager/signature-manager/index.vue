@@ -4,50 +4,37 @@
         <hr style="margin-bottom: 30px;" />
         <el-input style="width: 20%; marginLeft: 80%;marginBottom: 5px;" placeholder="请输入公司名称" icon="search" v-model="query.enterpriseName" :on-icon-click="search">
         </el-input>
-        <el-table 
-        :data="tableList" 
-        border 
-        style="width: 100%"  
-        v-loading="listLoading"
-        :empty-text="emptyText">
-            <el-table-column prop="num" type="index" label="序号"  width="120">
+        <el-table :data="tableList" border style="width: 100%" v-loading="listLoading" :empty-text="emptyText">
+            <el-table-column prop="num" type="index" label="序号" width="120">
             </el-table-column>
-            <el-table-column prop="enterpriseName" label="公司名称" >
+            <el-table-column prop="enterpriseName" label="公司名称">
             </el-table-column>
             <el-table-column prop="name" label="签章名字" align="center">
             </el-table-column>
             <el-table-column prop="picData" label="签章图片">
                 <template scope="scope">
                     <img :src="'data:image/png;base64,' + scope.row.picData" @click="handlePic(scope.row.picData)" style='width: 100px' />
-                    <el-dialog
-                        title=""
-                        :visible.sync="pic.dialogVisible"
-                        size="small"
-                        :before-close="handleClose">
+                    <el-dialog title="" :visible.sync="pic.dialogVisible" size="small" :before-close="handleClose">
                         <img :src="'data:image/png;base64,' + pic.picSrc" style='width: 300px' />
                     </el-dialog>
                 </template>
             </el-table-column>
             <el-table-column prop="action" label="操作">
                 <template scope="scope">
-                    <el-button type="text" size="small" @click="abled(scope.row.name, scope.row.id, scope.row.enabled)" >{{scope.row.enabled === "T" ? "禁用" : "启用"}}</el-button>
-                    <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
-                    <!--<el-popover
-                        ref="popover{{$index}}"
-                        placement="top"
-                        width="160"
-                        v-model="visible2">
-                        <p>确定删除吗？</p>
-                        <div style="text-align: right; margin: 0">
-                            <el-button size="mini" type="text" @click="!visible2">取消</el-button>
-                            <el-button type="primary" size="mini" @click="visible2=false">确定</el-button>
+                    <el-button type="text" size="small" @click="abled(scope.row.name, scope.row.id, scope.row.enabled)">{{scope.row.enabled === "T" ? "禁用" : "启用"}}</el-button>
+                    <el-button type="text" size="small" @click="scope.row.confirmVisible=true">删除</el-button>
+                    <el-popover v-model="scope.row.confirmVisible">
+                        <p>
+                            <i style="color:#ffbf00" class="el-icon-information"></i> 确定删除？</p>
+                        <div style="margin-top:15px;">
+                            <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
+                            <el-button type="primary" size="mini" @click="del(scope.row.id)">确定</el-button>
                         </div>
-                    </el-popover>
-                    <el-button type="text" v-popover:popover{{$index}}>删除</el-button>-->
+                    </el-popover> 
                 </template>
             </el-table-column>
         </el-table>
-        <my-Pagination :callback="getList" :total="total">
+        <my-Pagination @pageChange="pageChange" :total="total">
         </my-Pagination>
     </div>
 </template>
@@ -59,84 +46,93 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
+            pagination: {},
             visible2: false,
             searchInput: '',
             total: 0,
             pic: {
-                 dialogVisible: false,
-                 picSrc: ''
+                dialogVisible: false,
+                picSrc: ''
             },
-           
-            query: {enterpriseName:''},
+
+            query: { enterpriseName: '' },
             listLoading: false,
             emptyText: '暂无数据',
             tableList: [],
         }
     },
-    created() {
+    activated() {
         this.initData();
     },
-    computed : {
-            ...mapState(["loginInfo"])
-        },
+    computed: {
+        ...mapState(["loginInfo"])
+    },
     components: {
-            myPagination,
-    	},
+        myPagination,
+    },
     methods: {
-        async initData(){
-                this.listLoading = true;
-                try{
-                    this.getList();
-                    this.listLoading = false;
-                    if(!this.tableList.length){
-                        this.emptyText = "暂无数据";
-                    }
-                }catch(e){
-                    this.emptyText = "获取数据失败";
-                    this.listLoading = false;
+        pageChange(data) {
+            this.pagination = data;
+        },
+        async initData() {
+            this.listLoading = true;
+            try {
+                this.getList();
+                this.listLoading = false;
+                if (!this.tableList.length) {
+                    this.emptyText = "暂无数据";
                 }
-            },
-            async getList(pagination={page:1,size:10}){
-                const eid = this.loginInfo.enterpriseId;
-                const params = Object.assign({},this.query,pagination);
-                const resp = await getEpSignatureList(params, eid);
-                const res = await resp.json();
-                const total = resp.headers.get('x-total-count')
-                this.tableList = [...res];
-                Object.keys(this.tableList).forEach( (k) => {
-                        this.tableList[k].visible2 = false;
-                })
-                this.total = parseInt(total - 0);
-            },
-        async search () {
-                try{
-                    this.getList();
-                }catch(e){
-                    console.log(e)
-                }
-            },
-        async abled(name, id, enabled){
-            const abled = enabled === "T" ? "F" : "T"; 
+            } catch (e) {
+                this.emptyText = "获取数据失败";
+                this.listLoading = false;
+            }
+        },
+        async getList() {
+            const eid = this.loginInfo.enterpriseId;
+            const params = Object.assign({}, this.query, this.pagination);
+            const resp = await getEpSignatureList(params, eid);
+            const res = await resp.json();
+            let tmp = {};
+            res.map((v) =>{
+                Object.assign(tmp, v, {confirmVisible: false});
+            })
+            console.log("水水水水", tmp);
+            const total = resp.headers.get('x-total-count');
+            this.tableList = [...res];
+            Object.keys(this.tableList).forEach((k) => {
+                this.tableList[k].visible2 = false;
+            })
+            this.total = parseInt(total - 0);
+        },
+        async search() {
+            try {
+                this.getList();
+            } catch (e) {
+                console.log(e)
+            }
+        },
+        async abled(name, id, enabled) {
+            const abled = enabled === "T" ? "F" : "T";
             const resp = await abledEpSignature(name, id, abled);
-            if(resp.status === 200) {
+            if (resp.status === 200) {
                 this.$message({
-                        message: '修改状态成功！',
-                        type: 'success'
-                    });
+                    message: '修改状态成功！',
+                    type: 'success'
+                });
                 this.getList();
             } else {
                 this.$message.error('修改状态失败！');
             }
-            
+
         },
         async del(id) {
-            const  resp = await delEpSignature(id);
-            if(resp.status === 200) {
+            const resp = await delEpSignature(id);
+            if (resp.status === 200) {
                 this.getList();
                 this.$message({
-                        message: '删除成功！',
-                        type: 'success'
-                    });
+                    message: '删除成功！',
+                    type: 'success'
+                });
             } else {
                 this.$message.error('删除失败！');
             }
@@ -147,6 +143,14 @@ export default {
         },
         handleClose() {
             this.pic.dialogVisible = false;
+        },
+        watch: {
+            pagination: {
+                handler: function () {
+                    this.getList();
+                },
+                deep: true,
+            }
         }
     }
 }

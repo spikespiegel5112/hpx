@@ -25,19 +25,44 @@
 </template>
 <script>
     import { getMenuList,getProjectMenuList } from '../api/getData';
-	import { mapState } from 'vuex';
+	import { mapState , mapActions} from 'vuex';
     export default {
         data : () => ({
             menuList : [],
             laoding : false,
         }),
         props : ['index'],
+        created () {
+			(() => {
+				const pjId = this.$route.query.pj_id;
+				console.log(pjId)
+				this.getCurrentProjectId(pjId);
+			})()
+        },
         mounted : function(){
             this.$nextTick(
                 async () => {
                     this.loading = true;
-                    try{                       
-                        const resp = await getMenuList(this.loginInfo.enterpriseId);
+                    try{
+                        const path = this.$route.path.split('/')[1];
+                        const pjId = this.$route.query.pj_id;
+                        let resp;
+                        if(path !== 'platform' && path !== 'manager'){
+                            if(pjId){
+                                resp = await getProjectMenuList(this.loginInfo.enterpriseId,pjId)
+                            }else{
+                                const path = this.loginInfo.enterpriseId === '1' ? '/manager' : '/platform';
+                                this.$alert('没有选取项目或者没权限', '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        this.$router.push({path});
+                                    }
+                                })
+                            }
+                        }else{
+                            resp = await getMenuList(this.loginInfo.enterpriseId);
+                        }               
+
                         const res = await resp.json();
                         this.menuList = res;
                         this.loading = false;
@@ -48,11 +73,14 @@
             )
         },
         computed : {
-            ...mapState(['loginInfo']),
+            ...mapState(['loginInfo','projectId']),
             defaultActive: function(){
                 return this.$route.path.split('/').slice(0,3).join('/');
             },
         },
+        methods : {
+            ...mapActions(['getCurrentProjectId']),
+        }
     }
 </script>
 <style lang="less">

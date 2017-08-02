@@ -24,7 +24,6 @@ router.beforeEach(async(to, from, next) => {
     }
 })
 
-
 Vue.use(ElementUI);
 
 

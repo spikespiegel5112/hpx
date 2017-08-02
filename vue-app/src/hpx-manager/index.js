@@ -101,7 +101,7 @@ const router = {
             component: agreement,
             meta: ['协议授权管理'],
         },{
-            path: 'signatureManager',
+            path: 'signature',
             component: signatureManager,
             meta: ['企业签章管理'],
         },{

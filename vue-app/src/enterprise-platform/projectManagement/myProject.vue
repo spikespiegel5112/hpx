@@ -8,63 +8,63 @@
 				</el-table-column>
 				<el-table-column label="操作">
 					<template scope="scope">
-                            <el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
-                            <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
-                            <el-button type="text" size="small" @click="audit(scope)">邀请记录</el-button>
+                        <el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
+                        <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
+                        <el-button type="text" size="small" @click="audit(scope)">邀请记录</el-button>
                     </template>
-                </el-table-column>
-                </el-table>
-                <section class="main-pagination">
-                    <my-Pagination :callback="getList" :total="myProjectListTotal">
-                    </my-Pagination>
-                </section>
-            </el-tab-pane>
-            <el-tab-pane label="受邀项目">
-                <el-table row-key="id" :empty-text="emptyText" :data="invitedProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
-                    <!-- <el-table-column type="index" width="100"></el-table-column> -->
+				</el-table-column>
+			</el-table>
+			<section class="main-pagination">
+				<my-Pagination :callback="getList" :total="myProjectListTotal">
+				</my-Pagination>
+			</section>
+		</el-tab-pane>
+		<el-tab-pane label="受邀项目">
+			<el-table row-key="id" :empty-text="emptyText" :data="invitedProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
+				<!-- <el-table-column type="index" width="100"></el-table-column> -->
 
-                    <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-                    </el-table-column>
-                    <el-table-column label="操作">
-<template scope="scope">
-<el-button type="text" size="small" @click='editProjet(scope)'>
-	进入项目</el-button>
-<el-button type="text" size="small" @click="acceptInvite(scope)">接受</el-button>
-<el-button type="text" size="small" @click="rejectInvite(scope)">拒绝</el-button>
-</template>
-                    </el-table-column>
-                </el-table>
-                <section class="main-pagination">
-                    <my-Pagination :callback="getList" :total="invitedProjectTotal">
-                    </my-Pagination>
-                </section>
-                <section class="main-pagination">
-                    <el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
-                    </el-pagination>
-                </section>
-            </el-tab-pane>
-        </el-tabs>
-        <el-dialog title='选择企业及角色' :visible.sync='inviteEnterpriseFlag'>
-            <el-form :model="inviteData" :rules="rules" ref='ruleForm' label-width="110px">
-                <el-form-item label="企业名称" prop='eid'>
-                    <el-select v-model="inviteData.eid" placeholder="请选择">
-                        <el-option v-for="item in enterpriseList" :key='item.value' :label="item.name" :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="企业类型" prop='pid'>
-                    <el-select v-model="inviteData.pid" placeholder="请选择">
-                        <el-option v-for="item in roleList" :key='item.name' :label="item.name" :value="item.id" @change='aaa'>
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="inviteEnterpriseFlag = false">取 消</el-button>
-                <el-button type="primary" @click="submitInvite('ruleForm')">确 定</el-button>
-            </div>
-        </el-dialog>
-    </div>
+				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+				</el-table-column>
+				<el-table-column label="操作">
+					<template scope="scope">
+						<el-button type="text" size="small" @click='editProjet(scope)'>
+						进入项目</el-button>
+						<el-button type="text" size="small" @click="acceptInvite(scope)">接受</el-button>
+						<el-button type="text" size="small" @click="rejectInvite(scope)">拒绝</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+			<section class="main-pagination">
+				<my-Pagination :callback="getList" :total="invitedProjectTotal">
+				</my-Pagination>
+			</section>
+			<section class="main-pagination">
+				<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+				</el-pagination>
+			</section>
+		</el-tab-pane>
+	</el-tabs>
+	<el-dialog title='选择企业及角色' :visible.sync='inviteEnterpriseFlag'>
+		<el-form :model="inviteData" :rules="rules" ref='ruleForm' label-width="110px">
+			<el-form-item label="企业名称" prop='eid'>
+				<el-select v-model="inviteData.eid" placeholder="请选择">
+					<el-option v-for="item in enterpriseList" :key='item.id' :label="item.name" :value="item.id">
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="企业类型" prop='pid'>
+				<el-select v-model="inviteData.pid" placeholder="请选择">
+					<el-option v-for="item in roleList" :key='item.name' :label="item.name" :value="item.id" @change='aaa'>
+					</el-option>
+				</el-select>
+			</el-form-item>
+		</el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button @click="inviteEnterpriseFlag = false">取 消</el-button>
+			<el-button type="primary" @click="submitInvite('ruleForm')">确 定</el-button>
+		</div>
+	</el-dialog>
+</div>
 </template>
 <script>
 import headTop from '../../components/headTop'
@@ -73,7 +73,7 @@ import myPagination from '@/components/myPagination'
 import {
 	enterpriseListRequest,
 	enterpriseProjectListRequest
-} from '@/api/getData'
+} from '@/api/enterpriseApi'
 import {
 	enterpriseRolesListRequest,
 	modifyProjectRequest
@@ -86,7 +86,6 @@ export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
-			eid: this.$store.state.loginInfo.enterpriseId,
 			inviteData: {
 				eid: null,
 				pid: null
@@ -160,26 +159,29 @@ export default {
 	methods: {
 		getList() {
 			let that = this;
-			let params = Object.assign({
-				eid: this.eid
-			}, this.pagination)
-			enterpriseProjectListRequest(that.eid).then(response => {
+			let options= {
+				params:{
+					eid: this.$store.state.loginInfo.enterpriseId
+				}
+			}
+			options.params = Object.assign(options.params, this.pagination.params)
+			console.log(options);
+			enterpriseProjectListRequest(options).then(response => {
 				response.json().then(result => {
+					console.log(result);
 					this.myProjectList = [];
 					this.invitedProjectList = [];
 					for (var item in result) {
 						if (result[item].inviteStatus == 'F') {
 							that.myProjectList.push(result[item]);
-							console.log(that.myProjectList);
 						}
-						this.myProjectListTotal = result.length
+						this.pagination.total = result.length;
 					}
-
 					for (var item in result) {
 						if (result[item].inviteStatus == 'T') {
 							that.invitedProjectList.push(result[item]);
 						}
-						this.invitedProjectTotal = result.length
+						this.pagination.total = result.length;
 					}
 				})
 			})
@@ -212,7 +214,6 @@ export default {
 			enterpriseListRequest().then(response => {
 				response.json().then(result => {
 					console.log(result);
-
 					this.enterpriseList = result;
 					// for (var item in result) {
 					//     this.$set(this.enterpriseList, item, result[item])

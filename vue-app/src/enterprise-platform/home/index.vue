@@ -65,7 +65,7 @@
                         </el-button>
                     </div>
                     <ul class="home-project-list">
-                        <li v-for="(item,i) in projectList" :key="i+''" @click="toProject">
+                        <li v-for="(item,i) in projectList" :key="i+''" @click="toProject(item.pjId)">
                                 {{item.projectName}}
                         </li>
                     </ul>
@@ -78,7 +78,7 @@
 <script>
 import headTop from '@/components/headTop';
 import { projectsAuditListRequest } from '@/api/getData';
-import { mapState } from 'vuex'
+import { mapState , mapActions } from 'vuex'
 export default {
     components : {
         headTop
@@ -95,6 +95,7 @@ export default {
         ...mapState(['loginInfo']),
     },
     methods:{
+        ...mapActions(['getCurrentProjectId']),
         initProjectList(){
             (async () => {
                 try{
@@ -111,8 +112,12 @@ export default {
                 }
             })()
         },
-        toProject(){
-            this.$router.push({path : '/porderf/demander'})
+        async toProject(pjId){
+            if(pjId){
+                this.$router.push({path : '/porderf/demander',query : {pj_id:pjId}})
+            }else{
+                this.$message.error('fwssb')
+            }
         }
     }
 }

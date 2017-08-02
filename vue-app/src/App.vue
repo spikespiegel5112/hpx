@@ -10,7 +10,7 @@ import headerTop from '@/components/headerTop'
 export default {
 	components : {
 		headerTop
-	}
+	},
 }
 </script>
 
