@@ -188,7 +188,7 @@ export default {
 		},
 		inviteEnterprise(scope) {
 			console.log(scope);
-			alert(scope.row.priductCode)
+
 			this.inviteEnterpriseFlag = true;
 			this.getEnterpriseList();
 			this.getEnterpriseRolesList(scope.row.priductCode);
@@ -225,9 +225,10 @@ export default {
 			})
 		},
 		getEnterpriseRolesList(priductCode) {
+			alert(priductCode)
 			this.roleList = [];
 			let options={
-				priductCode:priductCode
+				productCode:priductCode
 			}
 			enterpriseRolesListRequest(options).then(response => {
 				response.json().then(result => {

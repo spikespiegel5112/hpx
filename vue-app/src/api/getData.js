@@ -266,14 +266,6 @@ export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterpr
 // export const projectsAuditList = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);
 
 /**
- * 获取产品列表
- */
-
-export const getProductList = () => fetch('/core/core/api/v1/products');
-
-
-
-/**
  * 获取新闻公告列表
  */
 

@@ -17,8 +17,8 @@ router.beforeEach(async(to, from, next) => {
     } else {
         res = await store.dispatch("getUserData");
     }
-    if (!res && to.path != '/login') {
-        next({path: '/login'})
+    if (!res && to.path != '/' && to.path != '/register') {
+        next({path: '/'})
     } else {
         next()
     }

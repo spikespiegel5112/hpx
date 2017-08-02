@@ -136,8 +136,8 @@ export const editProduct= (id, params) => fetch(`/core/core/api/v1/products/${id
  * 创建项目信息
  */
 
-export const createProject = (eid, type, formData) => {
-    return fetch(`/core/core/api/v1/projects/${eid}/product/${type}`, formData, 'put');
+export const createProject = options => {
+    return fetch(`/core/core/api/v1/projects/${options.eid}/product/${options.type}`, options.body, 'put');
 }
 
 /**

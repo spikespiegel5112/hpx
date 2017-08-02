@@ -8,20 +8,20 @@
 			<el-col :span="14">
 				<el-form :model="formData" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm">
 					<el-form-item label="企业名称" prop="ownerEnterpriseId">
-						<el-select v-model="formData.ownerEnterpriseId" placeholder="请选择">
+						<el-select v-model="formData.ownerEnterpriseId" placeholder="请选择" @change='getEnterpriseId'>
 							<el-option v-for="item in enterpriseList" :key="item.name" :label="item.name" :value="item.id.toString()">
 							</el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item label="产品类型" prop="productCode">
-						<el-select v-model="formData.productCode" @change='chooseEntRoles' placeholder="请选择">
-							<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.id.toString()">
+						<el-select v-model="formData.productCode" @change='chooseProductType' placeholder="请选择">
+							<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item label="产品企业类型" prop="type">
-						<el-select v-model="formData.type" @change='getEnterpriseType' placeholder="请选择">
-							<el-option v-for="item in typeList" :key="item.name" :label="item.name" :value="item.code">
+						<el-select v-model="formData.type" @change='getProductEnterpriseType' placeholder="请选择">
+							<el-option v-for="item in productEnterpriseTypeList" :key="item.name" :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -55,14 +55,12 @@ import headTop from '@/components/headTop'
 import moment from 'moment'
 import {
 	getEnterprisesList,
-	createProject
+	createProject,
+	getProductList
 } from '@/api/coreApi'
 import {
 	enterpriseRolesListRequest
 } from '@/api/enterpriseApi'
-import {
-	getProductList
-} from '@/api/getData'
 export default {
 	data() {
 		return {
@@ -70,7 +68,7 @@ export default {
 			enterpriseList: [],
 			productList: [],
 			productCode: '',
-			typeList: [],
+			productEnterpriseTypeList: [],
 			typeValue: '',
 			formData: {
 				ownerEnterpriseId: '',
@@ -139,7 +137,7 @@ export default {
 			let response = await getProductList();
 			let result = await response.json();
 			this.productList = [...result];
-
+			console.log(this.productList);
 		},
 		getOwnerEnterpriseId(value) {
 			for (var item in this.enterpriseList) {
@@ -150,27 +148,26 @@ export default {
 			}
 			alert(typeof this.formData.ownerEnterpriseId)
 		},
-		chooseEntRoles(productCode) {
+		chooseProductType() {
 			this.productCode = this.formData.productCode;
-			for (var item in this.productList) {
-				if (this.productList[item].id == this.formData.productCode) {
-					this.getTypes(this.productList[item].code);
-					this.formData.type = '';
-				}
-			}
+			this.getProductEnterpriseType(this.productCode);
+			this.formData.type = '';
 		},
-		getTypes(productCode) {
+		getProductEnterpriseType(productCode) {
 			let options = {
 				productCode: productCode
 			}
+			for (var item in this.productList) {
+				if (this.productList[item].code == productCode) {
+					options.id = this.productList[item].id;
+				}
+			}
+			console.log(options);
 			enterpriseRolesListRequest(options).then(response => {
 				response.json().then(result => {
-					this.typeList = result;
+					this.productEnterpriseTypeList = result;
 				})
 			})
-		},
-		getEnterpriseType(value) {
-			this.typeValue = value;
 		},
 		submitForm(formName) {
 			let that = this;
@@ -183,15 +180,25 @@ export default {
 					this.formData.startTime = this.formData.startTime != '' ? moment(this.formData.startTime).format(this.dateFormat) : '';
 					this.formData.endTime = this.formData.endTime != '' ? moment(this.formData.endTime).format(this.dateFormat) : '';
 					console.log(this.formData)
-					createProject(eid, type, this.formData).then((response) => {
+					let options = {
+						body: {
+							ownerEnterpriseId: that.formData.ownerEnterpriseId,
+							productCode: that.formData.productCode,
+							name: that.formData.name,
+							remark: that.formData.remark,
+							startTime: that.formData.startTime,
+							endTime: that.formData.endTime,
+						},
+						eid: this.formData.ownerEnterpriseId,
+						type: this.formData.type
+					}
+					options.body = this.formData;
+					console.log(options);
+					createProject(options).then(response => {
 						console.log(response.status)
 						if (response.status == 200) {
-							// this.$router.push({
-							// 	name: 'projectsMaintenance'
-							// })
 							this.$router.push('/manager/item')
 						}
-
 					})
 
 				} else {
@@ -202,6 +209,9 @@ export default {
 		},
 		resetForm(formName) {
 			this.$refs[formName].resetFields();
+		},
+		getEnterpriseId() {
+			alert(this.formData.ownerEnterpriseId)
 		}
 	}
 }

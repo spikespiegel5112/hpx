@@ -114,7 +114,8 @@ export default {
         },
         async toProject(pjId){
             if(pjId){
-                this.$router.push({path : '/porderf/demander',query : {pj_id:pjId}})
+                this.getCurrentProjectId(pjId);
+                this.$router.push({path : '/porderf/demander'})
             }else{
                 this.$message.error('fwssb')
             }

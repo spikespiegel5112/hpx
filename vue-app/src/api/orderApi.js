@@ -29,3 +29,8 @@ export const getInterest = (eid,pid) => fetch(`/order/interestRate/enterprises/$
  */
 export const updateInterest = (id,params) => fetch(`/order/interestRate/${id}`,params,'patch')
 
+/**
+ * 获取订单列表 ordersList 
+ */
+export const ordersList = (params) => fetch(`/order/salesOrder/search/`,params)
+

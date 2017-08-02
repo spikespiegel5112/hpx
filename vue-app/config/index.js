@@ -40,14 +40,14 @@ module.exports = {
                 target: 'http://10.38.42.245:9000',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/credit': '/credit/api/v1/'
+                    '^/credit': '/credit/api/v1'
                 },
             },
             '/order': {
                 target: 'http://10.38.42:245:9000',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/order': '/order/api/v1'
+                    '^/order': '/huaqian/api/v1'
                 }
             }
         },

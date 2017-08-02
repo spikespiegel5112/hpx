@@ -81,7 +81,15 @@
                         <el-button type="text" size="small" @click="check(scope.row.id)">查看</el-button>
                         <el-button type="text" size="small" @click="edite(scope.row.id)">编辑</el-button>
                         <el-button type="text" size="small" @click="deal(scope.$index,scope.row.id,scope.row.labelState)">{{scope.row.labelState === '0'? '启用' : '禁用'}}</el-button>
-                        <el-button type="text" size="small" @click="remove(scope.row.id)">删除</el-button>
+                        <el-button type="text" size="small" @click="scope.row.confirmVisible= true">删除</el-button>
+                        <el-popover
+                            v-model="scope.row.confirmVisible">
+                        <p><i style="color:#ffbf00" class="el-icon-information"></i> 确定删除？</p>
+                        <div style="margin-top:15px;">
+                            <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
+                            <el-button type="primary" size="mini" @click="remove(scope.row.id)">确定</el-button>
+                        </div>
+                        </el-popover> 
                     </template>
                 </el-table-column>
             </el-table>
@@ -167,10 +175,7 @@
                 //总页数
                 total : 0,
                 //分页 设置接收
-                pagination : {
-                    // page: 1, //当前页
-                    // size: 1,//每页个数
-                },
+                pagination : null,
                 //table
                 tableList: [],
                 listLoading:false,
@@ -238,7 +243,10 @@
                     const params = Object.assign({},this.query,this.pagination);
                     const resp = await labelList(this.loginInfo.enterpriseId,params);
                     const res = await resp.json();
-                    const total = resp.headers.get('x-total-count')
+                    const total = resp.headers.get('x-total-count');
+                    for( let i = 0 , len = res.length; i < len; i++){
+                        res[i].confirmVisible = false;
+                    };
                     this.tableList = [...res];
                     this.total = parseInt(total);
                     this.listLoading = false;
@@ -329,7 +337,6 @@
                 }
             },
             excelSuccess(response){
-                console.log(response)
                 this.excelPath = response
                 this.$message({
                     type : 'success',
@@ -355,7 +362,7 @@
                 handler : function(){
                     this.getList();
                 },
-                deep:true,
+                // deep:true,
             }
         }
     }
