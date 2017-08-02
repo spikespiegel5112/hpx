@@ -49,19 +49,8 @@
 
 		<section class="main-pagination">
 			<!-- 特殊情况分页自己按注释的  -->
-			<!-- <el-pagination
-                    :current-page="page"
-                    :page-size="size"
-                    :total="total"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :page-sizes="pageSizes"
-                    @current-change="currentChange"
-                    @size-change="pageSizeChange"
-                >
-                </el-pagination> -->
-			<!-- page租组件  -->
-			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
-			</my-Pagination>
+			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+			</el-pagination>
 		</section>
 	</section>
 	<!--编辑界面-->
