@@ -1,4 +1,33 @@
-body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, li, a, p, h1, h2, h3, h4,h5, h6, i, b, textarea, button, input, select, figure, figcaption {
+a,
+article,
+aside,
+b,
+body,
+button,
+dd,
+div,
+dl,
+dt,
+figcaption,
+figure,
+footer,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+i,
+input,
+li,
+nav,
+p,
+section,
+select,
+span,
+textarea,
+ul {
     padding: 0;
     margin: 0;
     list-style: none;
@@ -6,185 +35,196 @@ body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, l
     text-decoration: none;
     border: none;
     font-family: "Microsoft Yahei",sans-serif;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
+
     &:focus {
         outline: none;
     }
 }
 
-a{
-    color : #58B7FF;
-    font-size:12px;
+a {
+    color: #58B7FF;
+    font-size: 12px;
 }
-
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
-::-webkit-scrollbar
-{
-    width: 0px;
-    height: 0px;
+::-webkit-scrollbar {
+    width: 0;
+    height: 0;
     background-color: #F5F5F5;
 }
-
 /*定义滚动条轨道 内阴影+圆角*/
-::-webkit-scrollbar-track
-{
+::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0);
     border-radius: 10px;
     background-color: #F5F5F5;
 }
-
 /*定义滑块 内阴影+圆角*/
-::-webkit-scrollbar-thumb
-{
+::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
 }
 
-input[type="button"], input[type="submit"], input[type="search"], input[type="reset"] {
+input[type="button"],
+input[type="reset"],
+input[type="search"],
+input[type="submit"] {
     -webkit-appearance: none;
 }
 
-textarea { -webkit-appearance: none;}
+textarea {
+    -webkit-appearance: none;
+}
 
-html,body{
+body,
+html {
     height: 100%;
     width: 100%;
     // background-color: #F5F5F5;
 }
 
-.fillcontain{
+.fillcontain {
     height: 100%;
     width: 100%;
 }
-.clear:after{
+
+.clear:after {
     content: '';
     display: block;
     clear: both;
 }
 
-.clear{
-    zoom:1;
+.clear {
+    zoom: 1;
 }
 
-.back_img{
+.back_img {
     background-repeat: no-repeat;
     background-size: 100% 100%;
 }
 
-.margin{
+.margin {
     margin: 0 auto;
 }
 
-.left{
+.left {
     float: left;
 }
 
-.right{
+.right {
     float: right;
 }
 
-.hide{
+.hide {
     display: none;
 }
 
-.show{
+.show {
     display: block;
 }
 
-.ellipsis{
+.ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.router-container{
-    margin:50px 30px 30px 230px;
+.router-container {
+    margin: 50px 30px 30px 230px;
     // margin-left:200px;
     // background:#e9e9e9;
 }
 
-.up-section,
 .main-section,
+.main-table-container,
 .search-criteria-container,
-.main-table-container{
-    background:#fff;
-}
-
-.search-criteria-container{
-    padding:30px 10px 8px 10px;
-    margin-bottom:24px;
-    // border:1px solid #e9e9e9;
-    background:#e9e9e9;
-}
-
-.main-table-container{
-    padding-bottom: 24px;
-}
-.main-pagination{
-    text-align: right;
-    margin-top: 30px;
-    margin-right:20px
-}
-
-.up-section,
-.main-section{
-    padding:30px;
-}
-.up-section{
-    margin-bottom: 30px;
-}
-
-.el-select{
-    width:100%!important
-}
-
-// 模态框样式处理
-div.el-dialog__header{
-    // background:#1d8ce0;
-    padding:15px;
-    min-height:20px;
-    border-bottom:1px solid #e9e9e9; 
-}
-div.el-dialog__header .el-dialog__title{
-    // color:#fff;
-}
-.label-import-modal div.el-dialog__body{
-    padding-left:15%;
-    padding-right:15%;
-}
-
-
-div.el-card__header{
-    padding:0;
-}
-div.el-card__header .card-header{
-    background:#e9e9e9;
-    padding:10px 20px;
-}
-.el-submenu li.el-menu-item{
-    min-width:1px;
-}
-// ~~~~~~~~~~common_block_wrapper~~~~~~~~~~
-.common_block_wrapper{
-    margin: 20px;
-}
-// ~~~~~~~~~~common_editor_wrapper~~~~~~~~~~
-.common_editor_wrapper{
-    margin: 20px 0;
+.up-section {
     background: #fff;
 }
 
-// .el-popover
-div.el-popover{
-    min-width:120px;
+.search-criteria-container {
+    padding: 30px 10px 8px;
+    margin-bottom: 24px;
+    // border:1px solid #e9e9e9;
+    background: #e9e9e9;
 }
-div.el-table__body-wrapper,
+
+.main-table-container {
+    padding-bottom: 24px;
+}
+
+.main-pagination {
+    text-align: right;
+    margin-top: 30px;
+    margin-right: 20px;
+}
+
+.main-section,
+.up-section {
+    padding: 30px;
+}
+
+.up-section {
+    margin-bottom: 30px;
+}
+
+.el-select {
+    width: 100%!important;
+}
+// 模态框样式处理
+
+div.el-dialog__header {
+    // background:#1d8ce0;
+    padding: 15px;
+    min-height: 20px;
+    border-bottom: 1px solid #e9e9e9;
+}
+
+div.el-dialog__header .el-dialog__title {
+    // color:#fff;
+}
+
+.label-import-modal div.el-dialog__body {
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+div.el-card__header {
+    padding: 0;
+}
+
+div.el-card__header .card-header {
+    background: #e9e9e9;
+    padding: 10px 20px;
+}
+
+.el-submenu li.el-menu-item {
+    min-width: 1px;
+}
+// ~~~~~~~~~~common_block_wrapper~~~~~~~~~~
+
+.common_block_wrapper {
+    margin: 20px;
+}
+// ~~~~~~~~~~common_editor_wrapper~~~~~~~~~~
+
+.common_editor_wrapper {
+    margin: 20px 0;
+    background: #fff;
+}
+// .el-popover
+
+div.el-popover {
+    min-width: 120px;
+}
+
 div.el-table .cell,
-div.el-table .el-table__row td{
+div.el-table .el-table__row td,
+div.el-table__body-wrapper {
     position: static;
 }
-div.el-table{
+
+div.el-table {
     overflow: visible;
 }

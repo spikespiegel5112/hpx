@@ -2,9 +2,12 @@
 <div class="fillcontain">
 	<head-top></head-top>
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
-		<el-collapse-item :title="tagItem.scoreCardName" name="1">
-			<el-form ref="form" label-width="60%">
-				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition">
+		<el-collapse-item :title="tagItem.scoreCardName" :name="index">
+			<el-form :model='formData' ref="formData" label-width="60%">
+				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition" :rules="[{
+					required: true,
+					message: '请输入邮箱地址',
+					trigger: 'blur' }]">
 					<el-select v-model='formData.labels[index].subitems[index2].subItem' placeholder="请选择" style="width: 100px;">
 						<el-option v-for="(item, index3) in scoreItem.modelTargetInfos" :key='item.key' :label="item.threeLevel" :value="item.id"></el-option>
 					</el-select>
@@ -17,7 +20,7 @@
 			<div class="grid-content bg-purple"></div>
 		</el-col>
 	</el-row>
-	<el-row type="flex" class="row-bg" justify="center">
+	<el-row type="flex" class="row-bg common_block_wrapper" justify="center">
 		<el-col :span="3">
 			<el-button type="primary" @click='submitEvaluation'>提交评估</el-button>
 		</el-col>
@@ -46,6 +49,7 @@ export default {
 			labelPosition: 'center',
 			treeData: [],
 			selectModelTree: [],
+			activeNames: [],
 			formData: {
 				badRate: 0,
 				labels: [],
@@ -82,10 +86,11 @@ export default {
 					let index = 0;
 					for (var labelIndex in result.labelInfos) {
 						let subitems = [];
+						this.activeNames.push(labelIndex);
 						for (var targetInfosIndex in result.labelInfos[labelIndex].targetInfos) {
 							this.selectModelTree.push(targetInfosIndex)
 							subitems.push({
-								subItem:''
+								subItem: ''
 							});
 							console.log(labelIndex)
 						}
@@ -109,11 +114,16 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			console.log(this.formData);
-			submitTemplateReportListRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result);
-				})
-			})
+			// this.$refs['formData'].validate(valid => {
+			// 	if (valid) {
+					submitTemplateReportListRequest(options).then(response => {
+						response.json().then(result => {
+							console.log(result);
+						})
+					})
+			// 	}
+			// })
+
 		}
 	}
 }

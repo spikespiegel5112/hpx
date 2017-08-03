@@ -27,15 +27,15 @@
 					<template scope="scope">
 						<el-button type="text" size="small" @click='editProjet(scope)'>
 						进入项目</el-button>
-						<el-button type="text" size="small" @click="acceptInvite(scope)">接受</el-button>
-						<el-button type="text" size="small" @click="rejectInvite(scope)">拒绝</el-button>
+						<el-button type="text" size="small" @click="dealWithInvite(scope, 'T')">接受</el-button>
+						<el-button type="text" size="small" @click="dealWithInvite(scope, 'F')">拒绝</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<section class="main-pagination">
+			<!-- <section class="main-pagination">
 				<my-Pagination :callback="getList" :total="invitedProjectTotal">
 				</my-Pagination>
-			</section>
+			</section> -->
 			<section class="main-pagination">
 				<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 				</el-pagination>
@@ -71,7 +71,8 @@ import myPagination from '@/components/myPagination'
 import {
 	enterpriseListRequest,
 	enterpriseProjectListRequest,
-	enterpriseRolesListRequest
+	enterpriseRolesListRequest,
+	modifyProjectInvitStatusRequest
 } from '@/api/enterpriseApi'
 import {
 	addProjectRequest
@@ -88,6 +89,11 @@ export default {
 				eid: '',
 				pid: '',
 				projectRole: ''
+			},
+			dealWithInviteData: {
+				eid: '',
+				pid: '',
+				inviteStatus: ''
 			},
 			rules: {
 				eid: [{
@@ -201,11 +207,9 @@ export default {
 					}
 					console.log(options);
 					addProjectRequest(options).then(response => {
-						console.log(response.headers.get('x-hpx-error-desc'));
-						response.json().then(result => {
-							console.log(result);
-							this.getList();
-						})
+						if (response.status === '200') {
+
+						}
 					})
 				}
 			})
@@ -236,6 +240,19 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.roleList = result;
+				})
+			})
+		},
+		dealWithInvite(scope, inviteStatus) {
+			console.log(scope);
+			let options = {
+				eid: scope.row.enterpriseId,
+				pid: scope.row.pjId,
+				inviteStatus: inviteStatus
+			}
+			modifyProjectInvitStatusRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
 				})
 			})
 		},

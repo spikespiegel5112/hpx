@@ -25,6 +25,14 @@ export const enterpriseProjectListRequest = (options) =>{
 }
 
 /**
+ * 企业接受（拒绝）邀请
+ */
+
+export const modifyProjectInvitStatusRequest = (options) =>{
+    return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}/invite/${options.inviteStatus}`, {}, 'patch');
+}
+
+/**
  * 根据产品code获取所有企业角色信息
  */
 

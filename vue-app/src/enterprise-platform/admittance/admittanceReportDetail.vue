@@ -10,8 +10,8 @@
 					<label>评分：</label>
 					<div>
 						<span class='indicator' :style="{left:scoreIndicatorValue.left+'px'}"></span>
+						<i :style="{left:scoreIndicatorValue.left-5+'px'}">{{reportData.score}}</i>
 					</div>
-
 				</div>
 			</div>
 			<div class="block_wrapper">
@@ -94,7 +94,7 @@ export default {
 						})
 					}
 					this.chart();
-					this.scoreIndicatorValue.left =370* result.score*0.01;
+					this.scoreIndicatorValue.left = 370 * result.score * 0.01;
 					console.log(this.scoreIndicatorValue);
 				})
 			})
@@ -102,7 +102,7 @@ export default {
 		chart() {
 			var evaluatechart = echarts.init(document.getElementById('evaluatechart'));
 			evaluatechart.setOption({
-				color:'#323232',
+				color: '#323232',
 				title: {
 					text: '',
 					left: 'center',
@@ -153,7 +153,7 @@ export default {
 							shadowBlur: 200,
 							shadowColor: 'rgba(255, 255, 255, 0.5)'
 						},
-						radius:['100%']
+						radius: ['100%']
 					},
 					animationType: 'scale',
 					animationEasing: 'elasticOut',
@@ -162,8 +162,6 @@ export default {
 					}
 				}]
 			})
-
-
 		}
 	}
 }
