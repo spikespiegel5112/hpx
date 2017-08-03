@@ -37,25 +37,43 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { getSupplierList } from '@/api/orderApi'
+    import { afterSaleDetail } from '@/api/orderApi'
     import { mapState } from 'vuex'
+    import moment from 'moment'
     export default {
         data(){
             return {
                 //table columns
                 columns : [{
-                    label : '公司名称',
-                    prop  : 'enterpriseName',
+                    label : '品名',
+                    prop  : 'description',
                     },{
-                    label : '地址',
-                    prop  : 'address',
-                    minWidth : 150,
+                    label : '规格',
+                    prop  : 'specification',
                     },{
-                    label : '联系人',
-                    prop  : 'contacts',
+                    label : '型号',
+                    prop  : 'model',
                     },{
-                    label : '联系电话',
-                    prop  : 'contactsPhone',
+                    label : '计量单位',
+                    prop  : 'unit',
+                    },{
+                    label : '数量',
+                    prop  : 'amount',
+                    },{
+                    label : '单价',
+                    prop  : 'univalence',
+                    },{
+                    label : '总价',
+                    prop  : 'total',
+                    },{
+                    label : '差异数量',
+                    prop  : 'differenceAmount',
+                    },{
+                    label : '差异金额',
+                    prop  : 'differenceAmount',
+                    },{
+                    label : '差异类型',
+                    prop  : 'differenceType',
                     }
                 ],
                 //总页数
@@ -78,7 +96,10 @@
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo"]),
+            tAfterSaleId(){
+                return this.$route.params.tAfterSaleId
+            }
         },
         methods: {
             /*
@@ -93,8 +114,8 @@
                 */
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({},this.pagination);
-                    const resp = await getSupplierList(2,params);
+                    const params = Object.assign({tAfterSaleId:this.tAfterSaleId},this.pagination);
+                    const resp = await afterSaleDetail(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];
@@ -108,6 +129,7 @@
                     this.listLoading = false;
                 }
             },
+
         },
         /*
         ** 分页需改3

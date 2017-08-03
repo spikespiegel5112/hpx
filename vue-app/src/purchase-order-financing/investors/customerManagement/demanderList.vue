@@ -175,7 +175,7 @@
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo","projectId"])
         },
 
        
@@ -213,9 +213,8 @@
                 this.editeModalVisible = true;
                 this.editeData = row;
                 //判断是否存在客户利率信息
-                const resp = await getInterest(row.enterpriseId,row.pjId);
-                console.log(resp)
                 try{
+                    const resp = await getInterest(row.enterpriseId,row.pjId);
                     const Interest = await resp.json();
                     const creditPeriod = [moment(Interest.creditPeriodBegin),moment(Interest.creditPeriodOver)]
                     this.editeData = Object.assign({},{...row},{...Interest},{creditPeriod});
@@ -234,7 +233,7 @@
             editSubmit(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.editeData.projectId ='2';
+                        this.editeData.projectId = this.projectId;
                         this.editeData.creditPeriodBegin = this.editeData.creditPeriod[0] != '' ? moment(this.editeData.creditPeriod[0]).format(this.dateFormat) : '';
                         this.editeData.creditPeriodOver = this.editeData.creditPeriod[1] != '' ? moment(this.editeData.creditPeriod[1]).format(this.dateFormat) : '';
                         console.log(this.editeData.creditPeriodBegin)

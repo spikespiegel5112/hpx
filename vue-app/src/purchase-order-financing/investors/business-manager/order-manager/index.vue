@@ -5,39 +5,41 @@
         <!--  搜索条件  -->
         <section class='search-criteria-container'>
 			<el-form :inline="true" :model="query"  ref="query">
-                    <el-form-item prop="name">
+                    <el-form-item class="order-search-item" prop="name">
                         <el-input v-model="query.name" placeholder="订单名称"></el-input>
                     </el-form-item>
-                    <el-form-item prop="code">
+                    <el-form-item class="order-search-item" prop="code">
                         <el-input v-model="query.name" placeholder="订单编号"></el-input>
                     </el-form-item>
-                    <el-form-item prop="supplier">
+                    <el-form-item class="order-search-item" prop="supplier">
                         <el-select v-model="query.supplier" placeholder="需方">
                             <el-option
-                                v-for="item in activatedOptions"
-                                :key="item.activated"
-                                :label="item.value"
-                                :value="item.activated">
+                                v-for="item in supplierOptions"
+                                :key="item.enterpriseId"
+                                :label="item.enterpriseName"
+                                :value="item.enterpriseId">
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item prop="demander">
+                    <el-form-item class="order-search-item" prop="demander">
                         <el-select v-model="query.demander" placeholder="资方">
                             <el-option
-                                v-for="item in activatedOptions"
-                                :key="item.activated"
-                                :label="item.value"
-                                :value="item.activated">
+                                v-for="item in demanderOptions"
+                                :key="item.enterpriseId"
+                                :label="item.enterpriseName"
+                                :value="item.enterpriseId">
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <!-- <el-form-item> -->
-                        <el-button type="primary" icon="search" @click="search">查询</el-button>
-                        <el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
-                        <el-button icon="plus" type="primary">新增</el-button>
-                    <!-- </el-form-item> -->
+                    <el-form-item>
+                        <el-button   type="primary" icon="search" @click="search">查询</el-button>
+                        <el-button   type="primary" class="reset-b" icon="circle-close" @click="resetForm('query')">重置</el-button>
+                        <el-button   type="primary" :disabled="selection.length !== 1" @click="check">查看</el-button>
+                        <el-button   type="primary" :disabled="selection.length !== 1" @click="createCp">生成采购合同</el-button>
+                        <el-button   type="primary" :disabled="selection.length !== 1" @click="createSc">生成销售合同</el-button>
+                        <el-button   type="primary" :disabled="selection.length !== 1" @click="approve">审批</el-button>
+                    </el-form-item>
 			</el-form>
-		</el-col>
         </section>
 
         <section class="main-table-container">
@@ -45,12 +47,11 @@
                 row-key="id"
                 :empty-text="emptyText"
                 :data="tableList"
+                @selection-change="selectList"
                 v-loading="listLoading"
-                highlight-current-row
                 style="width: 100%">
                 <el-table-column
-                  type="index"
-                  width="100">
+                  type="selection">
                 </el-table-column>
                 <el-table-column
                     v-for="(value,i) in columns"
@@ -63,14 +64,8 @@
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >
                 </el-table-column>
-                <el-table-column label="操作">
-                    <template scope="scope">
-                        <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
-                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
-                    </template>
-                </el-table-column>
             </el-table>
-           <!-- 
+           <!--
             分页需改4
             -->
             <my-Pagination @pageChange="pageChange" :total="total">
@@ -85,10 +80,10 @@
 				<el-form-item label="企业名称" prop="name">
 					<el-input v-model="editeData.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label='激活状态' prop="activated">
+				<el-form-item label='需方' prop="activated">
                     <el-select v-model="editeData.activated">
                         <el-option
-                            v-for="item in activatedOptions"
+                            v-for="item in supplierOptions"
                             :key="item.activated"
                             :label="item.value"
                             :value="item.activated">
@@ -116,8 +111,9 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { ordersList } from '@/api/orderApi'
+    import { ordersList , getDemanderList , getSupplierList } from '@/api/orderApi'
     import { mapState } from 'vuex'
+    import moment from 'moment'
     export default {
         data(){
             return {
@@ -143,14 +139,17 @@
                     label : '创建时间',
                     prop  : 'createtime',
                     sortable : true,
+                    formatter : (row,column) => moment(row.createtime).format('YYYY-MM-DD')
                     },{
                     label : '订单状态',
                     prop  : 'orderStatus',
                     sortable : true,
+                    formatter : (row,column) => row.orderStatus === '0' ? "待确定" : "已确定"
                     },{
                     label : '审批状态',
                     prop  : 'approvalStatus',
                     sortable : true,
+                    formatter : (row,column) => !row.approvalStatus ? "已审批" : "未审批"
                     }
                 ],
                 //总页数
@@ -169,6 +168,8 @@
                     supplier : '',
                     demander : ''
                 },
+                supplierOptions : [],
+                demanderOptions : [],
                 activatedOptions : [
                     {
                         value : '激活',
@@ -189,8 +190,9 @@
                         auditState : 'F'
                     }
                 ],
-                //搜索条件的个数
-                criteriaNum : 3,
+
+                // checkbox
+                selection :[],
 
                 //模态框
                 editeModalVisible : false,
@@ -214,13 +216,18 @@
             myPagination,
     	},
         created(){
-            this.initData();
+            // this.initData();
+            this.demanders();
+            this.suppliers();
         },
         mounted(){
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo",'projectId']),
+            slectedId(){
+                return this.selection[0].id;
+            }
         },
         methods: {
             /*
@@ -231,6 +238,16 @@
             },
             async initData(){
                 this.getList();
+            },
+            async suppliers(){
+                const resp = await getSupplierList(this.projectId);
+                const res = await resp.json();
+                this.supplierOptions = JSON.parse(JSON.stringify(res));
+            },
+            async demanders(){
+                const resp = await getDemanderList(this.projectId);
+                const res = await resp.json();
+                this.demanderOptions = JSON.parse(JSON.stringify(res));
             },
             async getList(){
                 /*
@@ -261,13 +278,23 @@
                 this.$refs[formName].resetFields();
             },
 
-            check (index,row){
-                this.$router.push({path: this.$route.path + '/detail/' + row.id})
+            selectList(selection){
+                console.log(selection);
+                this.selection = selection
             },
-            edite (index,row) {
-                this.editeModalVisible = true;
-                this.editeData = Object.assign({},{...row})
-            }
+
+            check (){
+                this.$router.push({path:`${this.$route.path}/detail/${this.slectedId}`})
+            },
+            createCp (){
+
+            },
+            createSc (){
+
+            },
+            approve (){
+
+            },
         },
         /*
         ** 分页需改3
@@ -283,6 +310,8 @@
     }
 </script>
 
-<style lang="less">
-
+<style lang="less" scoped>
+    .order-search-item{
+        // width:120px;
+    }
 </style>

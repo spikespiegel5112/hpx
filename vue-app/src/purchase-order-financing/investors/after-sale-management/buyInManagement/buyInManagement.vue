@@ -24,6 +24,11 @@
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >
                 </el-table-column>
+                <el-table-column label="操作">
+                    <template scope="scope">
+                        <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
            <!-- 
             分页需改4
@@ -37,25 +42,37 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { getSupplierList } from '@/api/orderApi'
+    import { afterSaleList } from '@/api/orderApi'
     import { mapState } from 'vuex'
+    import moment from 'moment'
     export default {
         data(){
             return {
                 //table columns
                 columns : [{
-                    label : '公司名称',
-                    prop  : 'enterpriseName',
+                    label : '补购单号',
+                    prop  : 'code',
                     },{
-                    label : '地址',
-                    prop  : 'address',
-                    minWidth : 150,
+                    label : '合同编号',
+                    prop  : 'contractCode',
                     },{
-                    label : '联系人',
-                    prop  : 'contacts',
+                    label : '供应商',
+                    prop  : 'purchaser',
                     },{
-                    label : '联系电话',
-                    prop  : 'contactsPhone',
+                    label : '审批状态',
+                    prop  : 'approvalStatus',
+                    formatter : (row,column) => row.approvalStatus === '0' ? "待审批" : row.approvalStatus === '1' ? "已通过" : "已拒绝"
+                    },{
+                    label : '补购日期',
+                    prop  : 'applicationDate',
+                    formatter : (row,column) => moment(row.applicationDate).format('YYYY-MM-DD')
+                    },{
+                    label : '补购金额',
+                    prop  : 'money',
+                    },{
+                    label : '退款状态',
+                    prop  : 'paymentStatus',
+                    formatter : (row,column) => row.paymentStatus === '0' ? "待支付" : "已支付"
                     }
                 ],
                 //总页数
@@ -78,7 +95,7 @@
 
         },
         computed : {
-            ...mapState(["loginInfo","projectId"])
+            ...mapState(["loginInfo"])
         },
         methods: {
             /*
@@ -93,8 +110,8 @@
                 */
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({},this.pagination);
-                    const resp = await getSupplierList(this.projectId,params);
+                    const params = Object.assign({receiptsType:'G'},this.pagination);
+                    const resp = await afterSaleList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];
@@ -107,6 +124,10 @@
                     this.emptyText = "获取数据失败";
                     this.listLoading = false;
                 }
+            },
+
+            check (index,row){
+                this.$router.push({path: this.$route.path + '/zf_buyInManagementDetail/' + row.id})
             },
         },
         /*

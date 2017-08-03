@@ -38,56 +38,72 @@ export default {
 		laoding: false,
 	}),
 	props: ['index'],
-	created() {
-		(() => {
-			const pjId = this.$route.query.pj_id;
-			// console.log(pjId)
-			this.getCurrentProjectId(pjId);
-		})()
-	},
-	mounted: function() {
-		this.$nextTick(
-			async() => {
-				this.loading = true;
-				try {
-					const path = this.$route.path.split('/')[1];
-					const pjId = this.$route.query.pj_id;
-					let resp;
-					if (path !== 'platform' && path !== 'manager') {
-						if (pjId) {
-							resp = await getProjectMenuList(this.loginInfo.enterpriseId, pjId)
-						} else {
-							const path = this.loginInfo.enterpriseId === '1' ? '/manager' : '/platform';
-							this.$alert('没有选取项目或者没权限', '提示', {
-								confirmButtonText: '确定',
-								callback: action => {
-									this.$router.push({
-										path
-									});
-								}
-							})
+	created: function() {
+		(async() => {
+			this.loading = true;
+			try {
+				const path = this.$route.path.split('/')[1];
+				let resp,res;
+				if (path !== 'platform' && path !== 'manager') {
+					const { pjId } = this.$route.params;
+					this.getCurrentProjectId(pjId);
+					if (pjId) {
+						try{
+							resp = await getProjectMenuList(this.loginInfo.enterpriseId, pjId);
+							const tmp = await resp.json();
+							this.changePath(tmp,pjId);
+							res = [...tmp];
+						}catch(e){
+							this.toHome();
 						}
 					} else {
-						resp = await getMenuList(this.loginInfo.enterpriseId);
+						this.toHome();
 					}
-
-					const res = await resp.json();
-					this.menuList = res;
-					this.loading = false;
-				} catch (e) {
-					this.loading = false;
+				} else {
+					resp = await getMenuList(this.loginInfo.enterpriseId);
+					res = await resp.json();
 				}
+				this.menuList = res;
+				this.loading = false;
+			} catch (e) {
+				this.loading = false;
 			}
-		)
+		})()
 	},
 	computed: {
 		...mapState(['loginInfo', 'projectId']),
 		defaultActive: function() {
-			return this.$route.path.split('/').slice(0, 3).join('/');
+			const path = this.$route.path.split('/')[1];
+			const sliceNum = path === 'platform' || path === 'manager' ? 3 : 4;
+			return this.$route.path.split('/').slice(0, sliceNum).join('/');
 		},
 	},
 	methods: {
 		...mapActions(['getCurrentProjectId']),
+		changePath(data,pjId){
+			data.map(
+				(v,i) => {
+					if(v.vRolePermissionCustom.length){
+						this.changePath(v.vRolePermissionCustom,pjId)
+					}else{
+						let tmp = v.link.split('/')
+						tmp.splice(2,0,pjId);
+						v.link = tmp.join('/');
+					}
+				}
+			)
+		},
+		toHome(){
+			const path = this.loginInfo.enterpriseId === '1' ? '/manager' : '/platform';
+			this.$alert('没有选取项目或者没权限', '提示', {
+				confirmButtonText: '确定',
+				callback: action => {
+					this.$router.push({
+						path
+					});
+				}
+			})
+		}
 	}
 }
 </script>

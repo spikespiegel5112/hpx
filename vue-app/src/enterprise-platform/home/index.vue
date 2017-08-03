@@ -65,7 +65,7 @@
                         </el-button>
                     </div>
                     <ul class="home-project-list">
-                        <li v-for="(item,i) in projectList" :key="i+''" @click="toProject(item.pjId)">
+                        <li class="ellipsis" v-for="(item,i) in projectList" :key="i+''" @click="toProject(item.pjId)">
                                 {{item.projectName}}
                         </li>
                     </ul>
@@ -115,7 +115,7 @@ export default {
         async toProject(pjId){
             if(pjId){
                 this.getCurrentProjectId(pjId);
-                this.$router.push({path : '/porderf/demander'})
+                this.$router.push({path : `/porderf/${pjId}/demander`})
             }else{
                 this.$message.error('fwssb')
             }
@@ -145,7 +145,8 @@ export default {
             float : left;
             color:#fff;
             margin:10px 20px;
-            width:180px;
+            padding:0 50px;
+            width:80px;
             height:50px;
             line-height:50px;
             text-align: center;

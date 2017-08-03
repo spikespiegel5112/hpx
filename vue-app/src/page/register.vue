@@ -230,7 +230,7 @@ export default {
     color: red;
 }*/
 
-.el-input__inner {
+.register-form .el-input__inner {
     background: transparent;
     border: none;
     border-radius: 0;
