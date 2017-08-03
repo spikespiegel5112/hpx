@@ -185,8 +185,8 @@ export const auditProjectRequest = (eid, pid, state) => {
  * 新增企业项目信息
  */
 
-export const modifyProjectRequest = (options) => {
-    return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}`, {}, 'put');
+export const addProjectRequest = (options) => {
+    return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}`, options.body, 'put');
 }
 
 

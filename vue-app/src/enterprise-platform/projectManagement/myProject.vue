@@ -21,8 +21,6 @@
 		</el-tab-pane>
 		<el-tab-pane label="受邀项目">
 			<el-table row-key="id" :empty-text="emptyText" :data="invitedProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
-				<!-- <el-table-column type="index" width="100"></el-table-column> -->
-
 				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 				</el-table-column>
 				<el-table-column label="操作">
@@ -45,23 +43,23 @@
 		</el-tab-pane>
 	</el-tabs>
 	<el-dialog title='选择企业及角色' :visible.sync='inviteEnterpriseFlag'>
-		<el-form :model="inviteData" :rules="rules" ref='ruleForm' label-width="110px">
+		<el-form :model="inviteData" :rules="rules" ref='inviteData' label-width="110px">
 			<el-form-item label="企业名称" prop='eid'>
-				<el-select v-model="inviteData.eid" placeholder="请选择">
+				<el-select v-model="inviteData.eid" placeholder="请选择" @change='aaa'>
 					<el-option v-for="item in enterpriseList" :key='item.id' :label="item.name" :value="item.id">
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="企业类型" prop='pid'>
-				<el-select v-model="inviteData.pid" placeholder="请选择">
-					<el-option v-for="item in roleList" :key='item.name' :label="item.name" :value="item.id" @change='aaa'>
+			<el-form-item label="企业类型" prop='projectRole'>
+				<el-select v-model="inviteData.projectRole" placeholder="请选择" @change='aaa'>
+					<el-option v-for="item in roleList" :key='item.name' :label="item.name" :value="item.code">
 					</el-option>
 				</el-select>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
 			<el-button @click="inviteEnterpriseFlag = false">取 消</el-button>
-			<el-button type="primary" @click="submitInvite('ruleForm')">确 定</el-button>
+			<el-button type="primary" @click="submitInvite()">确 定</el-button>
 		</div>
 	</el-dialog>
 </div>
@@ -76,7 +74,7 @@ import {
 	enterpriseRolesListRequest
 } from '@/api/enterpriseApi'
 import {
-	modifyProjectRequest
+	addProjectRequest
 } from '@/api/coreApi'
 export default {
 	components: {
@@ -87,23 +85,18 @@ export default {
 		const dateFormat = "YYYY-MM-DD";
 		return {
 			inviteData: {
-				eid: null,
-				pid: null
-			},
-			ruleForm: {
 				eid: '',
-				pid: ''
+				pid: '',
+				projectRole: ''
 			},
 			rules: {
 				eid: [{
 					required: true,
-					message: '请选择企业名称',
-					trigger: 'blur'
+					message: '请选择企业名称'
 				}],
-				pid: [{
+				projectRole: [{
 					required: true,
-					message: '请选择产品类型',
-					trigger: 'blur'
+					message: '请选择企业角色'
 				}]
 			},
 			//table
@@ -155,6 +148,7 @@ export default {
 	},
 	activated() {
 		this.getList();
+		console.log(decodeURIComponent('%E6%95%B0%E6%8D%AE%E6%9B%B4%E6%94%B9%E5%A4%B1%E8%B4%A5'));
 	},
 	methods: {
 		getList() {
@@ -188,22 +182,33 @@ export default {
 		},
 		inviteEnterprise(scope) {
 			console.log(scope);
-
+			this.inviteData.pid = null;
+			this.inviteData.projectRole = '';
+			this.inviteData.pid = scope.row.pjId;
 			this.inviteEnterpriseFlag = true;
 			this.getEnterpriseList();
 			this.getEnterpriseRolesList(scope.row.priductCode);
 		},
-		submitInvite(formRule) {
-			console.log(this.inviteData);
-			this.$refs[formRule].validate((valid) => {
-				modifyProjectRequest(this.inviteData).then(response => {
-					response.json().then(result => {
-						console.log(result);
-						this.getList();
+		submitInvite() {
+			this.$refs['inviteData'].validate(async valid => {
+				if (valid) {
+					let options = {
+						eid: this.inviteData.eid,
+						pid: this.inviteData.pid,
+						body: {
+							enterpriseRole: this.inviteData.projectRole,
+						}
+					}
+					console.log(options);
+					addProjectRequest(options).then(response => {
+						console.log(response.headers.get('x-hpx-error-desc'));
+						response.json().then(result => {
+							console.log(result);
+							this.getList();
+						})
 					})
-				})
+				}
 			})
-
 		},
 		flipPage(pageIndex) {
 			this.pagination.params.page = pageIndex;
@@ -216,19 +221,16 @@ export default {
 					console.log(result);
 					this.enterpriseList = result;
 					for (var item in result) {
-					    this.$set(this.enterpriseList, item, result[item])
+						this.$set(this.enterpriseList, item, result[item])
 					}
-
-					// this.enterpriseList=result;
-
 				})
 			})
 		},
 		getEnterpriseRolesList(priductCode) {
 			alert(priductCode)
 			this.roleList = [];
-			let options={
-				productCode:priductCode
+			let options = {
+				productCode: priductCode
 			}
 			enterpriseRolesListRequest(options).then(response => {
 				response.json().then(result => {
@@ -238,7 +240,7 @@ export default {
 			})
 		},
 		aaa() {
-			alert(this.inviteData.pid)
+			console.log(this.inviteData)
 		}
 	}
 }
