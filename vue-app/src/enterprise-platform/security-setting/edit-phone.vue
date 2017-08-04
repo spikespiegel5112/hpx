@@ -34,11 +34,11 @@
         </div>
         <div class="old-code" v-if="newSeen">
             <div class="old-code-title">手机验证码验证 &nbsp;&nbsp;&nbsp;&nbsp; 为确认是你本人操作，请完成以下验证</div>
-            <el-form class="old-code-form" :model="newForm" ref="newForm" :rules="newRules" label-width="100px">
+            <el-form class="old-code-form" :model="newForm" ref="newForm" label-width="100px">
                 <el-form-item
                     label="新手机号码"
-                    prop="newPhone"
-                    v-model="newPhone"
+                    prop="newForm.newPhone"
+                    v-model="newForm.newPhone"
                 >
                     <el-col :span="6">
                         <el-input v-model="newForm.newPhone" auto-complete="off" ></el-input>
@@ -51,10 +51,10 @@
                     { required: true, message: '请输入验证码！',  trigger: 'blur'},
                     ]"
                 >
-                    <el-col :span="6">
-                        <el-input  v-model="newForm.code" auto-complete="off" ></el-input>
+                    <el-col :span="6" style="margin-right: 10px;">
+                        <el-input  v-model="newForm.code2" auto-complete="off" ></el-input>
                     </el-col>
-                     <el-col :span="4">
+                    <el-col :span="4">
                         <el-button @click="sendNewCode" :disabled="newForm.smsButton.disabled">{{newForm.smsButton.msg}}</el-button>
                     </el-col>
                 </el-form-item>
@@ -98,13 +98,8 @@
                 msg: '获取验证码'
             },
           },
-          newRules:{
-              newPhone: [
-                  {validator: validatePhone, trigger: 'blur'}
-              ]
-          },
         active: 0
-      };
+      }; 
     },
 
     mounted(){
@@ -172,53 +167,29 @@
             
         }
       },
-      async subOldPhone() {
-        const resp = await checkOldPhone( this.loginInfo.phone, this.oldForm.code);
-        if(resp.status === 200) {
-            return true;
-        } else {
-            return false;
-        }
-      },
-      async subNewPhone() {
-        const resp = await checkNewPhone( this.newForm.newPhone, this.newForm.code2);
-        if(resp.status === 200) {
-            return true;
-        } else {
-            return false;
-        }
-      },
       submitOld(formName) {
-        this.$refs[formName].validate((valid) => {
+        this.$refs[formName].validate( async (valid) => {
             if (valid) {
-               const oldOk = this.subOldPhone();
-               oldOk.then(status => {
-                   if(status) {
-                      this.oldSeen = false;
-                      this.newSeen = true;
-                      if (this.active++ > 2) this.active = 0;
-                   } else {
-                       this.$message.error('验证失败！');
-                   }
-               })
+                 try{
+                    const resp = await checkOldPhone( this.loginInfo.phone, this.oldForm.code);
+                    this.oldSeen = false;
+                    this.newSeen = true;
+                }catch(e) {
+                    this.$message.error(e);
+                }
             }
           });
       },
       submitNew(formName) {
-        this.$refs[formName].validate((valid) => {
+          console.log("呵呵", this.newForm)
+        this.$refs[formName].validate( async (valid) => {
             if (valid) {
-               const newOk = this.subNewPhone();
-               newOk.then(status => {
-                   if(status) {
-                       this.$message({
-                        message: "修改手机号码成功！",
-                        type: 'success'
-                      })
-                      history.back();
-                   } else {
-                      this.$message.error('修改手机号码失败！');
-                   }
-               })
+               try {
+                    const resp = await checkNewPhone( this.newForm.newPhone, this.newForm.code2);
+                    this.$router.push('/platform/secure');
+                } catch(e) {
+                    this.$message.error(e);
+                }
             }
           });
       }

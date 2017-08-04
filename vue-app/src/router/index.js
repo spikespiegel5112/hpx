@@ -13,6 +13,7 @@ const App = r => require.ensure([], () => r(require('@/App')), 'appContainer');
 */
 const login = r => require.ensure([], () => r(require('@/page/login')), 'login');
 const register = r => require.ensure([], () => r(require('@/page/register')), 'register');
+// const forgetPwd = r => require.ensure([], () => r(require('@/page/forgetPwd')), 'forgetPwd');
 const manage = r => require.ensure([], () => r(require('@/page/manage')), 'manage');
 const home = r => require.ensure([], () => r(require('@/page/home')), 'home');
 const addShop = r => require.ensure([], () => r(require('@/page/addShop')), 'addShop');
@@ -40,6 +41,10 @@ const routes = [
 		path: '/',
 		component: login
 	},
+	// {
+	// 	path: '/forgetPwd',
+	// 	component: forgetPwd
+	// },
 	{
 		path: '/register',
 		component: register
@@ -128,7 +133,7 @@ const routes = [
 			enterprisePlatformRouter,
 
 			//order
-			orderRouter,			
+			orderRouter,
 		]
 	},
 

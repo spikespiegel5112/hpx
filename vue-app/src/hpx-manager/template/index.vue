@@ -221,7 +221,7 @@
             myPagination,
     	},
         created(){
-            this.initData();
+            // this.initData();
         },
         mounted(){
 
@@ -236,9 +236,9 @@
             pageChange(data){
                 this.pagination = data;
             },
-            async initData(){
-                this.getList();
-            },
+            // async initData(){
+            //     this.getList();
+            // },
             async getList(){
                 /*
                 ** 分页需改5

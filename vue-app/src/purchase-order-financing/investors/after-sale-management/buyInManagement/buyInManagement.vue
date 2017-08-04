@@ -52,9 +52,11 @@
                 columns : [{
                     label : '补购单号',
                     prop  : 'code',
+                    minWidth : 130,
                     },{
                     label : '合同编号',
                     prop  : 'contractCode',
+                    minWidth : 130,
                     },{
                     label : '供应商',
                     prop  : 'purchaser',
@@ -65,7 +67,7 @@
                     },{
                     label : '补购日期',
                     prop  : 'applicationDate',
-                    formatter : (row,column) => moment(row.applicationDate).format('YYYY-MM-DD')
+                    formatter : (row,column) => row.applicationDate == null ? "" :moment(row.applicationDate).format('YYYY-MM-DD')
                     },{
                     label : '补购金额',
                     prop  : 'money',

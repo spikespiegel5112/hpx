@@ -3,13 +3,15 @@ import modelRouter from '@/risk-management/model/index';
 import labelRouter from '@/risk-management/label/index';
 // WrapComponent
 const home = r => require.ensure([], () => r(require('@/enterprise-platform/home')), 'enterprise-platform-home');
-
 const enterpriseIndex = r => require.ensure([], () => r(require('@/enterprise-platform/main')), 'enterprise-platform-index');
 const securitySetting = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting')), 'security-setting');
 const editPhone = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting/edit-phone')), 'edit-phone');
 const editPwd = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting/edit-pwd')), 'edit-pwd');
 const certification = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep')), 'certification-ep');
 const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platform/services-open')), 'enterprise-platform-serivces');
+const signatureManager = r => require.ensure([], () => r(require('@/enterprise-platform/signature-manager')), 'signature-manager');
+const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterprise-signature');
+
 
 // 项目管理
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
@@ -56,6 +58,14 @@ export default {
 			path: 'transaction-detail',
 			component: transactionDetail,
 			meta: ['资金管理', '交易明细'],
+		},{
+			path: 'signature',
+			component: signatureManager,
+			meta: ['签章管理'],
+		},{
+			path: 'enterpriseSignature',
+			component: enterpriseSignature,
+			meta: ['企业签章'],
 		},{
 			path: 'secure',
 			component: securitySetting,

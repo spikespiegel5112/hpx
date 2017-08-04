@@ -3,7 +3,7 @@
 	  	<transition name="form-fade" mode="in-out">
 	  		<section class="form_contianer" v-show="showLogin">
 		  		<div class="manage_tip">
-		  			<p>elm后台管理系统</p>
+		  			<p>hpx后台管理系统</p>
 		  		</div>
 		    	<el-form :model="loginForm" :rules="rules" ref="loginForm">
 					<el-form-item prop="username">
@@ -13,12 +13,11 @@
 						<el-input type="password" placeholder="密码" v-model="loginForm.password"></el-input>
 					</el-form-item>
 					<el-form-item>
-				    	<el-button type="primary" @click="submitForm('loginForm')" class="submit_btn">登陆</el-button>
+				    	<el-button type="primary" @click="submitForm('loginForm')" class="submit_btn">登录</el-button>
 				  	</el-form-item>
 				</el-form>
-				<p class="tip">温馨提示：</p>
-				<p class="tip">未登录过的新用户，自动注册</p>
-				<p class="tip">注册过的用户可凭账号密码登录</p>
+				<el-button style="float:right; margin-left: 20px;" @click="register" type="text">点击注册</el-button>
+				<el-button style="float:right" @click="forgetPwd" type="text">忘记密码</el-button>
 	  		</section>
 	  	</transition>
   	</div>
@@ -31,8 +30,8 @@
 	    data(){
 			return {
 				loginForm: {
-					username: '13333333334',
-					password: '123456',
+					username: '13333333338',
+					password: '111qqq',
 				},
 				rules: {
 					username: [
@@ -88,6 +87,12 @@
 					}
 				});
 			},
+			register () {
+				this.$router.push('/register');
+			},
+			forgetPwd () {
+				this.$router.push('/forgetPwd');
+			}
 		},
 		watch: {
 			adminInfo: function (newValue){

@@ -1,7 +1,6 @@
 <template>
     <div>
-        <p>所有企业电子签章列表</p>
-        <hr style="margin-bottom: 30px;" />
+        <p style="margin: 30px 0;">所有企业电子签章列表</p>
         <el-input style="width: 20%; marginLeft: 80%;marginBottom: 5px;" placeholder="请输入公司名称" icon="search" v-model="query.enterpriseName" :on-icon-click="search">
         </el-input>
         <el-table 
@@ -31,19 +30,15 @@
             <el-table-column prop="action" label="操作">
                 <template scope="scope">
                     <el-button type="text" size="small" @click="abled(scope.row.name, scope.row.id, scope.row.enabled)" >{{scope.row.enabled === "T" ? "禁用" : "启用"}}</el-button>
-                    <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
-                    <!--<el-popover
-                        ref="popover{{$index}}"
-                        placement="top"
-                        width="160"
-                        v-model="visible2">
-                        <p>确定删除吗？</p>
-                        <div style="text-align: right; margin: 0">
-                            <el-button size="mini" type="text" @click="!visible2">取消</el-button>
-                            <el-button type="primary" size="mini" @click="visible2=false">确定</el-button>
+                    <el-button type="text" size="small" @click="scope.row.confirmVisible=true">删除</el-button>
+                    <el-popover v-model="scope.row.confirmVisible">
+                        <p>
+                            <i style="color:#ffbf00" class="el-icon-information"></i> 确定删除？</p>
+                        <div style="margin-top:15px;">
+                            <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
+                            <el-button type="primary" size="mini" @click="del(scope.row.id)">确定</el-button>
                         </div>
                     </el-popover>
-                    <el-button type="text" v-popover:popover{{$index}}>删除</el-button>-->
                 </template>
             </el-table-column>
         </el-table>
@@ -102,6 +97,10 @@ export default {
                 const resp = await getEpSignatureList(params, eid);
                 const res = await resp.json();
                 const total = resp.headers.get('x-total-count')
+                let tmp = {};
+                res.map((v) =>{
+                    Object.assign(v, {confirmVisible: false});
+                })
                 this.tableList = [...res];
                 Object.keys(this.tableList).forEach( (k) => {
                         this.tableList[k].visible2 = false;

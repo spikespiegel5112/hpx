@@ -182,6 +182,7 @@ export default {
                             type: 'success'
                         });
                         this.$router.push('/')
+                        location.reload() 
                     } catch (e) {
                         this.$message.error(e);
                     }

@@ -17,11 +17,11 @@
 			<el-form-item>
 				<el-button type="primary" icon="search" @click="search">查询</el-button>
 				<el-button type="primary" class="reset-b" icon="circle-close" @click="resetForm('query')">重置</el-button>
-				<el-button type="primary">签章</el-button>
+				<!-- <el-button type="primary">签章</el-button>
 				<el-button type="primary">预览</el-button>
 				<el-button type="primary">上传合同</el-button>
 				<el-button type="primary">查看融资详情</el-button>
-				<el-button type="primary">已处置</el-button>
+				<el-button type="primary">已处置</el-button> -->
 			</el-form-item>
 		</el-form>
 	</section>
@@ -29,32 +29,28 @@
 		<el-table highlight-current-row row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
 			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
+			<el-table-column align="center" label="操作" style='width:200px'>
+				<template scope="scope">
+					<div class="common_tablebtn_wrapper">
+						<el-button type="text" size="small" icon="search" @click="search">查询</el-button>
+						<el-button type="text" size="small" class="reset-b" icon="circle-close" @click="resetForm('query')">重置</el-button>
+						<el-button type="text" size="small" @click="signature">签章</el-button>
+						<el-button type="text" size="small" @click="review">预览</el-button>
+					</div>
+					<div class="common_tablebtn_wrapper">
+						<el-button type="text" size="small" @click="uploadContract">上传合同</el-button>
+						<el-button type="text" size="small" @click="reviewFinancing">查看融资详情</el-button>
+						<el-button type="text" size="small" @click="uploadContract">已处置</el-button>
+					</div>
+				</template>
+			</el-table-column>
 		</el-table>
-		<el-dialog title="请选择评估模型" :visible.sync="evaluateEnterpriseDialogFlag">
-			<el-form :inline="true">
-				<el-form-item label="请选择行业" inline>
-					<el-select v-model="industryType" placeholder="请选择" @change='selectIndustry'>
-						<el-option v-for="item in industryList" :key='item.key' :label="item.industryName" :value="item.id"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="请选择模型" inline>
-					<el-select v-model="modelType" placeholder="请选择">
-						<el-option v-for="item in modelList" :key='item.key' :label="item.gradeCardName" :value="item.id"></el-option>
-					</el-select>
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="evaluateEnterpriseDialogFlag = false">取 消</el-button>
-				<el-button type="primary" @click="toEvaluate()">确 定</el-button>
-			</div>
-		</el-dialog>
+
 		<section class="main-pagination">
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
 	</section>
-	</span>
-	</el-dialog>
 </div>
 </template>
 
@@ -142,12 +138,6 @@ export default {
 			emptyText: "暂无数据",
 			//搜索条件的个数
 			criteriaNum: 3,
-			//选择模型模态框
-			evaluateEnterpriseDialogFlag: false,
-			industryList: [],
-			industryType: '',
-			modelList: [],
-			modelType: ''
 
 		}
 	},
@@ -193,25 +183,14 @@ export default {
 				})
 			})
 		},
-		getIndustryList() {
-			let options = {}
-			allIndustryListRequest().then(response => {
-				response.json().then(result => {
-					console.log(result);
-					this.industryList = result;
 
-				})
-			})
-		},
-		evaluateEnterprise(scope) {
-			console.log(this.pid);
-			this.pid = scope.row.projectId;
-			this.evaluateEnterpriseDialogFlag = true;
-			this.getIndustryList();
-		},
 		search() {},
 		resetForm() {},
-		selectIndustry() {}
+		selectIndustry() {},
+		signature(){},
+		review(){},
+		uploadContract(){},
+		reviewFinancing(){}
 
 
 

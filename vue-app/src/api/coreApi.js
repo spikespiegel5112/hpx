@@ -19,7 +19,7 @@ export const getOldCord = (oldPhone) => fetch('/core/core/api/v1/sms/checkOldPho
 /**
  * 安全设置，修改手机号码, 验证旧手机号码
  */
-export const checkOldPhone = (oldPhone, code) => fetch('/core/core/api/v1/checkOldPhone?oldPhone=' + oldPhone + '&code=' + code)
+export const checkOldPhone = (oldPhone, code) => fetch('/core/core/api/v1/checkOldPhone?oldPhone=' + oldPhone + '&code=' + code, {}, 'post')
 
 /**
  * 安全设置，修改手机号码, 向新手机号码发送验证码

@@ -79,7 +79,6 @@ export default {
 .title-out {
     /*border-bottom: 1px solid #DDD;*/
     padding: 18px 0px;
-    /*min-height: 50px;*/
     margin-bottom: 60px;
 }
 

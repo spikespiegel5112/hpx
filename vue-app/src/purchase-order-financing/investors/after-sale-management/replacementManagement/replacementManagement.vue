@@ -53,16 +53,18 @@
                 columns : [{
                     label : '补发单号',
                     prop  : 'code',
+                    minWidth : 130,
                     },{
                     label : '合同编号',
                     prop  : 'contractCode',
+                    minWidth : 130,
                     },{
                     label : '供应商',
                     prop  : 'purchaser',
                     },{
                     label : '申请日期',
                     prop  : 'applicationDate',
-                    formatter : (row,column) => moment(row.applicationDate).format('YYYY-MM-DD')
+                    formatter : (row,column) =>row.applicationDate == null ? "" :  moment(row.applicationDate).format('YYYY-MM-DD')
                     },{
                     label : '审批状态',
                     prop  : 'approvalStatus',

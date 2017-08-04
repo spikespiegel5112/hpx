@@ -6,6 +6,12 @@ import homeDemander from '@/purchase-order-financing/home-demander'
 import testD from '@/purchase-order-financing/test-demander'
 import zfdenabderList from '@/purchase-order-financing/investors/customerManagement/demanderList'
 import zfsupplierList from '@/purchase-order-financing/investors/customerManagement/supplierList'
+import purchaseContract from '@/purchase-order-financing/investors/purchaseContract'
+import investors from '@/purchase-order-financing/investors'
+import signature from '@/purchase-order-financing/investors/purchaseContract/signature'
+import receipt from '@/purchase-order-financing/investors/purchaseContract/receipt'
+import apply from '@/purchase-order-financing/investors/purchaseContract/apply'
+
 import refundManagement from '@/purchase-order-financing/investors/after-sale-management/refundManagement/refundManagement'
 import refundManagementDetail from '@/purchase-order-financing/investors/after-sale-management/refundManagement/refundManagementDetail'
 import replacementManagement from '@/purchase-order-financing/investors/after-sale-management/replacementManagement/replacementManagement'
@@ -22,9 +28,13 @@ import goodsMaintenance from '@/purchase-order-financing/investors/goodsMaintena
 import business from '@/purchase-order-financing/investors/business-manager'
 
 export default {
-    path : '/porderf/:pjId',
+    path : '/porderf/:pjId?',
     component : wrapComponent,
     children : [{
+			path: '/',
+			component: investors,
+			meta: ['首页', '资方'],
+        },{
 			path: 'demander',
 			component: homeDemander,
 			meta: ['订单融资', '需方'],
@@ -40,6 +50,22 @@ export default {
 			path: 'zf_supplier',
 			component: zfsupplierList,
 			meta: ['供应商列表', '资方'],
+        },{
+			path: 'zf_purchaseContract',
+			component: purchaseContract,
+			meta: ['资方', '采购合同'],
+        },{
+			path: 'zf_purchaseContract/signature/:id?',
+			component: signature,
+			meta: ['资方', '采购合同', '签章'],
+        },{
+			path: 'zf_purchaseContract/receipt/:id?',
+			component: receipt,
+			meta: ['资方', '采购合同', '确认收货'],
+        },{
+			path: 'zf_purchaseContract/receipt/:id?/apply/:bid?/:type?',
+			component: apply,
+			meta: ['资方', '采购合同', '确认收货','补发申请'],
         },{
 			path: 'zf_orders',
 			component: business.orderManager,

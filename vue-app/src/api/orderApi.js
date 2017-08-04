@@ -1,5 +1,4 @@
-import fetch from '@/config/fetch'
-
+﻿import fetch from '@/config/fetch'
 /**
  * 客户管理-获取供应商列表
  */
@@ -28,6 +27,33 @@ export const getInterest = (eid, pid) => fetch(`/order/interestRate/enterprises/
  * 修改客户利率信息
  */
 export const updateInterest = (id, params) => fetch(`/order/interestRate/${id}`, params, 'patch')
+
+
+/**
+ * 资方--采购合同--获取采购合同列表
+ */
+export const getPurchaseContractList = (query) => fetch('/order/contract/listC', query);
+
+/**
+ * 资方--采购合同--签章预览
+ */
+export const contractSignature = (id) => fetch(`/order/contract/preview/${id}`, {});
+
+
+/**
+ * 资方--采购合同--确认收货列表
+ */
+export const getReceiptList = (tContractId) => fetch(`/order/contract/queryReceivingDetail?tContractId=${tContractId}`, {});
+/**
+ * 资方--采购合同--补发申请,退款申请,补购申请
+ */
+export const saleManager = (type,params) => fetch(`/order/refund/add?receiptsType=${type}`, params,'post');
+
+/**
+ * 资方--采购合同--生成补货单
+ */
+export const supplementOrder = (id) => fetch(`/order/refund/get/${id}`, {});
+
 
 /**
  * 获取订单列表 ordersList

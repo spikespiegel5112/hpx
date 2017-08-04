@@ -13,6 +13,26 @@ export const login = data => fetch('/core/api/v1/login', data, 'form');
 export const signout = () => fetch('/core/api/v1/logout');
 
 /**
+ * 注册--获取手机短信验证码
+ */
+export const reSmgCode = (phone, strCode) => fetch(`/core/core/api/v1/sms/registerSendSms?phone=${phone}&strCode=${strCode}`, {}, 'post')
+
+/**
+ * 注册--提交注册信息
+ */
+export const subRegister = (params) => fetch('/core/core/api/v1/enterprise/users', params, 'form')
+
+/**
+ * 忘记密码--获取手机短信验证码
+ */
+export const forgetPwdSmgCode = (phone, strCode, enterpriseName) => fetch(`/core/core/api/v1/sms/forgotPasswordSendSms?phone=${phone}&strCode=${strCode}&enterpriseName=${enterpriseName}`, {}, 'post')
+
+/**
+ * 忘记密码--提交忘记密码信息
+ */
+export const subForgetPwd = (params) => fetch('/core/core/api/v1/forgotPassword', params, 'form')
+
+/**
  * mock menu
  */
 

@@ -44,7 +44,7 @@ module.exports = {
                 },
             },
             '/order': {
-                target: 'http://10.38.42:245:9000',
+                target: 'http://10.38.42.245:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/order': '/huaqian/api/v1'
@@ -53,6 +53,7 @@ module.exports = {
         },
         context: [ //代理路径
             '/core',
+            '/order'
             // '/shopping',
             // '/ugc',
             // '/v1',
