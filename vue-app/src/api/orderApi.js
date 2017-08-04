@@ -49,7 +49,6 @@ export const afterSaleList = (receiptsType) => fetch(`/order/refund/list`, recei
  */
 export const afterSaleDetail = (tAfterSaleId) => fetch(`/order/refund/queryDetail`, tAfterSaleId)
 
-
 /**
  * 补发单确认收货
  */
@@ -59,3 +58,24 @@ export const receiving = (id) => fetch(`/order/refund/updateStatus/${id}`, {}, '
  * 我的合同
  */
 export const listMyRequest = options => fetch(`core/huaqian/api/v1/contract/listMy`, options.params)
+
+/**
+ * 货品列表条件查询
+ */
+export const getGoodsMaintenanceListRequest = options =>{
+    return fetch(`core/huaqian/api/v1/goodsMaintenance/list`, options.params)
+}
+
+/**
+ * 货品列表条件查询
+ */
+export const addGoodRequest = options =>{
+    return fetch(`core/huaqian/api/v1/goodsMaintenance/add`, options.body, 'post')
+}
+
+/**
+ * 修改货品信息
+ */
+export const updateGoodsMaintenanceListRequest = options =>{
+    return fetch(`core/huaqian/api/v1/goodsMaintenance/update/${id}`, options.body, 'patch')
+}

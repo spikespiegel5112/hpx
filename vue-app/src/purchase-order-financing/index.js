@@ -15,6 +15,9 @@ import buyInManagement from '@/purchase-order-financing/investors/after-sale-man
 import buyInManagementDetail from '@/purchase-order-financing/investors/after-sale-management/buyInManagement/buyInManagementDetail'
 // 路径path 1 以purchase-order-financing为标准 2 需方 命名 前面 加上xf_  资方 zf_ 供应商 gf_
 
+//货品维护
+import goodsMaintenance from '@/purchase-order-financing/investors/goodsMaintenance'
+
 // 业务管理
 import business from '@/purchase-order-financing/investors/business-manager'
 
@@ -65,6 +68,10 @@ export default {
 			path: 'zf_buyInManagement/zf_buyInManagementDetail/:tAfterSaleId',
 			component: buyInManagementDetail,
 			meta: ['售后管理', '补购管理明细'],
+        },{
+			path: 'mtngoods',
+			component: goodsMaintenance,
+			meta: ['货品维护'],
         },{
 			path: 'zf_orders/detail/:orderId',
 			component: business.orderDetail,
