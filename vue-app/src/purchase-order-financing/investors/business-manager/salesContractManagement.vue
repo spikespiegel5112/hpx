@@ -17,7 +17,6 @@
 			<el-form-item>
 				<el-button type="primary" icon="search" @click="search">查询</el-button>
 				<el-button type="primary" class="reset-b" icon="circle-close" @click="resetForm('query')">重置</el-button>
-				<el-button type="primary">查看</el-button>
 				<el-button type="primary">签章</el-button>
 				<el-button type="primary">预览</el-button>
 				<el-button type="primary">上传合同</el-button>
@@ -27,7 +26,7 @@
 		</el-form>
 	</section>
 	<section class="main-table-container">
-		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
+		<el-table highlight-current-row row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
 			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
 		</el-table>
@@ -62,17 +61,8 @@
 <script>
 import headTop from '@/components/headTop'
 import {
-	allIndustryListRequest,
-	scoringmodelNameByIndustryRequest,
-	templateReportListRequest,
-} from '@/api/templateApi'
-import {
-	veyiterpriseAccessRequest,
-} from '@/api/enterpriseApi'
-import {
 	listMyRequest,
 } from '@/api/orderApi'
-
 import {
 	mapState
 } from 'vuex'
@@ -128,7 +118,7 @@ export default {
 				sortable: true,
 			}, {
 				label: '文件',
-				prop: 'creditState',
+				prop: 'fileId',
 				sortable: true,
 			}],
 			//search params
