@@ -51,7 +51,7 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="addGoodsDialogFlag = false">取消</el-button>
-				<el-button type="primary" @click.native="createdGoodsInfo">提交</el-button>
+				<el-button type="primary" @click.native="createGoodsInfo">提交</el-button>
 			</div>
 		</el-dialog>
 		<!--编辑报价对话框-->
@@ -150,48 +150,40 @@ export default {
 				createTime: [{
 					required: true,
 					message: '请输入项目创建时间',
-					trigger: 'blur'
 				}],
 				description: [{
 					required: true,
 					message: '请输入货品名称',
-					trigger: 'blur'
 				}],
 				id: [{
 					required: true,
 					message: '请输入货品名称',
-					trigger: 'blur'
 				}],
 				model: [{
 					required: true,
 					message: '请输入货品型号',
-					trigger: 'blur'
 				}],
 				offerDate: [{
 					type: 'date',
 					required: true,
 					message: '请选择报价日期',
-					trigger: 'blur'
 				}],
 				specification: [{
 					required: true,
 					message: '请输入货品规格',
-					trigger: 'blur'
 				}],
 				status: [{
 					required: true,
 					message: '请输入货品状态',
-					trigger: 'blur'
 				}],
 				unit: [{
 					required: true,
 					message: '请输入货品计量单位',
-					trigger: 'blur'
 				}],
 				univalence: [{
 					type: 'number',
 					message: '单价必须为数字值',
-				},{
+				}, {
 					required: true,
 					message: '请输入货品单价',
 				}]
@@ -275,20 +267,22 @@ export default {
 		resetForm() {},
 		addGoods() {
 			this.addGoodsDialogFlag = true;
-
+			this.$nextTick(()=>{
+				this.$refs['addGoodsFormData'].resetFields();
+			})
 		},
-		createdGoodsInfo() {
+		createGoodsInfo() {
 			let options = {
 				body: this.addGoodsFormData
 			}
 			this.$refs['addGoodsFormData'].validate(async(valid) => {
 				addGoodRequest(options).then(response => {
-					response.json().then(result => {
-						console.log(result);
-					})
+					if (response.status === 200) {
+						this.addGoodsDialogFlag = false;
+						this.getList();
+					}
 				})
 			})
-
 		},
 		editUnivalence() {
 			this.editUnivalenceDialogFlag = true;
@@ -306,9 +300,6 @@ export default {
 				})
 			})
 		}
-
-
-
 	}
 }
 </script>
