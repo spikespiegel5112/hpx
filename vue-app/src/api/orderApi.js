@@ -77,5 +77,5 @@ export const addGoodRequest = options =>{
  * 修改货品信息
  */
 export const updateGoodsMaintenanceListRequest = options =>{
-    return fetch(`core/huaqian/api/v1/goodsMaintenance/update/${id}`, options.body, 'patch')
+    return fetch(`core/huaqian/api/v1/goodsMaintenance/update/${options.id}`, options.body, 'patch')
 }

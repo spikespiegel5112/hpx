@@ -25,7 +25,7 @@
 			</el-table-column>
 		</el-table>
 		<!--新增货品对话框-->
-		<el-dialog title="新增货品" v-model="addGoodsDialogFlag" :close-on-click-modal="false">
+		<el-dialog title="新增货品" v-model="addGoodsDialogFlag" :close-on-click-modal="true">
 			<el-form :model="addGoodsFormData" label-width="120px" :rules="addGoodsRules" ref="addGoodsFormData">
 				<el-form-item label="品名" prop="description">
 					<el-input v-model="addGoodsFormData.description" auto-complete="off"></el-input>
@@ -55,15 +55,15 @@
 			</div>
 		</el-dialog>
 		<!--编辑报价对话框-->
-		<el-dialog title="编辑报价" v-model="editUnivalenceDialogFlag" :close-on-click-modal="false">
+		<el-dialog title="编辑报价" v-model="editUnivalenceDialogFlag" :close-on-click-modal="true">
 			<el-form :model="editUnivalenceFormData" label-width="120px" :rules="editUnivalenceRules" ref="editUnivalenceFormData">
-				<el-form-item label="单价" prop="productCode">
-					<el-input v-model="editUnivalenceFormData.univalence" auto-complete="off" readonly></el-input>
+				<el-form-item label="单价" prop="univalence">
+					<el-input v-model.number="editUnivalenceFormData.univalence"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="editUnivalenceDialogFlag = false">取消</el-button>
-				<el-button type="primary" @click.native="updateGoodsInfo(scope)">确定</el-button>
+				<el-button type="primary" @click.native="updateGoodsInfo">确定</el-button>
 			</div>
 		</el-dialog>
 		<section class="main-pagination">
@@ -127,12 +127,6 @@ export default {
 				prop: 'remark',
 				sortable: true,
 			}],
-			editUnivalenceRules: {
-				productCode: [{
-					required: true
-				}],
-			},
-
 			//添加货品表单
 			addGoodsFormData: {
 				description: '',
@@ -189,7 +183,15 @@ export default {
 				}]
 			},
 			editUnivalenceFormData: {
-				univalence: null
+				univalence: 0,
+				id: null
+			},
+			editUnivalenceRules: {
+				univalence: [{
+					type: 'number',
+					message: '单价必须为数字值',
+					trigger:'change'
+				}]
 			},
 			//search params
 			query: {
@@ -267,7 +269,7 @@ export default {
 		resetForm() {},
 		addGoods() {
 			this.addGoodsDialogFlag = true;
-			this.$nextTick(()=>{
+			this.$nextTick(() => {
 				this.$refs['addGoodsFormData'].resetFields();
 			})
 		},
@@ -284,21 +286,35 @@ export default {
 				})
 			})
 		},
-		editUnivalence() {
+		editUnivalence(scope) {
+
 			this.editUnivalenceDialogFlag = true;
+			this.editUnivalenceFormData.univalence = scope.row.univalence;
+			this.editUnivalenceFormData.id = scope.row.id;
+			console.log(this.editUnivalenceFormData);
 		},
-		updateGoodsInfo(scope) {
-			alert(scope.row.id)
-			let options = {
-				body: {},
-				id: scope.row.id
-			}
-			updateGoodsMaintenanceListRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result);
-					this.getList();
-				})
+		updateGoodsInfo() {
+			this.$refs['editUnivalenceFormData'].validate(valid => {
+				if (valid) {
+					let options = {
+						body: {
+							univalence: this.editUnivalenceFormData.univalence
+						},
+						id: this.editUnivalenceFormData.id
+					}
+					console.log(options);
+					updateGoodsMaintenanceListRequest(options).then(response => {
+						if (response.status === 200) {
+							this.editUnivalenceDialogFlag = false;
+							this.getList();
+						}else {
+
+						}
+					})
+				}
 			})
+
+
 		}
 	}
 }
