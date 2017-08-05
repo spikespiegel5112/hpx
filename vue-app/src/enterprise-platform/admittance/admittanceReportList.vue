@@ -147,9 +147,9 @@ export default {
 			let params = Object.assign(this.queryParams, this.pagination.params)
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
-				params: this.pagination.params
+				params: params
 			}
-
+			console.log(options);
 			templateReportListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
