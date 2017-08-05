@@ -9,7 +9,7 @@ export const provinces = () => fetch('/core/core/api/v1/enterpriseAccountEntity/
 /*
 ** 获取银行
 */
-export const bankTypes = () => fetch('/core/core/api/v1/enterpriseAccountEntity/banks')
+export const bankTypeRequest = () => fetch('/core/core/api/v1/enterpriseAccountEntity/banks')
 
 /*
 ** 获取城市
@@ -44,3 +44,8 @@ export const loadUrl = (id) => `/core` + `/core/api/v1/download/attachfiles/${id
 ** 上传文件
 */
 export const uploadUrl = () => `/core/core/api/v1/attachfiles`;
+
+/*
+** 获取图片验证码
+*/
+export const getKaptchaImageRequest = options => fetch( `/core/core/api/v1/getKaptchaImage?v=${options.params.timestamp}`)

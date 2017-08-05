@@ -29,19 +29,15 @@
 		<el-table highlight-current-row row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
 			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
-			<el-table-column align="center" label="操作" style='width:200px'>
+			<el-table-column align="center" label="操作" width='150'>
 				<template scope="scope">
-					<div class="common_tablebtn_wrapper">
-						<el-button type="text" size="small" icon="search" @click="search">查询</el-button>
-						<el-button type="text" size="small" class="reset-b" icon="circle-close" @click="resetForm('query')">重置</el-button>
-						<el-button type="text" size="small" @click="signature">签章</el-button>
-						<el-button type="text" size="small" @click="review">预览</el-button>
-					</div>
-					<div class="common_tablebtn_wrapper">
-						<el-button type="text" size="small" @click="uploadContract">上传合同</el-button>
-						<el-button type="text" size="small" @click="reviewFinancing">查看融资详情</el-button>
-						<el-button type="text" size="small" @click="uploadContract">已处置</el-button>
-					</div>
+					<el-button type="text" size="small" icon="search" @click="search">查询</el-button>
+					<el-button type="text" size="small" class="reset-b" icon="circle-close" @click="resetForm('query')">重置</el-button>
+					<el-button type="text" size="small" @click="signature">签章</el-button>
+					<el-button type="text" size="small" @click="review">预览</el-button>
+					<el-button type="text" size="small" @click="uploadContract">上传合同</el-button>
+					<el-button type="text" size="small" @click="reviewFinancing">查看融资详情</el-button>
+					<el-button type="text" size="small" @click="uploadContract">已处置</el-button>
 				</template>
 			</el-table-column>
 		</el-table>

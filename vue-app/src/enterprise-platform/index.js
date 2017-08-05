@@ -9,6 +9,7 @@ const editPhone = r => require.ensure([], () => r(require('@/enterprise-platform
 const editPwd = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting/edit-pwd')), 'edit-pwd');
 const certification = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep')), 'certification-ep');
 const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platform/services-open')), 'enterprise-platform-serivces');
+const accountOpening = r => require.ensure([], () => r(require('@/enterprise-platform/services-open/accountOpening')), 'accountOpening');
 const signatureManager = r => require.ensure([], () => r(require('@/enterprise-platform/signature-manager')), 'signature-manager');
 const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterprise-signature');
 
@@ -86,6 +87,10 @@ export default {
             path: 'services',
             component: servicesOpen,
             meta: ["服务开通"],
+        },{
+            path: 'accountopening',
+            component: accountOpening,
+            meta: ["线上开户"],
         },{
 			path:'fair-parameter',
 			component : fairParameter,

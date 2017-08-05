@@ -129,7 +129,7 @@
         </el-card>
 </template>
 <script>
-    import {provinces ,bankTypes ,cities ,countries,bankdes} from '../../api/publicApi'
+    import {provinces ,bankTypeRequest ,cities ,countries,bankdes} from '../../api/publicApi'
     export default {
         data() {
             return {
@@ -174,7 +174,7 @@
             },
             async getBank(){
                 try{
-                    const resp = await bankTypes();
+                    const resp = await bankTypeRequest();
                     const res = await resp.json();
                     this.bank = res;
                 }catch(e){

@@ -182,7 +182,7 @@ export default {
                             type: 'success'
                         });
                         this.$router.push('/')
-                        location.reload() 
+                        location.reload()
                     } catch (e) {
                         this.$message.error(e);
                     }
@@ -282,4 +282,3 @@ export default {
     font-size: 10px;
 }
 </style>
-

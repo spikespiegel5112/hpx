@@ -15,8 +15,8 @@
 				</el-table-column>
 			</el-table>
 			<section class="main-pagination">
-				<my-Pagination :callback="getList" :total="myProjectListTotal">
-				</my-Pagination>
+				<el-pagination @current-change="flipPage1" :current-page="pagination1.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination1.total">
+				</el-pagination>
 			</section>
 		</el-tab-pane>
 		<el-tab-pane label="受邀项目">
@@ -37,7 +37,7 @@
 				</my-Pagination>
 			</section> -->
 			<section class="main-pagination">
-				<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+				<el-pagination @current-change="flipPage2" :current-page="pagination2.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination2.total">
 				</el-pagination>
 			</section>
 		</el-tab-pane>
@@ -67,7 +67,6 @@
 <script>
 import headTop from '../../components/headTop'
 import moment from 'moment'
-import myPagination from '@/components/myPagination'
 import {
 	enterpriseListRequest,
 	enterpriseProjectListRequest,
@@ -79,8 +78,7 @@ import {
 } from '@/api/coreApi'
 export default {
 	components: {
-		headTop,
-		myPagination
+		headTop
 	},
 	data() {
 		const dateFormat = "YYYY-MM-DD";
@@ -114,7 +112,14 @@ export default {
 			enterpriseList: [],
 			roleList: [],
 			//分页信息
-			pagination: {
+			pagination1: {
+				params: {
+					page: 1,
+					size: 10
+				},
+				total: 0
+			},
+			pagination2: {
 				params: {
 					page: 1,
 					size: 10
@@ -164,9 +169,10 @@ export default {
 					eid: this.$store.state.loginInfo.enterpriseId
 				}
 			}
-			options.params = Object.assign(options.params, this.pagination.params)
+			options.params = Object.assign(options.params, this.pagination1.params)
 			console.log(options);
 			enterpriseProjectListRequest(options).then(response => {
+				console.log(response);
 				response.json().then(result => {
 					console.log(result);
 					this.myProjectList = [];
@@ -175,13 +181,13 @@ export default {
 						if (result[item].inviteStatus == 'T' && result[item].state == 'T') {
 							that.myProjectList.push(result[item]);
 						}
-						this.pagination.total = result.length;
+						this.pagination1.total = that.myProjectList.length;
 					}
 					for (var item in result) {
 						if (result[item].inviteStatus == 'I' && result[item].state == 'F') {
 							that.invitedProjectList.push(result[item]);
 						}
-						this.pagination.total = result.length;
+						this.pagination2.total = that.invitedProjectList.length;
 					}
 				})
 			})
@@ -214,8 +220,12 @@ export default {
 				}
 			})
 		},
-		flipPage(pageIndex) {
-			this.pagination.params.page = pageIndex;
+		flipPage1(pageIndex) {
+			this.pagination1.params.page = pageIndex;
+			this.getEnterpriseList();
+		},
+		flipPage2(pageIndex) {
+			this.pagination2.params.page = pageIndex;
 			this.getEnterpriseList();
 		},
 		getEnterpriseList() {
@@ -256,8 +266,17 @@ export default {
 				})
 			})
 		},
-		aaa() {
-			console.log(this.inviteData)
+		aaa(event) {
+			switch (event.index) {
+				case 0:
+				this.getEnterpriseList();
+					break;
+				case 1:
+				this.getEnterpriseRolesList();
+					break;
+				default:
+			}
+			alert(event.index)
 		}
 	}
 }

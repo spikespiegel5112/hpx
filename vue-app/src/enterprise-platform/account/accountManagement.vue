@@ -69,9 +69,8 @@
 </template>
 
 <script>
-import swiper from '../../assets/js/swiper'
-import headTop from '../../components/headTop'
-import myPagination from '@/components/myPagination'
+import swiper from '@/assets/js/swiper'
+import headTop from '@/components/headTop'
 import {
 	accountInfosListRequest,
 	accountStatementListRequest
@@ -114,8 +113,7 @@ export default {
 		}
 	},
 	components: {
-		headTop,
-		myPagination
+		headTop
 	},
 	mounted() {
 		this.initData();
@@ -153,6 +151,9 @@ export default {
 		getAccountList() {
 			let params = Object.assign(this.pagination.params)
 			console.log(params)
+			let options={
+				params:{}
+			}
 			accountInfosListRequest().then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {

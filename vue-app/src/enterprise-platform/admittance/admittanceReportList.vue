@@ -1,34 +1,31 @@
 <template>
 <div class="fillcontain">
 	<head-top></head-top>
-	<!-- <div class="header_container">
-		<el-breadcrumb separator="/">
-			<el-breadcrumb-item :to="{ name: 'manager' }">首页</el-breadcrumb-item>
-			<el-breadcrumb-item v-for="(item, index) in $route.meta.breadcrumb" key="index">{{item}}</el-breadcrumb-item>
-		</el-breadcrumb>
-	</div> -->
 
 	<!--  搜索条件  -->
 	<section class='search-criteria-container'>
-		<el-form :inline="true" :model="query" ref="query">
+		<el-form :inline="true" :model="queryParams" ref="queryParams">
 			<el-row>
-				<el-col :span="6">
+				<el-col :span="4">
 					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="请输入报告名称"></el-input>
+						<el-select v-model="queryOption" placeholder="请选择" @change='clearQuery'>
+							<el-option v-for="item in queryOptions" :key='item.value' :label="item.name" :value="item.name">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+				<el-col :span="4">
+					<el-form-item prop="name">
+						<el-input v-model="searchWord" placeholder="请输入"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="5">
+					<el-form-item>
+						<el-date-picker v-model="querySearchRange" type="daterange" placeholder="选择日期范围" @change='getDateRange'>
+						</el-date-picker>
 					</el-form-item>
 				</el-col>
 				<el-col :span="6">
-					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="请输入企业名称"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="6">
-					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="请输入创建时间"></el-input>
-					</el-form-item>
-				</el-col>
-
-				<el-col :span="6" style="float: right">
 					<el-form-item>
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
@@ -91,9 +88,21 @@ export default {
 				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}],
 			//搜索查询
-			query: {
-				name: '',
-				code: ''
+			queryOptions: [{
+				name: '报告名称',
+				value: 1,
+			}, {
+				name: '企业名称',
+				value: 2
+			}],
+			queryOption: null,
+			searchWord: '',
+			querySearchRange: {},
+			queryParams: {
+				admittanceName: '',
+				enterpriseName: '',
+				startTime: '',
+				endTime: ''
 			},
 			//分页信息
 			pagination: {
@@ -135,10 +144,12 @@ export default {
 			}
 		},
 		getList() {
+			let params = Object.assign(this.queryParams, this.pagination.params)
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				params: this.pagination.params
 			}
+
 			templateReportListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
@@ -151,13 +162,35 @@ export default {
 			this.pagination.params.page = pageIndex;
 			this.getList();
 		},
-		search() {},
+		clearQuery(){
+			for (var key in this.queryParams) {
+				this.queryParams[key] = '';
+			}
+		},
+		getDateRange(value) {
+			this.queryParams.startTime = value.substr(0, 10);
+			this.queryParams.endTime = value.substr(13, 10);
+			alert(this.queryParams.endTime)
+		},
+		search() {
+			switch (this.queryOption) {
+				case '报告名称':
+					this.queryParams.admittanceName = this.searchWord;
+					break;
+				case '企业名称':
+					this.queryParams.enterpriseName = this.searchWord;
+					break;
+				default:
+			}
+			console.log(this.queryParams);
+			this.getList();
+		},
 		reviewReport(scope) {
 			console.log(scope.row);
 			this.$router.push({
-				name:'reportDetail',
-				params:{
-					reportId:scope.row.id
+				name: 'reportDetail',
+				params: {
+					reportId: scope.row.id
 				}
 			})
 		}
