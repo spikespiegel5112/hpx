@@ -177,6 +177,8 @@ export default {
 			options.params = Object.assign(options.params, this.pagination1.params)
 			console.log(options);
 			enterpriseProjectListRequest(options).then(response => {
+				this.pagination1.total=Number(response.headers.get('x-total-count'))
+
 				console.log(response);
 				response.json().then(result => {
 					console.log(result);
