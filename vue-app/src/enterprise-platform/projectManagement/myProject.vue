@@ -149,6 +149,11 @@ export default {
 				minWidth: 60,
 				formatter: (row, column) => moment(column.startTime).format(dateFormat)
 			}, {
+				label: 'priductCode',
+				prop: 'priductCode',
+				sortable: true,
+				minWidth: 60,
+			}, {
 				label: '项目结束日',
 				prop: 'endTime',
 				sortable: true,
