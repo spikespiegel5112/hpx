@@ -202,8 +202,8 @@ export const editUser= (id, eid, params) => fetch(`/core/core/api/v1/enterprise/
  * 审核项目
  */
 
-export const auditProjectRequest = (eid, pid, state) => {
-    return fetch(`/core/core/api/v1/enterprise/${eid}/projects/${pid}/state/${state}`, {}, 'patch');
+export const auditProjectRequest = options => {
+    return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}/state/${options.state}`, {}, 'patch');
 }
 
 /**

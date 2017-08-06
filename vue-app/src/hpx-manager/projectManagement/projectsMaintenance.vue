@@ -222,9 +222,6 @@ export default {
 	activated(){
 		this.initData();
 	},
-	mounted() {
-
-	},
 	computed: {
 		loginInfo() {
 			return this.$store.state.loginInfo

@@ -10,7 +10,7 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-					<el-button type="text" size="small" @click="auditProject(scope)" >审核</el-button>
+					<el-button type="text" size="small" @click="auditProject">审核</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -21,20 +21,11 @@
 
 		</section>
 	</section>
-	<!--审核对话框-->
-	<el-dialog title="提示" :visible.sync="auditModalVisible" size="tiny">
-		<span>请确认审核是否通过?</span>
-		<span slot="footer" class="dialog-footer">
-    		<el-button @click="auditModalVisible = false">取 消</el-button>
-    		<el-button type="primary" @click="commitAudit">通过</el-button>
-  		</span>
-	</el-dialog>
 </div>
 </template>
 
 <script>
 import headTop from '@/components/headTop'
-import myPagination from '@/components/myPagination'
 import moment from 'moment'
 import {
 	projectsAuditListRequest
@@ -118,25 +109,19 @@ export default {
 
 			//审核模态框
 			auditModalVisible: false,
-			auditEid:null,
+			auditEid: null,
 			auditPid: null,
-			AuditState:''
+			AuditState: ''
 		}
 	},
 	components: {
-		headTop,
-		myPagination,
+		headTop
 	},
 	created() {
-		this.initData();
-	},
-	mounted() {
 
 	},
-	computed: {
-		loginInfo() {
-			return this.$store.state.loginInfo
-		}
+	activated() {
+		this.initData();
 	},
 	methods: {
 		async initData() {
@@ -152,17 +137,18 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		async getList() {
-			let options={
-				inviteStatus:'I',
-				state:'F'
+		getList() {
+			let options = {
+				inviteStatus: 'I',
+				state: 'F'
 			}
-			options=Object.assign(options, this.pagination.params);
-			projectsAuditListRequest(options).then(response=>{
-				this.pagination.total=response.headers.get('x-total-count');
-				response.json().then(result=>{
+			options = Object.assign(options, this.pagination.params);
+			console.log(options);
+			projectsAuditListRequest(options).then(response => {
+				this.pagination.total = Number(response.headers.get('x-total-count'));
+				response.json().then(result => {
 					console.log(result);
-					this.tableList=result
+					this.tableList = result
 				})
 			})
 		},
@@ -178,22 +164,37 @@ export default {
 			this.$refs[formName].resetFields();
 		},
 		auditProject(scope) {
+			console.log(scope.row);
 			this.auditModalVisible = true;
-			this.auditEid=scope.row.epId;
-			this.auditPid=scope.row.epId;
-			this.auditState=scope.row.state;
-		},
-		commitAudit(scope) {
-			console.log(this.auditEid)
-			auditProjectRequest(this.auditEid, this.auditPid, this.auditState).then(response=>{
-				// alert('dsds')
-				this.auditModalVisible=false;
+			this.$confirm('请确认是否通过此邀请?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				let options = {
+					eid: scope.row.epId,
+					pid: scope.row.epId,
+					state: scope.row.state
+				}
+				auditProjectRequest(options).then(response => {
+					this.getList();
+					this.$message({
+						type: 'success',
+						message: '审核通过'
+					});
+				})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消审核'
+				});
 			})
 		},
-		flipPage(){
-
+		flipPage(pageIndex) {
+			this.pagination.params.page = pageIndex;
+			this.getList();
 		}
-	},
+	}
 }
 </script>
 
