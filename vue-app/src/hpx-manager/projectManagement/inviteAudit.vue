@@ -2,47 +2,6 @@
 <div class="fillcontain">
 	<head-top></head-top>
 
-	<!--  搜索条件  -->
-	<section class='search-criteria-container'>
-		<el-form :inline="true" :model="query" ref="query">
-			<el-row>
-				<el-col :span="5">
-					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="企业名称"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="5">
-					<el-form-item prop="activated">
-						<el-select v-model="query.activated" size="large" placeholder="激活状态">
-							<el-option v-for="item in activatedOptions" :key="item.activated" :label="item.value" :value="item.activated">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="6">
-					<el-form-item prop="auditState">
-						<el-select v-model="query.auditState" size="large" placeholder="认证状态">
-							<el-option v-for="item in auditStateOptions" :key="item.auditState" :label="item.value" :value="item.auditState">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="7" :offset="6 * (3 - (criteriaNum % 4))">
-					<el-form-item>
-						<el-button type="primary" icon="search" @click="search">查询</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button icon="plus" type="primary">新增</el-button>
-					</el-form-item>
-				</el-col>
-			</el-row>
-		</el-form>
-		</el-col>
-	</section>
-
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 			<el-table-column type="index" width="100">
@@ -57,19 +16,9 @@
 		</el-table>
 		<section class="main-pagination">
 			<!-- 特殊情况分页自己按注释的  -->
-			<!-- <el-pagination
-                    :current-page="page"
-                    :page-size="size"
-                    :total="total"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :page-sizes="pageSizes"
-                    @current-change="currentChange"
-                    @size-change="pageSizeChange"
-                >
-                </el-pagination> -->
-			<!-- page租组件  -->
-			<my-Pagination :callback="getList" :query="query" :total="total">
-			</my-Pagination>
+			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+			</el-pagination>
+
 		</section>
 	</section>
 	<!--审核对话框-->
@@ -132,13 +81,14 @@ export default {
 			tableList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
-
-			//分页
-			page: 1, //当前页
-			size: 2, //每页个数
-			total: 0, //总数
-			pageSizes: [2, 4, 6],
-
+			//分页信息
+			pagination: {
+				params: {
+					page: 1,
+					size: 10
+				},
+				total: 0
+			},
 			//search params
 			query: {
 				eid: this.$store.state.loginInfo.enterpriseId,
@@ -202,17 +152,19 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		async getList(pagination = {
-			page: 1,
-			size: 10
-		}) {
-			const params = Object.assign(this.query, pagination);
-			const response = await projectsAuditListRequest(params);
-			const res = await response.json();
-			console.log(res)
-			const total = response.headers.get('x-total-count')
-			this.tableList = [...res];
-			this.total = parseInt(total);
+		async getList() {
+			let options={
+				inviteStatus:'I',
+				state:'F'
+			}
+			options=Object.assign(options, this.pagination.params);
+			projectsAuditListRequest(options).then(response=>{
+				this.pagination.total=response.headers.get('x-total-count');
+				response.json().then(result=>{
+					console.log(result);
+					this.tableList=result
+				})
+			})
 		},
 		async search() {
 			try {
@@ -237,6 +189,9 @@ export default {
 				// alert('dsds')
 				this.auditModalVisible=false;
 			})
+		},
+		flipPage(){
+
 		}
 	},
 }

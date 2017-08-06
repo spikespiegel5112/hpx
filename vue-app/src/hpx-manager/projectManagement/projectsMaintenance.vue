@@ -221,7 +221,6 @@ export default {
 	},
 	activated(){
 		this.initData();
-		alert(this.$store.loginInfo.id)
 	},
 	mounted() {
 

@@ -60,3 +60,8 @@ export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterpr
 export const veyiterpriseAccessRequest = options => {
     return fetch(`/core/core/api/v1/enterprises/veyiterpriseAccess/${options.id}`, options.params);
 }
+
+/*
+** 平台项目列表, 支持分页
+*/
+export const enterpriseInviteListRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.inviteStatus}/state/${options.state}`);
