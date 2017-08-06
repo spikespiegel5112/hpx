@@ -42,7 +42,6 @@
 					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
 					<el-button type="text" size="small" @click="deleteProjectFunction(scope)">删除</el-button>
-					<el-button type="text" size="small" @click="audit(scope.$index, scope.row)">审核</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -265,14 +264,12 @@ export default {
 				type: 'warning'
 			}).then(() => {
 				deleteProject(scope.row.id).then(() => {
-
 					this.getList();
 					this.$message({
 						type: 'success',
 						message: '删除成功!'
 					});
 				})
-
 			}).catch(() => {
 				this.$message({
 					type: 'info',

@@ -10,15 +10,13 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-					<el-button type="text" size="small" @click="auditProject">审核</el-button>
+					<el-button type="text" size="small" @click="auditProject(scope)">审核</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">
-			<!-- 特殊情况分页自己按注释的  -->
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
-
 		</section>
 	</section>
 </div>
@@ -59,7 +57,7 @@ export default {
 				label: '项目起始日',
 				prop: 'startTime',
 				sortable: true,
-				minWidth: 200,
+				minWidth: 100,
 				formatter: (row, column) => moment(column.startTime).format(dateFormat)
 			}, {
 				label: '项目结束日',
@@ -79,46 +77,11 @@ export default {
 					size: 10
 				},
 				total: 0
-			},
-			//search params
-			query: {
-				eid: this.$store.state.loginInfo.enterpriseId,
-				pid: '',
-				inviteStatus: 'T',
-				state: 'S'
-			},
-			activatedOptions: [{
-				value: '激活',
-				activated: 'T'
-			}, {
-				value: '未激活',
-				activated: 'F'
-			}],
-			auditStateOptions: [{
-				value: '已认证',
-				auditState: 'T'
-			}, {
-				value: '未认证',
-				auditState: 'F'
-			}],
-			rules: {
-
-			},
-			//搜索条件的个数
-			criteriaNum: 3,
-
-			//审核模态框
-			auditModalVisible: false,
-			auditEid: null,
-			auditPid: null,
-			AuditState: ''
+			}
 		}
 	},
 	components: {
 		headTop
-	},
-	created() {
-
 	},
 	activated() {
 		this.initData();
@@ -164,8 +127,6 @@ export default {
 			this.$refs[formName].resetFields();
 		},
 		auditProject(scope) {
-			console.log(scope.row);
-			this.auditModalVisible = true;
 			this.$confirm('请确认是否通过此邀请?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
@@ -173,9 +134,10 @@ export default {
 			}).then(() => {
 				let options = {
 					eid: scope.row.epId,
-					pid: scope.row.epId,
-					state: scope.row.state
+					pid: scope.row.pjId,
+					state: 'T'
 				}
+				console.log(options);
 				auditProjectRequest(options).then(response => {
 					this.getList();
 					this.$message({
