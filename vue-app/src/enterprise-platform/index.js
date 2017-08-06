@@ -55,7 +55,7 @@ export default {
 			path: 'account-management',
 			component: accountManagement,
 			meta: ['资金管理', '账户总览'],
-		},{
+		},{  
 			path: 'transaction-detail',
 			component: transactionDetail,
 			meta: ['资金管理', '交易明细'],

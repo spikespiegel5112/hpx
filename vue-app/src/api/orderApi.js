@@ -4,6 +4,10 @@
  */
 export const getSupplierList = (pjId, params) => fetch(`/core/core/api/v1/enterpriseProjects/${pjId}/supplier`, params)
 
+/**
+ * 客户管理-获取资方列表
+ */
+export const getCapitalList = (pid) => fetch(`/core/core/api/v1/enterpriseProjects/${pid}/capitalist`)
 
 /**
  * 客户管理-获取需方列表
@@ -105,3 +109,18 @@ export const addGoodRequest = options =>{
 export const updateGoodsMaintenanceListRequest = options =>{
     return fetch(`core/huaqian/api/v1/goodsMaintenance/update/${options.id}`, options.body, 'patch')
 }
+
+/**
+ * 供应商售后审核(type为Y通过，N拒绝)
+ */
+export const refundApproval = (id,type) => fetch(`/order/refund/refundApproval?id=${id}&type=${type}`,{},'patch')
+
+/**
+ * 根据售后生成代付款信息(类型type 退款1 补购2)
+ */
+export const saveAfterSalePendingPayment = (type,params) => fetch(`/order/payment/saveAfterSalePendingPayment/${type}`,params,'patch')
+
+/**
+ * 获取支付列表
+ */
+export const payList =(params) => fetch(`/order/payment/search`,params)

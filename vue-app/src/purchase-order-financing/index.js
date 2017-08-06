@@ -12,13 +12,21 @@ import signature from '@/purchase-order-financing/investors/purchaseContract/sig
 import receipt from '@/purchase-order-financing/investors/purchaseContract/receipt'
 import apply from '@/purchase-order-financing/investors/purchaseContract/apply'
 
-import refundManagement from '@/purchase-order-financing/investors/after-sale-management/refundManagement/refundManagement'
-import refundManagementDetail from '@/purchase-order-financing/investors/after-sale-management/refundManagement/refundManagementDetail'
-import replacementManagement from '@/purchase-order-financing/investors/after-sale-management/replacementManagement/replacementManagement'
-import replacementManagementDetail from '@/purchase-order-financing/investors/after-sale-management/replacementManagement/replacementManagementDetail'
+import zf_refundManagement from '@/purchase-order-financing/investors/after-sale-management/refundManagement/refundManagement'
+import zf_refundManagementDetail from '@/purchase-order-financing/investors/after-sale-management/refundManagement/refundManagementDetail'
+import zf_replacementManagement from '@/purchase-order-financing/investors/after-sale-management/replacementManagement/replacementManagement'
+import zf_replacementManagementDetail from '@/purchase-order-financing/investors/after-sale-management/replacementManagement/replacementManagementDetail'
+import zf_buyInManagement from '@/purchase-order-financing/investors/after-sale-management/buyInManagement/buyInManagement'
+import zf_buyInManagementDetail from '@/purchase-order-financing/investors/after-sale-management/buyInManagement/buyInManagementDetail'
 
-import buyInManagement from '@/purchase-order-financing/investors/after-sale-management/buyInManagement/buyInManagement'
-import buyInManagementDetail from '@/purchase-order-financing/investors/after-sale-management/buyInManagement/buyInManagementDetail'
+import gf_refundManagement from '@/purchase-order-financing/supplier/after-sale-management/refundManagement/refundManagement'
+import gf_refundManagementDetail from '@/purchase-order-financing/supplier/after-sale-management/refundManagement/refundManagementDetail'
+import gf_replacementManagement from '@/purchase-order-financing/supplier/after-sale-management/replacementManagement/replacementManagement'
+import gf_replacementManagementDetail from '@/purchase-order-financing/supplier/after-sale-management/replacementManagement/replacementManagementDetail'
+import gf_buyInManagement from '@/purchase-order-financing/supplier/after-sale-management/buyInManagement/buyInManagement'
+import gf_buyInManagementDetail from '@/purchase-order-financing/supplier/after-sale-management/buyInManagement/buyInManagementDetail'
+
+import gf_agencyReceipt from '@/purchase-order-financing/supplier/money/agency-receipt/agency-receipt'
 // 路径path 1 以purchase-order-financing为标准 2 需方 命名 前面 加上xf_  资方 zf_ 供应商 gf_
 
 //货品维护
@@ -72,27 +80,27 @@ export default {
 			meta: ['业务管理', '订单管理'],
         },{
 			path: 'zf_refundManagement',
-			component: refundManagement,
+			component: zf_refundManagement,
 			meta: ['售后管理', '退款管理'],
         },{
 			path: 'zf_refundManagement/zf_refundManagementDetail/:tAfterSaleId',
-			component: refundManagementDetail,
+			component: zf_refundManagementDetail,
 			meta: ['售后管理', '退款管理明细'],
         },{
 			path: 'zf_replacementManagement',
-			component: replacementManagement,
+			component: zf_replacementManagement,
 			meta: ['售后管理', '补发管理'],
         },{
 			path: 'zf_replacementManagement/zf_replacementManagementDetail/:tAfterSaleId',
-			component: replacementManagementDetail,
+			component: zf_replacementManagementDetail,
 			meta: ['售后管理', '补发管理明细'],
         },{
 			path: 'zf_buyInManagement',
-			component: buyInManagement,
+			component: zf_buyInManagement,
 			meta: ['售后管理', '补购管理'],
         },{
 			path: 'zf_buyInManagement/zf_buyInManagementDetail/:tAfterSaleId',
-			component: buyInManagementDetail,
+			component: zf_buyInManagementDetail,
 			meta: ['售后管理', '补购管理明细'],
         },{
 			path: 'mtngoods',
@@ -106,6 +114,34 @@ export default {
 			path: 'sales_contract_management',
 			component: business.salesContractManagement,
 			meta: ['业务管理', '订单管理','销售合同'],
+        },{
+			path: 'gf_refundManagement',
+			component: gf_refundManagement,
+			meta: ['供应商', '退款'],
+        },{
+			path: 'gf_refundManagement/gf_refundManagementDetail/:tAfterSaleId',
+			component: gf_refundManagementDetail,
+			meta: ['供应商', '退款明细'],
+        },{
+			path: 'gf_replacementManagement',
+			component: gf_replacementManagement,
+			meta: ['供应商', '补发'],
+        },{
+			path: 'gf_replacementManagement/gf_replacementManagementDetail/:tAfterSaleId',
+			component: gf_replacementManagementDetail,
+			meta: ['供应商', '补发明细'],
+        },{
+			path: 'gf_buyInManagement',
+			component: gf_buyInManagement,
+			meta: ['供应商', '补购'],
+        },{
+			path: 'gf_buyInManagement/gf_buyInManagementDetail/:tAfterSaleId',
+			component: gf_buyInManagementDetail,
+			meta: ['供应商', '补购明细'],
+        },{
+			path: 'gf_agencyReceipt',
+			component: gf_agencyReceipt,
+			meta: ['供应商', '待收款'],
         }
     ]
 }

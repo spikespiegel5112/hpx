@@ -1,7 +1,7 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
-        <!--  搜索条件  -->
+         <!--  搜索条件  -->
         <section class='search-criteria-container'>
 			<el-form :inline="true" :model="query"  ref="query">
                 <el-row>
@@ -16,9 +16,9 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item prop="supplier">
-                            <el-select v-model="query.supplier" size="large" placeholder="选择供应商">
-                                <el-option v-for="item in supplierList" :key="item.value" :label="item.value" :value="item.value">
+                        <el-form-item prop="capital">
+                            <el-select v-model="query.capital" size="large" placeholder="选择资方">
+                                <el-option v-for="item in capitalList" :key="item.value" :label="item.value" :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -74,6 +74,9 @@
                 <el-table-column label="操作">
                     <template scope="scope">
                         <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
+                        <br/>
+                        <el-button v-show="scope.row.approvalStatus === '0'" type="text" size="small" @click="pass(scope.$index, scope.row)" >通过</el-button>
+                        <el-button v-show="scope.row.approvalStatus === '0'" type="text" size="small" @click="refuse(scope.$index, scope.row)" >拒绝</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -89,7 +92,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { afterSaleList ,getSupplierList} from '@/api/orderApi'
+    import { afterSaleList ,getCapitalList,refundApproval} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -97,7 +100,7 @@
             return {
                 //table columns
                 columns : [{
-                    label : '补购单号',
+                    label : '补发单号',
                     prop  : 'code',
                     minWidth : 130,
                     },{
@@ -105,23 +108,22 @@
                     prop  : 'contractCode',
                     minWidth : 130,
                     },{
-                    label : '供应商',
-                    prop  : 'supplier',
+                     label : '资方',
+                    prop  : 'capital',
+                    },{
+                    label : '申请日期',
+                    prop  : 'applicationDate',
+                    formatter : (row,column) =>row.applicationDate == null ? "" :  moment(row.applicationDate).format('YYYY-MM-DD')
                     },{
                     label : '审批状态',
                     prop  : 'approvalStatus',
-                    formatter : (row,column) => row.approvalStatus === '0' ? "待审批" : row.approvalStatus === '1' ? "已通过" : row.approvalStatus === '2' ?"已拒绝" :""
+                    formatter : (row,column) => row.approvalStatus === '0' ? "待审批" : 
+                    row.approvalStatus === '1' ? "已通过" : row.approvalStatus === '2' ? "已拒绝" : ""
                     },{
-                    label : '补购日期',
-                    prop  : 'applicationDate',
-                    formatter : (row,column) => row.applicationDate == null ? "" :moment(row.applicationDate).format('YYYY-MM-DD')
-                    },{
-                    label : '补购金额',
-                    prop  : 'money',
-                    },{
-                    label : '退款状态',
-                    prop  : 'paymentStatus',
-                    formatter : (row,column) =>  row.paymentStatus === '0' ? "待支付" : row.paymentStatus === '1' ? "已支付" : ""
+                    label : '收货状态',
+                    prop  : 'shipmentsStatus',
+                    formatter : (row,column) => row.shipmentsStatus === '0' ? "待收货"
+                     : row.shipmentsStatus === '1' ? "已收货" : ""
                     }
                 ],
                 //总页数
@@ -130,16 +132,16 @@
                 pagination : {},
                 //table
                 tableList: [],
-                supplierList: [],
+                capitalList: [],
                 listLoading:false,
                 emptyText:"暂无数据",
 
-                //search params
+                 //search params
                 query : {
                     code : '',
                     contractCode : '',
-                    supplier : '',
-                    approvalStatus : '',
+                    capital : '',
+                    approvalStatus : '0',
                 },
                 approvalStatusOptions : [
                     {
@@ -182,18 +184,18 @@
                 */
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({receiptsType:'G'},this.query,this.pagination);
+                    const params = Object.assign({receiptsType:'F'},this.query,this.pagination);
                     const resp = await afterSaleList(params);
                     const res = await resp.json();
 
-                    const result = await getSupplierList(2);
+                    const result = await getCapitalList(2);
                     const resu = await result.json();
-                    console.log("供应商", resu)
+                    console.log("资方", resu)
                     let temp = [];
                     resu.forEach((v) =>{
                         temp.push({label: v.enterpriseName, value: v.enterpriseName });
                     })
-                    this.supplierList = temp;
+                    this.capitalList = temp;
 
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];
@@ -209,7 +211,28 @@
             },
 
             check (index,row){
-                this.$router.push({path: this.$route.path + '/zf_buyInManagementDetail/' + row.id})
+                this.$router.push({path: this.$route.path + '/gf_replacementManagementDetail/' + row.id})
+            },
+
+             //通过
+            async pass(index,row){
+                try{
+                    const resp = await refundApproval(row.id,'Y');
+                    this.getList();
+                    this.$message.success('操作成功');
+                }catch(e){
+                    this.$message.error('操作失败')
+                }
+            },
+            //拒绝
+            async refuse(index,row){
+                try{
+                    const resp = await refundApproval(row.id,'N');
+                    this.getList();
+                    this.$message.success('操作成功')
+                }catch(e){
+                   this.$message.error('操作失败')
+                }
             },
 
             async search () {

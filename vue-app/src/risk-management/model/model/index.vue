@@ -4,7 +4,7 @@
 
         <!--搜索条件-->
         <section class='search-criteria-container'>
-            <el-form :inline="true" :model="query" ref="query">
+            <el-form :inline="true" :model="query"  ref="query">
                 <el-row>
                     <el-col :span="4">
                         <el-form-item prop="modelName">
@@ -40,10 +40,10 @@
                         <el-form-item prop="industryId">
                             <el-select v-model="query.industryId" placeholder="行业">
                                 <el-option
-                                    v-for="item in industryIds"
-                                    :key="item.value"
-                                    :label="item.value"
-                                    :value="item.value">
+                                    v-for="item in industryList"
+                                    :key="item.id"
+                                    :label="item.industryName"
+                                    :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -57,7 +57,7 @@
                             <el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
                         </el-form-item>
                         <el-form-item>
-                            <el-button icon="plus" type="primary">新增</el-button>
+                            <el-button icon="plus" type="primary" @click="add()">新增</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -68,6 +68,7 @@
         <section class="main-table-container">
             <el-table
                 row-key="id"
+                border
                 :empty-text="emptyText"
                 :data="tableList"
                 v-loading="listLoading"
@@ -76,7 +77,8 @@
                 <el-table-column
                   type="index"
                   label="序号"
-                  width="100">
+                  width="100"
+                  align="center">
                 </el-table-column>
                 <el-table-column
                     v-for="(value,i) in columns"
@@ -87,6 +89,7 @@
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
+                    align="center"
                 >
                 </el-table-column>
                 <el-table-column label="操作" align="center">
@@ -103,13 +106,14 @@
                 </my-Pagination>
             </section>
         </section>
+
     </div>
 </template>
 
 <script>
 import headTop from '@/components/headTop'
 import myPagination from '@/components/myPagination'
-import { modelList, modelCheck, modelDel, modelAdd, modelEnabled, modelEdit } from '@/api/riskApi'
+import { modelList, modelCheck, modelDel, modelAdd, modelEnabled, modelEdit, industryList } from '@/api/riskApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
 export default {
@@ -148,7 +152,7 @@ export default {
             emptyText:"暂无数据",
 
             // search params
-            industryIds:[],
+            industryList:[],
             query: {
                 modelName: '',
                 enabledState:'',
@@ -168,16 +172,19 @@ export default {
         myPagination,
     },
     created() {
-    },
-    activated(){
         this.initData();
+        this.getIndustry();
     },
     computed: {
         ...mapState(["loginInfo"])
     },
     methods: {
+        async getIndustry () {
+             const resp = await industryList();
+             const res = await resp.json();
+             this.industryList = [...res];
+        },
         async initData () {
-            console.log("触发了")
             this.getList();
         },
         async getList(pagination={page:1,size:10}){
@@ -215,7 +222,7 @@ export default {
                 }
             },
         check (index,row){
-            this.$router.push({path: this.$route.path + '/detail/' + row.id})
+            this.$router.push({path: this.$route.path + '/check/' + row.id})
         },
         async del(row) {
             try{
@@ -241,10 +248,12 @@ export default {
                 this.$message.error('修改状态失败！')
             }
         },
-        
         edite (index,row) {
-            this.editeModalVisible = true;
             this.editeData = Object.assign({},{...row})
+            this.$router.push({path: this.$route.path + '/detail/' + row.id})
+        },
+        add () {
+            this.$router.push({path: this.$route.path + '/detail'})
         },
     }
 }

@@ -181,7 +181,6 @@
           });
       },
       submitNew(formName) {
-          console.log("呵呵", this.newForm)
         this.$refs[formName].validate( async (valid) => {
             if (valid) {
                try {

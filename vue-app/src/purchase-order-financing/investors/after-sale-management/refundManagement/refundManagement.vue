@@ -1,6 +1,53 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
+        <!--  搜索条件  -->
+        <section class='search-criteria-container'>
+			<el-form :inline="true" :model="query"  ref="query">
+                <el-row>
+                    <el-col :span="6">
+                        <el-form-item prop="code">
+                            <el-input v-model="query.code" size="large" placeholder="退款单号"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item prop="contractCode">
+                            <el-input v-model="query.contractCode" size="large" placeholder="合同编号"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item prop="supplier">
+                            <el-select v-model="query.supplier" size="large" placeholder="选择供应商">
+                                <el-option v-for="item in supplierList" :key="item.value" :label="item.value" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item prop="approvalStatus">
+                            <el-select v-model="query.approvalStatus" size="large" placeholder="审批状态">
+                                <el-option
+                                    v-for="item in approvalStatusOptions"
+                                    :key="item.approvalStatus"
+                                    :label="item.value"
+                                    :value="item.approvalStatus">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))">
+                        <el-form-item>
+                            <el-button type="primary" icon="search" @click="search">查询</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+			</el-form>
+		</el-col>
+        </section>
+
 
         <section class="main-table-container">
             <el-table
@@ -42,7 +89,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { afterSaleList } from '@/api/orderApi'
+    import { afterSaleList ,getSupplierList} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -59,7 +106,7 @@
                     minWidth : 130,
                     },{
                     label : '供应商',
-                    prop  : 'purchaser',
+                    prop  : 'supplier',
                     },{
                     label : '退款金额',
                     prop  : 'money',
@@ -74,7 +121,7 @@
                     },{
                     label : '退款状态',
                     prop  : 'paymentStatus',
-                    formatter : (row,column) => row.paymentStatus === '0' ? "未退款" : "已退款"
+                    formatter : (row,column) => row.paymentStatus === '0' ? "未退款" : row.paymentStatus === '1' ?"已退款" : ""
                     }
                 ],
                 //总页数
@@ -83,8 +130,31 @@
                 pagination : {},
                 //table
                 tableList: [],
+                supplierList: [],
                 listLoading:false,
                 emptyText:"暂无数据",
+
+                //search params
+                query : {
+                    code : '',
+                    contractCode : '',
+                    supplier : '',
+                    approvalStatus : '',
+                },
+                approvalStatusOptions : [
+                    {
+                        value : '待审批',
+                        approvalStatus : '0'
+                    },
+                    {
+                        value : '已通过',
+                        approvalStatus : '1'
+                    },
+                    {
+                        value : '已拒绝',
+                        approvalStatus : '2'
+                    }
+                ],
             }
         },
     	components: {
@@ -112,9 +182,19 @@
                 */
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({receiptsType:'T'},this.pagination);
+                    const params = Object.assign({receiptsType:'T'},this.query,this.pagination);
                     const resp = await afterSaleList(params);
                     const res = await resp.json();
+
+                    const result = await getSupplierList(2);
+                    const resu = await result.json();
+                    console.log("供应商", resu)
+                    let temp = [];
+                    resu.forEach((v) =>{
+                        temp.push({label: v.enterpriseName, value: v.enterpriseName });
+                    })
+                    this.supplierList = temp;
+
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];
                     this.total = parseInt(total);
@@ -130,6 +210,14 @@
 
             check (index,row){
                 this.$router.push({path: this.$route.path + '/zf_refundManagementDetail/' + row.id})
+            },
+
+            async search () {
+                this.getList();
+            },
+
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
             },
         },
         /*
