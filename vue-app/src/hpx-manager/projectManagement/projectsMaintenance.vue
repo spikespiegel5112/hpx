@@ -83,7 +83,6 @@
 <script>
 import headTop from '@/components/headTop'
 import myPagination from '@/components/myPagination'
-// import projectCreate from '@/components/projectCreate'
 import moment from 'moment'
 import {
 	getProjectList
@@ -99,8 +98,7 @@ import {
 
 export default {
 	components: {
-		headTop,
-		myPagination,
+		headTop
 	},
 	data() {
 		const dateFormat = "YYYY-MM-DD";
@@ -218,8 +216,11 @@ export default {
 			}
 		}
 	},
-	mounted() {
+	activated(){
 		this.initData();
+	},
+	mounted() {
+
 	},
 	computed: {
 		loginInfo() {

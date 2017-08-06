@@ -6,7 +6,7 @@
 			<el-col :span="3">
 			</el-col>
 			<el-col :span="14">
-				<el-form :model="formData" :rules="rules" ref="ruleForm" label-width="110px" class="demo-ruleForm">
+				<el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-ruleForm">
 					<el-form-item label="企业名称" prop="ownerEnterpriseId">
 						<el-select v-model="formData.ownerEnterpriseId" placeholder="请选择" @change='getEnterpriseId'>
 							<el-option v-for="item in enterpriseList" :key="item.name" :label="item.name" :value="item.id.toString()">
@@ -21,7 +21,7 @@
 					</el-form-item>
 					<el-form-item label="产品企业类型" prop="type">
 						<el-select v-model="formData.type" @change='getProductEnterpriseType' placeholder="请选择">
-							<el-option v-for="item in productEnterpriseTypeList" :key="item.name" :label="item.name" :value="item.code">
+							<el-option v-for="item in productEnterpriseTypeList" :key="item.code" :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -38,7 +38,7 @@
 						<el-date-picker type="date" placeholder="选择日期" format v-model="formData.endTime"></el-date-picker>
 					</el-form-item>
 					<el-form-item label="">
-						<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+						<el-button type="primary" @click="submitForm('formData')">保存</el-button>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -111,7 +111,7 @@ export default {
 					type: 'date',
 					required: true,
 					message: '请选择日期',
-					trigger: 'change'
+					trigger: 'blur'
 				}]
 			}
 		};
@@ -119,11 +119,17 @@ export default {
 	components: {
 		headTop
 	},
-	mounted() {
+	activated(){
 		this.getData();
+		this.$refs['formData'].resetFields();
+	},
+	mounted() {
+
 	},
 	methods: {
 		getData() {
+
+			console.log(this.formData);
 			this.getEnterprisesList();
 			this.getProductList();
 		},
@@ -163,11 +169,16 @@ export default {
 				}
 			}
 			console.log(options);
-			enterpriseRolesListRequest(options).then(response => {
-				response.json().then(result => {
-					this.productEnterpriseTypeList = result;
+			try {
+				enterpriseRolesListRequest(options).then(response => {
+					response.json().then(result => {
+						this.productEnterpriseTypeList = result;
+					})
 				})
-			})
+			} catch (e) {
+				console.log(e);
+			}
+
 		},
 		submitForm(formName) {
 			let that = this;

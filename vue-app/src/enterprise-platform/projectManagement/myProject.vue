@@ -50,22 +50,22 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="企业类型" prop='projectRole'>
-				<el-select v-model="inviteData.projectRole" placeholder="请选择" @change='aaa'>
-					<el-option v-for="item in roleList" :key='item.name' :label="item.name" :value="item.code">
+			<el-form-item label="企业类型" prop='enterpriseRole'>
+				<el-select v-model="inviteData.enterpriseRole" placeholder="请选择" @change='aaa'>
+					<el-option v-for="item in roleList" :key='item.code' :label="item.name" :value="item.code">
 					</el-option>
 				</el-select>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click="inviteEnterpriseFlag = false">取 消</el-button>
+			<el-button @click="inviteEnterpriseFlag=false">取 消</el-button>
 			<el-button type="primary" @click="submitInvite()">确 定</el-button>
 		</div>
 	</el-dialog>
 </div>
 </template>
 <script>
-import headTop from '../../components/headTop'
+import headTop from '@/components/headTop'
 import moment from 'moment'
 import {
 	enterpriseListRequest,
@@ -86,7 +86,7 @@ export default {
 			inviteData: {
 				eid: '',
 				pid: '',
-				projectRole: ''
+				enterpriseRole: ''
 			},
 			dealWithInviteData: {
 				eid: '',
@@ -98,7 +98,7 @@ export default {
 					required: true,
 					message: '请选择企业名称'
 				}],
-				projectRole: [{
+				enterpriseRole: [{
 					required: true,
 					message: '请选择企业角色'
 				}]
@@ -163,38 +163,51 @@ export default {
 		}
 	},
 	activated() {
-		this.getList();
-		console.log(decodeURIComponent('%E6%95%B0%E6%8D%AE%E6%9B%B4%E6%94%B9%E5%A4%B1%E8%B4%A5'));
+		this.getList1();
+		this.getList2();
 	},
 	methods: {
-		getList() {
+		getList1() {
 			let that = this;
 			let options = {
 				params: {
-					eid: this.$store.state.loginInfo.enterpriseId
+					eid: this.$store.state.loginInfo.enterpriseId,
+					inviteStatus: 'T',
+					status: 'T'
 				}
 			}
 			options.params = Object.assign(options.params, this.pagination1.params)
 			console.log(options);
 			enterpriseProjectListRequest(options).then(response => {
-				this.pagination1.total=Number(response.headers.get('x-total-count'))
-
-				console.log(response);
+				this.pagination1.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
 					this.myProjectList = [];
 					this.invitedProjectList = [];
 					for (var item in result) {
-						if (result[item].inviteStatus == 'T' && result[item].state == 'T') {
-							that.myProjectList.push(result[item]);
-						}
-						this.pagination1.total = that.myProjectList.length;
+						that.myProjectList.push(result[item]);
 					}
+					console.log(that.myProjectList);
+				})
+			})
+		},
+		getList2() {
+			let that = this;
+			let options = {
+				params: {
+					eid: this.$store.state.loginInfo.enterpriseId,
+					inviteStatus: 'I',
+					status: 'T'
+				}
+			}
+			enterpriseProjectListRequest(options).then(response => {
+				this.pagination2.total = Number(response.headers.get('x-total-count'))
+				console.log(response);
+				response.json().then(result => {
+					console.log(result);
+					this.invitedProjectList = [];
 					for (var item in result) {
-						if (result[item].inviteStatus == 'I' && result[item].state == 'F') {
-							that.invitedProjectList.push(result[item]);
-						}
-						this.pagination2.total = that.invitedProjectList.length;
+						that.invitedProjectList.push(result[item]);
 					}
 				})
 			})
@@ -202,7 +215,7 @@ export default {
 		inviteEnterprise(scope) {
 			console.log(scope);
 			this.inviteData.pid = null;
-			this.inviteData.projectRole = '';
+			this.inviteData.enterpriseRole = '';
 			this.inviteData.pid = scope.row.pjId;
 			this.inviteEnterpriseFlag = true;
 			this.getEnterpriseList();
@@ -215,25 +228,36 @@ export default {
 						eid: this.inviteData.eid,
 						pid: this.inviteData.pid,
 						body: {
-							enterpriseRole: this.inviteData.projectRole,
+							enterpriseRole: this.inviteData.enterpriseRole,
+							inviteStatus: 'I'
 						}
 					}
 					console.log(options);
 					addProjectRequest(options).then(response => {
-						if (response.status === '200') {
-
+						if (response.status == '200') {
+							this.inviteEnterpriseFlag = false;
+							this.$message({
+								type: 'success',
+								message: '项目邀请成功'
+							});
+							this.getList1();
 						}
+					}).catch(error => {
+						console.log(error);
+						this.$confirm(error).then(() => {
+							this.inviteEnterpriseFlag = false;
+						})
 					})
 				}
 			})
 		},
 		flipPage1(pageIndex) {
 			this.pagination1.params.page = pageIndex;
-			this.getEnterpriseList();
+			this.getList1();
 		},
 		flipPage2(pageIndex) {
 			this.pagination2.params.page = pageIndex;
-			this.getEnterpriseList();
+			this.getList2();
 		},
 		getEnterpriseList() {
 			this.enterpriseList = [];
@@ -262,28 +286,58 @@ export default {
 		},
 		dealWithInvite(scope, inviteStatus) {
 			console.log(scope);
+			let confirmMessage;
 			let options = {
 				eid: scope.row.enterpriseId,
 				pid: scope.row.pjId,
 				inviteStatus: inviteStatus
 			}
-			modifyProjectInvitStatusRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result);
+			switch (inviteStatus) {
+				case 'T':
+					confirmMessage='确认接受此项目邀请?'
+					break;
+				case 'F':
+					confirmMessage='确认拒绝此项目邀请?'
+				default:
+			}
+			this.$confirm(confirmMessage, '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'info'
+			}).then(() => {
+				modifyProjectInvitStatusRequest(options).then(response => {
+					response.json().then(result => {
+						console.log(result);
+						if (response.status === 200) {
+							this.inviteEnterpriseFlag = false;
+							this.$message({
+								type: 'success',
+								message: '邀请接受成功'
+							});
+							this.getList1();
+							this.getList2();
+						}
+					})
 				})
-			})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消操作'
+				});
+			});
 		},
 		aaa(event) {
+			alert(event)
 			switch (event.index) {
 				case 0:
-				this.getEnterpriseList();
+					this.getEnterpriseList();
 					break;
 				case 1:
-				this.getEnterpriseRolesList();
+					this.getEnterpriseRolesList();
 					break;
 				default:
 			}
-			alert(event.index)
+			console.log(this.inviteData)
 		}
 	}
 }
