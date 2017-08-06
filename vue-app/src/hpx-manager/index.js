@@ -10,10 +10,6 @@ const projectRoleManagement = r => require.ensure([], () => r(require('@/hpx-man
 const projectEdit = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectEdit')), 'projectEdit');
 const projectCreate = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectCreate')), 'projectCreate');
 
-const signatureManager = r => require.ensure([], () => r(require('@/hpx-manager/signature-manager')), 'signature-manager');
-const enterpriseSignature = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-signature')), 'enterprise-signature');
-const addSignature = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-signature/add-signature')), 'add-signature');
-
 const accreditation = r => require.ensure([], () => r(require('@/hpx-manager/accreditation')), 'hpx-manager-accreditation');
 const addedServices = r => require.ensure([], () => r(require('@/hpx-manager/added-services')), 'hpx-manager-addedServices');
 const enterpriseManager = r => require.ensure([], () => r(require('@/hpx-manager/enterprise-manager')), 'hpx-manager-enterprise-manager');
@@ -65,21 +61,13 @@ const router = {
             component: inviteAudit,
             meta: ['项目管理', '邀请审核'],
         },{
-            path: 'enterprise-signature',
-            component: enterpriseSignature,
-            meta: ['企业签章','签章'],
-        },{
-            path: 'enterprise-signature/add-signature',
-            component: addSignature,
-            meta: ['新增签章','新增签章'],
-        },{
             path: 'product',
             component: product,
-            meta: ['产品管理','产品管理'],
+            meta: ['平台基础管理','产品管理'],
         },{
             path: 'user',
             component: user,
-            meta: ['用户管理'],
+            meta: ['企业管理','用户管理'],
         },{
             path: 'accreditation',
             component: accreditation,
@@ -100,10 +88,6 @@ const router = {
             path: 'protocol',
             component: agreement,
             meta: ['协议授权管理'],
-        },{
-            path: 'signature',
-            component: signatureManager,
-            meta: ['企业签章管理'],
         },{
             path: 'news-notice',
             component: noticeList,

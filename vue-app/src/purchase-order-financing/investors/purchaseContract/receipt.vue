@@ -167,7 +167,10 @@ export default {
             }
             try{
                 const tContractId = this.$route.params.id;
-                const res = await saleManager(tContractId, type, this.selectProduct);
+                this.selectProduct.map((v) => {
+                    v.differenceType = v.differenceType === '正常' ? '0' : v.differenceType === '少发' ? '1' : '2';
+                })
+                const res = await saleManager(type, this.selectProduct);
                 const resp = await res.json();
                 const id = resp.id;
                 this.$router.push({ path: this.$route.path + '/apply/' + id + '/' + type});

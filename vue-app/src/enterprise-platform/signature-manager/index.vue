@@ -27,6 +27,8 @@
                     </el-dialog>
                 </template>
             </el-table-column>
+            <el-table-column prop="abled" label="状态" align="center">
+            </el-table-column>
             <el-table-column prop="action" label="操作">
                 <template scope="scope">
                     <el-button type="text" size="small" @click="abled(scope.row.name, scope.row.id, scope.row.enabled)" >{{scope.row.enabled === "T" ? "禁用" : "启用"}}</el-button>
@@ -91,22 +93,25 @@ export default {
                     this.listLoading = false;
                 }
             },
-            async getList(pagination={page:1,size:10}){
-                const eid = this.loginInfo.enterpriseId;
-                const params = Object.assign({},this.query,pagination);
-                const resp = await getEpSignatureList(params, eid);
-                const res = await resp.json();
-                const total = resp.headers.get('x-total-count')
-                let tmp = {};
-                res.map((v) =>{
-                    Object.assign(v, {confirmVisible: false});
-                })
-                this.tableList = [...res];
-                Object.keys(this.tableList).forEach( (k) => {
-                        this.tableList[k].visible2 = false;
-                })
-                this.total = parseInt(total - 0);
-            },
+        async getList(pagination={page:1,size:10}){
+            const eid = this.loginInfo.enterpriseId;
+            const params = Object.assign({},this.query,pagination);
+            const resp = await getEpSignatureList(params, eid);
+            const res = await resp.json();
+            res.map((v) => {
+                v.abled = v.enabled === 'T' ? '启用' : '禁用';
+            })
+            const total = resp.headers.get('x-total-count')
+            let tmp = {};
+            res.map((v) =>{
+                Object.assign(v, {confirmVisible: false});
+            })
+            this.tableList = [...res];
+            Object.keys(this.tableList).forEach( (k) => {
+                    this.tableList[k].visible2 = false;
+            })
+            this.total = parseInt(total - 0);
+        },
         async search () {
                 try{
                     this.getList();

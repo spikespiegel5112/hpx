@@ -136,8 +136,10 @@
     
         <!--提交部分-->
         <section>
-            <el-button type="primary" style="margin:  30px 0 50px 40%" @click="subModel('addForm')">提交</el-button>
-            <el-button type="primary" style="margin:  30px 0 50px 40%" @click="subModel('addForm')">取消</el-button>
+            <div style="width: 200px;margin: 50px auto">
+                <el-button type="primary"  @click="subModel('addForm')">提交</el-button>
+                <el-button type="primary"  @click="cancle('addForm')">取消</el-button>
+            </div>
         </section>
     </div>
 </template>
@@ -328,13 +330,14 @@ export default {
                     this.selectLabelList = [];
                     this.scoreList = [];
                     this.gradeList = [];
-                    console.log("提交后", response)
                 } catch (e) {
                     this.$message.error(e);
                 };
             });
         },
-
+        cancle() {
+            history.back();
+        }
     }
 }
 </script>

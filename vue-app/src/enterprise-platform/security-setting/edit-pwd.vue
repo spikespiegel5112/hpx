@@ -80,8 +80,6 @@ export default {
             }
         },
         submitForm(formName) {
-            console.log("hehehhe", this.isLogin)
-
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     const isOk = this.subPwd();
@@ -92,8 +90,6 @@ export default {
                                 type: 'success'
                             })
                             this.$store.dispatch('revisePsw')
-                            // history.back();
-                            console.log("hehehhe", this.isLogin)
                             this.$router.push('/')
                         } else {
                             this.$message.error('修改密码失败！');
@@ -101,7 +97,6 @@ export default {
                     })
 
                 } else {
-                    console.log('error submit!!');
                     return false;
                 }
             });

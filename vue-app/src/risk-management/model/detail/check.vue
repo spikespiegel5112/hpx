@@ -152,7 +152,6 @@ export default {
             try{
                 const resp = await modelCheck(id, eid) ;
                 const res = await resp.json();
-                console.log("数据", res);
                 this.modelData = {...res};
             }catch(e) {
 

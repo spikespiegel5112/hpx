@@ -9,10 +9,10 @@
                 <ul class="section-serviceType">
                     <li v-for="(item , i) in serviceList" :key="i+''" style="position:relative;">
                         <dl>
-                            <dt @click="modelShow(item.code)"><img :src="item.pic" /></dt>
+                            <dt @click="modelShow(item.code)"><img :src="serviceListMock[i].pic" /></dt>
                             <dd>
                                 <h4>{{item.name}}</h4>
-                                <p class="service-remark">{{item.remark}}</p>
+                                <p class="service-remark">{{item.description}}</p>
                                 <el-button type="text" @click="loadText(item.code)">下载授权书</el-button>
                             </dd>
                         </dl>
@@ -65,11 +65,12 @@ import { mapState } from 'vuex'
 import headTop from '@/components/headTop';
 import { servicesTypeList } from '@/api/mockApi';
 import { loadUrl } from '@/api/publicApi';
-import { servicesOpen } from '@/api/coreApi';
+import { servicesOpen , servicesTypes} from '@/api/coreApi';
 export default {
     data(){
         return{
             serviceList : [],
+            serviceListMock :[],
             modalVisible : false,
             serviceCode : '',
             fileId:'',
@@ -89,21 +90,30 @@ export default {
     computed:{
         ...mapState(["loginInfo"])
     },
-    mounted(){
-        this.$nextTick(
-            async () => {
-                try{
-                    const resp = await servicesTypeList();
-                    const res = await resp.json();
-                    this.serviceList = res.data;
-                    console.log(this.serviceList)
-                }catch(e){
-                    this.$message.error(e)
-                }
-            }
-        )
+    created(){
+        this.mockTypes();
+        this.servicesTypes();
     },
     methods:{
+        async mockTypes(){
+            try{
+                const respMock = await servicesTypeList();
+                const resMock = await respMock.json();
+                this.serviceListMock = resMock.data;
+            }catch(e){
+                this.$message.error(e)
+            }
+        },
+         async servicesTypes(){
+            try{
+                const resp = await servicesTypes('SERVICE_OPEN');              
+                const res = await resp.json();
+                this.serviceList = res;
+
+            }catch(e){
+                this.$message.error(e)
+            }
+        },
         loadText(code){
             window.location.href = loadUrl(code)
         },

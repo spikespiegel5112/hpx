@@ -16,13 +16,13 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item prop="locked">
-                            <el-select v-model="query.locked" size="large" placeholder="锁定状态">
+                        <el-form-item prop="enabled">
+                            <el-select v-model="query.enabled" size="large" placeholder="状态">
                                 <el-option
-                                    v-for="item in lockedOptions"
-                                    :key="item.locked"
+                                    v-for="item in enabledOptions"
+                                    :key="item.enabled"
                                     :label="item.value"
-                                    :value="item.locked">
+                                    :value="item.enabled">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -76,7 +76,6 @@
                     <template scope="scope">
                         <el-button type="text" size="small" @click="abled(scope.row.id)">{{scope.row.enabled === 'T' ? '禁用' : '启用'}}</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
-                        <!--<el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>                        -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -92,30 +91,30 @@
                 label="用户名" 
                 prop="name" 
                 >
-					<el-input v-model="editeData.name" auto-complete="off"></el-input>
+					<el-input v-model="editeData.name" ></el-input>
 				</el-form-item>
 				<el-form-item 
                 label="手机号码" 
                 prop="phone"
                 v-model="editRules.email"
                 >
-					<el-input v-model="editeData.phone" auto-complete="off"></el-input>
+					<el-input v-model="editeData.phone" ></el-input>
 				</el-form-item>
                 <el-form-item 
                 label="邮箱" 
                 prop="email"
                 v-model="editRules.email"
                 >
-					<el-input v-model="editeData.email" auto-complete="off"></el-input>
+					<el-input v-model="editeData.email" ></el-input>
 				</el-form-item>
                 <el-form-item 
                 label="性别"
-                prop="gender"
+                prop="sex"
                 :rules="[
                 { required: true, message: '请选择性别'},
                 ]">
                     <el-select
-                        v-model="editeData.gender">
+                        v-model="editeData.sex">
                         <el-option
                         v-for="item in genderOptions"
                         :key="item.value"
@@ -123,44 +122,6 @@
                         :value="item.value">
                         </el-option>
                     </el-select>
-				</el-form-item>
-				<el-form-item 
-                label='启用状态' 
-                prop="enabled"
-                :rules="[
-                { required: true, message: '请选择启用状态'},
-                ]">
-                    <el-select v-model="editeData.enabled">
-                        <el-option
-                            v-for="item in enabledOptions"
-                            :key="item.enabled"
-                            :label="item.value"
-                            :value="item.enabled">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item 
-                label='锁定状态' 
-                prop="locked"
-                :rules="[
-                { required: true, message: '请选择锁定状态'},
-                ]">
-                    <el-select v-model="editeData.locked">
-                        <el-option
-                            v-for="item in lockedOptions"
-                            :key="item.locked"
-                            :label="item.value"
-                            :value="item.locked">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-				<el-form-item 
-                label="注册时间" 
-                prop="registerTime"
-                :rules="[
-                { required: true, message: '请选择注册时间'},
-                ]">
-					<el-date-picker type="date" placeholder="选择注册时间" v-model="editeData.registerTime"></el-date-picker>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -174,7 +135,7 @@
 <script>
     import headTop from '../../components/headTop'
     import myPagination from '../../components/myPagination'
-    import { getUserList, abledUser, delUser, addUser, editUser } from '@/api/coreApi'
+    import { getUserList, abledUser, addUser, editUser } from '@/api/coreApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     import { checkEmail, checkPhone } from '../../config/mUtils'
@@ -207,11 +168,11 @@
                     prop  : 'email',
                     },{
                     label : '性别',
-                    prop  : 'gender',
-                    },{
-                    label : '是否锁定',
-                    prop  : 'locked',
-                    },{
+                    prop  : 'sex',
+                    }, {
+                    label : '状态',
+                    prop  : 'abled',
+                    }, {
                     label : '注册时间',
                     prop  : 'registerTime',
                     formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')                    
@@ -228,7 +189,7 @@
                 query : {
                     name : '',
                     phone : '',
-                    locked: '',
+                    enabled : '',
                 },
                 enabledOptions : [
                     {
@@ -250,16 +211,6 @@
                         gender : 'M'
                     }
                 ],
-                lockedOptions : [
-                    {
-                        value : '是',
-                        locked : 'T'
-                    },
-                    {
-                        value : '否',
-                        locked : 'F'
-                    }
-                ],
                 //搜索条件的个数
                 criteriaNum : 3,
 
@@ -271,10 +222,8 @@
                     phone : '',
                     name : '',
                     email :'',
-                    locked : '',
-                    enabled: '',
                     gender: '',
-                    registerTime : '',
+                    sex: '',
                 },
                 editRules : {
                     name : [
@@ -322,8 +271,8 @@
                 const resp = await getUserList(eid, params);
                 const res = await resp.json();
                 res.map((v) => {
-                    v.locked === 'T' ? v.locked = '是' : v.locked = '否';
-                    v.gender === 'F' ? v.gender = '女' : v.gender = '男';
+                    v.sex = v.gender === 'F' ? '女' : '男';
+                    v.abled = v.enabled === 'T' ? '启用' : '禁用';
                 })
                 const total = resp.headers.get('x-total-count')
                 this.tableList = [...res];
@@ -355,16 +304,19 @@
                 }
             },
            add () {
+               this.editeData = {};
                this.modalTitle = '新增',
                this.editeModalVisible = true; 
             },
            edite (index,row) {
+               this.editeData = Object.assign({...row}, {sex: sex});
                 this.modalTitle = '编辑',
                 this.editeModalVisible = true;
-                const enabled = row.abled === "T" ? "启用" : "禁用";
-                this.editeData = Object.assign({...row}, {abled: enabled});
+                const sex = row.gender === "F" ? "女" : "男";
+                this.editeData = Object.assign({...row}, {sex: sex});
             },
             async editSubmit (formName) {
+                this.editeData.gender = this.editeData.sex === '男' ? 'M' : 'F';
                 this.$refs[formName].validate(async (valid) => {
                     if (!valid) return false;
                     
@@ -385,17 +337,6 @@
                     }
                 });
             },
-            async del (id) {
-                try{const resp = await delUser(id);
-                    this.$message({
-                        message: '删除成功！',
-                        type: 'success'
-                    });
-                    this.getList();}
-                 catch(e) {
-                    this.$message.error(e);
-                }
-            }
         },
     }
 </script>

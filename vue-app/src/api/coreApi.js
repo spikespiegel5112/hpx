@@ -39,10 +39,35 @@ export const checkNewPhone = (newPhone, code) => fetch('/core/core/api/v1/modify
 export const getEnterpriseInfo = (eid) => fetch(`/core/core/api/v1/enterprises/${eid}`);
 
 /*
+ ** 企业认证账户信息
+ */
+export const eidAccCountInfo = (eid) => fetch(`/core/core/api/v1/enterpriseAccountEntity/enterpriseAccountEntity/${eid}`);
+
+/*
+ ** 填写 认证账户信息
+ */
+export const accountFill = (eid,data) => fetch(`/core` + `/core/api/v1/enterpriseAccountEntity/enterprise/${eid}/enterpriseAccountEntity`, data,'put')
+
+/*
+ ** 获取 认证 已上传文件信息
+ */
+export const filesDetail = (eid) => fetch(`/core` + `/core/api/v1/enterpriseFiles/enterprise/${eid}/attachfiles`)
+
+
+/*
+ ** 查看企业认证状态
+ */
+
+export const eidAccStatus = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/authenticateProcess`);
+
+/*
  ** 更改企业信息
  */
 export const patchEnterpriseInfo = (eid, body) => fetch(`/core/core/api/v1/enterprises/${eid}`, body, 'patch')
-
+/*
+ ** 企业认证
+ */
+export const applyReview  = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/authenticateProcess`, {}, 'put')
 /*
  ** 管理签章 -- 获取企业电子签章列表
  */
@@ -229,3 +254,8 @@ export const addDictionary = (params) => fetch('/core/core/api/v1/dictionary',pa
 ** 字典管理--编辑
 */
 export const editDictionary = (id, params) => fetch(`/core/core/api/v1/dictionary/${id}`,params, 'patch');
+
+/*
+** 字典管理--编辑
+*/
+export const servicesTypes = (code) => fetch(`/core/core/api/v1/dictionary/${code}/children`);

@@ -16,6 +16,18 @@
                             <el-input v-model="query.code" size="large" placeholder="产品编码"></el-input>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="6">
+                        <el-form-item prop="availableStatus">
+                            <el-select v-model="query.availableStatus" size="large" placeholder="状态">
+                                <el-option
+                                    v-for="item in availableStatus"
+                                    :key="item.available"
+                                    :label="item.value"
+                                    :value="item.available">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style="float: right"> 
                         <el-form-item>
                             <el-button type="primary" icon="search" @click="search">查询</el-button>
@@ -55,17 +67,22 @@
                     :key="i"
                     :label="value.label"
                     :prop="value.prop"
-                    :sortable="value.sortable"
-                    :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
-                    :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >             
                 </el-table-column>
                 <el-table-column align="center" label="操作">
                     <template scope="scope">
-                        <el-button type="text" size="small" @click="abled(scope.row.id)">{{scope.row.available === 'T' ? '禁用' : '启用'}}</el-button>
+                        <el-button type="text" size="small" @click="abled(scope.row,scope.row.id)">{{scope.row.available === 'F' ? '启用' : '禁用'}}</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>                        
+                        <el-button type="text" size="small" @click="scope.row.confirmVisible=true">删除</el-button>
+                        <el-popover v-model="scope.row.confirmVisible">
+                            <p>
+                                <i style="color:#ffbf00" class="el-icon-information"></i> 确定删除？</p>
+                            <div style="margin-top:15px;">
+                                <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
+                                <el-button type="primary" size="mini" @click="del(scope.row.id)">确定</el-button>
+                            </div>
+                        </el-popover>                       
                     </template>
                 </el-table-column>
             </el-table>
@@ -76,7 +93,7 @@
         </section>
         <!--编辑界面-->
 		<el-dialog :title="modalTitle" v-model="editeModalVisible" :close-on-click-modal="false">
-			<el-form :model="editeData" label-width="110px" :rules="editRules" ref="editeData">
+			<el-form :model="editeData" label-width="110px" ref="editeData">
                 <el-form-item 
                 label="产品编码" 
                 prop="code" 
@@ -97,8 +114,9 @@
                 <el-form-item 
                 label="产品企业类型"
                 :rules="[
-                { required: true, message: '请选择产品企业类型',trigger:'blur'},
-                ]">
+                    { type : 'array', required: true, message: '请选择产品企业类型',trigger:'blur'}
+                ]"
+                prop="productEnterpriseRole">
                     <el-select
                         v-model="editeData.productEnterpriseRole"
                         multiple
@@ -113,37 +131,6 @@
                         </el-option>
                     </el-select>
 				</el-form-item>
-				<el-form-item 
-                label='启用状态' 
-                prop="available"
-                :rules="[
-                { required: true, message: '请选择启用状态',trigger:'blur'},
-                ]">
-                    <el-select v-model="editeData.available">
-                        <el-option
-                            v-for="item in enabledOptions"
-                            :key="item.available"
-                            :label="item.value"
-                            :value="item.available">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-				<el-form-item 
-                label="产品入口地址" 
-                prop="entryUrl"
-                :rules="[
-                { required: true, message: '请输入产品入口地址',trigger:'blur'},
-                ]">
-					<el-input v-model="editeData.entryUrl"><template slot="prepend">Http://</template></el-input>
-				</el-form-item>
-				<!--<el-form-item 
-                label="最后更新时间" 
-                prop="modifiedTime"
-                :rules="[
-                { required: true, message: '请选择最后更新时间'},
-                ]">
-					<el-date-picker type="date" placeholder="选择日期"  v-model="editeData.modifiedTime"></el-date-picker>
-				</el-form-item>-->
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="editeModalVisible = false">取消</el-button>
@@ -161,7 +148,6 @@
     import moment from 'moment'
     export default {
         data(){
-            this.t = '7'
             return {
                 //table columns
                 columns : [{
@@ -171,13 +157,13 @@
                     label : '产品名称',
                     prop  : 'name',
                     },{
-                    label : '产品的入口地址',
-                    prop  : 'entryUrl',
-                    },{
                     label : '最后更新时间',
                     prop  : 'modifiedTime',
                     formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')
-                    }
+                    },{
+                    label : '状态',
+                    prop  : 'abled',
+                    },
                 ],
                 //总页数
                 total : 0,
@@ -189,9 +175,10 @@
                 //search params
                 query : {
                     name : '',
-                    code : ''
+                    code : '',
+                    availableStatus: '',
                 },
-                enabledOptions : [
+                availableStatus : [
                     {
                         value : '启用',
                         available : 'T'
@@ -213,15 +200,8 @@
                     id: '',
                     code : '',
                     name : '',
-                    entryUrl : '',
-                    available: '',
                     productEnterpriseRole: [],
                 },
-                editRules : {
-                    name : [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					]
-                }
             }
         },
     	components: {
@@ -255,7 +235,10 @@
                 const params = Object.assign({},this.query,pagination);
                 const resp = await getProductList(params);
                 const res = await resp.json();
-                const total = resp.headers.get('x-total-count')
+                res.map((v) => {
+                    Object.assign(v, {abled: v.available === 'F' ? '禁用' : '启用'},{confirmVisible: false})
+                })
+                const total = resp.headers.get('x-total-count');
                 this.tableList = [...res];
                 this.total = parseInt(total);
             },
@@ -270,17 +253,17 @@
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
-            async abled (id){
-                const resp = await abledProduct(id);
-                if(resp.status === 200) {
+            async abled (row,id){
+                try{
+                    const resp = await abledProduct(id);
                     this.$message({
                         message: '修改状态成功！',
                         type: 'success'
                     });
                     this.getList();
-                } else {
+                } catch(e) {
                     this.$message.error('修改状态失败！');
-                }
+                };
             },
             // 获取产品企业类型
             async getPERList() {
@@ -291,7 +274,6 @@
                const res = await resp.json();
                res.map((v) => {
                    this.productEnterpriseRoleList.push(v);
-                   this.tmp.push(v.code)
                })
             },
            add () {
@@ -302,14 +284,20 @@
                this.getPERList();
             },
            edite (index,row) {
+                this.productEnterpriseRoleList = [];
+                Object.assign(this.$data.editeData, this.$options.data().editeData)
+                this.tmp = [];
                 this.modalTitle = '编辑',
                 this.editeModalVisible = true;
                 this.getPERList();
-                const enabled = row.available === "T" ? "启用" : "禁用";
-                this.editeData = Object.assign({},row, {available: enabled},{productEnterpriseRole:this.tmp});
+                const enabled = row.available === "T" ? "禁用" : "启用";
+                const list = row.productEnterpriseRole
+                for(let i = 0; i < list.length; i++) {
+                    this.tmp.push(list[i].code);
+                }
+                this.editeData = {id: row.id, code: row.code, name: row.name, productEnterpriseRole: this.tmp};
             },
             async editSubmit (formName) {
-                console.log("此次", this.editeData )
                 this.$refs[formName].validate(async (valid) => {
                     if (!valid) return false;
 
@@ -331,10 +319,6 @@
                         });
                          this.editeModalVisible = false;
                          this.getList();
-                        //  console.log("呵呵00",editePostData )
-                        //  this.editeData = {}
-                        //  this.$refs[formName].resetFields();
-                        //  console.log("呵呵",this.editeData )
                     } catch(e) {
                         this.$message.error(e);
                     }

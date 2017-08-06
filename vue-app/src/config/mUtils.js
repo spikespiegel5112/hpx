@@ -289,6 +289,25 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
     }, 20);
 }
 
+export function checkEmail(input){
+    let filter  = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if(filter.test(input)) {
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//检测手机号是否合法
+export function checkPhone(value) {
+    var reg = /^0?1[3|4|5|8|7][0-9]\d{8}$/;
+    if (reg.test(value)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // 验证密码
 export function checkPassword(strPassword) { //6到16位，需包含数字，字母，符号中两种
     strPassword = strPassword || '';

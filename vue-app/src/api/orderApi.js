@@ -41,13 +41,25 @@ export const getPurchaseContractList = (query) => fetch('/order/contract/listC',
 /**
  * 资方--采购合同--签章预览
  */
-export const contractSignature = (id) => fetch(`/order/contract/preview/${id}`, {});
-
+// 获取合同详情
+export const getPurchaseContractDetail = (id) => fetch(`/order/contract/preview/${id}`, {});
+// 获取附录信息
+export const getAppendixList = (id) => fetch(`/order/contract/preview/${id}`, {});
+// 获取所有的签章
+export const getAllSignature = (eid) => fetch(`/core/core/api/v1/venterprise/${eid}/esigns`, {});
+// 发送签章短信验证码
+export const coSmgCode = (phone, strCode) => fetch(`/order/contract/SendSms?phone=${phone}&strCode=${strCode}`, {}, 'post');
+// 提交签章
+export const subSignature = (eid) => fetch(`/core/core/api/v1/venterprise/${eid}/esigns`, {});
 
 /**
  * 资方--采购合同--确认收货列表
  */
 export const getReceiptList = (tContractId) => fetch(`/order/contract/queryReceivingDetail?tContractId=${tContractId}`, {});
+
+// 上传合同
+export const uploadContract = (id) => `/order/contract/uploadingContract/${id}`;
+
 /**
  * 资方--采购合同--补发申请,退款申请,补购申请
  */
@@ -68,6 +80,16 @@ export const ordersList = (params) => fetch(`/order/salesOrder/search`, params)
  * 获取订单详情 ordersDetail
  */
 export const ordersDetail = (orderId) => fetch(`/order/salesOrder/getDetail/${orderId}`)
+
+/**
+ * 下载订单详情 ordersDetailDownload
+ */
+export const ordersDetailDownload = (orderId) => `/order/salesOrder/downloadDetail/${orderId}`;
+
+/**
+ * 修改订单详情 salesOrder/updateDetail
+ */
+export const ordersDetailRevise = (params) => fetch(`/order/salesOrder/updateDetail`,params,'patch');
 
 /**
  * 获取售后管理单据列表

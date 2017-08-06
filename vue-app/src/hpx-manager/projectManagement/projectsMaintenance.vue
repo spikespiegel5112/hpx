@@ -169,6 +169,9 @@ export default {
 				},
 				total: 0
 			},
+			//登录信息
+			userId: this.$store.state.loginInfo.id,
+			enterpriseId:this.enterpriseId,
 			//search params
 			query: {
 				eid: this.$store.state.loginInfo.enterpriseId
@@ -218,6 +221,7 @@ export default {
 	},
 	activated(){
 		this.initData();
+		alert(this.$store.loginInfo.id)
 	},
 	mounted() {
 

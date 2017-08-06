@@ -14,7 +14,7 @@
                     <el-col :span="6">
                         <el-form-item prop="firstParty">
                             <el-select v-model="query.firstParty" size="large" placeholder="选择供应商">
-                                <el-option v-for="item in supplierList" :key="item.activated" :label="item.value" :value="item.activated">
+                                <el-option v-for="item in supplierList" :key="item.value" :label="item.value" :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -30,7 +30,7 @@
         </section>
 
         <section class="main-table-container">
-            <el-table row-key="id" max-height="250" border @selection-change="handleSelectionChange" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+            <el-table row-key="id" max-height="250" border :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
                 <el-table-column fixed prop="name" label="合同名称"></el-table-column>
                 <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
                 </el-table-column>
@@ -38,16 +38,18 @@
                     <template scope="scope">
                         <el-button type="text" size="small" @click="signature(scope.$index, scope.row)" >签章</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">预览</el-button>
-                        <!--<el-button type="text" size="small" @click="uploadContract(scope.$index, scope.row)">上传合同</el-button>-->
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :file-list="fileList">
-                            <el-button size="small" type="primary">上传合同</el-button>
-                        </el-upload>
                         <el-button type="text" size="small" @click="receipt(scope.$index, scope.row)">确认收货</el-button>
+                        <!--<el-button type="text" size="small" @click="uploadContract(scope.$index, scope.row)">上传合同</el-button>-->
+                         <!--action="/order/contract/uploadingContract/"+{scope.row.id}-->
+                        <el-upload
+                            :action="`/order/contract/uploadingContract/${scope.row.id}`"
+                            :file-list="excelList"
+                            :on-change="excelChange"
+                            :before-upload="excelBefore"
+                            :on-success="excelSuccess"
+                        >
+                        <el-button size="small" type="text">上传合同</el-button>
+                    </el-upload>
                     </template>
                 </el-table-column>
             </el-table>
@@ -93,7 +95,7 @@
 <script>
 import headTop from '../../../components/headTop'
 import myPagination from '../../../components/myPagination'
-import { getPurchaseContractList, getSupplierList, contractSignature } from '@/api/orderApi'
+import { getPurchaseContractList, getSupplierList, uploadContract } from '@/api/orderApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
 export default {
@@ -136,7 +138,7 @@ export default {
             */
             pagination: {},
 
-            fileList: [],
+            excelList: [],
             //table
             tableList: [],
             supplierList: [],
@@ -189,7 +191,10 @@ export default {
 
     },
     computed: {
-        ...mapState(["loginInfo"])
+        ...mapState(["loginInfo"]),
+        // excelAction(){
+        //     return uploadContract();
+        // }
     },
     methods: {
         /*
@@ -212,13 +217,11 @@ export default {
                 const res = await resp.json();
                 const result = await getSupplierList(2);
                 const resu = await result.json();
-                console.log("供应商", resu)
                 let temp = [];
                 resu.forEach((v) =>{
                     temp.push({label: v.enterpriseName, value: v.enterpriseName });
                 })
                 this.supplierList = temp;
-                console.log("列表数据", res)
                 const total = resp.headers.get('x-total-count')
                 this.tableList = [...res];
                 this.total = parseInt(total);
@@ -236,19 +239,30 @@ export default {
         },
 
         // 上传合同
-        handleRemove(file, fileList) {
-            console.log(file, fileList);
-        },
-        handlePreview(file) {
-            console.log(file);
-        },
+        excelChange(file,list){
+                this.excelList = list;
+            },
+        excelBefore(){
+                if(this.excelList.length > 1){
+                    this.$message({
+                        type:'info',
+                        message:'每次只能上传一个 '
+                    });
+                    return false;
+                }
+            },
+        excelSuccess(response){
+                this.excelPath = response
+                this.$message({
+                    type : 'success',
+                    message : '上传成功'
+                })
+            },
 
         handleSelectionChange(val) {
-            console.log("勾选数据", val)
             // this.multipleSelection = val;
         },
         signature(index, row) {
-            // console.log("签章  ")
             this.$router.push({ path: this.$route.path + '/signature/' + row.id})
         },
 
