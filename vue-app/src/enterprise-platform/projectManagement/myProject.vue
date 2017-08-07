@@ -159,11 +159,14 @@ export default {
 			}],
 		}
 	},
-	async activated() {
-		await this.getList1();
-		await this.getList2();
+	activated() {
+		this.initData();
 	},
 	methods: {
+		async initData(){
+			await this.getList1();
+			await this.getList2();
+		},
 		getList1() {
 			let that = this;
 			let options = {
@@ -305,7 +308,6 @@ export default {
 					break;
 				case 'F':
 					confirmMessage = '确认拒绝此项目邀请?'
-				default:
 			}
 			this.$confirm(confirmMessage, '提示', {
 				confirmButtonText: '确定',
@@ -321,8 +323,7 @@ export default {
 								type: 'success',
 								message: '邀请接受成功'
 							});
-							this.getList1();
-							this.getList2();
+							this.initData();
 						}
 					})
 				})
