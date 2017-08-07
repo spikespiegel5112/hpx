@@ -14,8 +14,8 @@
 			<el-row>
 				<el-col :span="4">
 					<el-form-item prop="name">
-						<el-select v-model="queryOption" placeholder="请选择" @change='clearQuery'>
-							<el-option v-for="item in noticeTypeList" :key='item.value' :label="item.name" :value="item.name">
+						<el-select v-model="queryParams.noticeType" placeholder="请选择" @change='clearQuery'>
+							<el-option v-for="item in noticeTypeList" :key='item.code' :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -24,6 +24,7 @@
 				<el-col :span="6">
 					<el-form-item>
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
+						<el-button type="primary" @click="clearQuery">重置</el-button>
 					</el-form-item>
 					<el-form-item>
 						<el-button icon="plus" type="primary" @click="addNotice()" style="float: right; margin-bottom: 5px;">新增</el-button>
@@ -47,8 +48,8 @@
 				<template scope="scope">
                     <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
                     <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
-					<el-button v-if="scope.row.istop=='0'"  type="text" size="small" @click="setTop(scope)">置顶</el-button>
-					<el-button v-else-if="scope.row.istop=='1'"  type="text" size="small" @click="setTop(scope)">取消置顶</el-button>
+					<el-button v-if="scope.row.istop=='1'"  type="text" size="small" @click="setTop(scope)">置顶</el-button>
+					<el-button v-else-if="scope.row.istop=='0'"  type="text" size="small" @click="setTop(scope)">取消置顶</el-button>
 					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
                 </template>
 			</el-table-column>
@@ -97,9 +98,12 @@ export default {
 				prop: 'creator',
 				sortable: true,
 			}],
-			query: {},
-			queryParams:{},
-			queryOption:{},
+			//文章类型列表
+			noticeTypeList:[],
+			queryParams: {
+				noticeType:'',
+			},
+
 			//分页信息
 			pagination: {
 				params: {
@@ -112,11 +116,6 @@ export default {
 			tableList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
-			//文章类型列表
-			noticeTypeList:[],
-			noticeType:'',
-			//搜索条件的个数
-			criteriaNum: 3,
 			//模态框
 			deleteNoticeFlag: false,
 		}
@@ -149,7 +148,7 @@ export default {
 			let options = {
 				params: {}
 			}
-			options.params = Object.assign(options.params, this.pagination.params);
+			options.params = Object.assign(options.params, this.pagination.params, this.queryParams);
 			console.log(options);
 			noticeRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
@@ -169,7 +168,7 @@ export default {
 				})
 			})
 		},
-		async search() {
+		search() {
 			try {
 				this.getList();
 			} catch (e) {
@@ -256,10 +255,11 @@ export default {
 			this.pagination.params.page = pageIndex;
 			this.getList();
 		},
-		clearQuery(){
-			for (var key in this.queryParams) {
-				this.queryParams[key] = '';
-			}
+		clearQuery(value){
+			alert(value)
+			// for (var key in this.queryParams) {
+			// 	this.queryParams[key] = '';
+			// }
 		},
 	}
 }
