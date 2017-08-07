@@ -278,7 +278,7 @@ export const getProjectList = options =>{
  */
 
 export const getInviteRecordsList = options =>{
-    return fetch(`/core/core/api/v1/projects/${options.params.eid}/inviteRecords/${options.params.pid}`);
+    return fetch(`/core/core/api/v1/enterprisProjects/${options.params.eid}/inviteRecords/${options.params.pid}`);
 }
 
 /**

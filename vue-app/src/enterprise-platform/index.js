@@ -53,7 +53,7 @@ export default {
 			component: myProject,
 			meta: ['项目管理', '我的项目'],
 		},{
-			path: 'invite-record?:eid&:pid',
+			path: 'inviterecord',
             name: 'inviteRecord',
 			component: inviteRecord,
 			meta: ['项目管理', '邀请记录'],

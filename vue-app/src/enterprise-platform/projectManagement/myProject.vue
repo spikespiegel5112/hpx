@@ -163,7 +163,7 @@ export default {
 		this.initData();
 	},
 	methods: {
-		async initData(){
+		async initData() {
 			await this.getList1();
 			await this.getList2();
 		},
@@ -334,13 +334,13 @@ export default {
 				});
 			});
 		},
-		auditRecord(scope){
+		auditRecord(scope) {
 			console.log(scope);
 			this.$router.push({
-				name:"inviteRecord",
-				params:{
-					eid:this.$store.state.loginInfo.enterpriseId,
-					pid:scope.row.pjId
+				name: "inviteRecord",
+				query: {
+					eid: this.$store.state.loginInfo.enterpriseId,
+					pid: scope.row.pjId
 				}
 			})
 		},

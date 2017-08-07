@@ -2,27 +2,6 @@
 <div class="fillcontain">
 	<head-top></head-top>
 
-	<!--  搜索条件  -->
-	<section class='search-criteria-container'>
-		<el-form :inline="true" :model="query" ref="query">
-			<el-row>
-				<el-col :span="5">
-					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="项目名称"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="7" :offset="6 * (3 - (criteriaNum % 4))">
-					<el-form-item>
-						<el-button type="primary" icon="search" @click="search">查询</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button icon="plus" type="primary" @click='createProject'>新增</el-button>
-					</el-form-item>
-				</el-col>
-			</el-row>
-		</el-form>
-	</section>
-
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 			<!-- <el-table-column type="index" width="100"></el-table-column> -->
@@ -36,13 +15,6 @@
 				</template>
 			</el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-			</el-table-column>
-			<el-table-column label="操作">
-				<template scope="scope">
-					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
-					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
-					<el-button type="text" size="small" @click="deleteProjectFunction(scope)">删除</el-button>
-				</template>
 			</el-table-column>
 		</el-table>
 
@@ -81,15 +53,10 @@
 
 <script>
 import headTop from '@/components/headTop'
-import myPagination from '@/components/myPagination'
 import moment from 'moment'
 import {
 	getInviteRecordsList
 } from '@/api/getData'
-import {
-	modifyProjectInfo,
-	deleteProject
-} from '@/api/coreApi'
 import {
 	mapState
 } from 'vuex'
@@ -170,7 +137,7 @@ export default {
 			},
 			//登录信息
 			userId: this.$store.state.loginInfo.id,
-			enterpriseId:this.enterpriseId,
+			enterpriseId: this.enterpriseId,
 			//search params
 			query: {
 				eid: this.$store.state.loginInfo.enterpriseId
@@ -218,7 +185,7 @@ export default {
 			}
 		}
 	},
-	activated(){
+	activated() {
 		this.initData();
 	},
 	computed: {
@@ -243,11 +210,12 @@ export default {
 		getList() {
 			let options = {
 				params: {
-					eid:this.$route.params.eid,
-					pid:this.$route.params.pid
+					eid: this.$route.query.eid,
+					pid: this.$route.query.pid
 				}
 			}
-			options.params = this.pagination.params;
+
+			options.params = Object.assign(options.params, this.pagination.params)
 			console.log(options);
 			getInviteRecordsList(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
@@ -261,23 +229,6 @@ export default {
 			this.pagination.params.page = pageIndex;
 			this.getList();
 		},
-		async search() {
-			try {
-				this.getList();
-			} catch (e) {
-
-			}
-		},
-		resetForm(formName) {
-			this.$refs[formName].resetFields();
-		},
-		check(index, row) {
-			console.log(this.$route.path)
-			this.$router.push({
-				path: this.$route.path + '/detail/' + row.id
-			})
-			console.log(index, row)
-		}
 	},
 }
 </script>
