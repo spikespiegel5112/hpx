@@ -4,22 +4,12 @@
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			<!-- <el-table-column type="index" width="100"></el-table-column> -->
-			<el-table-column type="expand">
-				<template scope="props">
-					<el-form label-position="left" class="demo-table-expand">
-						<el-form-item v-for="(value,i) in expand" :key="i" :label="value.label" :prop="value.prop" :formatter="value.formatter">
-							<span>{{ props.row[value.prop] }}</span>
-						</el-form-item>
-					</el-form>
-				</template>
-			</el-table-column>
+			<el-table-column type="index" width="100"></el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
 		</el-table>
 
 		<section class="main-pagination">
-			<!-- 特殊情况分页自己按注释的  -->
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
@@ -71,57 +61,37 @@ export default {
 		return {
 			//table columns
 			columns: [{
-				label: '产品编码',
-				prop: 'productCode',
+				label: '联系电话',
+				prop: 'contactsPhone',
 				sortable: true,
 			}, {
-				label: '项目编号',
-				prop: 'code',
+				label: '创建时间',
+				prop: 'createTime',
 				sortable: true,
-				minWidth: 120,
+				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
-				label: '项目名称',
-				prop: 'name',
+				label: '受邀企业名称',
+				prop: 'enterpriseName',
 				sortable: true,
 			}, {
-				label: '项目说明',
-				prop: 'remark',
-				sortable: true,
-				minWidth: 200
-			}],
-			expand: [{
+				label: '邀请状态',
+				prop: 'inviteStatus',
+				sortable: true
+			}, {
+				label: '企业角色类型',
+				prop: 'productName',
+				sortable: true
+			}, {
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
 				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
-				label: '项目终止时间',
-				prop: 'endTime',
-				sortable: true,
-				formatter: (row, column) => moment(column.endTime).format(dateFormat)
-			}, {
-				label: '建立人',
-				prop: 'creator',
-				sortable: true,
-			}, {
-				label: '项目状态',
+				label: '审核状态',
 				prop: 'state',
-				sortable: true,
-			}, {
-				label: '记录时间',
-				prop: 'createTime',
-				sortable: true,
-				formatter: (row, column) => moment(column.createTime).format(dateFormat)
-			}, {
-				label: '更新人',
-				prop: 'modifiedBy',
-				sortable: true,
-			}, {
-				label: '最后更新',
-				prop: 'modifiedTime',
-				sortable: true,
-				formatter: (row, column) => moment(column.modifiedTime).format(dateFormat)
+				sortable: true
 			}],
+
 			//table
 			tableList: [],
 			listLoading: false,
