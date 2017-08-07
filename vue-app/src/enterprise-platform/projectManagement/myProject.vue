@@ -6,7 +6,7 @@
 			<el-table row-key="id" :empty-text="emptyText" :data="myProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
 				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 				</el-table-column>
-				<el-table-column label="操作">
+				<el-table-column label="操作" width='200'>
 					<template scope="scope">
                         <el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
                         <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
@@ -23,7 +23,7 @@
 			<el-table row-key="id" :empty-text="emptyText" :data="invitedProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
 				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 				</el-table-column>
-				<el-table-column label="操作">
+				<el-table-column label="操作" width='200'>
 					<template scope="scope">
 						<el-button type="text" size="small" @click='editProjet(scope)'>
 						进入项目</el-button>
@@ -42,13 +42,13 @@
 	<el-dialog title='选择企业及角色' :visible.sync='inviteEnterpriseFlag'>
 		<el-form :model="inviteData" :rules="rules" ref='inviteData' label-width="110px">
 			<el-form-item label="企业名称" prop='eid'>
-				<el-select v-model="inviteData.eid" placeholder="请选择" @change='aaa'>
+				<el-select v-model="inviteData.eid" placeholder="请选择">
 					<el-option v-for="item in enterpriseList" :key='item.id' :label="item.name" :value="item.id">
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="企业类型" prop='enterpriseRole'>
-				<el-select v-model="inviteData.enterpriseRole" placeholder="请选择" @change='aaa'>
+				<el-select v-model="inviteData.enterpriseRole" placeholder="请选择">
 					<el-option v-for="item in roleList" :key='item.code' :label="item.name" :value="item.code">
 					</el-option>
 				</el-select>
@@ -145,11 +145,6 @@ export default {
 				sortable: true,
 				minWidth: 60,
 				formatter: (row, column) => moment(column.startTime).format(dateFormat)
-			}, {
-				label: 'priductCode',
-				prop: 'priductCode',
-				sortable: true,
-				minWidth: 60,
 			}, {
 				label: '项目结束日',
 				prop: 'endTime',
@@ -282,7 +277,7 @@ export default {
 			})
 		},
 		getEnterpriseRolesList(priductCode) {
-			alert(priductCode)
+			// alert(priductCode)
 			this.roleList = [];
 			let options = {
 				productCode: priductCode
@@ -343,19 +338,6 @@ export default {
 					pid: scope.row.pjId
 				}
 			})
-		},
-		aaa(event) {
-			alert(event)
-			switch (event.index) {
-				case 0:
-					this.getEnterpriseList();
-					break;
-				case 1:
-					this.getEnterpriseRolesList();
-					break;
-				default:
-			}
-			console.log(this.inviteData)
 		}
 	}
 }
