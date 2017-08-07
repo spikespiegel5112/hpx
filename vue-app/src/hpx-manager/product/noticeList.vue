@@ -252,8 +252,9 @@ export default {
 			});
 
 		},
-		flipPage() {
-
+		flipPage(pageIndex) {
+			this.pagination.params.page = pageIndex;
+			this.getList();
 		},
 		clearQuery(){
 			for (var key in this.queryParams) {

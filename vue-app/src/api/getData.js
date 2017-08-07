@@ -298,5 +298,5 @@ export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterpr
  */
 
 export const noticeRequest = options => {
-    return fetch(`/core/core/api/v1/notice`, options);
+    return fetch(`/core/core/api/v1/notice`, options.params);
 }
