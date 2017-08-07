@@ -45,6 +45,7 @@
 				<template scope="scope">
                     <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
                     <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
+					<el-button type="text" size="small" @click="setTop(scope)">置顶</el-button>
 					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
                 </template>
 			</el-table-column>
@@ -65,6 +66,7 @@ import {
 } from '@/api/getData'
 import {
 	publishNoticeRequest,
+	modifyNoticeRequest,
 	deleteNoticeRequest
 } from '@/api/noticeApi'
 import {
@@ -147,6 +149,7 @@ export default {
 			const res = await resp.json();
 			const total = resp.headers.get('x-total-count')
 			this.tableList = [...res];
+			console.log(this.tableList);
 			this.pagination.total = parseInt(total);
 		},
 		async search() {
@@ -168,7 +171,7 @@ export default {
 			this.$router.push({
 				name: 'noticeEdit',
 				params: {
-					noticeId: 'modify&' +scope.row.id
+					noticeId: 'modify&' + scope.row.id
 				}
 			})
 		},
@@ -197,6 +200,34 @@ export default {
 					message: '已取消删除'
 				});
 			});
+		},
+		setTop(scope) {
+			this.$confirm('确认将此条信息置顶?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				let options = {
+					id: scope.row.id,
+					body: {
+						istop: 'T'
+					}
+				}
+				console.log(options);
+				modifyNoticeRequest(options).then(response => {
+					console.log(response);
+					response.json().then(result=>{
+						console.log(result);
+						this.getList();
+					})
+				})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消置顶'
+				});
+			});
+
 		}
 	}
 }

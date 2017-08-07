@@ -277,6 +277,14 @@ export const getProjectList = options =>{
  * 取得企业项目邀请记录列表
  */
 
+export const getInviteRecordsList = options =>{
+    return fetch(`/core/core/api/v1/projects/${options.params.eid}/inviteRecords/${options.params.pid}`);
+}
+
+/**
+ * 取得企业项目邀请记录列表
+ */
+
 export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);
 
 /**

@@ -16,6 +16,7 @@ const addSignature = r => require.ensure([], () => r(require('@/enterprise-platf
 
 // 项目管理
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
+const inviteRecord = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/inviteRecord')), 'inviteRecord');
 
 //账户总览
 const accountManagement = r => require.ensure([], () => r(require('@/enterprise-platform/account/accountManagement')), 'accountManagement');
@@ -52,10 +53,15 @@ export default {
 			component: myProject,
 			meta: ['项目管理', '我的项目'],
 		},{
+			path: 'invite-record?:eid&:pid',
+            name: 'inviteRecord',
+			component: inviteRecord,
+			meta: ['项目管理', '邀请记录'],
+		},{
 			path: 'account-management',
 			component: accountManagement,
 			meta: ['资金管理', '账户总览'],
-		},{  
+		},{
 			path: 'transaction-detail',
 			component: transactionDetail,
 			meta: ['资金管理', '交易明细'],

@@ -24,6 +24,6 @@ export const reviewNoticeRequest = params =>{
 /**
  * 修改公告
  */
-export const modifyNoticeRequest = params =>{
-    return fetch(`/core/core/api/v1/notice/${params.id}`, params.body, 'patch');
+export const modifyNoticeRequest = options =>{
+    return fetch(`/core/core/api/v1/notice/${options.id}`, options.body, 'patch');
 }

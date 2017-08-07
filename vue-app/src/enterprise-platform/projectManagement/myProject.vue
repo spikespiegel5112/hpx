@@ -10,7 +10,7 @@
 					<template scope="scope">
                         <el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
                         <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
-                        <el-button type="text" size="small" @click="audit(scope)">邀请记录</el-button>
+                        <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
                     </template>
 				</el-table-column>
 			</el-table>
@@ -333,6 +333,16 @@ export default {
 					message: '已取消操作'
 				});
 			});
+		},
+		auditRecord(scope){
+			console.log(scope);
+			this.$router.push({
+				name:"inviteRecord",
+				params:{
+					eid:this.$store.state.loginInfo.enterpriseId,
+					pid:scope.row.pjId
+				}
+			})
 		},
 		aaa(event) {
 			alert(event)
