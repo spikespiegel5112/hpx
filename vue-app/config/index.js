@@ -30,8 +30,8 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/core': {
-                target: 'http://10.38.42.245:9000',
-                // target: 'http://10.38.8.25:9000',
+                // target: 'http://10.38.42.245:9000',
+                target: 'http://10.38.8.67:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/core': ''
@@ -39,15 +39,15 @@ module.exports = {
             },
             '/credit': {
                 // target: 'http://10.38.42.245:9000',
-                target: 'http://10.38.8.75:9000',
+                target: 'http://10.38.8.67:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/credit': '/credit/api/v1'
                 },
             },
             '/order': {
-                target: 'http://10.38.42.245:9000',
-                // target: 'http://10.38.8.75:9000',
+                // target: 'http://10.38.42.245:9000',
+                target: 'http://10.38.8.67:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/order': '/huaqian/api/v1'
