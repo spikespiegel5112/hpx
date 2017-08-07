@@ -1,6 +1,7 @@
 <template>
 <div v-if="menuList.length" class="menu-wrap">
-	<el-menu :default-active="defaultActive" mode='vertical' style="min-height: 100%;" theme="dark" unique-opened router>
+	<el-menu class='common_menu_wrapper' :default-active="defaultActive" mode='vertical'  theme="dark" unique-opened router>
+		<el-menu-item></el-menu-item>
 		<el-menu-item :index="index"><i class="el-icon-menu"></i>首页</el-menu-item>
 		<template v-for="(subMenu,i) in menuList">
                 <template v-if="subMenu.vRolePermissionCustom.length">
@@ -112,10 +113,14 @@ export default {
 .menu-wrap {
     height: 100%;
     position: fixed;
-    top: 50px;
+    // top: 50px;
     bottom: 0;
     left: 0;
     width: 200px;
     overflow-y: scroll;
+}
+.common_menu_wrapper{
+	min-height: 100%;
+	margin: 50px 0 0 0;
 }
 </style>

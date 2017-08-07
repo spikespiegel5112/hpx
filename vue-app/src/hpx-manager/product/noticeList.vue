@@ -14,7 +14,7 @@
 			<el-row>
 				<el-col :span="4">
 					<el-form-item prop="name">
-						<el-select v-model="queryParams.type" placeholder="请选择" @change='clearQuery'>
+						<el-select v-model="queryParams.type" placeholder="请选择">
 							<el-option v-for="item in noticeTypeList" :key='item.code' :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
@@ -33,10 +33,6 @@
 			</el-row>
 		</el-form>
 	</section>
-
-
-
-
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
@@ -256,10 +252,8 @@ export default {
 			this.getList();
 		},
 		clearQuery(value){
-			alert(value)
-			// for (var key in this.queryParams) {
-			// 	this.queryParams[key] = '';
-			// }
+			this.queryParams.type='';
+			this.getList();
 		},
 	}
 }

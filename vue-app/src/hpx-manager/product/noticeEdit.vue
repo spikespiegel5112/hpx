@@ -1,5 +1,6 @@
 <template>
 <div class='fillcontain'>
+	<commonDetailTitle routerName='noticeList' title='编辑新闻公告'></commonDetailTitle>
 	<el-form :model="formData" :rules="rules" ref="formData" label-width="80px">
 		<el-form-item label="标题" prop='title'>
 			<el-input v-model="formData.title"></el-input>
@@ -43,6 +44,7 @@ import {
 } from '@/api/dictionaryApi'
 // import TinyMCE from 'assets/js/tinymce.min.js'
 import headTop from '@/components/headTop'
+import commonDetailTitle from '@/components/commonDetailTitle'
 import {
 	VueEditor
 } from 'vue2-editor'
@@ -50,6 +52,7 @@ import {
 export default {
 	components: {
 		headTop,
+		commonDetailTitle,
 		// TinyMCE,
 		VueEditor
 	},
@@ -212,8 +215,8 @@ export default {
 			this.formData.endTime = dateObj;
 			console.log(this.formData);
 		},
-		convertDateObjToDateString(){
-			this.formData.endTime=this.endTimeString;
+		convertDateObjToDateString() {
+			this.formData.endTime = this.endTimeString;
 			console.log(this.formData.endTime)
 		},
 		getDateString(value) {
