@@ -258,12 +258,25 @@ export default {
 		},
 		getEnterpriseList() {
 			this.enterpriseList = [];
-			enterpriseListRequest().then(response => {
+			let options = {
+				params: {
+					name: '',
+					activated: '',
+					auditState: ''
+				}
+			}
+			enterpriseListRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);
 					this.enterpriseList = result;
 					for (var item in result) {
-						this.$set(this.enterpriseList, item, result[item])
+						if (result[item].id===this.$store.state.loginInfo.enterpriseId) {
+							alert(result[item].name)
+							continue;
+						}else{
+							this.$set(this.enterpriseList, item, result[item])
+						}
+
 					}
 				})
 			})
@@ -291,10 +304,10 @@ export default {
 			}
 			switch (inviteStatus) {
 				case 'T':
-					confirmMessage='确认接受此项目邀请?'
+					confirmMessage = '确认接受此项目邀请?'
 					break;
 				case 'F':
-					confirmMessage='确认拒绝此项目邀请?'
+					confirmMessage = '确认拒绝此项目邀请?'
 				default:
 			}
 			this.$confirm(confirmMessage, '提示', {

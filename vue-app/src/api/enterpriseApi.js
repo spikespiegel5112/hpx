@@ -44,8 +44,8 @@ export const enterpriseRolesListRequest = options =>{
  * 取得企业列表, 支持分页
  */
 
-export const enterpriseListRequest = query =>{
-    return fetch(`/core/core/api/v1/enterprises`, query);
+export const enterpriseListRequest = options =>{
+    return fetch(`/core/core/api/v1/enterprises`, options.params);
 }
 
 /**
