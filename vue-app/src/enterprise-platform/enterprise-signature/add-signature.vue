@@ -83,7 +83,7 @@ export default {
                         type: 'success'
                     });
                     this.form = {};
-                    this.$router.replace('/manager/enterprise-signature')
+                    this.$router.replace('/platform/enterprise-signature')
                 } else {
                     this.$message.error('添加失败！');
                 }

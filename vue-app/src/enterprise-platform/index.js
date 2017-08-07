@@ -12,7 +12,7 @@ const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platf
 const accountOpening = r => require.ensure([], () => r(require('@/enterprise-platform/services-open/accountOpening')), 'accountOpening');
 const signatureManager = r => require.ensure([], () => r(require('@/enterprise-platform/signature-manager')), 'signature-manager');
 const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterprise-signature');
-
+const addSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature/add-signature')), 'add-signature');
 
 // 项目管理
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
@@ -64,9 +64,13 @@ export default {
 			component: signatureManager,
 			meta: ['签章管理'],
 		},{
-			path: 'enterpriseSignature',
+			path: 'enterprise-signature',
 			component: enterpriseSignature,
-			meta: ['企业签章'],
+			meta: ['签章管理', '企业签章'],
+		},{
+			path: 'enterprise-signature/add-signature',
+			component: addSignature,
+			meta: ['企业签章', '新增签章'],
 		},{
 			path: 'secure',
 			component: securitySetting,

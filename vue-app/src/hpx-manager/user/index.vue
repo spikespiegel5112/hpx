@@ -7,7 +7,7 @@
                <el-row>
                     <el-col :span="6">
                         <el-form-item prop="name">
-                            <el-input v-model="query.name" size="large" placeholder="企业名称"></el-input>
+                            <el-input v-model="query.name" size="large" placeholder="用户名"></el-input>
                         </el-form-item>
                     </el-col>
                      <el-col :span="6">
@@ -72,7 +72,12 @@
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >             
                 </el-table-column>
-                <el-table-column align="center" label="操作">
+                <el-table-column label="状态" prop="enabled" align="center" width="100px" >
+                    <template scope="scope">
+                        <el-tag :type="scope.row.enabled === 'T'?'success':'danger'">{{scope.row.enabled === 'T' ? '启用' : '停用' }}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="操作" width="120px">
                     <template scope="scope">
                         <el-button type="text" size="small" @click="abled(scope.row.id)">{{scope.row.enabled === 'T' ? '禁用' : '启用'}}</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
@@ -96,25 +101,34 @@
 				<el-form-item 
                 label="手机号码" 
                 prop="phone"
-                v-model="editRules.email"
                 >
 					<el-input v-model="editeData.phone" ></el-input>
 				</el-form-item>
                 <el-form-item 
                 label="邮箱" 
                 prop="email"
-                v-model="editRules.email"
                 >
 					<el-input v-model="editeData.email" ></el-input>
 				</el-form-item>
+                 <el-form-item 
+                label="密码" 
+                prop="encryptPassword"
+                >
+					<el-input type="password" v-model="editeData.encryptPassword" ></el-input>
+				</el-form-item>
+                <el-form-item 
+                label="确认密码" 
+                prop="passwordOk"
+                >
+					<el-input type="password" v-model="editeData.passwordOk" ></el-input>
+				</el-form-item>
                 <el-form-item 
                 label="性别"
-                prop="sex"
+                prop="gender"
                 :rules="[
-                { required: true, message: '请选择性别'},
+                    { required: true, message: '请选择性别'},
                 ]">
-                    <el-select
-                        v-model="editeData.sex">
+                    <el-select v-model="editeData.gender">
                         <el-option
                         v-for="item in genderOptions"
                         :key="item.value"
@@ -138,7 +152,7 @@
     import { getUserList, abledUser, addUser, editUser } from '@/api/coreApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
-    import { checkEmail, checkPhone } from '../../config/mUtils'
+    import { checkEmail, checkPhone, checkPassword} from '../../config/mUtils'
     export default {
         data(){
             var validateEmail = (rule, value, callback) => {
@@ -155,6 +169,24 @@
                     callback();
                 } 
             }
+            var checkPass = (rule, value, callback) => {
+                if (!value) {
+                    callback(new Error('请输入密码'));
+                } else if (!checkPassword(value)) {
+                    callback(new Error('密码需6到16位，需包含数字，字母，符号中两种'))
+                } else {
+                    callback();
+                }
+            };
+            var checkPassOk = (rule, value, callback) => {
+                if (!value) {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.editeData.encryptPassword) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
             return {
                 //table columns
                 columns : [{
@@ -168,14 +200,12 @@
                     prop  : 'email',
                     },{
                     label : '性别',
-                    prop  : 'sex',
-                    }, {
-                    label : '状态',
-                    prop  : 'abled',
+                    prop  : 'gender',
+                    width: '80',
                     }, {
                     label : '注册时间',
                     prop  : 'registerTime',
-                    formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')                    
+                    formatter : (row, column) => moment(row.registerTime).format('YYYY-MM-DD')                    
                     },
                 ],
                 //总页数
@@ -223,7 +253,8 @@
                     name : '',
                     email :'',
                     gender: '',
-                    sex: '',
+                    encryptPassword: '',
+                    passwordOk: '',
                 },
                 editRules : {
                     name : [
@@ -235,7 +266,13 @@
                     email : [
                         { validator: validateEmail, required: true, message: '请输入邮箱', trigger: 'blur' }
                     ],
-                }
+                    encryptPassword: [
+                        { required: true, validator: checkPass, trigger: 'blur' }
+                    ],
+                    passwordOk: [
+                        { required: true, validator: checkPassOk, trigger: 'blur' }
+                    ],
+                },
             }
         },
     	components: {
@@ -271,13 +308,14 @@
                 const resp = await getUserList(eid, params);
                 const res = await resp.json();
                 res.map((v) => {
-                    v.sex = v.gender === 'F' ? '女' : '男';
+                    v.gender = v.gender === 'F' ? '女' : '男';
                     v.abled = v.enabled === 'T' ? '启用' : '禁用';
                 })
                 const total = resp.headers.get('x-total-count')
                 this.tableList = [...res];
                 this.total = parseInt(total);
             },
+
             async search () {
                 try{
                     this.getList();
@@ -304,19 +342,24 @@
                 }
             },
            add () {
-               this.editeData = {};
+               this.editeData = {
+                    id: '',
+                    phone : '',
+                    name : '',
+                    email :'',
+                    gender: '',
+                    encryptPassword: '',
+                    passwordOk: '',};
                this.modalTitle = '新增',
                this.editeModalVisible = true; 
             },
            edite (index,row) {
-               this.editeData = Object.assign({...row}, {sex: sex});
+                this.editeData = {...row};
                 this.modalTitle = '编辑',
                 this.editeModalVisible = true;
-                const sex = row.gender === "F" ? "女" : "男";
-                this.editeData = Object.assign({...row}, {sex: sex});
             },
             async editSubmit (formName) {
-                this.editeData.gender = this.editeData.sex === '男' ? 'M' : 'F';
+                this.editeData.gender = this.editeData.gender === '女' ? 'F' : 'T';
                 this.$refs[formName].validate(async (valid) => {
                     if (!valid) return false;
                     

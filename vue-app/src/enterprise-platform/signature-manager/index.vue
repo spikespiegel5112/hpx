@@ -98,13 +98,10 @@ export default {
             const params = Object.assign({},this.query,pagination);
             const resp = await getEpSignatureList(params, eid);
             const res = await resp.json();
-            res.map((v) => {
-                v.abled = v.enabled === 'T' ? '启用' : '禁用';
-            })
             const total = resp.headers.get('x-total-count')
             let tmp = {};
             res.map((v) =>{
-                Object.assign(v, {confirmVisible: false});
+                 Object.assign(v, {confirmVisible: false}, {abled: v.enabled === 'T' ? '启用' : '禁用'});
             })
             this.tableList = [...res];
             Object.keys(this.tableList).forEach( (k) => {

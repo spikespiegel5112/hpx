@@ -91,6 +91,7 @@ export default {
 			this.listLoading = true;
 			try {
 				this.getList();
+
 				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
@@ -133,7 +134,7 @@ export default {
 				type: 'warning'
 			}).then(() => {
 				let options = {
-					eid: scope.row.epId,
+					eid: scope.row.enterpriseId,
 					pid: scope.row.pjId,
 					state: 'T'
 				}

@@ -19,10 +19,20 @@
                     <img :src="'data:image/png;base64,' + scope.row.picData" style='width: 100px' />
                 </template>
             </el-table-column>
+            <el-table-column prop="abled" label="状态" align="center">
+            </el-table-column>
             <el-table-column prop="action" label="操作">
                 <template scope="scope">
                     <el-button type="text" size="small" @click="abled(scope.row.name, scope.row.id, scope.row.enabled)" >{{scope.row.enabled === "T" ? "禁用" : "启用"}}</el-button>
-                    <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
+                    <el-button type="text" size="small" @click="scope.row.confirmVisible=true">删除</el-button>
+                    <el-popover v-model="scope.row.confirmVisible">
+                        <p>
+                            <i style="color:#ffbf00" class="el-icon-information"></i> 确定删除？</p>
+                        <div style="margin-top:15px;">
+                            <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
+                            <el-button type="primary" size="mini" @click="del(scope.row.id)">确定</el-button>
+                        </div>
+                    </el-popover>
                 </template>
             </el-table-column>
         </el-table>
@@ -46,7 +56,7 @@ export default {
             tableList: [],
         }
     },
-    created() {
+    activated() {
         this.initData();
     },
     computed : {
@@ -74,6 +84,9 @@ export default {
                 const params = Object.assign({},this.query,pagination);
                 const resp = await getSignatureList(params, eid);
                 const res = await resp.json();
+                res.map((v) =>{
+                    Object.assign(v, {confirmVisible: false}, {abled: v.enabled === 'T' ? '启用' : '禁用'});
+                })
                 const total = resp.headers.get('x-total-count')
                 this.tableList = [...res];
                 this.total = parseInt(total);
