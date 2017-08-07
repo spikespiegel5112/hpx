@@ -297,6 +297,6 @@ export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterpr
  * 获取新闻公告列表
  */
 
-export const noticeRequest = data => {
-    return fetch(`/core/core/api/v1/notice`, data);
+export const noticeRequest = options => {
+    return fetch(`/core/core/api/v1/notice`, options);
 }

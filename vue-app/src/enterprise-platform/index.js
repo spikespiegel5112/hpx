@@ -56,7 +56,7 @@ export default {
 			path: 'inviterecord',
             name: 'inviteRecord',
 			component: inviteRecord,
-			meta: ['项目管理', '邀请记录'],
+			meta: ['项目管理', '我的项目', '邀请记录'],
 		},{
 			path: 'account-management',
 			component: accountManagement,

@@ -10,19 +10,18 @@
 
 	<!--  搜索条件  -->
 	<section class='search-criteria-container'>
-		<el-form :inline="true" :model="query" ref="query">
+		<el-form :inline="true" :model="queryParams" ref="queryParams">
 			<el-row>
-				<el-col :span="6">
+				<el-col :span="4">
 					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="产品名称"></el-input>
+						<el-select v-model="queryOption" placeholder="请选择" @change='clearQuery'>
+							<el-option v-for="item in noticeTypeList" :key='item.value' :label="item.name" :value="item.name">
+							</el-option>
+						</el-select>
 					</el-form-item>
 				</el-col>
+
 				<el-col :span="6">
-					<el-form-item prop="code">
-						<el-input v-model="query.code" size="large" placeholder="产品编码"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style="float: right">
 					<el-form-item>
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
@@ -32,8 +31,11 @@
 				</el-col>
 			</el-row>
 		</el-form>
-		</el-col>
 	</section>
+
+
+
+
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
@@ -45,14 +47,15 @@
 				<template scope="scope">
                     <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
                     <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
-					<el-button type="text" size="small" @click="setTop(scope)">置顶</el-button>
+					<el-button v-if="scope.row.istop=='0'"  type="text" size="small" @click="setTop(scope)">置顶</el-button>
+					<el-button v-else-if="scope.row.istop=='1'"  type="text" size="small" @click="setTop(scope)">取消置顶</el-button>
 					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
                 </template>
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">
-			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
-			</my-Pagination>
+			<el-pagination @current-change="flipPage" :current-page="pagination.params.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+			</el-pagination>
 		</section>
 	</section>
 </div>
@@ -60,7 +63,6 @@
 
 <script>
 import headTop from '../../components/headTop'
-import myPagination from '@/components/myPagination'
 import {
 	noticeRequest,
 } from '@/api/getData'
@@ -69,6 +71,9 @@ import {
 	modifyNoticeRequest,
 	deleteNoticeRequest
 } from '@/api/noticeApi'
+import {
+	getDictionaryByCodeRequest
+} from '@/api/dictionaryApi'
 import {
 	mapState
 } from 'vuex'
@@ -92,21 +97,24 @@ export default {
 				prop: 'creator',
 				sortable: true,
 			}],
+			query: {},
+			queryParams:{},
+			queryOption:{},
 			//分页信息
 			pagination: {
-				total: 0,
-				page: 1,
-				size: 10,
+				params: {
+					page: 1,
+					size: 10
+				},
+				total: 0
 			},
 			//table
 			tableList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
-
-			//search params
-			query: {
-
-			},
+			//文章类型列表
+			noticeTypeList:[],
+			noticeType:'',
 			//搜索条件的个数
 			criteriaNum: 3,
 			//模态框
@@ -114,8 +122,7 @@ export default {
 		}
 	},
 	components: {
-		headTop,
-		myPagination
+		headTop
 	},
 	mounted() {
 		this.initData();
@@ -126,9 +133,9 @@ export default {
 	methods: {
 		async initData() {
 			this.listLoading = true;
-			this.pagination.page = 1;
 			try {
 				this.getList();
+				this.getNoticeType();
 				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
@@ -138,19 +145,29 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		async getList(pagination = {
-			page: 1,
-			size: 10,
-		}) {
-			console.log(pagination);
-			const params = Object.assign({}, this.query, pagination);
-			console.log(params)
-			const resp = await noticeRequest(params);
-			const res = await resp.json();
-			const total = resp.headers.get('x-total-count')
-			this.tableList = [...res];
-			console.log(this.tableList);
-			this.pagination.total = parseInt(total);
+		getList() {
+			let options = {
+				params: {}
+			}
+			options.params = Object.assign(options.params, this.pagination.params);
+			console.log(options);
+			noticeRequest(options).then(response => {
+				this.pagination.total = Number(response.headers.get('x-total-count'))
+				response.json().then(result => {
+					console.log(result);
+					this.tableList = result
+				})
+			})
+		},
+		getNoticeType(){
+			getDictionaryByCodeRequest({
+				code: 'PUB_TYPE'
+			}).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.noticeTypeList = result;
+				})
+			})
 		},
 		async search() {
 			try {
@@ -207,16 +224,22 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
+				let istopStatus;
+				if (scope.row.istop == '0') {
+					istopStatus = '1';
+				} else if (scope.row.istop == '1') {
+					istopStatus = '0';
+				}
 				let options = {
 					id: scope.row.id,
 					body: {
-						istop: 'T'
+						istop: istopStatus
 					}
 				}
 				console.log(options);
 				modifyNoticeRequest(options).then(response => {
 					console.log(response);
-					response.json().then(result=>{
+					response.json().then(result => {
 						console.log(result);
 						this.getList();
 					})
@@ -228,7 +251,15 @@ export default {
 				});
 			});
 
-		}
+		},
+		flipPage() {
+
+		},
+		clearQuery(){
+			for (var key in this.queryParams) {
+				this.queryParams[key] = '';
+			}
+		},
 	}
 }
 </script>
