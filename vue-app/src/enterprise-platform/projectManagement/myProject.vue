@@ -32,10 +32,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<!-- <section class="main-pagination">
-				<my-Pagination :callback="getList" :total="invitedProjectTotal">
-				</my-Pagination>
-			</section> -->
+
 			<section class="main-pagination">
 				<el-pagination @current-change="flipPage2" :current-page="pagination2.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination2.total">
 				</el-pagination>
@@ -162,9 +159,9 @@ export default {
 			}],
 		}
 	},
-	activated() {
-		this.getList1();
-		this.getList2();
+	async activated() {
+		await this.getList1();
+		await this.getList2();
 	},
 	methods: {
 		getList1() {
