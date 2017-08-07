@@ -1,4 +1,4 @@
-﻿import fetch from '@/config/fetch'
+import fetch from '@/config/fetch'
 /**
  * 客户管理-获取供应商列表
  */
@@ -145,4 +145,9 @@ export const saveAfterSalePendingPayment = (type,params) => fetch(`/order/paymen
 /**
  * 获取支付列表
  */
-export const payList =(params) => fetch(`/order/payment/search`,params)
+export const payList = (params) => fetch(`/order/payment/search`,params)
+
+/**
+ * 获取支付明细信息
+ */
+export const payDetail =(paymentId) => fetch(`/order/payment/getDetail?paymentId=${paymentId}`)

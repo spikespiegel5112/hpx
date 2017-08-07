@@ -1,34 +1,6 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
-        <!--  搜索条件  -->
-        <section class='search-criteria-container'>
-			<el-form :inline="true" :model="query"  ref="query">
-                <el-row>
-                    <el-col :span="6">
-                        <el-form-item prop="orderCode">
-                            <el-input v-model="query.orderCode" size="large" placeholder="合同编号"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item prop="orderName">
-                            <el-input v-model="query.orderName" size="large" placeholder="合同名称"></el-input>
-                        </el-form-item>
-                    </el-col>
-
-                    <el-col :span="6">
-                        <el-form-item>
-                            <el-button type="primary" icon="search" @click="search">查询</el-button>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-			</el-form>
-		</el-col>
-        </section>
-
 
         <section class="main-table-container">
             <el-table
@@ -52,11 +24,6 @@
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >
                 </el-table-column>
-                <el-table-column label="操作">
-                    <template scope="scope">
-                        <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看明细</el-button>
-                    </template>
-                </el-table-column>
             </el-table>
            <!-- 
             分页需改4
@@ -70,7 +37,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { payList} from '@/api/orderApi'
+    import { payDetail} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -78,30 +45,38 @@
             return {
                 //table columns
                 columns : [{
-                    label : '订单编号',
-                    prop  : 'orderCode',
+                    label : '付款银行',
+                    prop  : 'payerBank',
+                    },{
+                    label : '付款银行账号',
+                    prop  : 'payerBankAccount',
                     minWidth : 130,
                     },{
-                    label : '订单名称',
-                    prop  : 'orderName',
-                    minWidth : 130,
+                    label : '付款开户名',
+                    prop  : 'payerAccountName',
                     },{
                     label : '付款方',
                     prop  : 'payer',
                     },{
-                    label : '总金额',
-                    prop  : 'totalMoney',
+                    label : '收款银行',
+                    prop  : 'payeeBank',
                     },{
-                    label : '已收款',
+                    label : '收款银行账号',
+                    prop  : 'payeeBankSccount',
+                    minWidth : 130,
+                    },{
+                    label : '收款开户名',
+                    prop  : 'payeeAccountName',
+                    },{
+                    label : '收款方',
+                    prop  : 'payee',
+                    },{
+                    label : '支付金额',
                     prop  : 'paymentAmount',
                     },{
-                    label : '未收款',
-                    prop  : 'noPaymentAmount',
-                    },{
-                    label : '付款类型',
-                    prop  : 'paymentType',
-                    formatter : (row,column) => row.paymentType === '0' ? "保证金" :
-                     row.paymentType === '1' ?"货款" : ""
+                    label : '支付日期',
+                    prop  : 'paymentDate',
+                    formatter : (row,column) => row.paymentDate == null ? "" :moment(row.paymentDate).format('YYYY-MM-DD')
                     }
                 ],
                 //总页数
@@ -112,12 +87,6 @@
                 tableList: [],
                 listLoading:false,
                 emptyText:"暂无数据",
-
-                 //search params
-                query : {
-                    orderCode : '',
-                    orderName : '',
-                },
                
             }
         },
@@ -131,7 +100,10 @@
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo"]),
+             paymentId(){
+                return this.$route.params.paymentId
+            }
         },
         methods: {
             /*
@@ -146,8 +118,8 @@
                 */
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({pageType:'receive'},this.query,this.pagination);
-                    const resp = await payList(params);
+                    const params = Object.assign({paymentId:this.paymentId},this.pagination);
+                    const resp = await payDetail(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];
@@ -160,19 +132,6 @@
                     this.emptyText = "获取数据失败";
                     this.listLoading = false;
                 }
-            },
-
-            //查看明细
-            check (index,row){
-                this.$router.push({path: this.$route.path + '/gf_agencyReceiptDetail/' + row.id})
-            },
-
-            async search () {
-                this.getList();
-            },
-
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
             },
         },
         /*

@@ -27,6 +27,16 @@ import gf_buyInManagement from '@/purchase-order-financing/supplier/after-sale-m
 import gf_buyInManagementDetail from '@/purchase-order-financing/supplier/after-sale-management/buyInManagement/buyInManagementDetail'
 
 import gf_agencyReceipt from '@/purchase-order-financing/supplier/money/agency-receipt/agency-receipt'
+import gf_agencyReceiptDetail from '@/purchase-order-financing/supplier/money/agency-receipt/detail'
+
+import gf_agencyReceiptRecord from '@/purchase-order-financing/supplier/money/agency-receipt-record/agency-receipt-record'
+import gf_agencyReceiptRecordDetail from '@/purchase-order-financing/supplier/money/agency-receipt-record/detail'
+
+import gf_paymentReceipt from '@/purchase-order-financing/supplier/money/payment-receipt/payment-receipt'
+import gf_paymentReceiptDetail from '@/purchase-order-financing/supplier/money/payment-receipt/detail'
+
+import gf_paymentReceiptRecord from '@/purchase-order-financing/supplier/money/payment-receipt-record/payment-receipt-record'
+import gf_paymentReceiptRecordDetail from '@/purchase-order-financing/supplier/money/payment-receipt-record/detail'
 // 路径path 1 以purchase-order-financing为标准 2 需方 命名 前面 加上xf_  资方 zf_ 供应商 gf_
 
 //货品维护
@@ -36,7 +46,7 @@ import goodsMaintenance from '@/purchase-order-financing/investors/goodsMaintena
 import business from '@/purchase-order-financing/investors/business-manager'
 
 export default {
-    path : '/porderf/:pjId?',
+    path : '/porderf/:pjId',
     component : wrapComponent,
     children : [{
 			path: '/',
@@ -103,45 +113,49 @@ export default {
 			component: zf_buyInManagementDetail,
 			meta: ['售后管理', '补购管理明细'],
         },{
-			path: 'mtngoods',
-			component: goodsMaintenance,
-			meta: ['货品维护'],
-        },{
-			path: 'zf_orders/detail/:orderId',
+			path: 'zf_orders/detail/:orderId/:demanderId',
 			component: business.orderDetail,
 			meta: ['业务管理', '订单管理','订单详情'],
         },{
-			path: 'sales_contract_management',
-			component: business.salesContractManagement,
-			meta: ['业务管理', '订单管理','销售合同'],
+			path: 'zf_orders/createcp/:orderId/:demanderId',
+			component: business.orderCreateCp,
+			meta: ['业务管理', '订单管理','生成采购合同'],
         },{
-			path: 'gf_refundManagement',
-			component: gf_refundManagement,
-			meta: ['供应商', '退款'],
-        },{
-			path: 'gf_refundManagement/gf_refundManagementDetail/:tAfterSaleId',
-			component: gf_refundManagementDetail,
-			meta: ['供应商', '退款明细'],
-        },{
-			path: 'gf_replacementManagement',
-			component: gf_replacementManagement,
-			meta: ['供应商', '补发'],
-        },{
-			path: 'gf_replacementManagement/gf_replacementManagementDetail/:tAfterSaleId',
-			component: gf_replacementManagementDetail,
-			meta: ['供应商', '补发明细'],
-        },{
-			path: 'gf_buyInManagement',
-			component: gf_buyInManagement,
-			meta: ['供应商', '补购'],
-        },{
-			path: 'gf_buyInManagement/gf_buyInManagementDetail/:tAfterSaleId',
-			component: gf_buyInManagementDetail,
-			meta: ['供应商', '补购明细'],
+			path: 'zf_orders/createsc/:orderId/:demanderId',
+			component: business.orderCreateSc,
+			meta: ['业务管理', '订单管理','生成销售合同'],
         },{
 			path: 'gf_agencyReceipt',
 			component: gf_agencyReceipt,
 			meta: ['供应商', '待收款'],
+        },{
+			path: 'gf_agencyReceipt/gf_agencyReceiptDetail/:paymentId',
+			component: gf_agencyReceiptDetail,
+			meta: ['供应商', '待收款明细'],
+        },{
+			path: 'gf_agencyReceiptRecord',
+			component: gf_agencyReceiptRecord,
+			meta: ['供应商', '历史收款'],
+        },{
+			path: 'gf_agencyReceiptRecord/gf_agencyReceiptRecordDetail/:paymentId',
+			component: gf_agencyReceiptRecordDetail,
+			meta: ['供应商', '历史收款明细'],
+        },{
+			path: 'gf_paymentReceipt',
+			component: gf_paymentReceipt,
+			meta: ['供应商', '待付款'],
+        },{
+			path: 'gf_paymentReceipt/gf_paymentReceiptDetail/:paymentId',
+			component: gf_paymentReceiptDetail,
+			meta: ['供应商', '待付款明细'],
+        },{
+			path: 'gf_paymentReceiptRecord',
+			component: gf_paymentReceiptRecord,
+			meta: ['供应商', '历史付款'],
+        },{
+			path: 'gf_paymentReceiptRecord/gf_paymentReceiptRecordDetail/:paymentId',
+			component: gf_paymentReceiptRecordDetail,
+			meta: ['供应商', '历史付款明细'],
         }
     ]
 }

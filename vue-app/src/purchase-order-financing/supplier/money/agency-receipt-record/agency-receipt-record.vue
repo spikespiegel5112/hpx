@@ -131,7 +131,7 @@
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo"]),
         },
         methods: {
             /*
@@ -146,7 +146,7 @@
                 */
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({pageType:'receive'},this.query,this.pagination);
+                    const params = Object.assign({pageType:'historyReceive'},this.query,this.pagination);
                     const resp = await payList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
@@ -164,7 +164,7 @@
 
             //查看明细
             check (index,row){
-                this.$router.push({path: this.$route.path + '/gf_agencyReceiptDetail/' + row.id})
+                this.$router.push({path: this.$route.path + '/gf_agencyReceiptRecordDetail/' + row.id})
             },
 
             async search () {

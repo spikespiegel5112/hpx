@@ -52,7 +52,7 @@
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >
                 </el-table-column>
-                <el-table-column label="操作">
+                 <el-table-column label="操作">
                     <template scope="scope">
                         <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看明细</el-button>
                     </template>
@@ -86,22 +86,22 @@
                     prop  : 'orderName',
                     minWidth : 130,
                     },{
-                    label : '付款方',
-                    prop  : 'payer',
+                    label : '收款方',
+                    prop  : 'payee',
                     },{
                     label : '总金额',
                     prop  : 'totalMoney',
                     },{
-                    label : '已收款',
+                    label : '已付款',
                     prop  : 'paymentAmount',
                     },{
-                    label : '未收款',
+                    label : '未付款',
                     prop  : 'noPaymentAmount',
                     },{
                     label : '付款类型',
                     prop  : 'paymentType',
-                    formatter : (row,column) => row.paymentType === '0' ? "保证金" :
-                     row.paymentType === '1' ?"货款" : ""
+                    formatter : (row,column) => row.paymentType === '0' ? "退款" :
+                     row.paymentType === '1' ?"回购货款" : ""
                     }
                 ],
                 //总页数
@@ -131,7 +131,7 @@
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo"]),
         },
         methods: {
             /*
@@ -146,7 +146,7 @@
                 */
                 this.listLoading = true;
                 try{
-                    const params = Object.assign({pageType:'receive'},this.query,this.pagination);
+                    const params = Object.assign({pageType:'historyPay'},this.query,this.pagination);
                     const resp = await payList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
@@ -164,7 +164,7 @@
 
             //查看明细
             check (index,row){
-                this.$router.push({path: this.$route.path + '/gf_agencyReceiptDetail/' + row.id})
+                this.$router.push({path: this.$route.path + '/gf_paymentReceiptRecordDetail/' + row.id})
             },
 
             async search () {
