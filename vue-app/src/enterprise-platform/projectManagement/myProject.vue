@@ -268,15 +268,12 @@ export default {
 			enterpriseListRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);
-					this.enterpriseList = result;
 					for (var item in result) {
-						if (result[item].id===this.$store.state.loginInfo.enterpriseId) {
-							alert(result[item].name)
+						if (result[item].id === this.$store.state.loginInfo.enterpriseId) {
 							continue;
-						}else{
-							this.$set(this.enterpriseList, item, result[item])
+						} else {
+							this.enterpriseList.push(result[item])
 						}
-
 					}
 				})
 			})
