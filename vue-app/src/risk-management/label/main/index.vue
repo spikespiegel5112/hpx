@@ -60,9 +60,11 @@
                 :data="tableList"
                 v-loading="listLoading"
                 highlight-current-row
-                style="width: 100%">
+                style="width: 100%"
+                border>
                 <el-table-column
                   type="index"
+                  label="序号"
                   width="100">
                 </el-table-column>
                 <el-table-column
@@ -70,7 +72,6 @@
                     :key="i"
                     :label="value.label"
                     :prop="value.prop"
-                    :sortable="value.sortable"
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
@@ -107,7 +108,8 @@
 				<el-form-item label="导入说明" prop="describe">
 					<el-input v-model="upInfo.describe" auto-complete="on"></el-input>
 				</el-form-item>
-                <el-form-item label="上传文件" prop="excelPath">
+                <el-form-item label="上传文件" prop="file" >
+                    <!--<el-input v-model="upInfo.file" ></el-input>-->
 					<el-upload
                         :action="excelAction"
                         :file-list="excelList"
@@ -154,22 +156,16 @@
             return {
                 //table columns
                 columns : [{
-                    label : '名称',
+                    label : '标签名称',
                     prop  : 'scoreCardName',
-                    },{
-                    label : '创建人ID',
-                    prop  : 'addUserid',
-                    sortable : true,
                     },{
                     label : '创建时间',
                     prop  : 'addTime',
-                    sortable : true,
                     formatter : (row,column) => moment(row.addTime).format(this.format)
                     },{
                     label : '状态',
                     prop  : 'labelState',
-                    sortable : true,
-                    formatter : (row,column) => row.labelState === '0' ? '已禁用' : '已启用'
+                    formatter : (row,column) => row.labelState === '0' ? '禁用' : '启用'
                     }
                 ],
                 //总页数
@@ -198,14 +194,14 @@
                 upInfo : {
                     name : '',
                     describe:'',
-                    excelPath:'',
+                    file:'',
                 },
                 excelList : [],
                 editRules : {
                     name : [
 						{ required: true, message: '请输入标签名称'}
                     ],
-                    excelPath :[
+                    file :[
                         { required: true, message: '未上传EXCEL文件'}
                     ]
                 }
@@ -278,7 +274,7 @@
                 this.upInfo = {
                     name : '',
                     describe:'',
-                    excelPath:''
+                    file:''
                 };
                 this.modalVisible = true;
             },
@@ -337,24 +333,28 @@
                 }
             },
             excelSuccess(response){
-                this.excelPath = response
+                this.upInfo.file = response;
                 this.$message({
                     type : 'success',
                     message : '上传成功'
                 })
             },
             importLabel(){
-                this.$refs['upInfo'].validate(
-                    async (valid) => {
-                        if(valid){
-                            try{
-                                const resp = await labelImportSubmit(this.loginInfo.enterpriseId,this.upInfo)
-                            }catch(e){
-                                this.$message.error(e)
-                            }
+                this.$refs['upInfo'].validate(async (valid) => {
+                    if(valid){
+                        try{
+                            const resp = await labelImportSubmit(this.loginInfo.enterpriseId,this.upInfo)
+                            this.$message({
+                                type : 'success',
+                                message : '导入成功'
+                            })
+                            this.getList();
+                            this.modalVisible = false;
+                        }catch(e){
+                            this.$message.error(e)
                         }
                     }
-                )
+                })
             }
         },
         watch : {

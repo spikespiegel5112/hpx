@@ -119,17 +119,17 @@ export default {
 			return operationType
 		}
 	},
-	mounted() {
-		alert(this.operationType)
-		this.getPublishDirection();
-		this.getNewsType();
-		this.getNoticeContent();
-	},
-	// activited() {
+	// mounted() {
+	// 	alert(this.operationType)
 	// 	this.getPublishDirection();
 	// 	this.getNewsType();
 	// 	this.getNoticeContent();
 	// },
+	activited() {
+		this.getPublishDirection();
+		this.getNewsType();
+		this.getNoticeContent();
+	},
 	methods: {
 		publishNotice() {
 			//测试数据

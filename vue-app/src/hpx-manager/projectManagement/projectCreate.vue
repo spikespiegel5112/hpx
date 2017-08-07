@@ -21,7 +21,7 @@
 					</el-form-item>
 					<el-form-item label="产品企业类型" prop="type">
 						<el-select v-model="formData.type" placeholder="请选择">
-							<el-option v-for="item in productEnterpriseTypeList" :key="item.name" :label="item.name" :value="item.name">
+							<el-option v-for="item in productEnterpriseTypeList" :key="item.name" :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
 					</el-form-item>

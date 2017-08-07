@@ -31,7 +31,7 @@ module.exports = {
         proxyTable: {
             '/core': {
                 // target: 'http://10.38.42.245:9000',
-                target: 'http://10.38.8.67:9000',
+                target: 'http://10.38.8.31:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/core': ''
@@ -39,7 +39,7 @@ module.exports = {
             },
             '/credit': {
                 // target: 'http://10.38.42.245:9000',
-                target: 'http://10.38.8.67:9000',
+                target: 'http://10.38.8.85:9003',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/credit': '/credit/api/v1'
@@ -47,7 +47,7 @@ module.exports = {
             },
             '/order': {
                 // target: 'http://10.38.42.245:9000',
-                target: 'http://10.38.8.67:9000',
+                target: 'http://10.38.8.31:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/order': '/huaqian/api/v1'
@@ -56,19 +56,6 @@ module.exports = {
         },
         context: [ //代理路径
             '/core',
-            // '/shopping',
-            // '/ugc',
-            // '/v1',
-            // '/v2',
-            // '/v3',
-            // '/v4',
-            // '/bos',
-            // '/member',
-            // '/promotion',
-            // '/eus',
-            // '/payapi',
-            // '/admin',
-            // '/statis',
         ],
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

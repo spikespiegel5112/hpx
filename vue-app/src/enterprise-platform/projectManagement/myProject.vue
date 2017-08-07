@@ -47,9 +47,9 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="企业类型" prop='enterpriseTypeName'>
-				<el-select v-model="inviteData.enterpriseTypeName" placeholder="请选择">
-					<el-option v-for="item in roleList" :key='item.code' :label="item.name" :value="item.code">
+			<el-form-item label="企业类型" prop='enterpriseRole'>
+				<el-select v-model="inviteData.enterpriseRole" placeholder="请选择" @change='aaa'>
+					<el-option v-for="item in roleList" :key='item.code' :label="item.name" :value="item.name">
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -95,7 +95,7 @@ export default {
 					required: true,
 					message: '请选择企业名称'
 				}],
-				enterpriseTypeName: [{
+				enterpriseRole: [{
 					required: true,
 					message: '请选择企业角色'
 				}]
@@ -209,12 +209,12 @@ export default {
 		},
 		inviteEnterprise(scope) {
 			console.log(scope);
-			this.inviteData.pid = null;
-			this.inviteData.enterpriseTypeName = '';
+			this.inviteData.eid = '';
+			this.inviteData.enterpriseRole = '';
 			this.inviteData.pid = scope.row.pjId;
 			this.inviteEnterpriseFlag = true;
 			this.getEnterpriseList();
-			this.getenterpriseTypeNameList(scope.row.productCode);
+			this.getEnterpriseTypeNameList(scope);
 		},
 		submitInvite() {
 			this.$refs['inviteData'].validate(async valid => {
@@ -276,11 +276,11 @@ export default {
 				})
 			})
 		},
-		getenterpriseRolesList(productCode) {
+		getEnterpriseTypeNameList(scope) {
 			// alert(productCode)
 			this.roleList = [];
 			let options = {
-				productCode: productCode
+				productCode: scope.row.productCode
 			}
 			enterpriseRolesListRequest(options).then(response => {
 				response.json().then(result => {
@@ -338,6 +338,9 @@ export default {
 					pid: scope.row.pjId
 				}
 			})
+		},
+		aaa(value){
+			alert(value)
 		}
 	}
 }

@@ -1,7 +1,7 @@
 <template>
 <div v-if="menuList.length" class="menu-wrap">
 	<el-menu class='common_menu_wrapper' :default-active="defaultActive" mode='vertical'  theme="dark" unique-opened router>
-		<el-menu-item></el-menu-item>
+		<el-menu-item :index="index"</el-menu-item>
 		<el-menu-item :index="index"><i class="el-icon-menu"></i>首页</el-menu-item>
 		<template v-for="(subMenu,i) in menuList">
                 <template v-if="subMenu.vRolePermissionCustom.length">

@@ -59,7 +59,7 @@ export const labelDetail = (eid,id) => fetch(`/credit/tp/scorelabel/${eid}/${id}
 export const labelImport = () => `/credit/tp/scorelabel/excel`;
 
 // 上传标签提交
-export const labelImportSubmit = (eid,data) => fetch(`/credit/tp/scorelabel/${eid}/import?=${serialize(data)}`,{},post);
+export const labelImportSubmit = (eid,data) => fetch(`/credit/tp/scorelabel/${eid}/import`,data,'post');
 
 // 标签禁用启用
 export const labelStatusAction = (eid,id) => fetch(`/credit/tp/scorelabel/${eid}/state/${id}`,{},'patch');

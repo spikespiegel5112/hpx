@@ -58,12 +58,17 @@ export const subSignature = (eid) => fetch(`/core/core/api/v1/venterprise/${eid}
 export const getReceiptList = (tContractId) => fetch(`/order/contract/queryReceivingDetail?tContractId=${tContractId}`, {});
 
 // 上传合同
-export const uploadContract = (id) => `/order/contract/uploadingContract/${id}`;
+// export const uploadContract = (id) => `/order/contract/uploadingContract/${id}`;
+export const uploadContract = (eid,code) => `/core/core/api/v1/enterpriseFiles/enterprise/${eid}/dictionary/${code}/enterpriseFiles`;
 
 /**
- * 资方--采购合同--补发申请,退款申请,补购申请
+ * 资方--采购合同--确认收货
  */
+// 补发申请,退款申请,补购申请
 export const saleManager = (type,params) => fetch(`/order/refund/add?receiptsType=${type}`, params,'post');
+// 修改实收数量
+export const changeReceivedAmount = (id, amount) => fetch(`/order/contract/updateReceivedAmount/${id}?amount=${amount}`, {}, 'patch');
+
 
 /**
  * 资方--采购合同--生成补货单
