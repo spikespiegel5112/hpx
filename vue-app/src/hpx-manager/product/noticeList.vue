@@ -14,14 +14,14 @@
 			<el-row>
 				<el-col :span="4">
 					<el-form-item prop="name">
-						<el-select v-model="queryParams.noticeType" placeholder="请选择" @change='clearQuery'>
+						<el-select v-model="queryParams.type" placeholder="请选择" @change='clearQuery'>
 							<el-option v-for="item in noticeTypeList" :key='item.code' :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
 
-				<el-col :span="6">
+				<el-col :span="18">
 					<el-form-item>
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 						<el-button type="primary" @click="clearQuery">重置</el-button>
@@ -101,7 +101,7 @@ export default {
 			//文章类型列表
 			noticeTypeList:[],
 			queryParams: {
-				noticeType:'',
+				type:'',
 			},
 
 			//分页信息
