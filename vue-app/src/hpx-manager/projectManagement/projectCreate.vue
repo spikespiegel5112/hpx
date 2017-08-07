@@ -20,7 +20,7 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item label="产品企业类型" prop="type">
-						<el-select v-model="formData.type" @change='getProductEnterpriseType' placeholder="请选择">
+						<el-select v-model="formData.type" placeholder="请选择">
 							<el-option v-for="item in productEnterpriseTypeList" :key="item.code" :label="item.name" :value="item.code">
 							</el-option>
 						</el-select>
@@ -160,6 +160,7 @@ export default {
 			this.formData.type = '';
 		},
 		getProductEnterpriseType(productCode) {
+
 			let options = {
 				productCode: productCode
 			}
@@ -169,15 +170,11 @@ export default {
 				}
 			}
 			console.log(options);
-			try {
-				enterpriseRolesListRequest(options).then(response => {
-					response.json().then(result => {
-						this.productEnterpriseTypeList = result;
-					})
+			enterpriseRolesListRequest(options).then(response => {
+				response.json().then(result => {
+					this.productEnterpriseTypeList = result;
 				})
-			} catch (e) {
-				console.log(e);
-			}
+			})
 
 		},
 		submitForm(formName) {
