@@ -120,25 +120,25 @@ export default {
 	// 		return operationType
 	// 	}
 	// },
-	// mounted() {
-	// 	alert(this.operationType)
-	// 	this.getPublishDirection();
-	// 	this.getNewsType();
-	// 	this.getNoticeContent();
-	// },
-	activited() {
-
-		alert('dsds')
+	mounted() {
 		this.getRouteParams();
 		this.getPublishDirection();
 		this.getNewsType();
 		this.getNoticeContent();
 	},
+	// activited() {
+	// 	this.getRouteParams();
+	// 	this.getPublishDirection();
+	// 	this.getNewsType();
+	// 	this.getNoticeContent();
+	// },
 	methods: {
 		getRouteParams() {
-			this.creator = this.$store.state.loginInfo.id;
+			this.formData.creator = this.$store.state.loginInfo.id;
+
 			this.noticeId = this.$route.params.noticeId.split('&')[1];
-			this.operationType = this.$route.params.operationType.split('&')[0];
+
+			this.operationType = this.$route.params.noticeId.split('&')[0];
 		},
 		publishNotice() {
 			//测试数据

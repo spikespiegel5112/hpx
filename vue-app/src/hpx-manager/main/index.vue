@@ -7,6 +7,9 @@
 			<keep-alive :exclude='excludeComponents'>
 				<router-view></router-view>
 			</keep-alive>
+			<!-- <keep-alive>
+				<router-view></router-view>
+			</keep-alive> -->
 			<!-- <router-view> v-if='$route.meta.useKeepAlive'</router-view> -->
 		</div>
   	</div>
