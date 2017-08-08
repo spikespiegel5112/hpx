@@ -40,6 +40,11 @@
 			</el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
+			<el-table-column label="状态" prop="enterpriseStatus">
+				<template scope="scope">
+					<el-tag :type="projectState(scope)">{{projectState(scope)}}</el-tag>
+				</template>
+			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
@@ -133,14 +138,14 @@ export default {
 				prop: 'endTime',
 				sortable: true,
 				formatter: (row, column) => moment(column.endTime).format(dateFormat)
+			}, {
+				label: '项目状态',
+				prop: 'state',
+				sortable: true,
 			}],
 			expand: [{
 				label: '建立人',
 				prop: 'creator',
-				sortable: true,
-			}, {
-				label: '项目状态',
-				prop: 'state',
 				sortable: true,
 			}, {
 				label: '记录时间',
@@ -161,7 +166,7 @@ export default {
 			tableList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
-
+			// stateArray:[],
 			//分页信息
 			pagination: {
 				params: {
@@ -172,10 +177,10 @@ export default {
 			},
 			//登录信息
 			userId: this.$store.state.loginInfo.id,
-			enterpriseId:this.enterpriseId,
+			enterpriseId: this.enterpriseId,
 			//搜索
 			query: {
-				name:''
+				name: ''
 			},
 			activatedOptions: [{
 				value: '激活',
@@ -220,13 +225,14 @@ export default {
 			}
 		}
 	},
-	activated(){
+	activated() {
 		this.initData();
 	},
 	computed: {
 		loginInfo() {
 			return this.$store.state.loginInfo
-		}
+		},
+
 	},
 	methods: {
 		initData() {
@@ -246,7 +252,7 @@ export default {
 			let options = {
 				params: {}
 			}
-			options.params = Object.assign(this.pagination.params,this.query);
+			options.params = Object.assign(this.pagination.params, this.query);
 			console.log(options);
 			getProjectList(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
@@ -306,7 +312,7 @@ export default {
 				});
 			});
 		},
-		search(){
+		search() {
 			this.getList();
 		},
 		flipPage(pageIndex) {
@@ -314,10 +320,32 @@ export default {
 			this.getList();
 		},
 		resetTable() {
-			this.query.name='';
+			this.query.name = '';
 			this.getList();
 		},
-		aaa(value){
+		projectState(scope) {
+			let state={};
+			switch (scope.row.state) {
+				case 'B':
+				state = '准备中';
+					break;
+				case 'R':
+					state.name = '进行中';
+					state.color = 'success';
+					break;
+				case 'E':
+					state = '正常结束';
+					break;
+				case 'P':
+					state = '暂停';
+					break;
+				case 'F':
+					state = '异常结束';
+					break;
+			}
+			return state;
+		},
+		aaa(value) {
 			console.log(value)
 		}
 	},
