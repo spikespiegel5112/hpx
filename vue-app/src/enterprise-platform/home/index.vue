@@ -61,7 +61,7 @@
                     <div slot="header" class="card-header">
                         <span>我的项目</span>
                         <el-button type="text" class="p-home-action">
-                            <router-link to="/platform/certification">更多项目</router-link>
+                            <router-link to="/platform/project">更多项目</router-link>
                         </el-button>
                     </div>
                     <ul class="home-project-list">

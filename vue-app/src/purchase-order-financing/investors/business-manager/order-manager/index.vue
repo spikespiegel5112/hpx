@@ -9,7 +9,7 @@
                         <el-input v-model="query.name" placeholder="订单名称"></el-input>
                     </el-form-item>
                     <el-form-item class="order-search-item" prop="code">
-                        <el-input v-model="query.name" placeholder="订单编号"></el-input>
+                        <el-input v-model="query.code" placeholder="订单编号"></el-input>
                     </el-form-item>
                     <el-form-item class="order-search-item" prop="supplier">
                         <el-select v-model="query.supplier" placeholder="需方">
@@ -37,7 +37,7 @@
                         <el-button   type="primary" :disabled="selection.length !== 1" @click="check">查看</el-button>
                         <el-button   type="primary" :disabled="selection.length !== 1" @click="createCp">生成采购合同</el-button>
                         <el-button   type="primary" :disabled="selection.length !== 1" @click="createSc">生成销售合同</el-button>
-                        <el-button   type="primary" :disabled="selection.length !== 1" @click="approve">审批</el-button>
+                        <!-- <el-button   type="primary" :disabled="selection.length !== 1" @click="approve">审批</el-button> -->
                     </el-form-item>
 			</el-form>
         </section>
@@ -62,7 +62,13 @@
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
+                    align="center"
                 >
+                </el-table-column>
+                <el-table-column label="操作" align="center">
+                    <template scope="scope">
+                        <el-button size="small" @click="approve(scope.$index,scope.row.id)">审批</el-button>
+                    </template>
                 </el-table-column>
             </el-table>
            <!--
@@ -72,34 +78,12 @@
             </my-Pagination>
         </section>
         <!--编辑界面-->
-		<el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
-			<el-form :model="editeData" label-width="80px" :rules="editRules" ref="editeData">
-                <el-form-item label="企业编号" prop="id" readonly>
-					<el-input v-model="editeData.id" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="企业名称" prop="name">
-					<el-input v-model="editeData.name" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label='需方' prop="activated">
-                    <el-select v-model="editeData.activated">
-                        <el-option
-                            v-for="item in supplierOptions"
-                            :key="item.activated"
-                            :label="item.value"
-                            :value="item.activated">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-				<el-form-item label="联系方式">
-					<el-input v-model="editeData.contactsNumber"></el-input>
-				</el-form-item>
-				<el-form-item label="更新时间">
-					<el-date-picker type="date" placeholder="选择日期" v-model="editeData.birth"></el-date-picker>
-				</el-form-item>
-				<el-form-item label="地址">
-					<el-input type="textarea" v-model="editeData.address"></el-input>
-				</el-form-item>
-			</el-form>
+		<el-dialog title="审批" v-model="editeModalVisible" :close-on-click-modal="false">
+			<ul>
+                <li>
+
+                </li>
+            </ul>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="editeModalVisible = false">取消</el-button>
 				<el-button type="primary" @click.native="editSubmit">提交</el-button>
@@ -111,7 +95,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { ordersList , getDemanderList , getSupplierList } from '@/api/orderApi'
+    import { ordersList , getDemanderList , getSupplierList , approInfo} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -227,12 +211,12 @@
             ...mapState(["loginInfo",'projectId']),
             slectedId(){
                 return this.selection[0].id;
+            },
+            demanderId(){
+                return this.selection[0].demanderid;
             }
         },
         methods: {
-            /*
-            ** 分页需改2
-            */
             pageChange(data){
                 this.pagination = data;
             },
@@ -279,20 +263,26 @@
             },
 
             selectList(selection){
-                console.log(selection);
                 this.selection = selection
             },
 
             check (){
-                this.$router.push({path:`${this.$route.path}/detail/${this.slectedId}`})
+                this.$router.push({path:`${this.$route.path}/detail/${this.slectedId}/${this.demanderId}`})
             },
             createCp (){
-
+                this.$router.push({path:`${this.$route.path}/createcp/${this.slectedId}/${this.demanderId}`})
             },
             createSc (){
-
+                this.$router.push({path:`${this.$route.path}/createsc/${this.slectedId}/${this.demanderId}`})
             },
-            approve (){
+            async approve (index,id){
+                try{
+                    const resp = await approInfo(id,this.projectId);
+                    const res = await resp.json(); 
+                    this.editeModalVisible = true;
+                }catch(e){
+
+                }
 
             },
         },

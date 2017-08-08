@@ -12,11 +12,11 @@
 </template>
 
 <script>
-	import siderBar from '../../components/siderBar';
+	import siderBar from '@/components/siderBar';
     export default {
 		components : {
-			siderBar
-		}
+			siderBar,
+		},
     }
 </script>
 

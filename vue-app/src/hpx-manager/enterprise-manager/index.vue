@@ -67,8 +67,8 @@
                         <el-button type="text" size="small">
                             <router-link :to="`/manager/etpde/${scope.row.id}`">查看</router-link>
                         </el-button>                        
-                        <el-button v-if="scope.row.enterpriseStatus === 'F'" type="success" size="small" @click="del(scope.$index, scope.row,'T')">启用</el-button>
-                        <el-button v-if="scope.row.enterpriseStatus === 'T'" type="danger" size="small" @click="del(scope.$index, scope.row,'F')">停用</el-button>
+                        <el-button v-if="scope.row.enterpriseStatus === 'F'" type="text" size="small" @click="del(scope.$index, scope.row,'T')">启用</el-button>
+                        <el-button v-if="scope.row.enterpriseStatus === 'T'" type="text" size="small" @click="del(scope.$index, scope.row,'F')">停用</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -164,6 +164,7 @@
                 query : {
                     name : '',
                     activated : '',
+                    auditState : 'T',
                 },
                 activatedOptions : [
                     {

@@ -44,6 +44,9 @@
 				showLogin: false,
 			}
 		},
+		created () {
+			this.$store.dispatch('loginNot')
+		},
 		mounted(){
 			this.showLogin = true;
 			if (!this.adminInfo.id) {

@@ -1,33 +1,35 @@
 <template>
-<div v-if="menuList.length" class="menu-wrap">
-	<el-menu class='common_menu_wrapper' :default-active="defaultActive" mode='vertical'  theme="dark" unique-opened router>
-		<el-menu-item :index="index"</el-menu-item>
-		<el-menu-item :index="index"><i class="el-icon-menu"></i>首页</el-menu-item>
-		<template v-for="(subMenu,i) in menuList">
-                <template v-if="subMenu.vRolePermissionCustom.length">
-                    <el-submenu :index="subMenu.permissionsId+''">
-                        <template slot="title"><i :class="subMenu.icon"></i>{{subMenu.name}}</template>
-		<el-menu-item v-for="(item,num) in subMenu.vRolePermissionCustom" :key="num" :index="item.link">
-			{{item.name}}
-		</el-menu-item>
-		</el-submenu>
-		</template>
-		<template v-else>
-                    <el-menu-item :index="subMenu.link">
-                        <i :class="subMenu.icon"></i>{{subMenu.name}}
-                    </el-menu-item>
-                </template>
-		</template>
-	</el-menu>
-</div>
-<div v-else style="height:100%;">
-	<div></div>
-</div>
+	<div v-if="menuList.length" class="menu-wrap">
+		<el-menu :default-active="defaultActive" mode='vertical' style="min-height: 100%;" theme="dark" unique-opened router>
+			<el-menu-item :index="index">
+				<i class="el-icon-menu"></i>首页</el-menu-item>
+			<template v-for="(subMenu,i) in menuList">
+				<template v-if="subMenu.vRolePermissionCustom.length">
+					<el-submenu :index="subMenu.permissionsId+''">
+						<template slot="title">
+							<i :class="subMenu.icon"></i>{{subMenu.name}}</template>
+						<el-menu-item v-for="(item,num) in subMenu.vRolePermissionCustom" :key="num" :index="item.link">
+							{{item.name}}
+						</el-menu-item>
+					</el-submenu>
+				</template>
+				<template v-else>
+					<el-menu-item :index="subMenu.link">
+						<i :class="subMenu.icon"></i>{{subMenu.name}}
+					</el-menu-item>
+				</template>
+			</template>
+		</el-menu>
+	</div>
+	<div v-else style="height:100%;">
+		<div></div>
+	</div>
 </template>
 <script>
 import {
 	getMenuList,
-	getProjectMenuList
+	getProjectMenuList,
+	signout
 } from '../api/getData';
 import {
 	mapState,
@@ -39,22 +41,22 @@ export default {
 		laoding: false,
 	}),
 	props: ['index'],
-	created: function() {
-		(async() => {
+	created: function () {
+		(async () => {
 			this.loading = true;
 			try {
 				const path = this.$route.path.split('/')[1];
-				let resp,res;
+				let resp, res;
 				if (path !== 'platform' && path !== 'manager') {
 					const { pjId } = this.$route.params;
 					this.getCurrentProjectId(pjId);
 					if (pjId) {
-						try{
+						try {
 							resp = await getProjectMenuList(this.loginInfo.enterpriseId, pjId);
 							const tmp = await resp.json();
-							this.changePath(tmp,pjId);
+							this.changePath(tmp, pjId);
 							res = [...tmp];
-						}catch(e){
+						} catch (e) {
 							this.toHome();
 						}
 					} else {
@@ -68,12 +70,18 @@ export default {
 				this.loading = false;
 			} catch (e) {
 				this.loading = false;
+				this.$alert(`${e}将跳转至登录页面`, '提示', {
+					confirmButtonText: '确定',
+					callback: action => {
+						this.$router.push({path:'/'})
+					}
+				});		
 			}
 		})()
 	},
 	computed: {
 		...mapState(['loginInfo', 'projectId']),
-		defaultActive: function() {
+		defaultActive: function () {
 			const path = this.$route.path.split('/')[1];
 			const sliceNum = path === 'platform' || path === 'manager' ? 3 : 4;
 			return this.$route.path.split('/').slice(0, sliceNum).join('/');
@@ -81,29 +89,29 @@ export default {
 	},
 	methods: {
 		...mapActions(['getCurrentProjectId']),
-		changePath(data,pjId){
+		changePath(data, pjId) {
 			data.map(
-				(v,i) => {
-					if(v.vRolePermissionCustom.length){
-						this.changePath(v.vRolePermissionCustom,pjId)
-					}else{
+				(v, i) => {
+					if (v.vRolePermissionCustom.length) {
+						this.changePath(v.vRolePermissionCustom, pjId)
+					} else {
 						let tmp = v.link.split('/')
-						tmp.splice(2,0,pjId);
+						tmp.splice(2, 0, pjId);
 						v.link = tmp.join('/');
 					}
 				}
 			)
 		},
-		toHome(){
+		toHome() {
 			const path = this.loginInfo.enterpriseId === '1' ? '/manager' : '/platform';
-			this.$alert('没有选取项目或者没权限', '提示', {
-				confirmButtonText: '确定',
-				callback: action => {
-					this.$router.push({
-						path
-					});
-				}
-			})
+			// this.$alert('没有选取项目或者没权限', '提示', {
+			// 	confirmButtonText: '确定',
+			// 	callback: action => {
+			// 		this.$router.push({
+			// 			path
+			// 		});
+			// 	}
+			// })
 		}
 	}
 }
@@ -111,16 +119,12 @@ export default {
 <style lang="less">
 @import '../style/mixin';
 .menu-wrap {
-    height: 100%;
-    position: fixed;
-    // top: 50px;
-    bottom: 0;
-    left: 0;
-    width: 200px;
-    overflow-y: scroll;
-}
-.common_menu_wrapper{
-	min-height: 100%;
-	margin: 50px 0 0 0;
+	height: 100%;
+	position: fixed;
+	top: 50px;
+	bottom: 0;
+	left: 0;
+	width: 200px;
+	overflow-y: scroll;
 }
 </style>

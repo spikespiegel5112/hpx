@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {getAdminInfo,getLoginInfo} from '@/api/getData'
-
+import { eidAccStatus } from '@/api/coreApi'
 
 Vue.use(Vuex)
 
@@ -12,7 +12,9 @@ const state = {
 	loginInfo : null,
 	isLogin : false,
 	projectId:null,
-	projectInfo :null
+	projectInfo :null,
+	accStatusInfo : null,
+	statusStep : 1,
 }
 
 const mutations = {
@@ -29,6 +31,12 @@ const mutations = {
 	},
 	saveProjectId(state,pjId){
 		state.projectId = pjId;
+	},
+	saveAccStatusInfo(state,info){
+		state.accStatusInfo = info;
+	},
+	saveAccStep(state,step){
+		state.statusStep = step;
 	}
 }
 
@@ -42,7 +50,6 @@ const actions = {
 				throw new Error(res)
 			}
 		}catch(err){
-			console.log('您尚未登陆或者session失效')
 		}
 	},
 	async getUserData({commit},object){
@@ -56,7 +63,6 @@ const actions = {
 				return false;
 			}
 		}catch(err){
-			console.log('您尚未登陆或者session失效');
 			return false;
 		}
 	},
@@ -68,7 +74,40 @@ const actions = {
 			commit('saveProjectId', pjId);
 			return true
 		}catch(err){
-			this.$message.error(err);
+			return false;
+		}
+	},
+	async getAccStatusInfo(store){
+		try{
+			const resp = await eidAccStatus(store.state.loginInfo.enterpriseId);
+			if(resp.status === 200){
+				const res = await resp.json();
+				let step = 1;
+				switch(res.authenticateStatus){
+					case 'P':
+					step = 4 ;
+					break;
+					case 'T':
+					step = 3 ;
+					break;
+					case 'F':
+					step = 3 ;
+					break;
+					case 'A':
+					step = 2 ; 
+					break;
+					default :
+					step = 1;
+					break;
+				}
+				store.commit('saveAccStatusInfo',res);
+				store.commit('saveAccStep',step)				
+			}else{
+				store.commit('saveAccStatusInfo',{});
+				store.commit('saveAccStep',1)
+			}
+			return true;	
+		}catch(e){
 			return false;
 		}
 	},

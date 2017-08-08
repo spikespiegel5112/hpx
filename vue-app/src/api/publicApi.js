@@ -9,7 +9,7 @@ export const provinces = () => fetch('/core/core/api/v1/enterpriseAccountEntity/
 /*
 ** 获取银行
 */
-export const bankTypeRequest = () => fetch('/core/core/api/v1/enterpriseAccountEntity/banks')
+export const bankTypes = () => fetch('/core/core/api/v1/enterpriseAccountEntity/banks')
 
 /*
 ** 获取城市

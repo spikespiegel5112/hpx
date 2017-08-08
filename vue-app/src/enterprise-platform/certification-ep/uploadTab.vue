@@ -24,21 +24,23 @@
                     :align="value.align ? value.align : 'left'"
                 >             
                 </el-table-column>
-                <el-table-column label="文件" align="center" prop="info" min-width="120px">
+                <el-table-column label="文件" align="center" prop="webPath" min-width="120px">
                     <template scope="scope">
-                          <upload-pic 
+                          <upload-pic
                             v-show="scope.row.thumbUrl"
                             :index="scope.$index" 
                             :thumbUrl="scope.row.thumbUrl" 
-                            :name="scope.row.filesname"
+                            :name="scope.row.fileName"
                             :removeFile="removeFile"
                         >
-                        </upload-pic> 
+                        </upload-pic>
+                        <el-button v-if="scope.row.fileId" type="text" @click="clickLoad(scope.row.fileId)">点击下载查看</el-button>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center" class-name="acc-action-upload"> 
                     <template scope="scope">
                          <el-upload
+                            v-if="allEdite"
                             :action="uploadActionUrl(scope.row.code)"
                             list-type="picture"
                             :auto-upload="false"
@@ -48,6 +50,9 @@
                         >
                             <el-button icon="upload" type="primary" size="small">上传文件</el-button>
                          </el-upload>
+                         <div v-else>
+                             {{scope.row.id ? "已经上传" : "未上传"}}
+                         </div>
                     </template>
                 </el-table-column>
             </el-table>
@@ -56,7 +61,7 @@
 <script>
     import uploadPic from '@/components/uploadPicture'
     import moment from 'moment'
-    import { filesTypes , uploadAction } from '../../api/publicApi'
+    import { filesTypes , uploadAction ,loadUrl} from '../../api/publicApi'
     import { filesDetail } from '../../api/coreApi'
     import { mapState } from 'vuex'
     export default {
@@ -70,15 +75,17 @@
                     minWidth : 150,
                     },{
                     label : '文件名称',
-                    prop  : 'filesname',
+                    prop  : 'fileName',
                     },{
                     label : '文件大小',
-                    prop  : 'filesSize',
-                    formatter : (row,column) => row.filesSize
-                    },{
-                    label : '上传人',
-                    prop  : 'modifiedBy',
-                    },{
+                    prop  : 'fileLength',
+                    formatter : (row,column) =>{ return row.fileLength ? (parseInt(row.fileLength)/1024).toFixed(2) + 'M' : ''}
+                    },
+                    // {
+                    // label : '上传人',
+                    // prop  : 'modifiedBy',
+                    // },
+                    {
                     label : '上传时间',
                     prop  : 'modifiedTime',
                     sortable : true,
@@ -98,13 +105,16 @@
         mounted(){
             this.$nextTick(
                 async () => {
-                    this.getFilesTypes();
+                    // this.getFilesTypes();
                     this.getFilesDetail()
                 }
             );
         },
         computed : {
-            ...mapState(['loginInfo']),
+            ...mapState(['loginInfo','accStatusInfo']),
+            allEdite(){
+                return !this.accStatusInfo.authenticateStatus || this.accStatusInfo.authenticateStatus === 'F' ? true : false;
+            }
         },
         methods : {
             async getFilesTypes () {
@@ -112,8 +122,8 @@
                     const resp = await filesTypes(this.loginInfo.enterpriseId);
                     let res = await resp.json();
                     for(let i = 0,len = res.length; i < len ; i++){
-                        res[i].filesname = '';
-                        res[i].filesSize = '';
+                        res[i].fileName = '';
+                        res[i].fileLength = '';
                         res[i].thumbUrl = '';
                     };
                     this.tableList = res;
@@ -125,7 +135,7 @@
                 try{
                     const resp = await filesDetail(this.loginInfo.enterpriseId);
                     const res = await resp.json();
-                    // this.tableList = res
+                    this.tableList = res
                 }catch(e){
 
                 }
@@ -135,14 +145,17 @@
             },
             filesChange(index,file,filesList){
                 console.log(file,filesList,index)
-                this.tableList[index].filesname = file.name;
-                this.tableList[index].filesSize = file.size;
+                this.tableList[index].fileName = file.name;
+                this.tableList[index].fileLength = file.size;
                 this.tableList[index].thumbUrl = file.url; 
             },
             removeFile(index){
-                this.tableList[index].filesname = '';
-                this.tableList[index].filesSize = '';
+                this.tableList[index].fileName = '';
+                this.tableList[index].fileLength = '';
                 this.tableList[index].thumbUrl = ''; 
+            },
+            clickLoad(fileId){
+                window.location.href = loadUrl(fileId);
             }
         },
     }

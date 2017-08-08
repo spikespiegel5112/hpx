@@ -25,9 +25,11 @@ function interceptor(resp) {
     }else if(status == 403){//没有权限
       	throw err;
     }else if(status >= 500){
-	
-		err = decodeURIComponent( resp.headers.get('x-error-alert'))
 		
+		// err = decodeURIComponent( resp.headers.get('x-error-alert'))
+		// console.log(location)
+		// setTimeout( () => window.location.href = location.origin + '/#/',1000)
+		err = '服务或网络异常'
 		throw err;
     }
   }

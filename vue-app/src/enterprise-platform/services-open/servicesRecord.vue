@@ -73,7 +73,7 @@
                 :visible.sync="dialogVisible"
                 size="tiny"
                 :before-close="handleClose">
-                <p style="text-indent: 2em">{{applyContext.length > 0 ? applyContext : '无'}}</p>
+                <span>{{applyContext.length > 0 ? applyContext : '无'}}</span>
             </el-dialog>
             <section class="main-pagination">
                 <my-Pagination :total="total" @pageChange="pageChange">
@@ -84,8 +84,8 @@
 </template>
 
 <script>
-    import headTop from '../../components/headTop'
-    import myPagination from '../../components/myPagination'
+    import headTop from '@/components/headTop'
+    import myPagination from '@/components/myPagination'
     import { servicesList , auithcertification ,servicesAidth} from '@/api/coreApi'
     import { loadUrl } from '@/api/publicApi'
     import { mapState } from 'vuex'

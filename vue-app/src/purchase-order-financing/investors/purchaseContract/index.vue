@@ -31,7 +31,7 @@
 
         <section class="main-table-container">
             <el-table row-key="id" max-height="250" border :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-                <el-table-column fixed prop="name" label="合同名称"></el-table-column>
+                <el-table-column fixed prop="name" width = '160px' label="合同名称"></el-table-column>
                 <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
                 </el-table-column>
                 <el-table-column fixed="right" width="238" label="操作">
@@ -41,7 +41,7 @@
                         <el-button type="text" size="small" @click="receipt(scope.$index, scope.row)">确认收货</el-button>
                         <!--<el-button type="text" size="small" @click="uploadContract(scope.$index, scope.row)">上传合同</el-button>-->
                          <!--action="/order/contract/uploadingContract/"+{scope.row.id}-->
-                        <el-upload
+                        <!--<el-upload
                             :action="`/order/contract/uploadingContract/${scope.row.id}`"
                             :file-list="excelList"
                             :on-change="excelChange"
@@ -49,7 +49,16 @@
                             :on-success="excelSuccess"
                         >
                         <el-button size="small" type="text">上传合同</el-button>
-                    </el-upload>
+                    </el-upload>-->
+                         <el-upload
+                            :action="uploadActionUrl(scope.row.code)"
+                            list-type="picture"
+                            :auto-upload="false"
+                            accept="image/gif, image/jpeg, image/png, image/jpg"
+                            :on-change="(file,filesList)=>filesChange(scope.$index,file,filesList)"
+                            :on-remove="()=>removeFile(scope.$index)">
+                            <el-button icon="upload" type="primary" size="small">上传文件</el-button>
+                         </el-upload>
                     </template>
                 </el-table-column>
             </el-table>
@@ -105,25 +114,32 @@ export default {
             columns: [{
                     label: '合同编号',
                     prop: 'code',
+                    width: '160px'
                 }, {
                     label: '订单编号',
                     prop: 'orderCode',
+                    width: '160px'
                 }, {
                     label: '供应商',
                     prop: 'firstParty',
+                    width: '160px'
                 }, {
                     label: '合同金额',
                     prop: 'money',
+                    width: '160px'
                 }, {
                     label: '收货状态',
                     prop: 'receivingStatus',
+                    width: '160px'
                 }, {
                     label: '创建时间',
                     prop: 'createTime',
+                    width: '160px',
                     formatter: (row, column) => moment(column.createTime).format('YYYY-MM-DD')
                 }, {
                     label: '收货日期',
                     prop: 'receivingDate',
+                    width: '160px',
                     formatter: (row, column) => moment(column.receivingDate).format('YYYY-MM-DD')
                 }, {
                     label: '文件',
@@ -275,7 +291,21 @@ export default {
         },
         receipt(index, row) {
              this.$router.push({ path: this.$route.path + '/receipt/' + row.id })
-        }
+        },
+        uploadActionUrl (code) {
+            return uploadContract(this.loginInfo.enterpriseId,code)
+        },
+        filesChange(index,file,filesList){
+            console.log(file,filesList,index)
+            this.tableList[index].fileName = file.name;
+            this.tableList[index].fileLength = file.size;
+            this.tableList[index].thumbUrl = file.url; 
+        },
+        removeFile(index){
+            this.tableList[index].fileName = '';
+            this.tableList[index].fileLength = '';
+            this.tableList[index].thumbUrl = ''; 
+        },
     },
     /*
     ** 分页需改3

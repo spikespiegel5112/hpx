@@ -198,7 +198,7 @@ export default {
     width: 90%;
 }
 
-.el-input__inner {
+.forget-pwd-form .el-input__inner {
     background: transparent;
     border: none;
     border-radius: 0;
@@ -210,7 +210,7 @@ export default {
     width: 51%;
 }
 
-.el-form-item__label {
+.forget-pwd-form .el-form-item__label {
     color: #fff;
 }
 

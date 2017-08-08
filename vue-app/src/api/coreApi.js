@@ -68,6 +68,12 @@ export const patchEnterpriseInfo = (eid, body) => fetch(`/core/core/api/v1/enter
  ** 企业认证
  */
 export const applyReview  = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/authenticateProcess`, {}, 'put')
+
+/*
+ ** 企业认证 金额确认
+ */
+export const checkAccountM  = (eid,params) => fetch(`/core/core/api/v1/enterpriseAccountEntity/enterprise/${eid}/checkAccount?val=${params}`, {}, 'PATCH')
+
 /*
  ** 管理签章 -- 获取企业电子签章列表
  */
@@ -106,8 +112,7 @@ export const delSignature = (id, eid) => fetch(`/core/core/api/v1/enterprise/${e
 /*
  ** 认证企业 审核
  */
-export const auithcertification = (id, type, nodes) => fetch(`/core/core/api/v1/enterprises/enterprise/${id}/auditState/${type}?nodes=${nodes}`, {}, 'PATCH')
-
+export const auithcertification = (id, type, nodes,amount) => fetch(`/core/core/api/v1/enterprises/enterprise/${id}/auditState/${type}?amount=${amount}&nodes=${nodes}`, {}, 'PATCH')
 /*
  ** 获取 增值服务列表
  */

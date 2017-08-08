@@ -11,9 +11,10 @@ const App = r => require.ensure([], () => r(require('@/App')), 'appContainer');
 /*
 **	model template
 */
+const enerpriseCertification = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep')), 'enerpriseCertification');
 const login = r => require.ensure([], () => r(require('@/page/login')), 'login');
 const register = r => require.ensure([], () => r(require('@/page/register')), 'register');
-// const forgetPwd = r => require.ensure([], () => r(require('@/page/forgetPwd')), 'forgetPwd');
+const forgetPwd = r => require.ensure([], () => r(require('@/page/forgetPwd')), 'forgetPwd');
 const manage = r => require.ensure([], () => r(require('@/page/manage')), 'manage');
 const home = r => require.ensure([], () => r(require('@/page/home')), 'home');
 const addShop = r => require.ensure([], () => r(require('@/page/addShop')), 'addShop');
@@ -31,23 +32,22 @@ const adminSet = r => require.ensure([], () => r(require('@/page/adminSet')), 'a
 const sendMessage = r => require.ensure([], () => r(require('@/page/sendMessage')), 'sendMessage');
 const explain = r => require.ensure([], () => r(require('@/page/explain')), 'explain');
 
-/*
-**	template test
-*/
-const template = r => require.ensure([], () => r(require('@/view/template')), 'template');
 
 const routes = [
 	{
 		path: '/',
 		component: login
 	},
-	// {
-	// 	path: '/forgetPwd',
-	// 	component: forgetPwd
-	// },
 	{
 		path: '/register',
 		component: register
+	},{
+		path: '/forgetPwd',
+		component: forgetPwd
+	},
+	{
+		path: '/etpauth',
+		component:enerpriseCertification
 	},
 	//model
 	{
@@ -114,10 +114,6 @@ const routes = [
 			path: '/explain',
 			component: explain,
 			meta: ['说明', '说明'],
-		},{
-			path: '/template',
-			component: template,
-			meta: ['模板', 'test'],
 		}]
 	},
 
@@ -133,7 +129,7 @@ const routes = [
 			enterprisePlatformRouter,
 
 			//order
-			orderRouter,
+			orderRouter,			
 		]
 	},
 

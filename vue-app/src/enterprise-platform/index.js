@@ -10,13 +10,12 @@ const editPwd = r => require.ensure([], () => r(require('@/enterprise-platform/s
 const certification = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep')), 'certification-ep');
 const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platform/services-open')), 'enterprise-platform-serivces');
 const accountOpening = r => require.ensure([], () => r(require('@/enterprise-platform/services-open/accountOpening')), 'accountOpening');
-const signatureManager = r => require.ensure([], () => r(require('@/enterprise-platform/signature-manager')), 'signature-manager');
-const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterprise-signature');
-const addSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature/add-signature')), 'add-signature');
+const servicesRecord = r => require.ensure([], () => r(require('@/enterprise-platform/services-open/servicesRecord')), 'servicesRecord');
+const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterpriseSignature');
+const addSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature/add-signature')), 'addSignature');
 
 // 项目管理
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
-const inviteRecord = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/inviteRecord')), 'inviteRecord');
 
 //账户总览
 const accountManagement = r => require.ensure([], () => r(require('@/enterprise-platform/account/accountManagement')), 'accountManagement');
@@ -47,32 +46,22 @@ export default {
     children:[{
 			path: '',
 			component: home,
-			meta: ['', ''],
 		},{
 			path: 'project',
 			component: myProject,
 			meta: ['项目管理', '我的项目'],
 		},{
-			path: 'inviterecord',
-            name: 'inviteRecord',
-			component: inviteRecord,
-			meta: ['项目管理', '我的项目', '邀请记录'],
-		},{
 			path: 'account-management',
 			component: accountManagement,
 			meta: ['资金管理', '账户总览'],
-		},{
+		},{  
 			path: 'transaction-detail',
 			component: transactionDetail,
 			meta: ['资金管理', '交易明细'],
 		},{
-			path: 'signature',
-			component: signatureManager,
-			meta: ['签章管理'],
-		},{
 			path: 'enterprise-signature',
 			component: enterpriseSignature,
-			meta: ['签章管理', '企业签章'],
+			meta: ['企业签章'],
 		},{
 			path: 'enterprise-signature/add-signature',
 			component: addSignature,
@@ -100,7 +89,11 @@ export default {
         },{
             path: 'accountopening',
             component: accountOpening,
-            meta: ["线上开户"],
+            meta: ["服务开通","线上开户"],
+        },{
+            path: 'services-record',
+            component: servicesRecord,
+            meta: ["服务开通","申请记录"],
         },{
 			path:'fair-parameter',
 			component : fairParameter,

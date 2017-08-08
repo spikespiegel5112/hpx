@@ -45,8 +45,7 @@
                 highlight-current-row
                 style="width: 100%">
                 <el-table-column
-                  type="index"
-                  width="100">
+                  type="index">
                 </el-table-column>
                 <el-table-column
                     v-for="(value,i) in columns"
@@ -73,12 +72,15 @@
             </my-Pagination>
         </section>
         <!--编辑界面-->
-		<el-dialog title="审核" v-model="editeModalVisible" size="tiny" :close-on-click-modal="false">
+		<el-dialog title="审核" v-model="editeModalVisible" size="small" :close-on-click-modal="false">
 			<el-form :model="editeData" label-width="80px" :rules="editRules" ref="editeData">
                 <div style="margin:20px 0;">
                     <el-tag type="primary">请确定企业资料审核通过,在下方填写审核说明</el-tag>
                 </div>
-                <el-form-item label="审核说明" prop="nodes" label-width="30%" style="padding:0 30px;">
+                <el-form-item label="输入金额" prop="amount">
+					<el-input v-model="editeData.amount" auto-complete="off"></el-input>
+				</el-form-item>
+                <el-form-item label="审核说明" prop="nodes">
 					<el-input type="textarea" v-model="editeData.nodes" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
@@ -126,6 +128,7 @@
                     label : '联系方式',
                     prop  : 'contactsNumber',
                     sortable : true,
+                    minWidth : 100
                     }
                 ],
                 //总页数
@@ -140,7 +143,8 @@
                 query : {
                     name : '',
                     activated : '',
-                    auditState : 'B',
+                    auditState : 'A',
+                    amount : 0,
                 },
                 activatedOptions : [
                     {
@@ -154,7 +158,7 @@
                 ],
                 //搜索条件的个数
                 criteriaNum : 2,
-
+                auditState : '',
                 //模态框
                 editeModalVisible : false,
                 editeData : {
@@ -165,6 +169,9 @@
                 editRules : {
                     nodes : [
 						{ required: true, message: '请输入审核说明' }
+                    ],
+                    amount : [
+						{ required: true, message: '请输入账户金额' }
 					]
                 }
             }
@@ -175,9 +182,6 @@
     	},
         created(){
             this.initData();
-        },
-        mounted(){
-
         },
         computed : {
             ...mapState(["loginInfo"])
@@ -228,7 +232,7 @@
                         if(valid){
                             try{
                                 console.log(this.rowId,this.auditState,this.editeData.nodes)
-                                const resp = await auithcertification(this.rowId,this.auditState,this.editeData.nodes);
+                                const resp = await auithcertification(this.rowId,this.auditState,this.editeData.nodes,this.editeData.amount);
                                 if(resp.status === 200){
                                     const msg = decodeURIComponent(resp.headers.get('x-hpx-alert'))
                                     this.$message({
@@ -236,6 +240,7 @@
                                         message:msg
                                     })
                                     this.editeModalVisible = false;
+                                    this.getList();
                                 }
                             }catch(e){
                                 this.$message.error(e)

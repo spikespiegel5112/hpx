@@ -11,6 +11,9 @@ import baobao from './config/mUtils'
 Vue.prototype.$echarts = echarts
 Vue.config.productionTip = false;
 
+const authLogin = ['/','/register','/forgetPwd'];
+const authAcc = ['platform','porderf']
+
 router.beforeEach(async(to, from, next) => {
     const { isLogin } = store.state;
     let res = false;
@@ -19,10 +22,27 @@ router.beforeEach(async(to, from, next) => {
     } else {
         res = await store.dispatch("getUserData");
     }
-    if (!res && to.path != '/' && to.path != '/register') {
+    // authLogin.indexOf(to.path) !== -1)
+
+    if (!res && to.path !== '/' && to.path !== '/register' && to.path !== '/forgetPwd') {
         next({path: '/'})
     } else {
-        next()
+        const rootPath = to.path.split('/')[1];
+        if(authAcc.indexOf(rootPath) !== -1){
+            const { accStatusInfo } = store.state;
+            if(!accStatusInfo){
+                const statusResp = await store.dispatch('getAccStatusInfo');
+            };
+            const { authenticateStatus } = store.state.accStatusInfo;
+            if(authenticateStatus === 'P'){
+                next()
+            }else{
+                next({path:'/etpauth'})
+            }                   
+        }else{
+            next()
+        }
+
     }
 })
 

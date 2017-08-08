@@ -23,6 +23,7 @@ const noticeEdit = r => require.ensure([], () => r(require('@/hpx-manager/produc
 const user = r => require.ensure([], () => r(require('@/hpx-manager/user')), 'user');
 const agreement = r => require.ensure([], () => r(require('@/hpx-manager/agreement')), 'agreement');
 const dictionary = r => require.ensure([], () => r(require('@/hpx-manager/dictionary')), 'dictionary');
+const signatureManager = r => require.ensure([], () => r(require('@/hpx-manager/signature-manager')), 'signatureManager');
 
 const router = {
     path: '/manager',
@@ -103,7 +104,11 @@ const router = {
             component: dictionary,
             name: 'dictionary',
             meta: ['平台基础管理', '字典项'],
-        }]
+        }, {
+			path: 'signature',
+			component: signatureManager,
+			meta: ['签章管理'],
+		}]
 }
 
 export default router;

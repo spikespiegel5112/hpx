@@ -1,6 +1,7 @@
 <template>
     <div>
-        <head-top></head-top> 
+        <header-top style="position:relative;" v-if="!accStatusInfo.authenticateStatus || accStatusInfo.authenticateStatus !== 'P'"></header-top>
+        <head-top v-if="accStatusInfo.authenticateStatus === 'P'"></head-top> 
         <section class="up-section">
             <div class="cer-steps">  
                 <cer-steps></cer-steps>
@@ -28,7 +29,10 @@
     </div>  
 </template>
 <script>
+    import { mapState , mapActions } from 'vuex'
+    import store from '@/store'
     import headTop from '@/components/headTop'
+    import headerTop from '@/components/headerTop'
     // 步骤条
     import cerSteps from './cer-steps';
     // 基本信息填写
@@ -56,16 +60,51 @@
                         title: "企业认证",
                         icon : "el-icon-plus",
                     }
-                ]
+                ],
             }
         },
         components : {
+            headerTop,
             headTop,
             cerSteps,
             infoTab,
             bankTab,
             uploadTab,
             identificationTab
+        },
+        computed : {
+            ...mapState(['loginInfo','accStatusInfo'])
+        },
+        created (){
+            // this.getAccStatusInfo()
+            if(this.accStatusInfo.authenticateStatus !== 'P'){
+
+                this.$confirm('你还未完成企业认证,请完成', '提示', {
+                    confirmButtonText: '确定',
+                    // cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+
+                }).catch(() => {
+                    this.$router.push({path:'/'})
+                });
+                            
+            }
+        },
+        methods:{
+            ...mapActions(['getAccStatusInfo']),
+        },
+        async beforeRouteEnter(to,from,next){
+            if(!store.accStatusInfo){
+                const resp = await store.dispatch('getAccStatusInfo');
+                if(store.state.accStatusInfo.authenticateStatus && store.state.accStatusInfo.authenticateStatus === 'P'){
+                    next({path:'/platform'})
+                }else{
+                    next();
+                }
+            }else{
+                next();
+            }
         }
     }
 </script>
@@ -80,5 +119,3 @@
         padding:0 30px;
     }
 </style>
-
-

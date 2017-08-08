@@ -1,172 +1,129 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
-        <section class="main-table-container">
-            <el-table
-                row-key="id"
-                :empty-text="emptyText"
-                :data="tableList"
-                v-loading="listLoading"
-                highlight-current-row
-                style="width: 100%">
-                <el-table-column
-                  type="index">
-                </el-table-column>
-                <el-table-column
-                    v-for="(value,i) in columns"
-                    :key="i"
-                    :label="value.label"
-                    :prop="value.prop"
-                    :sortable="value.sortable"
-                    :width="value.width ? value.width : 'auto'"
-                    :formatter="value.formatter"
-                    :min-width="value.minWidth ? value.minWidth : 'auto'"
-                >
-                </el-table-column>
-                <el-table-column label="操作">
-                    <template scope="scope">
-                        <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
-                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </section>
-        <!--编辑界面-->
-		<el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
-			<el-form :model="editeData" label-width="80px" :rules="editRules" ref="editeData">
-                <el-form-item label="企业编号" prop="id" readonly>
-					<el-input v-model="editeData.id" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="企业名称" prop="name">
-					<el-input v-model="editeData.name" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="联系方式">
-					<el-input v-model="editeData.contactsNumber"></el-input>
-				</el-form-item>
-				<el-form-item label="更新时间">
-					<el-date-picker type="date" placeholder="选择日期" v-model="editeData.birth"></el-date-picker>
-				</el-form-item>
-				<el-form-item label="地址">
-					<el-input type="textarea" v-model="editeData.address"></el-input>
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="editeModalVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="editSubmit">提交</el-button>
-			</div>
-		</el-dialog>
+        <div class="order-action">
+            <el-button type="primary" @click="changeEdite">{{!isEdite ? '修改' : '保存'}}</el-button>
+            <el-button type="primary" @click="download">下载</el-button>
+        </div>
+        <order-list :orderId="orderId" :edite="isEdite" @numChange="numChange" @orderDetail="orderDetail"></order-list>
+        <div class="order-total">
+            <p>
+                <span>共计数量:</span><span>{{this.totalNum}}件</span>
+            </p>
+            <p>
+                <span>共计金额:</span><span>￥{{this.totalAmount}}</span>
+            </p>
+            <p>
+                <span>保证金:</span><span>￥{{this.deposit.toFixed(2)}}</span>
+            </p>
+        </div>
+        <div class="order-action">
+            <el-button type="primary" @click="save">确定修改</el-button>
+            <el-button type="primary" @click="dealSubmit">确定订单</el-button>
+        </div>
+
     </div>
 </template>
 
 <script>
     import headTop from '@/components/headTop'
-    import { ordersDetail } from '@/api/orderApi'
+    import orderList from './orderList';
+    import { ordersDetail , ordersDetailDownload ,demanderInterestRate , ordersDetailRevise} from '@/api/orderApi'
     import { mapState } from 'vuex'
     export default {
         data(){
             return {
-                //table columns
-                columns : [{
-                    label : '品名',
-                    prop  : 'description',
-                    },{
-                    label : '规格',
-                    prop  : 'specification',
-                    },{
-                    label : '型号',
-                    prop  : 'model',
-                    },{
-                    label : '单位',
-                    prop  : 'unit',
-                    },{
-                    label : '数量',
-                    prop  : 'amount',
-                    },{
-                    label : '单价',
-                    prop  : 'univalence',
-                    },{
-                    label : '总价',
-                    prop  : 'total',
-                    },{
-                    label : '备注',
-                    prop  : 'remark',
-                    }
-                ],
-                //总页数
-                total : 0,
-  
-                //table
-                tableList: [],
-                listLoading:false,
-                emptyText:"暂无数据",
+                isEdite : false,
+                detail : [],
+                totalNum : 0,
+                totalAmount : 0,
+                
+                //利率信息
+                interestRate : null,
 
-                //模态框
-                editeModalVisible : false,
-                editeData : {
-                    id : '',
-                    name : '',
-                    activated : '',
-                    address : '',
-                    contactsNumber : '',
-                    birth:''
-                },
-                editRules : {
-                    name : [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					]
-                }
             }
         },
     	components: {
             headTop,
-    	},
-        created(){
-            this.getList();
+            orderList
+        },
+        activated(){
+            this.getInterestRate();
         },
         computed : {
-            ...mapState(["loginInfo"]),
+            ...mapState(["loginInfo","projectId"]),
             orderId(){
                 return this.$route.params.orderId
+            },
+            demanderId(){
+                return this.$route.params.demanderId
+            },
+            deposit(){
+                return this.totalAmount * this.interestRate/100;
             }
         },
         methods: {
-            async getList(){
-                this.listLoading = true;
+            numChange(data){
+                this.totalNum = data[0];
+                this.totalAmount = data[1];
+            },
+            orderDetail(data){
+                this.detail = data;
+            },
+            async changeEdite(){
+                this.isEdite = !this.isEdite;
+            },
+            async getInterestRate(){
                 try{
-                    const resp = await ordersDetail(this.orderId);
+                    const resp = await demanderInterestRate(this.demanderId,this.projectId);
                     const res = await resp.json();
-                    const total = resp.headers.get('x-total-count')
-                    this.tableList = [...res];
-                    this.total = parseInt(total);
-                    this.listLoading = false;
-                    if(!this.tableList.length){
-                        this.emptyText = "暂无数据";
-                    }
+                    this.interestRate = res.marginRatio;
                 }catch(e){
-                    this.emptyText = "获取数据失败";
-                    this.listLoading = false;
+
                 }
             },
-            async search () {
-                this.getList();
+            download(){
+                window.location.href = ordersDetailDownload(this.orderId);
             },
+            async save(){
+                if(this.isEdite){
+                    this.$message({type:'warning',message:'请先保存数据'});
+                    return;
+                };
+                try{
+                    const resp = await ordersDetailRevise(this.detail);
+                    if(resp.status === 200){
+                        this.$message({
+                            type:'success',
+                            message:'修改成功'
+                        })
+                    }
+                }catch(e){
 
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-            },
+                }
 
-            check (index,row){
-                this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
-            edite (index,row) {
-                this.editeModalVisible = true;
-                this.editeData = Object.assign({},{...row})
+            dealSubmit(){
+
             }
         },
     }
 </script>
 
-<style lang="less">
-
+<style lang="less" scoped>
+    .order-total{
+        margin:10px 0;
+        p{
+            margin: 10px 0;
+            padding-left:20px;
+            span{
+                display: inline-block;
+            }
+        }
+    }
+    .order-action{
+        padding-left:20px;
+        margin:10px 0;
+    }
 
 </style>

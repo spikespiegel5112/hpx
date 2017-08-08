@@ -243,7 +243,7 @@ export default {
     width: 51%;
 }
 
-.el-form-item__label {
+.register-form .el-form-item__label {
     color: #fff;
 }
 

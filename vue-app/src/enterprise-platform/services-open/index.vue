@@ -52,7 +52,7 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="modalVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="delSubmit">提交</el-button>
+				<el-button type="primary" @click.native="addSubmit">提交</el-button>
 			</div>
 		</el-dialog>
         <el-dialog v-model="dialogVisible" size="small" :modal="false">
@@ -118,6 +118,10 @@ export default {
             window.location.href = loadUrl(code)
         },
         modelShow(code){
+            this.introduce = {
+                context :'',
+                uploadimg:''
+            }
             this.modalVisible = true;
             this.serviceCode = code;
             this.fileList = [];
@@ -130,7 +134,6 @@ export default {
             this.dialogVisible = true;
         },
         beforeAvatarUpload(file){
-            console.log(this.fileList)
             if(this.fileList.length > 1){
                 this.$message({
                     type:'info',
@@ -150,10 +153,9 @@ export default {
             })
         },
         errorUplaod(response){
-            console.log(response)
             this.$message.error(response)          
         },
-        delSubmit(){
+        addSubmit(){
             if(!this.fileId){
                 this.$message({
                     type:'warning',
@@ -168,6 +170,7 @@ export default {
                         {
                             code : this.serviceCode,
                             fileId :  this.fileId,
+                            context : this.introduce.context,
                         }
                     );
                     if(resp.status === 200){

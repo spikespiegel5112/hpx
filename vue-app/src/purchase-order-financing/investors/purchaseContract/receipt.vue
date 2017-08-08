@@ -15,8 +15,7 @@
     
         <section class="main-table-container">
             <el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%" @selection-change="handleSelectionChange" border>
-                <el-table-column type="selection" width="55">
-                </el-table-column>
+                <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
                 </el-table-column>
                 <el-table-column prop="receivedAmount" label="实收数量" align="center">
@@ -30,6 +29,8 @@
                 <el-table-column prop="differenceMoney" label="差异金额" align="center" >
                 </el-table-column>
                 <el-table-column prop="differenceType" label="差异类型" align="center" >
+                </el-table-column>
+                <el-table-column prop="processStatus" label="处理状态" align="center" >
                 </el-table-column>
                  <el-table-column label="操作" align="center">
                     <template scope="scope">
@@ -58,7 +59,7 @@
 
 <script>
 import headTop from '../../../components/headTop'
-import { getReceiptList, saleManager } from '@/api/orderApi'
+import { getReceiptList, saleManager, changeReceivedAmount } from '@/api/orderApi'
 import { mapState } from 'vuex'
 export default {
     data() {
@@ -123,7 +124,7 @@ export default {
                 const resp = await getReceiptList(tContractId);
                 const res = await resp.json();
                 res.map((v) => {
-                    Object.assign(v,{isEdit: true})
+                    Object.assign(v,{isEdit: true}, {processStatus: v.processStatus === '0' ? '未处理' : v.processStatus === '1' ? '已处理' : '暂不处理'})
                 })
                 this.tableList = [...res];
                 this.listLoading = false;
@@ -136,7 +137,7 @@ export default {
             }
         },
 
-        save(index, row) {
+        async save(index, row) {
             if (row.receivedAmount === '') {
                 this.$message.error('数据不能为空');
             }
@@ -146,6 +147,12 @@ export default {
             this.tableList[index].differenceType = this.tableList[index].differenceAmount === 0 ? '正常' : this.tableList[index].differenceAmount > 0 ? '多发' : '少发';
             this.money += this.tableList[index].receivedAmount * this.tableList[index].univalence;
             this.count += this.tableList[index].receivedAmount;
+            try {
+                const resp = await changeReceivedAmount(row.id, this.tableList[index].receivedAmount);
+                const res = await resp.json();
+            }catch(e) {
+
+            }
         },
         edit(index, row) {
              this.tableList[index].isEdit = true;
@@ -174,6 +181,7 @@ export default {
                 const resp = await res.json();
                 const id = resp.id;
                 this.$router.push({ path: this.$route.path + '/apply/' + id + '/' + type});
+                // 申请后数据不可编辑
             }catch(e){
                 this.$message.error(e);
             }
