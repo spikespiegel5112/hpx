@@ -21,7 +21,7 @@ export const accountStatementListRequest = (options) =>{
  */
 
 export const enterpriseProjectListRequest = (options) =>{
-    return fetch(`/core/core/api/v1/enterprise/projects/vo`, options.params);
+    return fetch('/core/core/api/v1/enterprise/projects/vo', options.params);
 }
 
 /**

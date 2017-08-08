@@ -25,8 +25,6 @@
 				</el-table-column>
 				<el-table-column label="操作" width='200'>
 					<template scope="scope">
-						<el-button type="text" size="small" @click='editProjet(scope)'>
-						进入项目</el-button>
 						<el-button type="text" size="small" @click="dealWithInvite(scope, 'T')">接受</el-button>
 						<el-button type="text" size="small" @click="dealWithInvite(scope, 'F')">拒绝</el-button>
 					</template>
@@ -168,7 +166,7 @@ export default {
 				params: {
 					eid: this.$store.state.loginInfo.enterpriseId,
 					inviteStatus: 'T',
-					status: 'T'
+					state: 'T'
 				}
 			}
 			options.params = Object.assign(options.params, this.pagination1.params)
@@ -192,9 +190,10 @@ export default {
 				params: {
 					eid: this.$store.state.loginInfo.enterpriseId,
 					inviteStatus: 'I',
-					status: 'T'
+					state: 'F'
 				}
 			}
+			options.params = Object.assign(options.params, this.pagination2.params)
 			enterpriseProjectListRequest(options).then(response => {
 				this.pagination2.total = Number(response.headers.get('x-total-count'))
 				console.log(response);
@@ -340,7 +339,7 @@ export default {
 			})
 		},
 		aaa(value){
-			alert(value)
+			// alert(value)
 		}
 	}
 }

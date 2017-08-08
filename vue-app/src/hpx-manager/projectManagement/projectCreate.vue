@@ -3,8 +3,7 @@
 	<head-top></head-top>
 	<div class="search-criteria-container">
 		<el-row type="flex" class="row-bg">
-			<el-col :span="3">
-			</el-col>
+			<el-col :span="3"></el-col>
 			<el-col :span="14">
 				<el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-ruleForm">
 					<el-form-item label="企业名称" prop="ownerEnterpriseId">
@@ -152,7 +151,7 @@ export default {
 					console.log(this.formData.ownerEnterpriseId)
 				}
 			}
-			alert(typeof this.formData.ownerEnterpriseId)
+			// alert(typeof this.formData.ownerEnterpriseId)
 		},
 		chooseProductType() {
 			this.productCode = this.formData.productCode;
@@ -160,7 +159,6 @@ export default {
 			this.formData.type = '';
 		},
 		getProductEnterpriseType(productCode) {
-
 			let options = {
 				productCode: productCode
 			}
@@ -219,7 +217,7 @@ export default {
 			this.$refs[formName].resetFields();
 		},
 		getEnterpriseId() {
-			alert(this.formData.ownerEnterpriseId)
+			// alert(this.formData.ownerEnterpriseId)
 		}
 	}
 }

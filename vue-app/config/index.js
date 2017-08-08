@@ -31,7 +31,8 @@ module.exports = {
         proxyTable: {
             '/core': {
                 // target: 'http://10.38.42.245:9000',
-                target: 'http://10.38.8.31:9000',
+                target: 'http://10.38.8.90:9000',
+                // target: 'http://10.38.8.45:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/core': ''
@@ -39,7 +40,8 @@ module.exports = {
             },
             '/credit': {
                 // target: 'http://10.38.42.245:9000',
-                target: 'http://10.38.8.85:9003',
+                target: 'http://10.38.8.90:9000',
+                // target: 'http://10.38.8.45:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/credit': '/credit/api/v1'
@@ -47,7 +49,8 @@ module.exports = {
             },
             '/order': {
                 // target: 'http://10.38.42.245:9000',
-                target: 'http://10.38.8.31:9000',
+                target: 'http://10.38.8.90:9000',
+                // target: 'http://10.38.8.45:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/order': '/huaqian/api/v1'
