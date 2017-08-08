@@ -41,7 +41,7 @@
 				<template scope="scope">
 					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
-					<el-button type="text" size="small" @click="deleteProjectFunction(scope)">删除</el-button>
+					<!-- <el-button type="text" size="small" @click="deleteProjectFunction(scope)">删除</el-button> -->
 				</template>
 			</el-table-column>
 		</el-table>

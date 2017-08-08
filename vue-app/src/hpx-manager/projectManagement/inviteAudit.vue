@@ -103,10 +103,12 @@ export default {
 		},
 		getList() {
 			let options = {
-				inviteStatus: 'I',
-				state: 'F'
+				params:{
+					inviteStatus: 'T',
+					state: 'F'
+				}
 			}
-			options = Object.assign(options, this.pagination.params);
+			options = Object.assign(options.params, this.pagination.params);
 			console.log(options);
 			projectsAuditListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'));

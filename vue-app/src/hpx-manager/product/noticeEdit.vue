@@ -99,7 +99,8 @@ export default {
 					trigger: 'blur'
 				}]
 			},
-			// noticeId: null,
+			noticeId: null,
+			operationType:'',
 			publishDirection: [],
 			publishDirectionList: [],
 			newsType: [],
@@ -108,17 +109,17 @@ export default {
 			endTimeString: '``'
 		}
 	},
-	computed: {
-		noticeId() {
-			let originNoticeId = this.$route.params.noticeId;
-			originNoticeId = originNoticeId.split('&')[1];
-			return originNoticeId
-		},
-		operationType() {
-			let operationType = this.$route.params.noticeId.split('&')[0];
-			return operationType
-		}
-	},
+	// computed: {
+	// 	noticeId() {
+	// 		let originNoticeId = this.$route.params.noticeId;
+	// 		originNoticeId = originNoticeId.split('&')[1];
+	// 		return originNoticeId
+	// 	},
+	// 	operationType() {
+	// 		let operationType = this.$route.params.noticeId.split('&')[0];
+	// 		return operationType
+	// 	}
+	// },
 	// mounted() {
 	// 	alert(this.operationType)
 	// 	this.getPublishDirection();
@@ -126,11 +127,19 @@ export default {
 	// 	this.getNoticeContent();
 	// },
 	activited() {
+
+		alert('dsds')
+		this.getRouteParams();
 		this.getPublishDirection();
 		this.getNewsType();
 		this.getNoticeContent();
 	},
 	methods: {
+		getRouteParams() {
+			this.creator = this.$store.state.loginInfo.id;
+			this.noticeId = this.$route.params.noticeId.split('&')[1];
+			this.operationType = this.$route.params.operationType.split('&')[0];
+		},
 		publishNotice() {
 			//测试数据
 			let body = {

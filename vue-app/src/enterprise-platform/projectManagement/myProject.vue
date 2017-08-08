@@ -47,7 +47,7 @@
 			</el-form-item>
 			<el-form-item label="企业类型" prop='enterpriseRole'>
 				<el-select v-model="inviteData.enterpriseRole" placeholder="请选择" @change='aaa'>
-					<el-option v-for="item in roleList" :key='item.code' :label="item.name" :value="item.name">
+					<el-option v-for="item in roleList" :key='item.code' :label="item.name" :value="item.code">
 					</el-option>
 				</el-select>
 			</el-form-item>
