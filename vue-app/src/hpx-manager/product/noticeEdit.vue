@@ -109,32 +109,28 @@ export default {
 			endTimeString: '``'
 		}
 	},
-	// computed: {
-	// 	noticeId() {
-	// 		let originNoticeId = this.$route.params.noticeId;
-	// 		originNoticeId = originNoticeId.split('&')[1];
-	// 		return originNoticeId
-	// 	},
-	// 	operationType() {
-	// 		let operationType = this.$route.params.noticeId.split('&')[0];
-	// 		return operationType
-	// 	}
-	// },
-	mounted() {
-		this.getRouteParams();
-		this.getPublishDirection();
-		this.getNewsType();
-		this.getNoticeContent();
-	},
-	// activited() {
+	// mounted() {
 	// 	this.getRouteParams();
 	// 	this.getPublishDirection();
 	// 	this.getNewsType();
 	// 	this.getNoticeContent();
 	// },
+	activated() {
+		// alert(this.$store.state.loginInfo.id)
+		this.getRouteParams();
+		this.getPublishDirection();
+		this.getNewsType();
+		this.getNoticeContent();
+	},
+	deactivated(){
+		this.noticeId='';
+		this.operationType='';
+		this.$refs['formData'].resetFields();
+		this.formData.content='';
+	},
 	methods: {
 		getRouteParams() {
-			this.formData.creator = this.$store.state.loginInfo.id;
+			this.formData.creator = this.$store.state.loginInfo.name;
 
 			this.noticeId = this.$route.params.noticeId.split('&')[1];
 

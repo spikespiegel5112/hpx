@@ -4,12 +4,12 @@
 			<sider-bar index="/manager"></sider-bar>
 		</div>
 		<div class="router-container" style="height: 100%;overflow: auto;">
-			<keep-alive :exclude='excludeComponents'>
-				<router-view></router-view>
-			</keep-alive>
-			<!-- <keep-alive>
+			<!-- <keep-alive :exclude='excludeComponents'>
 				<router-view></router-view>
 			</keep-alive> -->
+			<keep-alive>
+				<router-view></router-view>
+			</keep-alive>
 			<!-- <router-view> v-if='$route.meta.useKeepAlive'</router-view> -->
 		</div>
   	</div>
