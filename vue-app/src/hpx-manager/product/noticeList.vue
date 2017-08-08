@@ -61,12 +61,10 @@
 <script>
 import headTop from '@/components/headTop'
 import {
-	noticeRequest,
-} from '@/api/getData'
-import {
-	publishNoticeRequest,
-	modifyNoticeRequest,
-	deleteNoticeRequest
+	noticeListRequest,
+	publishnoticeListRequest,
+	modifynoticeListRequest,
+	deletenoticeListRequest
 } from '@/api/noticeApi'
 import {
 	getDictionaryByCodeRequest
@@ -146,7 +144,7 @@ export default {
 			}
 			options.params = Object.assign(options.params, this.pagination.params, this.queryParams);
 			console.log(options);
-			noticeRequest(options).then(response => {
+			noticeListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
@@ -201,7 +199,7 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
-				deleteNoticeRequest(scope.row.id).then(() => {
+				deletenoticeListRequest(scope.row.id).then(() => {
 					this.tableList = [];
 					this.getList();
 					this.deleteNoticeFlag = false;
@@ -232,7 +230,7 @@ export default {
 					}
 				}
 				console.log(options);
-				modifyNoticeRequest(options).then(response => {
+				modifynoticeListRequest(options).then(response => {
 					console.log(response);
 					response.json().then(result => {
 						console.log(result);

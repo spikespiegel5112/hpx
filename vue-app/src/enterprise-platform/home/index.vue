@@ -71,6 +71,22 @@
                     </ul>
                 </el-card>
             </el-col>
+            <el-col :span="8">
+                <el-card>
+                    <div slot="header" class="card-header">
+                        <span>新闻公告</span>
+                        <el-button type="text" class="p-home-action">
+                            <router-link :to="{name:'noticeList'}">详细信息</router-link>
+                        </el-button>
+                    </div>
+                    <ul>
+                        <li v-for="elem in noticeList" :key="elem.key">
+                            <!-- <a class='common_carditemtitle_item' href="javascript:;">{{elem.title}}</a> -->
+                            <router-link class='common_carditemtitle_item' :to="{ name: 'noticeEdit', params: { noticeId: 'review&'+elem.id}}">{{elem.title}}</router-link>
+                        </li>
+                    </ul>
+                </el-card>
+            </el-col>
         </el-row>
     </div>
 </template>
@@ -78,6 +94,7 @@
 <script>
 import headTop from '@/components/headTop';
 import { projectsAuditListRequest } from '@/api/getData';
+import {noticeListRequest} from '@/api/noticeApi';
 import { mapState , mapActions } from 'vuex'
 export default {
     components : {
@@ -85,10 +102,12 @@ export default {
     },
     data(){
         return {
-            projectList : []
-        }    
+            projectList : [],
+            noticeList:[]
+        }
     },
     activated(){
+        this.getNoticeList();
         this.initProjectList()
     },
     computed : {
@@ -119,6 +138,21 @@ export default {
             }else{
                 this.$message.error('fwssb')
             }
+        },
+        getNoticeList(){
+            let options={
+                params:{
+                    size:7,
+                    page:1
+                }
+            }
+            noticeListRequest(options).then(response=>{
+
+                response.json().then(result=>{
+                    console.log(result);
+                    this.noticeList=result;
+                })
+            })
         }
     }
 }
@@ -127,7 +161,7 @@ export default {
 <style lang="less" scoped>
     .paltform-home-container>div{
         margin-top:40px;
-        
+
     }
     .paltform-home-container .el-card{
         min-height:250px;

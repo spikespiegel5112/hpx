@@ -293,10 +293,10 @@ export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterpr
 
 // export const projectsAuditList = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);
 
-/**
- * 获取新闻公告列表
- */
 
-export const noticeRequest = options => {
+/**
+ * 公告列表List
+ */
+export const noticeListRequest = options => {
     return fetch(`/core/core/api/v1/notice`, options.params);
 }

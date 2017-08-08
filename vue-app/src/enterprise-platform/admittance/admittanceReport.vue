@@ -63,11 +63,9 @@
 import headTop from '../../components/headTop'
 import myPagination from '@/components/myPagination'
 import {
-	noticeRequest,
-} from '@/api/getData'
-import {
-	publishNoticeRequest,
-	deleteNoticeRequest
+	noticeListRequest,
+	publishnoticeListRequest,
+	deletenoticeListRequest
 } from '@/api/noticeApi'
 import {
 	mapState
@@ -145,7 +143,7 @@ export default {
 			console.log(pagination);
 			const params = Object.assign({}, this.query, pagination);
 			console.log(params)
-			const resp = await noticeRequest(params);
+			const resp = await noticeListRequest(params);
 			const res = await resp.json();
 			const total = resp.headers.get('x-total-count')
 			this.tableList = [...res];
@@ -188,7 +186,7 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
-				deleteNoticeRequest(scope.row.id).then(() => {
+				deletenoticeListRequest(scope.row.id).then(() => {
 					this.tableList = [];
 					this.getList();
 					this.deleteNoticeFlag = false;

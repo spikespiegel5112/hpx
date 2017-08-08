@@ -35,9 +35,9 @@
 
 <script type="text/javascript">
 import {
-	publishNoticeRequest,
-	reviewNoticeRequest,
-	modifyNoticeRequest
+	publishnoticeListRequest,
+	reviewnoticeListRequest,
+	modifynoticeListRequest
 } from '@/api/noticeApi'
 import {
 	getDictionaryByCodeRequest
@@ -168,7 +168,7 @@ export default {
 
 					this.mergePublishDirection();
 					this.convertDateObjToDateString();
-					publishNoticeRequest(this.formData);
+					publishnoticeListRequest(this.formData);
 					this.$router.push({
 						name: 'noticeList'
 					})
@@ -188,7 +188,7 @@ export default {
 					// alert('submit!');
 					this.mergePublishDirection();
 					this.convertDateObjToDateString();
-					modifyNoticeRequest({
+					modifynoticeListRequest({
 						id: this.noticeId,
 						body: this.formData
 					})
@@ -203,7 +203,7 @@ export default {
 		},
 		getNoticeContent() {
 			if (this.noticeId != 0) {
-				reviewNoticeRequest({
+				reviewnoticeListRequest({
 					id: this.noticeId
 				}).then(response => {
 					response.json().then(result => {

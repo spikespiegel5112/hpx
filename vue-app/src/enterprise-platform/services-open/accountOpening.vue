@@ -142,7 +142,7 @@ export default {
 
 					this.mergePublishDirection();
 					this.convertDateObjToDateString();
-					publishNoticeRequest(this.formData);
+					publishnoticeListRequest(this.formData);
 					this.$router.push({
 						name: 'noticeList'
 					})
