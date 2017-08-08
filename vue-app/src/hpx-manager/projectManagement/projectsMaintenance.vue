@@ -16,6 +16,9 @@
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
 					<el-form-item>
+						<el-button type="primary" icon="resetTable" @click="resetTable">重置</el-button>
+					</el-form-item>
+					<el-form-item>
 						<el-button icon="plus" type="primary" @click='createProject'>新增</el-button>
 					</el-form-item>
 				</el-col>
@@ -39,7 +42,6 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-					<!-- <el-button type="text" size="small" @click="check(scope.$index, scope.row)">修改</el-button> -->
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
 					<!-- <el-button type="text" size="small" @click="deleteProjectFunction(scope)">删除</el-button> -->
 				</template>
@@ -68,7 +70,7 @@
 				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
 			</el-form-item>
 			<el-form-item label="项目终止时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime"></el-date-picker>
+				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime" @change='aaa'></el-date-picker>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -121,18 +123,18 @@ export default {
 				prop: 'remark',
 				sortable: true,
 				minWidth: 200
-			}],
-			expand: [{
+			}, {
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
-				formatter: (row, column) => moment(column.createTime).format(dateFormat)
+				formatter: (row, column) => moment(column.startTime).format(dateFormat)
 			}, {
 				label: '项目终止时间',
 				prop: 'endTime',
 				sortable: true,
 				formatter: (row, column) => moment(column.endTime).format(dateFormat)
-			}, {
+			}],
+			expand: [{
 				label: '建立人',
 				prop: 'creator',
 				sortable: true,
@@ -171,9 +173,9 @@ export default {
 			//登录信息
 			userId: this.$store.state.loginInfo.id,
 			enterpriseId:this.enterpriseId,
-			//search params
+			//搜索
 			query: {
-				eid: this.$store.state.loginInfo.enterpriseId
+				name:''
 			},
 			activatedOptions: [{
 				value: '激活',
@@ -227,6 +229,33 @@ export default {
 		}
 	},
 	methods: {
+		initData() {
+			this.listLoading = true;
+			try {
+				this.getList();
+				this.listLoading = false;
+				if (!this.tableList.length) {
+					this.emptyText = "暂无数据";
+				}
+			} catch (e) {
+				this.emptyText = "获取数据失败";
+				this.listLoading = false;
+			}
+		},
+		getList() {
+			let options = {
+				params: {}
+			}
+			options.params = Object.assign(this.pagination.params,this.query);
+			console.log(options);
+			getProjectList(options).then(response => {
+				this.pagination.total = Number(response.headers.get('x-total-count'))
+				response.json().then(result => {
+					console.log(result);
+					this.tableList = result
+				})
+			})
+		},
 		editProjet(scope) {
 			this.editProjetEid = scope.row.id;
 			this.dialogFormVisible = true;
@@ -277,53 +306,19 @@ export default {
 				});
 			});
 		},
-		initData() {
-			this.listLoading = true;
-			try {
-				this.getList();
-				this.listLoading = false;
-				if (!this.tableList.length) {
-					this.emptyText = "暂无数据";
-				}
-			} catch (e) {
-				this.emptyText = "获取数据失败";
-				this.listLoading = false;
-			}
-		},
-		getList() {
-			let options = {
-				params: {}
-			}
-			options.params = this.pagination.params;
-			console.log(options);
-			getProjectList(options).then(response => {
-				this.pagination.total = Number(response.headers.get('x-total-count'))
-				response.json().then(result => {
-					console.log(result);
-					this.tableList = result
-				})
-			})
+		search(){
+			this.getList();
 		},
 		flipPage(pageIndex) {
 			this.pagination.params.page = pageIndex;
 			this.getList();
 		},
-		async search() {
-			try {
-				this.getList();
-			} catch (e) {
-
-			}
+		resetTable() {
+			this.query.name='';
+			this.getList();
 		},
-		resetForm(formName) {
-			this.$refs[formName].resetFields();
-		},
-		check(index, row) {
-			console.log(this.$route.path)
-			this.$router.push({
-				path: this.$route.path + '/detail/' + row.id
-			})
-			console.log(index, row)
+		aaa(value){
+			console.log(value)
 		}
 	},
 }

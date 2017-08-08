@@ -64,7 +64,7 @@
                             <router-link :to="`/manager/etpde/${scope.row.id}`">查看</router-link>
                         </el-button>
                         <el-button type="text" size="small" @click="del(scope.row.id,'T')" >通过</el-button>
-                        <el-button type="text" size="small" @click="del(scope.row.id, 'F')">拒绝</el-button>
+                        <el-button type="text" size="small" @click="del(scope.row.id, 'E')">拒绝</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -77,7 +77,7 @@
                 <div style="margin:20px 0;">
                     <el-tag type="primary">请确定企业资料审核通过,在下方填写审核说明</el-tag>
                 </div>
-                <el-form-item label="输入金额" prop="amount">
+                <el-form-item v-show="auditState === 'T'" label="输入金额" prop="amount">
 					<el-input v-model="editeData.amount" auto-complete="off"></el-input>
 				</el-form-item>
                 <el-form-item label="审核说明" prop="nodes">
@@ -144,7 +144,6 @@
                     name : '',
                     activated : '',
                     auditState : 'A',
-                    amount : 0,
                 },
                 activatedOptions : [
                     {
@@ -163,6 +162,7 @@
                 editeModalVisible : false,
                 editeData : {
                     nodes : '',
+                    amount : 0,
                 },
                 rowId : '',
                 rowType : 'T',
@@ -228,6 +228,9 @@
                 this.auditState = type
             },
             delSubmit (){
+                if(this.auditState === 'E'){
+                    this.editeData.amount = 0;
+                };
                 this.$refs['editeData'].validate( async (valid) => {
                         if(valid){
                             try{

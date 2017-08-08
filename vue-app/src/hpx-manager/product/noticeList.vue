@@ -42,7 +42,7 @@
 			</el-table-column>
 			<el-table-column align="center" label="操作">
 				<template scope="scope">
-                    <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
+                    <el-button type="text" size="small" @click="reviewNotice(scope)">查看</el-button>
                     <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
 					<el-button v-if="scope.row.istop=='1'"  type="text" size="small" @click="setTop(scope)">置顶</el-button>
 					<el-button v-else-if="scope.row.istop=='0'"  type="text" size="small" @click="setTop(scope)">取消置顶</el-button>

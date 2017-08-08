@@ -109,14 +109,7 @@ export default {
 			endTimeString: '``'
 		}
 	},
-	// mounted() {
-	// 	this.getRouteParams();
-	// 	this.getPublishDirection();
-	// 	this.getNewsType();
-	// 	this.getNoticeContent();
-	// },
 	activated() {
-		// alert(this.$store.state.loginInfo.id)
 		this.getRouteParams();
 		this.getPublishDirection();
 		this.getNewsType();
