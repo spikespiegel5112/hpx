@@ -48,7 +48,7 @@
 			<el-table-column label="操作">
 				<template scope="scope">
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
-					<!-- <el-button type="text" size="small" @click="deleteProjectFunction(scope)">删除</el-button> -->
+					<el-button type="text" size="small" @click="projectConfiguration(scope)">配置</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -60,7 +60,7 @@
 		</section>
 	</section>
 	<!--编辑界面-->
-	<el-dialog title="修改项目" v-model="dialogFormVisible" :close-on-click-modal="false">
+	<el-dialog title="修改项目" v-model="editProjectDialogFlag" :close-on-click-modal="false">
 		<el-form :model="editData" label-width="120px" :rules="editRules" ref="editData">
 			<el-form-item label="产品类型" prop="productCode">
 				<el-input v-model="editData.productCode" auto-complete="off" readonly></el-input>
@@ -79,7 +79,31 @@
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="dialogFormVisible = false">取消</el-button>
+			<el-button @click.native="editProjectDialogFlag = false">取消</el-button>
+			<el-button type="primary" @click.native="editProjetSubmit">提交</el-button>
+		</div>
+	</el-dialog>
+	<!--项目配置-->
+	<el-dialog title="项目配置" v-model="editProjectDialogFlag" :close-on-click-modal="false">
+		<el-form :model="editData" label-width="120px" :rules="editRules" ref="editData">
+			<el-form-item label="产品类型" prop="productCode">
+				<el-input v-model="editData.productCode" auto-complete="off" readonly></el-input>
+			</el-form-item>
+			<el-form-item label="项目名称" prop="name">
+				<el-input v-model="editData.name" auto-complete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="项目说明">
+				<el-input v-model="editData.remark"></el-input>
+			</el-form-item>
+			<el-form-item label="项目开始时间">
+				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
+			</el-form-item>
+			<el-form-item label="项目终止时间">
+				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime" @change='aaa'></el-date-picker>
+			</el-form-item>
+		</el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button @click.native="editProjectDialogFlag = false">取消</el-button>
 			<el-button type="primary" @click.native="editProjetSubmit">提交</el-button>
 		</div>
 	</el-dialog>
@@ -133,11 +157,6 @@ export default {
 				prop: 'endTime',
 				sortable: true,
 				formatter: (row, column) => moment(column.endTime).format(dateFormat)
-			}, {
-				label: '记录时间',
-				prop: 'createTime',
-				sortable: true,
-				formatter: (row, column) => moment(column.createTime).format(dateFormat)
 			}, {
 				label: '最后更新',
 				prop: 'modifiedTime',
@@ -194,8 +213,8 @@ export default {
 			}],
 			//搜索条件的个数
 			criteriaNum: 3,
-			//模态框
-			dialogFormVisible: false,
+			//编辑项目模态框
+			editProjectDialogFlag: false,
 			editProjetEid: 0,
 			editData: {
 				productCode: '',
@@ -218,6 +237,16 @@ export default {
 					message: '请输入项目名称',
 					trigger: 'blur'
 				}]
+			},
+			//配置项目模态框
+			editProjectDialogFlag: false,
+			editProjetEid: 0,
+			editData: {
+				productCode: '',
+				name: '',
+				remark: '',
+				startTime: '',
+				endTime: ''
 			}
 		}
 	},
@@ -260,7 +289,7 @@ export default {
 		},
 		editProjet(scope) {
 			this.editProjetEid = scope.row.id;
-			this.dialogFormVisible = true;
+			this.editProjectDialogFlag = true;
 			this.editData.productCode = scope.row.productCode;
 			this.editData = {
 				productCode: scope.row.productCode,
@@ -275,7 +304,7 @@ export default {
 				if (valid) {
 					try {
 						const response = await modifyProjectInfo(this.editProjetEid, this.editData);
-						this.dialogFormVisible = false;
+						this.editProjectDialogFlag = false;
 						this.initData();
 					} catch (e) {
 						this.$message.error(e)
@@ -287,6 +316,9 @@ export default {
 			this.$router.push({
 				name: 'projectCreate'
 			})
+		},
+		projectConfiguration(){
+
 		},
 		deleteProjectFunction(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
