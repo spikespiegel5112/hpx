@@ -42,7 +42,7 @@
 			</el-table-column>
 			<el-table-column label="状态" prop="enterpriseStatus">
 				<template scope="scope">
-					<el-tag :type="projectState(scope)">{{projectState(scope)}}</el-tag>
+					<el-tag :type="projectStateColor(scope)">{{projectState(scope)}}</el-tag>
 				</template>
 			</el-table-column>
 			<el-table-column label="操作">
@@ -124,11 +124,6 @@ export default {
 				prop: 'name',
 				sortable: true,
 			}, {
-				label: '项目说明',
-				prop: 'remark',
-				sortable: true,
-				minWidth: 200
-			}, {
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
@@ -139,28 +134,29 @@ export default {
 				sortable: true,
 				formatter: (row, column) => moment(column.endTime).format(dateFormat)
 			}, {
-				label: '项目状态',
-				prop: 'state',
+				label: '记录时间',
+				prop: 'createTime',
 				sortable: true,
+				formatter: (row, column) => moment(column.createTime).format(dateFormat)
+			}, {
+				label: '最后更新',
+				prop: 'modifiedTime',
+				sortable: true,
+				formatter: (row, column) => moment(column.modifiedTime).format(dateFormat)
 			}],
 			expand: [{
 				label: '建立人',
 				prop: 'creator',
 				sortable: true,
 			}, {
-				label: '记录时间',
-				prop: 'createTime',
+				label: '项目说明',
+				prop: 'remark',
 				sortable: true,
-				formatter: (row, column) => moment(column.createTime).format(dateFormat)
+				minWidth: 200
 			}, {
 				label: '更新人',
 				prop: 'modifiedBy',
 				sortable: true,
-			}, {
-				label: '最后更新',
-				prop: 'modifiedTime',
-				sortable: true,
-				formatter: (row, column) => moment(column.modifiedTime).format(dateFormat)
 			}],
 			//table
 			tableList: [],
@@ -323,15 +319,35 @@ export default {
 			this.query.name = '';
 			this.getList();
 		},
-		projectState(scope) {
-			let state={};
+		projectStateColor(scope){
+			let stateColor;
 			switch (scope.row.state) {
 				case 'B':
-				state = '准备中';
+					stateColor = 'blue';
 					break;
 				case 'R':
-					state.name = '进行中';
-					state.color = 'success';
+					stateColor = 'Success';
+					break;
+				case 'E':
+					stateColor = 'Black';
+					break;
+				case 'P':
+					stateColor = 'Warning';
+					break;
+				case 'F':
+					stateColor = 'danger';
+					break;
+			}
+			return stateColor;
+		},
+		projectState(scope) {
+			let state;
+			switch (scope.row.state) {
+				case 'B':
+					state = '准备中';
+					break;
+				case 'R':
+					state = '进行中';
 					break;
 				case 'E':
 					state = '正常结束';
