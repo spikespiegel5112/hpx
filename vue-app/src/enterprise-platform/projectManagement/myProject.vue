@@ -142,16 +142,16 @@ export default {
 				prop: 'startTime',
 				sortable: true,
 				minWidth: 60,
-				formatter: (row, column) =>{
-					return row.startTime!=null?moment(row.startTime).format(dateFormat):''
+				formatter: (row, column) => {
+					return row.startTime != null ? moment(row.startTime).format(dateFormat) : ''
 				}
 			}, {
 				label: '项目结束日',
 				prop: 'endTime',
 				sortable: true,
 				minWidth: 60,
-				formatter: (row, column) =>{
-					return row.endTime!=null?moment(row.endTime).format(dateFormat):''
+				formatter: (row, column) => {
+					return row.endTime != null ? moment(row.endTime).format(dateFormat) : ''
 				}
 			}],
 		}
@@ -342,7 +342,7 @@ export default {
 				}
 			})
 		},
-		aaa(value){
+		aaa(value) {
 			// alert(value)
 		}
 	}

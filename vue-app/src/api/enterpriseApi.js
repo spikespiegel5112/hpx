@@ -62,3 +62,15 @@ export const veyiterpriseAccessRequest = options => {
 ** 平台项目列表, 支持分页
 */
 export const enterpriseProjectListRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.inviteStatus}/state/${options.state}`);
+
+/*
+** 绑定企业项目和角色
+*/
+export const bindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.eid}/roles${options.pid}`, options.body, 'put');
+
+/*
+** 取得指企业角色信息
+*/
+
+
+export const bindProjectRequest = options => fetch(`/api/v1/enterpriseProjects/{pid}`, options.params);

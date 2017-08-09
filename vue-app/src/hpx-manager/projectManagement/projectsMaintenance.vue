@@ -48,7 +48,7 @@
 			<el-table-column label="操作">
 				<template scope="scope">
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
-					<el-button type="text" size="small" @click="projectConfiguration(scope)">配置</el-button>
+					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -84,27 +84,18 @@
 		</div>
 	</el-dialog>
 	<!--项目配置-->
-	<el-dialog title="项目配置" v-model="editProjectDialogFlag" :close-on-click-modal="false">
+	<el-dialog title="项目配置" v-model="configProjectFlag" :close-on-click-modal="false">
 		<el-form :model="editData" label-width="120px" :rules="editRules" ref="editData">
-			<el-form-item label="产品类型" prop="productCode">
-				<el-input v-model="editData.productCode" auto-complete="off" readonly></el-input>
-			</el-form-item>
-			<el-form-item label="项目名称" prop="name">
-				<el-input v-model="editData.name" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="项目说明">
-				<el-input v-model="editData.remark"></el-input>
-			</el-form-item>
-			<el-form-item label="项目开始时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
-			</el-form-item>
-			<el-form-item label="项目终止时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime" @change='aaa'></el-date-picker>
+			<el-form-item label="项目角色类型" prop="productCode">
+				<el-select v-model="configProjectData.role">
+					<el-option v-for="item in configProjectData" :value="item.name" :key="item.name" :label="item.name">
+					</el-option>
+				</el-select>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="editProjectDialogFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="editProjetSubmit">提交</el-button>
+			<el-button @click.native="configProjectFlag = false">取消</el-button>
+			<el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
 		</div>
 	</el-dialog>
 </div>
@@ -116,6 +107,11 @@ import moment from 'moment'
 import {
 	getProjectList
 } from '@/api/getData'
+
+import {
+	enterpriseRolesListRequest,
+	bindProjectRequest
+} from '@/api/enterpriseApi'
 import {
 	modifyProjectInfo,
 	deleteProject
@@ -150,17 +146,23 @@ export default {
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
-				formatter: (row, column) => moment(column.startTime).format(dateFormat)
+				formatter: (row, column) => {
+					return row.startTime != null ? moment(row.startTime).format(dateFormat) : ''
+				}
 			}, {
 				label: '项目终止时间',
 				prop: 'endTime',
 				sortable: true,
-				formatter: (row, column) => moment(column.endTime).format(dateFormat)
+				formatter: (row, column) => {
+					return row.endTime != null ? moment(row.endTime).format(dateFormat) : ''
+				}
 			}, {
 				label: '最后更新',
 				prop: 'modifiedTime',
 				sortable: true,
-				formatter: (row, column) => moment(column.modifiedTime).format(dateFormat)
+				formatter: (row, column) => {
+					return row.endTime != null ? moment(row.endTime).format(dateFormat) : ''
+				}
 			}],
 			expand: [{
 				label: '建立人',
@@ -180,7 +182,6 @@ export default {
 			tableList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
-			// stateArray:[],
 			//分页信息
 			pagination: {
 				params: {
@@ -189,27 +190,24 @@ export default {
 				},
 				total: 0
 			},
-			//登录信息
-			userId: this.$store.state.loginInfo.id,
-			enterpriseId: this.enterpriseId,
 			//搜索
 			query: {
 				name: ''
 			},
-			activatedOptions: [{
-				value: '激活',
-				activated: 'T'
-			}, {
-				value: '未激活',
-				activated: 'F'
-			}],
-			auditStateOptions: [{
-				value: '已认证',
-				auditState: 'T'
-			}, {
-				value: '未认证',
-				auditState: 'F'
-			}],
+			// activatedOptions: [{
+			// 	value: '激活',
+			// 	activated: 'T'
+			// }, {
+			// 	value: '未激活',
+			// 	activated: 'F'
+			// }],
+			// auditStateOptions: [{
+			// 	value: '已认证',
+			// 	auditState: 'T'
+			// }, {
+			// 	value: '未认证',
+			// 	auditState: 'F'
+			// }],
 			//搜索条件的个数
 			criteriaNum: 3,
 			//编辑项目模态框
@@ -238,15 +236,28 @@ export default {
 				}]
 			},
 			//配置项目模态框
-			editProjectDialogFlag: false,
+			configProjectFlag: false,
 			editProjetEid: 0,
-			editData: {
-				productCode: '',
-				name: '',
-				remark: '',
-				startTime: '',
-				endTime: ''
-			}
+			configProjectData: {
+				eid: '',
+				epid: '',
+				role: '',
+			},
+			configProjectRules: {
+				productCode: [{
+					required: true
+				}],
+				createTime: [{
+					required: true,
+					message: '请输入项目创建时间',
+					trigger: 'blur'
+				}],
+				name: [{
+					required: true,
+					message: '请输入项目名称',
+					trigger: 'blur'
+				}]
+			},
 		}
 	},
 	activated() {
@@ -316,8 +327,39 @@ export default {
 				name: 'projectCreate'
 			})
 		},
-		projectConfiguration(){
+		configProject(scope) {
+			alert(scope.row)
+			// this.configProjectData.eid=scope.row.
+			let options = {
+				enterpriseId: scope.row.ownerEnterpriseId
+			}
+			enterpriseRolesListRequest()
+			this.configProjectFlag = true
+		},
+		configProjectSubmit(){
+			this.$refs['configProjectData'].validate(async(valid) => {
+				if (valid) {
+					try {
+						let options={
+							eid:'',
+							epid:'',
+							body:{
+								role:''
+							}
+						}
+						bindProjectRequest(options).then(response=>{
+							response.json().then(result=>{
+								console.log(result);
+								this.configProjectFlag = false;
+							})
+						})
 
+						this.initData();
+					} catch (e) {
+						this.$message.error(e)
+					}
+				}
+			})
 		},
 		deleteProjectFunction(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
@@ -350,7 +392,7 @@ export default {
 			this.query.name = '';
 			this.getList();
 		},
-		projectStateColor(scope){
+		projectStateColor(scope) {
 			let stateColor;
 			switch (scope.row.state) {
 				case 'B':
