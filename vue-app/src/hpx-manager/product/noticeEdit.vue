@@ -1,6 +1,6 @@
 <template>
 <div class='fillcontain'>
-	<commonDetailTitle routerName='noticeList' title='编辑新闻公告'></commonDetailTitle>
+	<commonDetailTitle routerName='noticeList' :title="title"></commonDetailTitle>
 	<el-form :model="formData" :rules="rules" ref="formData" label-width="80px">
 		<el-form-item label="标题" prop='title'>
 			<el-input v-model="formData.title"></el-input>
@@ -106,7 +106,8 @@ export default {
 			newsType: [],
 			description: '',
 			notice: '',
-			endTimeString: '``'
+			endTimeString: '``',
+			title:''
 		}
 	},
 	activated() {
@@ -114,6 +115,7 @@ export default {
 		this.getPublishDirection();
 		this.getNewsType();
 		this.getNoticeContent();
+		this.getTitle();
 	},
 	deactivated(){
 		this.noticeId='';
@@ -239,7 +241,13 @@ export default {
 				})
 			})
 		},
-
+		getTitle(){
+			if (this.operationType=='review') {
+				this.title='查看新闻公告';
+			}else if (this.operationType=='modify') {
+				this.title='编辑新闻公告';
+			}
+		}
 	}
 }
 </script>

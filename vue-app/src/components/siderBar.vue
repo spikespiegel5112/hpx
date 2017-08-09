@@ -75,7 +75,7 @@ export default {
 					callback: action => {
 						this.$router.push({path:'/'})
 					}
-				});		
+				});
 			}
 		})()
 	},
