@@ -119,6 +119,11 @@ export const auithcertification = (id, type, nodes,amount) => fetch(`/core/core/
 export const servicesList = (params) => fetch(`/core` + `/core/api/v1/vEnterpriseServiceApplication`, params)
 
 /*
+ ** 获取 增值服务申请记录列表
+ */
+export const applyRecordList = (params) => fetch(`/core` + `/core/api/v1/vEnterpriseServiceApplication`, params)
+
+/*
  **  增值服务审核
  */
 export const servicesAidth = (id, type) => fetch(`/core` + `/core/api/v1/serviceApplication/${id}/approval?approval=${type}`, {}, 'patch')

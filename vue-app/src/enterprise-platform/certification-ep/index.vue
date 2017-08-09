@@ -1,7 +1,7 @@
 <template>
     <div>
-        <header-top style="position:relative;" v-if="!accStatusInfo.authenticateStatus || accStatusInfo.authenticateStatus !== 'P'"></header-top>
-        <head-top v-if="accStatusInfo.authenticateStatus === 'P'"></head-top> 
+        <header-top style="position:relative;" v-show="!accStatusInfo.authenticateStatus || accStatusInfo.authenticateStatus !== 'P'"></header-top>
+        <head-top v-show="accStatusInfo.authenticateStatus === 'P'"></head-top> 
         <section class="up-section">
             <div class="cer-steps">  
                 <cer-steps></cer-steps>
@@ -81,7 +81,7 @@
 
                 this.$confirm('你还未完成企业认证,请完成', '提示', {
                     confirmButtonText: '确定',
-                    // cancelButtonText: '取消',
+                    cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
 
@@ -95,7 +95,7 @@
             ...mapActions(['getAccStatusInfo']),
         },
         async beforeRouteEnter(to,from,next){
-            if(!store.accStatusInfo){
+            if(!store.accStatusInfo && to.path === '/etpauth'){
                 const resp = await store.dispatch('getAccStatusInfo');
                 if(store.state.accStatusInfo.authenticateStatus && store.state.accStatusInfo.authenticateStatus === 'P'){
                     next({path:'/platform'})

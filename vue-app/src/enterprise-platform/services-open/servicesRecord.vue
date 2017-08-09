@@ -1,16 +1,10 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
-
         <!--  搜索条件  -->
         <section class='search-criteria-container'>
 			<el-form :inline="true" :model="query"  ref="query">
                 <el-row>
-                    <el-col :span="6">
-                        <el-form-item prop="enterpriseName">
-                            <el-input v-model="query.enterpriseName" size="large" placeholder="企业名称"></el-input>
-                        </el-form-item>
-                    </el-col>
                     <el-col :span="6">
                         <el-form-item prop="approval">
                             <el-select v-model="query.approval" size="large" placeholder="审批状态">
@@ -63,8 +57,6 @@
                     <template scope="scope">
                         <el-button type="text" size="small" @click="check(scope.$index, scope.row)">查看申请说明</el-button>
                         <el-button type="text" size="small" @click="load(scope.row.code)">下载授权书</el-button>
-                        <el-button type="text" size="small" :disabled="scope.row.approval === '0' ? false : true" @click="examine(scope.row.id,scope.$index,'P')" >通过</el-button>
-                        <el-button type="text" size="small" :disabled="scope.row.approval === '0' ? false : true" @click="examine(scope.row.id,scope.$index,'R')">拒绝</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -75,7 +67,7 @@
                 :before-close="handleClose">
                 <span>{{applyContext.length > 0 ? applyContext : '无'}}</span>
             </el-dialog>
-            <section class="main-pagination">
+            <section class="main-pagination" >
                 <my-Pagination :total="total" @pageChange="pageChange">
                 </my-Pagination>
             </section>
@@ -86,7 +78,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { servicesList , auithcertification ,servicesAidth} from '@/api/coreApi'
+    import { applyRecordList , auithcertification ,servicesAidth} from '@/api/coreApi'
     import { loadUrl } from '@/api/publicApi'
     import { mapState } from 'vuex'
     export default {
@@ -94,9 +86,6 @@
             return {
                 //table columns
                 columns : [{
-                    label : '企业名称',
-                    prop  : 'enterpriseName',
-                    },{
                     label : '服务类型',
                     prop  : 'code',
                     formatter : (row,column) => this.serviceType(row.code,'code')
@@ -175,8 +164,8 @@
                 this.listLoading = true; 
                 try{
                     this.listLoading = false;
-                    const params = Object.assign({},this.query,this.pagination);
-                    const resp = await servicesList(params);
+                    const params = Object.assign({}, this.query, this.pagination);
+                    const resp = await applyRecordList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];
@@ -239,7 +228,6 @@
                     view = 'WTF'
                 }
                 }
-
                 return view;
             },
             load(id){
@@ -260,34 +248,6 @@
                 this.dialogVisible = true;
                 this.applyContext = row.context;
             },
-            examine (id,index,type) {
-                this.$confirm('确定给该企业开通此服务?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then((data) => {
-                    (async () => {
-                        try{
-                            console.log(id,index,type)
-                            const resp = await servicesAidth(id,type);
-                            if(resp.status === 200){
-                                this.$message({
-                                    type: 'success',
-                                    message: '操作成功!'
-                                });
-                                this.tableList[index].approval = type
-                            }
-                        }catch(e){
-                            this.$message.error(e);
-                        }
-                    })()
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消操作'
-                    });          
-                })
-            }
         },
         //n路由离开即提示消失
         beforeRouteLeave(to,from,next){

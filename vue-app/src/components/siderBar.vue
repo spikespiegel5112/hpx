@@ -70,12 +70,12 @@ export default {
 				this.loading = false;
 			} catch (e) {
 				this.loading = false;
-				this.$alert(`${e}将跳转至登录页面`, '提示', {
-					confirmButtonText: '确定',
-					callback: action => {
-						this.$router.push({path:'/'})
-					}
-				});
+				// this.$alert(`${e}将跳转至登录页面`, '提示', {
+				// 	confirmButtonText: '确定',
+				// 	callback: action => {
+				// 		this.$router.push({path:'/'})
+				// 	}
+				// });
 			}
 		})()
 	},

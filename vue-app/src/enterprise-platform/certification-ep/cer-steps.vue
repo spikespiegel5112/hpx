@@ -18,6 +18,9 @@
         computed : {
             ...mapState(['statusStep','accStatusInfo']),
         },
+        created(){
+            this.showStatus(this.accStatusInfo)
+        },
         methods : {
             showStatus(tmp){
                 const status = tmp ? tmp.authenticateStatus : tmp;

@@ -6,8 +6,8 @@
                 <el-step title="提交时间" :description="description1"></el-step>
                 <el-step v-if="!accStatusInfo.updateTime" title="审核时间" description="尚未提交审核"></el-step>
                 <template v-else>
-                    <el-step title="审核时间" :description="description2"></el-step>
-                    <el-step v-if="!accStatusInfo.certificationTime" title="认证通过时间" description="尚未金额认证"></el-step>
+                    <el-step title="审核时间" :status="accStatusInfo.authenticateStatus === 'F' ? 'error' : 'success'" :description="description2"></el-step>
+                    <el-step v-if="!accStatusInfo.certificationTime" status="process" title="认证通过时间" description="尚未金额认证"></el-step>
                     <template v-else>
                         <el-step title="认证通过时间" :description="description3"></el-step>
                     </template>
@@ -19,7 +19,7 @@
                 :disabled="accStatusInfo.authenticateStatus === 'P' || accStatusInfo.authenticateStatus === 'T' || accStatusInfo.authenticateStatus === 'A' "
             >提交认证</el-button>
             <el-button @click="accMoney"
-                :disabled="accStatusInfo.authenticateStatus === 'P'"
+                :disabled="accStatusInfo.authenticateStatus !== 'T'"
             >金额确认</el-button>
         </div>
         <el-dialog>
@@ -80,13 +80,12 @@
                         try{
                             const resp = await checkAccountM(this.loginInfo.enterpriseId,value);
                             const msg = decodeURI(resp.headers.get('x-hpx-alert'));
-                            this.$message.success(msg)
+                            this.$message.success(msg + '请重新登陆')
                             this.$store.dispatch('getAccStatusInfo');
-                            setTimeout( 
-                                function(){this.$router.replace({path:'/paltform'})}
-                            ,1000)
+                            this.$router.push({path:'/'}) 
+                            
                         }catch(e){
-                            this.$message.success(e)
+                            this.$message.error(e)
                         }
                     })()
                 }).catch(() => {

@@ -8,11 +8,6 @@
 
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
-      <!-- Sidebar toggle button-->
-      <!-- <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"
-         @click.stop.prevent="toggleMenu(!sidebar.collapsed,device.isMobile)">
-        <span class="sr-only">Toggle navigation</span>
-      </a> -->
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
@@ -41,13 +36,11 @@
           <li class="dropdown user user-menu"  @mouseenter.stop.prevent="showProfileBox=true"
                 @mouseleave.stop.prevent="showProfileBox=false">
             <a href="#" class="dropdown-toggle">
-              <!-- <img src="../../../static/img/user2-160x160.jpg" class="user-image" alt="User Image"> -->
               <span class="hidden-xs">{{loginInfo.name}}</span>
             </a>
             <ul class="dropdown-menu" v-if="showProfileBox">
               <!-- User image -->
               <li class="user-header">
-                <!-- <img src="../../../static/img/user2-160x160.jpg" class="img-circle" alt="User Image"> -->
                 <p>
                   {{loginInfo.name}} - Web Developer
                 </p>
@@ -63,11 +56,6 @@
               </li>
               <!-- Menu Footer-->
               <li class="user-footer">
-                <!-- <div class="pull-left">
-                  <router-link :to="{ path: '/resetPwd' }">
-                    <el-button type="default">修改密码</el-button>
-                  </router-link>
-                </div> -->
                 <div class="pull-right">
                   <el-button type="default" @click="logout">退出</el-button>
                 </div>
@@ -96,6 +84,9 @@ data(){
 },
 computed : {
     ...mapState(['loginInfo'])
+},
+created(){
+  console.log(this.loginInfo)
 },
 methods: {
     ...mapActions(['loginNot']),

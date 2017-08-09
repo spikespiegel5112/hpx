@@ -305,14 +305,14 @@ export default {
             },
             baseRules: {
                 name: [
-                    { required: true, message: '请输入企业名称' },
+                    { required: true, message: '请输入企业名称' ,trigger: 'blur' },
                 ],
                 taxNumber: [
                     { required: true, message: '请输入税务登记证', trigger: 'blur' },
                     { validator: checkNumber, trigger: 'blur' }
                 ],
                 iscode31: [
-                    { required: true, message: '请选择是否三证合一' },
+                    { required: true, message: '请选择是否三证合一',trigger: 'blur'  },
                 ],
                 licenceNo: [
                     { required: true, message: '请输入营业执照号', trigger: 'blur' },
@@ -320,7 +320,7 @@ export default {
                 ],
                 codeOrg: [
                     { required: true, message: '请输入组织机构代码', trigger: 'blur' },
-                    { validator: checkNumber }
+                    { validator: checkNumber , trigger: 'blur' }
                 ],
             },
             isCode31Options: [
@@ -359,7 +359,7 @@ export default {
             ],
             businessRules: {
                 regDate: [
-                    { required: true, message: '先选择日期', trigger: 'blur' }
+                    { required: true, message: '请选择日期'}
                 ],
                 contactsEmail: [
                     { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
@@ -390,14 +390,14 @@ export default {
                     { validator: checkPhone, trigger: 'blur' }
                 ],
                 contactsEmail: [
-                    { required: true, message: '请输入邮箱' },
-                    { type: 'email', message: '邮箱格式不正确' }
+                    { required: true, message: '请输入邮箱',trigger: 'blur'  },
+                    { type: 'email', message: '邮箱格式不正确' ,trigger: 'blur' }
                 ],
                 city: [
-                    { required: true, message: '请输入城市' },
+                    { required: true, message: '请输入城市' ,trigger: 'blur' },
                 ],
                 address: [
-                    { required: true, message: '请输入地址' },
+                    { required: true, message: '请输入地址',trigger: 'blur'  },
                 ],
                 legalPerson: [
                     { required: true, message: '请输入法人姓名', trigger: 'blur' },
@@ -413,7 +413,11 @@ export default {
             },
             taxRules: {
                 taxNumber: [
-                    { validator: checkNumber, trigger: 'blur' }
+                    { validator: checkNumber, trigger: 'blur' },
+                    { required: true, message: '请输入税号', trigger: 'blur' },
+                ],
+                taxType: [
+                    { required: true, message: '请输入税务类型', trigger: 'blur' },
                 ]
             }
         }
@@ -455,10 +459,8 @@ export default {
             this.isEdite[type] = false;
         },
         editeDone(type) {
-            console.log(type)
             this.$refs[`${type}InfoForm`].validate(
                 async (valid) => {
-                    console.log(type)
                     if (valid) {
                         try {
                             let params;

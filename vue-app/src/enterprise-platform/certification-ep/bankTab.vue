@@ -66,7 +66,7 @@
 
                         <el-col :span="12">
                             <el-form-item label="开户名" prop="accountName">
-                                <el-input :disabled="isEdite"  v-model="bankInfoForm.accountName"  placeholder="请输入纳税类型"></el-input>
+                                <el-input :disabled="isEdite"  v-model="bankInfoForm.accountName"  placeholder="请输入开户名"></el-input>
                             </el-form-item>
                         </el-col>
 
@@ -156,7 +156,27 @@ export default {
             bank : [],
             bankde : [],
             bankRules  : {
-
+                bankProvince : [
+                    { required: true, message: '请选择省份' ,trigger: 'blur' },
+                ],
+                bankCity : [
+                    { required: true, message: '请选择城市' ,trigger: 'blur' },
+                ],
+                bankCountry : [
+                    { required: true, message: '请选择县区' ,trigger: 'blur' },
+                ],
+                bankCode : [
+                    { required: true, message: '请选择银行' ,trigger: 'blur' },
+                ],
+                bankName : [
+                    { required: true, message: '请选择支行' ,trigger: 'blur' },
+                ],
+                accountName : [
+                    { required: true, message: '请输入账户名称' ,trigger: 'blur' },
+                ],
+                bankAccount : [
+                    { required: true, message: '请输入账户号' ,trigger: 'blur' },
+                ]
             }
         }
     },
@@ -180,7 +200,7 @@ export default {
                     this.bankInfoForm[key] = res[key]
                 } )
             }catch(e){
-                this.$message.error(e)
+                // this.$message.error(e)
             }
         },
         async getProv(){
