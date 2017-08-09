@@ -4,7 +4,7 @@
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			<el-table-column type="index" width="100">
+			<el-table-column type="index" width='5	0'>
 			</el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
@@ -48,22 +48,31 @@ export default {
 				label: '项目名称',
 				prop: 'projectName',
 				sortable: true,
-				minWidth: 120,
+				minWidth: 100,
+			}, {
+				label: '受邀企业名称',
+				prop: 'enterpriseName',
+				sortable: true,
+				minWidth: 100,
 			}, {
 				label: '参与角色',
-				prop: 'enterpriseRole',
+				prop: 'enterpriseTypeName',
 				sortable: true,
 			}, {
 				label: '项目起始日',
 				prop: 'startTime',
 				sortable: true,
 				minWidth: 100,
-				formatter: (row, column) => moment(column.startTime).format(dateFormat)
+				formatter: (row, column) =>{
+					return row.startTime!=null?moment(row.startTime).format(dateFormat):''
+				}
 			}, {
 				label: '项目结束日',
 				prop: 'endTime',
 				sortable: true,
-				formatter: (row, column) => moment(column.endTime).format(dateFormat)
+				formatter: (row, column) =>{
+					return row.endTime!=null?moment(row.endTime).format(dateFormat):''
+				}
 			}],
 
 			//table

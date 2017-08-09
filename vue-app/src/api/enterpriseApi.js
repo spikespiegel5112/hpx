@@ -17,12 +17,10 @@ export const accountStatementListRequest = (options) =>{
 }
 
 /**
- * 取得企业项目信息列表, 支持分页
+ * 取得企业项目邀请（受邀请）列表, 支持分页
  */
 
-export const enterpriseProjectListRequest = (options) =>{
-    return fetch('/core/core/api/v1/enterprise/projects/vo', options.params);
-}
+export const projectListRequest = options => fetch(`/core/core/api/v1/enterprise/projects/vo`, options.params);
 
 /**
  * 企业接受（拒绝）邀请
@@ -63,4 +61,4 @@ export const veyiterpriseAccessRequest = options => {
 /*
 ** 平台项目列表, 支持分页
 */
-export const enterpriseInviteListRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.inviteStatus}/state/${options.state}`);
+export const enterpriseProjectListRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.inviteStatus}/state/${options.state}`);

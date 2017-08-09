@@ -64,7 +64,7 @@ import headTop from '@/components/headTop'
 import moment from 'moment'
 import {
 	enterpriseListRequest,
-	enterpriseProjectListRequest,
+	projectListRequest,
 	enterpriseRolesListRequest,
 	modifyProjectInvitStatusRequest
 } from '@/api/enterpriseApi'
@@ -142,13 +142,17 @@ export default {
 				prop: 'startTime',
 				sortable: true,
 				minWidth: 60,
-				formatter: (row, column) => moment(column.startTime).format(dateFormat)
+				formatter: (row, column) =>{
+					return row.startTime!=null?moment(row.startTime).format(dateFormat):''
+				}
 			}, {
 				label: '项目结束日',
 				prop: 'endTime',
 				sortable: true,
 				minWidth: 60,
-				formatter: (row, column) => moment(column.endTime).format(dateFormat)
+				formatter: (row, column) =>{
+					return row.endTime!=null?moment(row.endTime).format(dateFormat):''
+				}
 			}],
 		}
 	},
@@ -171,7 +175,7 @@ export default {
 			}
 			options.params = Object.assign(options.params, this.pagination1.params)
 			console.log(options);
-			enterpriseProjectListRequest(options).then(response => {
+			projectListRequest(options).then(response => {
 				this.pagination1.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
@@ -194,7 +198,7 @@ export default {
 				}
 			}
 			options.params = Object.assign(options.params, this.pagination2.params)
-			enterpriseProjectListRequest(options).then(response => {
+			projectListRequest(options).then(response => {
 				this.pagination2.total = Number(response.headers.get('x-total-count'))
 				console.log(response);
 				response.json().then(result => {
