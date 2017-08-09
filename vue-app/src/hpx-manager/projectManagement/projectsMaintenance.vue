@@ -85,8 +85,8 @@
 	<!--项目配置-->
 	<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
 		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-			<el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
-				<el-select v-model="configProjectData.role">
+			<el-form-item v-for="(item,index) in projectRoleList" :key="item.key" :label="item.enterpriseName" prop="role">
+				<el-select v-model="configProjectData[index].role" @change='chooseRole(value)'>
 					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
 					</el-option>
 				</el-select>
@@ -236,14 +236,13 @@ export default {
 					trigger: 'blur'
 				}]
 			},
-
 			//配置项目模态框
 			configProjectFlag: false,
 			projectRoleList: [],
 			configProjectData: {
 				eid: '',
 				epid: '',
-				role: '',
+				code: [],
 			},
 			configProjectRules: {
 				role: [{
@@ -356,6 +355,12 @@ export default {
 				}
 			})
 		},
+		chooseRole(value, index){
+			this.projectRoleList[index]=value;
+			if (value==this.configProjectData[index].role) {
+
+			}
+		},
 		deleteProjectFunction(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
 				confirmButtonText: '确定',
@@ -376,6 +381,7 @@ export default {
 				});
 			});
 		},
+
 		search() {
 			this.getList();
 		},
