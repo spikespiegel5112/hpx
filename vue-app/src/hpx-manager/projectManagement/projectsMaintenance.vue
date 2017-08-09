@@ -60,7 +60,7 @@
 		</section>
 	</section>
 	<!--编辑界面-->
-	<el-dialog title="修改项目" v-model="editProjectDialogFlag" :close-on-click-modal="false">
+	<el-dialog title="修改项目" :visible.sync='editProjectDialogFlag' :close-on-click-modal="false">
 		<el-form :model="editData" label-width="120px" :rules="editRules" ref="editData">
 			<el-form-item label="产品类型" prop="productCode">
 				<el-input v-model="editData.productCode" auto-complete="off" readonly></el-input>
@@ -75,7 +75,7 @@
 				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
 			</el-form-item>
 			<el-form-item label="项目终止时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime" @change='aaa'></el-date-picker>
+				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime"></el-date-picker>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -84,11 +84,11 @@
 		</div>
 	</el-dialog>
 	<!--项目配置-->
-	<el-dialog title="项目配置" v-model="configProjectFlag" :close-on-click-modal="false">
-		<el-form :model="editData" label-width="120px" :rules="editRules" ref="editData">
-			<el-form-item label="项目角色类型" prop="productCode">
+	<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
+		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
+			<el-form-item label="项目角色类型" prop="role">
 				<el-select v-model="configProjectData.role">
-					<el-option v-for="item in configProjectData" :value="item.name" :key="item.name" :label="item.name">
+					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -109,7 +109,7 @@ import {
 } from '@/api/getData'
 
 import {
-	enterpriseRolesListRequest,
+	getRolesByEnterpriseRequest,
 	bindProjectRequest
 } from '@/api/enterpriseApi'
 import {
@@ -222,7 +222,9 @@ export default {
 			},
 			editRules: {
 				productCode: [{
-					required: true
+					required: true,
+					message: '请输入项目创建时间',
+					trigger: 'blur'
 				}],
 				createTime: [{
 					required: true,
@@ -235,39 +237,25 @@ export default {
 					trigger: 'blur'
 				}]
 			},
+
 			//配置项目模态框
 			configProjectFlag: false,
-			editProjetEid: 0,
+			projectRoleList: [],
 			configProjectData: {
 				eid: '',
 				epid: '',
 				role: '',
 			},
 			configProjectRules: {
-				productCode: [{
-					required: true
-				}],
-				createTime: [{
+				role: [{
 					required: true,
-					message: '请输入项目创建时间',
-					trigger: 'blur'
-				}],
-				name: [{
-					required: true,
-					message: '请输入项目名称',
-					trigger: 'blur'
+					message: '请选择企业项目类型'
 				}]
-			},
+			}
 		}
 	},
 	activated() {
 		this.initData();
-	},
-	computed: {
-		loginInfo() {
-			return this.$store.state.loginInfo
-		},
-
 	},
 	methods: {
 		initData() {
@@ -328,32 +316,36 @@ export default {
 			})
 		},
 		configProject(scope) {
-			alert(scope.row)
-			// this.configProjectData.eid=scope.row.
 			let options = {
-				enterpriseId: scope.row.ownerEnterpriseId
+				pid: scope.row.id,
+				params: {}
 			}
-			enterpriseRolesListRequest()
+			options.params = Object.assign(options.params, this.pagination.params)
+			getRolesByEnterpriseRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.projectRoleList = result;
+				})
+			})
 			this.configProjectFlag = true
 		},
-		configProjectSubmit(){
+		configProjectSubmit() {
 			this.$refs['configProjectData'].validate(async(valid) => {
 				if (valid) {
 					try {
-						let options={
-							eid:'',
-							epid:'',
-							body:{
-								role:''
+						let options = {
+							eid: '',
+							epid: '',
+							body: {
+								role: ''
 							}
 						}
-						bindProjectRequest(options).then(response=>{
-							response.json().then(result=>{
+						bindProjectRequest(options).then(response => {
+							response.json().then(result => {
 								console.log(result);
 								this.configProjectFlag = false;
 							})
 						})
-
 						this.initData();
 					} catch (e) {
 						this.$message.error(e)
@@ -433,9 +425,6 @@ export default {
 					break;
 			}
 			return state;
-		},
-		aaa(value) {
-			console.log(value)
 		}
 	},
 }

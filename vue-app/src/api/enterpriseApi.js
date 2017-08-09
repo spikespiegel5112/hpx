@@ -71,6 +71,4 @@ export const bindProjectRequest = options => fetch(`/core/core/api/v1/entProject
 /*
 ** 取得指企业角色信息
 */
-
-
-export const bindProjectRequest = options => fetch(`/api/v1/enterpriseProjects/{pid}`, options.params);
+export const getRolesByEnterpriseRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.pid}`, options.params);
