@@ -112,7 +112,6 @@
 
 <script>
 import headTop from '@/components/headTop'
-import myPagination from '@/components/myPagination'
 import moment from 'moment'
 import {
 	getProjectList

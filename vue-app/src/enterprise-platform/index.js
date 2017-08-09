@@ -52,6 +52,7 @@ export default {
 		},{
 			path: 'project',
 			component: myProject,
+            name: 'myProject',
 			meta: ['项目管理', '我的项目'],
 		},{
 			path: 'project/inviteRecord',

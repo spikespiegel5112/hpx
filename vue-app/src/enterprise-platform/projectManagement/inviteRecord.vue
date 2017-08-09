@@ -1,6 +1,6 @@
 <template>
 <div class="fillcontain">
-	<head-top></head-top>
+	<commonDetailTitle routerName='myProject' title="邀请记录"></commonDetailTitle>
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
@@ -43,6 +43,7 @@
 
 <script>
 import headTop from '@/components/headTop'
+import commonDetailTitle from '@/components/commonDetailTitle'
 import moment from 'moment'
 import {
 	getInviteRecordsList
@@ -54,7 +55,8 @@ import {
 
 export default {
 	components: {
-		headTop
+		headTop,
+		commonDetailTitle
 	},
 	data() {
 		const dateFormat = "YYYY-MM-DD";
