@@ -28,7 +28,6 @@
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			<!-- <el-table-column type="index" width="100"></el-table-column> -->
 			<el-table-column type="expand">
 				<template scope="props">
 					<el-form label-position="left" class="demo-table-expand">
@@ -86,7 +85,7 @@
 	<!--项目配置-->
 	<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
 		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-			<el-form-item label="项目角色类型" prop="role">
+			<el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
 				<el-select v-model="configProjectData.role">
 					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
 					</el-option>
@@ -316,6 +315,9 @@ export default {
 			})
 		},
 		configProject(scope) {
+			this.configProjectData.eid=scope.row.ownerEnterpriseId
+			this.configProjectData.pid=scope.row.id
+
 			let options = {
 				pid: scope.row.id,
 				params: {}
@@ -334,12 +336,13 @@ export default {
 				if (valid) {
 					try {
 						let options = {
-							eid: '',
-							epid: '',
+							eid: this.configProjectData.eid,
+							pid: this.configProjectData.pid,
 							body: {
-								role: ''
+								code: this.configProjectData.role
 							}
 						}
+						console.log(options);
 						bindProjectRequest(options).then(response => {
 							response.json().then(result => {
 								console.log(result);
