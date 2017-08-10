@@ -85,14 +85,11 @@
 	<!--项目配置-->
 	<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
 		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-			<el-form-item v-for="(item,index) in enterpeiseTypeList" :key="item.key" :label="item.enterpriseName" prop="enterpriseName">
-
-<!--
-				<el-select v-model="configProjectData[index].code" @change='chooseRole(value)'>
-					<el-option v-for="item in projectRoleList" :value="item.code" :key="item.code" :label="item.name">
+			<el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
+				<el-select v-model="configProjectData.role">
+					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
 					</el-option>
 				</el-select>
--->
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -111,9 +108,9 @@ import {
 } from '@/api/getData'
 
 import {
+    getRolesByProjectRequest,
 	getRolesByEnterpriseRequest,
-	bindProjectRequest,
-	enterpriseRolesListRequest
+	bindProjectRequest
 } from '@/api/enterpriseApi'
 import {
 	modifyProjectInfo,
@@ -240,14 +237,14 @@ export default {
 					trigger: 'blur'
 				}]
 			},
+
 			//配置项目模态框
 			configProjectFlag: false,
-			enterpeiseTypeList: [],
-            projectRoleList:[],
+			projectRoleList: [],
 			configProjectData: {
 				eid: '',
 				epid: '',
-				code: [],
+				role: '',
 			},
 			configProjectRules: {
 				role: [{
@@ -319,39 +316,20 @@ export default {
 			})
 		},
 		configProject(scope) {
-			console.log(scope);
-			this.configProjectData.eid = scope.row.ownerEnterpriseId
-			this.configProjectData.pid = scope.row.id
+			this.configProjectData.eid=scope.row.ownerEnterpriseId
+			this.configProjectData.pid=scope.row.id
 
-			let options2={
-                productCode:scope.row.productCode
-            }
-			// options.params = Object.assign(options.params, this.pagination.params)
-            
-//			enterpriseRolesListRequest(options2).then(response => {
-//				response.json().then(result => {
-//					console.log(result);
-//					this.enterpeiseTypeList = result;
-////					for (var variable in this.projectRoleList) {
-////						this.configProjectData.push({
-////							role: ''
-////						})
-////					}
-//				})
-//			})
-            alert(this.configProjectData.pid)
-            let options3 = {
-				code: scope.row.productCode,
-				id: scope.row.ownerEnterpriseId,
+			let options = {
+				pid: scope.row.id,
+				params: {}
 			}
-			console.log(options3);
-            getRolesByEnterpriseRequest(options3).then(response=>{
-                response.json().then(result=>{
-                    console.log(result);
-                    this.enterpeiseTypeList=result;
-                    this.projectRoleList=result;
-                })
-            })
+			options.params = Object.assign(options.params, this.pagination.params)
+			getRolesByProjectRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.projectRoleList = result;
+				})
+			})
 			this.configProjectFlag = true
 		},
 		configProjectSubmit() {
@@ -379,12 +357,6 @@ export default {
 				}
 			})
 		},
-		chooseRole(value, index) {
-			this.enterpeiseTypeList[index] = value;
-			if (value == this.configProjectData[index].role) {
-
-			}
-		},
 		deleteProjectFunction(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
 				confirmButtonText: '确定',
@@ -405,7 +377,6 @@ export default {
 				});
 			});
 		},
-
 		search() {
 			this.getList();
 		},
