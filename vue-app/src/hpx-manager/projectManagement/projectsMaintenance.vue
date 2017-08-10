@@ -87,7 +87,7 @@
 		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
 			<el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
 				<el-select v-model="configProjectData.role">
-					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
+					<el-option v-for="item in enterpriseRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -241,6 +241,7 @@ export default {
 			//配置项目模态框
 			configProjectFlag: false,
 			projectRoleList: [],
+            enterpriseRoleList: [],
 			configProjectData: {
 				eid: '',
 				epid: '',
@@ -319,17 +320,29 @@ export default {
 			this.configProjectData.eid=scope.row.ownerEnterpriseId
 			this.configProjectData.pid=scope.row.id
 
-			let options = {
+			let options1 = {
 				pid: scope.row.id,
 				params: {}
 			}
-			options.params = Object.assign(options.params, this.pagination.params)
-			getRolesByProjectRequest(options).then(response => {
+			options1.params = Object.assign(options1.params, this.pagination.params)
+			getRolesByProjectRequest(options1).then(response => {
 				response.json().then(result => {
 					console.log(result);
 					this.projectRoleList = result;
 				})
 			})
+            
+            
+            let options2 = {
+				code: scope.row.productCode,
+				id: scope.row.id
+			}
+            getRolesByEnterpriseRequest(options2).then(response=>{
+                response.json().then(result=>{
+                    console.log(result);
+                    this.enterpriseRoleList = result;
+                })
+            })
 			this.configProjectFlag = true
 		},
 		configProjectSubmit() {
