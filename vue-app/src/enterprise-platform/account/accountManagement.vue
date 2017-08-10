@@ -5,6 +5,11 @@
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
 				<div class="enterprise_accountoverview_wrapper">
+					<el-row>
+						<el-col :span="24">
+							<el-button type="primary" @click="openAccountFlag='true'">线上开户</el-button>
+						</el-col>
+					</el-row>
 					<div class="carousel">
 						<a class='arrowleft iconfont icon-backward2'></a>
 						<ul class="swiper-wrapper">
@@ -60,7 +65,30 @@
 			</my-Pagination>
 		</section> -->
 	</section>
-
+	<!--项目配置-->
+	<el-dialog title="线上开户" :visible.sync='openAccountFlag' :close-on-click-modal="true">
+		<el-form :model="openAccountFormData" label-width="120px" :rules="openAccountRules" ref="openAccountFormData">
+			<el-form-item label="账户类型">
+				<el-select v-model="openAccountFormData.type">
+					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="手机号">
+				<el-input v-model="openAccountFormData.name"></el-input>
+			</el-form-item>
+			<el-form-item label="获取验证码">
+				<el-input v-model="openAccountFormData.name"></el-input>
+			</el-form-item>
+			<el-form-item label="短信验证码">
+				<el-input v-model="openAccountFormData.name"></el-input>
+			</el-form-item>
+		</el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button @click.native="configProjectFlag = false">取消</el-button>
+			<el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
+		</div>
+	</el-dialog>
 
 
 
@@ -110,6 +138,27 @@ export default {
 			criteriaNum: 3,
 			//模态框
 			deleteNoticeFlag: false,
+			//线上开户
+			openAccountFlag: false,
+			bankList:[],
+			openAccountFormData: [],
+			openAccountRules:{
+				productCode: [{
+					required: true,
+					message: '请输入项目创建时间',
+					trigger: 'blur'
+				}],
+				createTime: [{
+					required: true,
+					message: '请输入项目创建时间',
+					trigger: 'blur'
+				}],
+				name: [{
+					required: true,
+					message: '请输入项目名称',
+					trigger: 'blur'
+				}]
+			}
 		}
 	},
 	components: {
@@ -151,8 +200,8 @@ export default {
 		getAccountList() {
 			let params = Object.assign(this.pagination.params)
 			console.log(params)
-			let options={
-				params:{}
+			let options = {
+				params: {}
 			}
 			accountInfosListRequest().then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
@@ -183,6 +232,9 @@ export default {
 					this.tableList = response;
 				})
 			})
+		},
+		getBankList(){
+
 		},
 		async search() {
 			try {

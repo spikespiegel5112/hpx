@@ -85,11 +85,11 @@
 	<!--项目配置-->
 	<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
 		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-			<el-form-item v-for="(item,index) in projectRoleList" :key="item.key" :label="item.enterpriseName" prop="role">
-				<el-select v-model="configProjectData[index].role" @change='chooseRole(value)'>
+			<el-form-item v-for="(item,index) in projectRoleList" :key="item.key" :label="item.enterpriseName" prop="enterpriseName">
+				<!-- <el-select v-model="configProjectData[index].role" @change='chooseRole(value)'>
 					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
 					</el-option>
-				</el-select>
+				</el-select> -->
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -326,6 +326,11 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.projectRoleList = result;
+					for (var variable in this.projectRoleList) {
+						this.configProjectData.push({
+							role:''
+						})
+					}
 				})
 			})
 			this.configProjectFlag = true
