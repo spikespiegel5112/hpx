@@ -58,7 +58,7 @@
                     <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
                     <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
 					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
-                </template>
+</template>
 			</el-table-column>
 		</el-table>
 		<!-- <section class="main-pagination">
@@ -69,33 +69,23 @@
 	<!--项目配置-->
 	<el-dialog title="线上开户" :visible.sync='openAccountFlag' :close-on-click-modal="true">
 		<el-form :model="openAccountFormData" label-width="120px" :rules="openAccountRules" ref="openAccountFormData">
-			<el-form-item label="账户类型">
+			<el-form-item label="账户类型" prop='platBankType'>
 				<el-select v-model="openAccountFormData.platBankType">
 					<el-option v-for="item in accountTypeList" :value="item.code" :key="item.name" :label="item.name">
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="虚拟卡号">
-				<el-input v-model="openAccountFormData.title"></el-input>
+			<el-form-item label="虚拟卡号" prop='citicAccNo'>
+				<el-input v-model="openAccountFormData.citicAccNo"></el-input>
 			</el-form-item>
-			<el-form-item label="图片验证码">
-				<el-row>
-					<el-col :span="15">
-						<el-input v-model="openAccountFormData.strCode"></el-input>
-					</el-col>
-					<el-col :span="5">
-						<img style='width:100%;' :src="kaptchaImagePath" alt="">
-					</el-col>
-					<el-col :span="3">
-						<el-button type="primary" @click='getKptchaImage'>看不清</el-button>
-					</el-col>
-				</el-row>
-
+			<el-form-item label="客户号" prop='hostNo'>
+				<el-input v-model="openAccountFormData.hostNo"></el-input>
 			</el-form-item>
-			<el-form-item label="短信验证码">
+			
+			<el-form-item label="短信验证码" prop='code'>
 				<el-row>
 					<el-col :span="19">
-						<el-input v-model="openAccountFormData.name"></el-input>
+						<el-input v-model="openAccountFormData.code"></el-input>
 					</el-col>
 					<el-col :span="3">
 						<el-button type="primary" @click='getSmsCode'>发送验证码</el-button>
@@ -111,8 +101,6 @@
 	</el-dialog>
 
 
-
-
 </div>
 </template>
 
@@ -120,7 +108,8 @@
 import swiper from '@/assets/js/swiper'
 import headTop from '@/components/headTop'
 import {
-	reSmgCode
+	reSmgCode,
+	openAccSendSmsRequest
 } from '@/api/getData';
 import {
 	getDictionaryByCodeRequest
@@ -175,25 +164,29 @@ export default {
 			bankList: [],
 			openAccountFormData: {
 				platBankType: '',
-				strCode: '',
-				name: '',
-				smsCode: ''
+				hostNo:'',
+				code:''
 			},
 			openAccountRules: {
-				productCode: [{
+				platBankType: [{
 					required: true,
-					message: '请输入项目创建时间',
-					trigger: 'blur'
+					message: '请选择项目账户类型',
+					trigger: 'change'
 				}],
-				createTime: [{
+				citicAccNo: [{
 					required: true,
-					message: '请输入项目创建时间',
-					trigger: 'blur'
+					message: '请输入项目虚拟卡号',
+					trigger: 'change'
 				}],
-				name: [{
+				hostNo: [{
 					required: true,
-					message: '请输入项目名称',
-					trigger: 'blur'
+					message: '请输入项目客户号',
+					trigger: 'change'
+				}],
+				code: [{
+					required: true,
+					message: '请输入短信验证码',
+					trigger: 'change'
 				}]
 			}
 		}
@@ -283,16 +276,26 @@ export default {
 			})
 		},
 		submitOpenAccount() {
-			let options = {
-				body: this.openAccountFormData,
-				eid: this.$store.state.loginInfo.enterpriseId
-			}
-			alert(options.eid)
-			enterpriseAccountOpenRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result);
-				})
+			this.$refs['openAccountFormData'].validate(valid => {
+				if (valid) {
+					let options = {
+						body: {
+                            hostNo:this.openAccountFormData.hostNo,
+                            citicAccNo:this.openAccountFormData.citicAccNo
+                        },
+						code: this.openAccountFormData.code,
+						eid: this.$store.state.loginInfo.enterpriseId
+					}
+					console.log(options)
+					enterpriseAccountOpenRequest(options).then(response => {
+						response.json().then(result => {
+							console.log(result);
+						})
+					})
+				}
 			})
+
+
 		},
 		async search() {
 			try {
@@ -305,18 +308,18 @@ export default {
 			this.kaptchaImagePath = `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime()
 		},
 		getSmsCode() {
-			this.openAccountFormData.smsCode = '';
-			let options = {
-				phone: this.$store.state.loginInfo.phone,
-				strCode: this.openAccountFormData.strCode
-			}
-			console.log(options);
-			reSmgCode(options.phone, options.strCode).then(response => {
+			this.code = '';
+			// let options = {
+			// 	phone: this.$store.state.loginInfo.phone,
+			// 	strCode: this.openAccountFormData.strCode
+			// }
+			// console.log(options);
+			openAccSendSmsRequest().then(response => {
 				console.log(response);
 				response.json().then(result => {
 					console.log(result);
 				})
-			}).catch(e => {``
+			}).catch(e => {
 				console.log(e);
 				this.$message({
 					showClose: true,
@@ -336,6 +339,6 @@ export default {
 @import "../../style/enterprise";
 @import "../../assets/css/swiper.css";
 .table_container {
-    padding: 20px;
+	padding: 20px;
 }
 </style>

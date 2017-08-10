@@ -20,6 +20,8 @@
 				</dl>
 			</el-card>
 		</el-col>
+
+
 		<el-col :span="8">
 			<el-card>
 				<div slot="header" class="card-header">
@@ -41,19 +43,17 @@
 		<el-col :span="8">
 			<el-card>
 				<div slot="header" class="card-header">
-					<span>基本信息</span>
+					<span>新闻公告</span>
 					<el-button type="text" class="p-home-action">
-						<router-link to="/platform/certification">详细信息</router-link>
+						<router-link :to="{name:'noticeList'}">详细信息</router-link>
 					</el-button>
 				</div>
-				<dl>
-					<dd>公司名称 ：</dd>
-					<dt>上海广信诚保理有限公司已认证</dt>
-					<dd>参与项目 ：</dd>
-					<dt>6</dt>
-					<dd>账户余额 ：</dd>
-					<dt>100,000.00元</dt>
-				</dl>
+				<ul>
+					<li v-for="elem in noticeList" :key="elem.key">
+						<!-- <a class='common_carditemtitle_item' href="javascript:;">{{elem.title}}</a> -->
+						<router-link class='common_carditemtitle_item' :to="{ name: 'noticeEdit', params: { noticeId: 'review&'+elem.id}}">{{elem.title}}</router-link>
+					</li>
+				</ul>
 			</el-card>
 		</el-col>
 		<el-col :span="16">
@@ -73,17 +73,19 @@
 		<el-col :span="8">
 			<el-card>
 				<div slot="header" class="card-header">
-					<span>新闻公告</span>
+					<span>基本信息</span>
 					<el-button type="text" class="p-home-action">
-						<router-link :to="{name:'noticeList'}">详细信息</router-link>
+						<router-link to="/platform/certification">详细信息</router-link>
 					</el-button>
 				</div>
-				<ul>
-					<li v-for="elem in noticeList" :key="elem.key">
-						<!-- <a class='common_carditemtitle_item' href="javascript:;">{{elem.title}}</a> -->
-						<router-link class='common_carditemtitle_item' :to="{ name: 'noticeEdit', params: { noticeId: 'review&'+elem.id}}">{{elem.title}}</router-link>
-					</li>
-				</ul>
+				<dl>
+					<dd>公司名称 ：</dd>
+					<dt>上海广信诚保理有限公司已认证</dt>
+					<dd>参与项目 ：</dd>
+					<dt>6</dt>
+					<dd>账户余额 ：</dd>
+					<dt>100,000.00元</dt>
+				</dl>
 			</el-card>
 		</el-col>
 	</el-row>

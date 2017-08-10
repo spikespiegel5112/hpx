@@ -33,6 +33,20 @@ export const forgetPwdSmgCode = (phone, strCode, enterpriseName) => fetch(`/core
 export const subForgetPwd = (params) => fetch('/core/core/api/v1/forgotPassword', params, 'form')
 
 /**
+ * 发送短信验证码
+ */
+export const sendSmsRequest = options =>{
+    return fetch(`/core/core/api/v1/sms/SendSms`, options, 'post')
+}
+
+/**
+ * 开户发送短信验证码
+ */
+ export const openAccSendSmsRequest = () =>{
+     return fetch(`/core/core/api/v1/sms/openAccSendSms`, {}, 'post')
+ }
+
+/**
  * mock menu
  */
 

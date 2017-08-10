@@ -11,7 +11,7 @@
 			<el-table-column label="操作">
 				<template scope="scope">
 					<el-button type="text" size="small" @click="auditProject(scope)">审核</el-button>
-				</template>
+</template>
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">
@@ -19,6 +19,17 @@
 			</el-pagination>
 		</section>
 	</section>
+	<el-dialog
+		title="提示"
+		:visible.sync="auditDialogFlag"
+		size="tiny">
+		<span>请确认是否通过此邀请?</span>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="auditDialogFlag=false">取 消</el-button>
+			<el-button @click="commitAudit('F')">拒 绝</el-button>
+			<el-button type="primary" @click="commitAudit('T')">确 定</el-button>
+		</span>
+	</el-dialog>
 </div>
 </template>
 
@@ -63,15 +74,15 @@ export default {
 				prop: 'startTime',
 				sortable: true,
 				minWidth: 100,
-				formatter: (row, column) =>{
-					return row.startTime!=null?moment(row.startTime).format(dateFormat):''
+				formatter: (row, column) => {
+					return row.startTime != null ? moment(row.startTime).format(dateFormat) : ''
 				}
 			}, {
 				label: '项目结束日',
 				prop: 'endTime',
 				sortable: true,
-				formatter: (row, column) =>{
-					return row.endTime!=null?moment(row.endTime).format(dateFormat):''
+				formatter: (row, column) => {
+					return row.endTime != null ? moment(row.endTime).format(dateFormat) : ''
 				}
 			}],
 
@@ -86,7 +97,9 @@ export default {
 					size: 10
 				},
 				total: 0
-			}
+			},
+			//审核弹框
+			auditDialogFlag: false
 		}
 	},
 	components: {
@@ -112,7 +125,7 @@ export default {
 		},
 		getList() {
 			let options = {
-				params:{
+				params: {
 					inviteStatus: 'T',
 					state: 'F'
 				}
@@ -134,35 +147,65 @@ export default {
 
 			}
 		},
-
 		resetForm(formName) {
 			this.$refs[formName].resetFields();
 		},
 		auditProject(scope) {
-			this.$confirm('请确认是否通过此邀请?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-				let options = {
-					eid: scope.row.enterpriseId,
-					pid: scope.row.pjId,
-					state: 'T'
-				}
-				console.log(options);
+			this.auditDialogFlag = true;
+			this.auditEid = scope.row.enterpriseId;
+			this.auditPid = scope.row.pjId;
+			// this.$confirm('请确认是否通过此邀请?', '提示', {
+			// 	confirmButtonText: '确定',
+			// 	cancelButtonText: '取消',
+			// 	type: 'warning'
+			// }).then(() => {
+			// 	let options = {
+			// 		eid: scope.row.enterpriseId,
+			// 		pid: scope.row.pjId,
+			// 		state: 'T'
+			// 	}
+			// 	console.log(options);
+			// 	auditProjectRequest(options).then(response => {
+			// 		this.getList();
+			// 		this.$message({
+			// 			type: 'success',
+			// 			message: '审核通过'
+			// 		});
+			// 	})
+			// }).catch(() => {
+			// 	this.$message({
+			// 		type: 'info',
+			// 		message: '已取消审核'
+			// 	});
+			// })
+		},
+		commitAudit(code) {
+			let options = {
+				eid: this.auditEid,
+				pid: this.auditPid,
+				state: code
+			}
+			console.log(options);
+			if (code == 'T') {
 				auditProjectRequest(options).then(response => {
 					this.getList();
 					this.$message({
 						type: 'success',
 						message: '审核通过'
 					});
+					this.auditDialogFlag = false;
 				})
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: '已取消审核'
-				});
-			})
+			}else if(code == 'F'){
+				auditProjectRequest(options).then(response => {
+					this.getList();
+					this.$message({
+						type: 'success',
+						message: '审核通过'
+					});
+					this.auditDialogFlag = false;
+				})
+			}
+
 		},
 		flipPage(pageIndex) {
 			this.pagination.params.page = pageIndex;
@@ -175,6 +218,6 @@ export default {
 <style lang="less">
 @import '../../style/mixin';
 .table_container {
-    padding: 20px;
+	padding: 20px;
 }
 </style>

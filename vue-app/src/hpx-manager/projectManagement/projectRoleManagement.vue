@@ -15,9 +15,6 @@
 					<el-form-item>
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
-					<el-form-item>
-						<el-button icon="plus" type="primary" @click='createProject'>新增</el-button>
-					</el-form-item>
 				</el-col>
 			</el-row>
 		</el-form>

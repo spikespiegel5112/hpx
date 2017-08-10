@@ -71,9 +71,14 @@ export const bindProjectRequest = options => fetch(`/core/core/api/v1/entProject
 /*
 ** 取得指企业角色信息
 */
-export const getRolesByEnterpriseRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.pid}`, options.params);
+export const getRolesByEnterpriseRequest = options => fetch(`/core/core/api/v1/products/${options.code}/ent_roles/${options.id}`, options.id);
+
+/*
+** 取得指企业角色信息
+*/
+//export const getRolesByEnterpriseRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.pid}`, options.params);
 
 /*
 ** 新增企业开户申请
 */
-export const enterpriseAccountOpenRequest = options => fetch(`/api/v1/enterprise/${eid}/accounts`, options.body, 'put');
+export const enterpriseAccountOpenRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts/${options.code}`, options.body, 'put');
