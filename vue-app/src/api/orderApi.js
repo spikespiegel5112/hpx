@@ -5,6 +5,11 @@ import fetch from '@/config/fetch'
 export const getSupplierList = (pjId, params) => fetch(`/core/core/api/v1/enterpriseProjects/${pjId}/supplier`, params)
 
 /**
+ * 获取企业项目任意角色
+ */
+export const roleList = (pid, params) => fetch(`/core/core/api/v1/enterpriseProjects/${pid}`, params)
+
+/**
  * 客户管理-获取资方列表
  */
 export const getCapitalList = (pid) => fetch(`/core/core/api/v1/enterpriseProjects/${pid}/capitalist`)
@@ -155,4 +160,57 @@ export const payList = (params) => fetch(`/order/payment/search`,params)
 /**
  * 获取支付明细信息
  */
-export const payDetail =(paymentId) => fetch(`/order/payment/getDetail?paymentId=${paymentId}`)
+export const payDetail =(params) => fetch(`/order/payment/getDetail`,params)
+
+
+/**
+ * 获取地址列表
+ */
+export const addressList =(params) => fetch(`/order/address/search`,params)
+
+
+/**
+ * 添加地址
+ */
+export const addAddress =(params) => fetch(`/order/address/add`,params,'put')
+
+/**
+ * 修改地址
+ */
+export const updateAddress =(id,params) =>fetch(`/order/address/update/${id}`,params,'patch')
+
+/**
+ * 删除地址
+ */
+export const deleteAddress =(id) =>fetch(`/order/address/delete/${id}`,{},'delete')
+
+/**
+ * 货品列表
+ */
+export const productList =(params) => fetch(`/order/goodsMaintenance/list`,params)
+
+/**
+ * 添加货品
+ */
+export const addProduct =(params) => fetch(`/order/goodsMaintenance/add`,params,'post')
+
+/**
+ * 修改货品
+ */
+export const updateProduct =(id,params) => fetch(`/order/goodsMaintenance/update/${id}`,params,'patch')
+
+/**
+ * 删除货品
+ */
+export const deleteProduct =(id) => fetch(`/order/goodsMaintenance/delete/${id}`,{},'delete')
+
+/**
+ * 风控预警列表
+ */
+export const warningList =(params) => fetch(`/order/riskControl/list`,params)
+
+/**
+ * 添加风控预警
+ */
+export const addWarning =(params) => fetch(`/order/riskControl/add`,params,'post')
+

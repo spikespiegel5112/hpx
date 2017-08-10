@@ -4,12 +4,13 @@
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
+				<el-row>
+					<el-col :span="24">
+						<el-button type="primary" @click="openAccountFlag='true'">线上开户</el-button>
+					</el-col>
+				</el-row>
 				<div class="enterprise_accountoverview_wrapper">
-					<el-row>
-						<el-col :span="24">
-							<el-button type="primary" @click="openAccountFlag='true'">线上开户</el-button>
-						</el-col>
-					</el-row>
+
 					<div class="carousel">
 						<a class='arrowleft iconfont icon-backward2'></a>
 						<ul class="swiper-wrapper">
@@ -69,8 +70,8 @@
 	<el-dialog title="线上开户" :visible.sync='openAccountFlag' :close-on-click-modal="true">
 		<el-form :model="openAccountFormData" label-width="120px" :rules="openAccountRules" ref="openAccountFormData">
 			<el-form-item label="账户类型">
-				<el-select v-model="openAccountFormData.type">
-					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
+				<el-select v-model="openAccountFormData.platBankType">
+					<el-option v-for="item in accountTypeList" :value="item.code" :key="item.code" :label="item.name">
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -85,8 +86,8 @@
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="configProjectFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
+			<el-button @click.native="openAccountFlag = false">取消</el-button>
+			<el-button type="primary" @click.native="submitOpenAccount">提交</el-button>
 		</div>
 	</el-dialog>
 
@@ -100,8 +101,12 @@
 import swiper from '@/assets/js/swiper'
 import headTop from '@/components/headTop'
 import {
+	getDictionaryByCodeRequest
+} from '@/api/dictionaryApi'
+import {
 	accountInfosListRequest,
-	accountStatementListRequest
+	accountStatementListRequest,
+	enterpriseAccountOpenRequest
 } from '@/api/enterpriseApi'
 import {
 	mapState
@@ -140,8 +145,9 @@ export default {
 			deleteNoticeFlag: false,
 			//线上开户
 			openAccountFlag: false,
+			accountTypeList:[],
 			bankList:[],
-			openAccountFormData: [],
+			openAccountFormData: {},
 			openAccountRules:{
 				productCode: [{
 					required: true,
@@ -166,7 +172,7 @@ export default {
 	},
 	mounted() {
 		this.initData();
-
+		this.getBankList();
 	},
 	computed: {
 		last4Digits(value) {
@@ -226,15 +232,35 @@ export default {
 			let options = {
 				accoundId: this.$store.state.loginInfo.id
 			}
-			accountStatementListRequest(options).then(result => {
-				result.json().then(response => {
-					console.log(response);
-					this.tableList = response;
+			// accountStatementListRequest(options).then(result => {
+			// 	result.json().then(response => {
+			// 		console.log(response);
+			// 		this.tableList = response;
+			// 	})
+			// })
+		},
+		getBankList(){
+			let options={
+				code:'BANK_TYPE'
+			}
+			getDictionaryByCodeRequest(options).then(response=>{
+				response.json().then(result=>{
+					console.log(result);
+					this.accountTypeList=result;
 				})
 			})
 		},
-		getBankList(){
-
+		submitOpenAccount(){
+			let options={
+				body:this.openAccountFormData,
+				eid:this.$store.state.loginInfo.enterpriseId
+			}
+			alert(options.eid)
+			// enterpriseAccountOpenRequest(options).then(response=>{
+			// 	response.json().then(result=>{
+			// 		console.log(result);
+			// 	})
+			// })
 		},
 		async search() {
 			try {

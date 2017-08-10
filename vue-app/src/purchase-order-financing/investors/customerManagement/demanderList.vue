@@ -194,7 +194,7 @@
                 this.listLoading = true;
                 try{
                     const params = Object.assign({},this.pagination);
-                    const resp = await getDemanderList(2,params);
+                    const resp = await getDemanderList(this.projectId,params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];

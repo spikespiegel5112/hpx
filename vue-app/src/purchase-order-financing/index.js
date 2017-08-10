@@ -37,6 +37,15 @@ import gf_paymentReceiptDetail from '@/purchase-order-financing/supplier/money/p
 
 import gf_paymentReceiptRecord from '@/purchase-order-financing/supplier/money/payment-receipt-record/payment-receipt-record'
 import gf_paymentReceiptRecordDetail from '@/purchase-order-financing/supplier/money/payment-receipt-record/detail'
+
+import gf_address from '@/purchase-order-financing/supplier/address/address'
+import zf_address from '@/purchase-order-financing/investors/address/address'
+
+import gf_productMaintenance from '@/purchase-order-financing/supplier/product-maintenance/product-maintenance'
+import zf_productMaintenance from '@/purchase-order-financing/investors/product-maintenance/product-maintenance'
+
+import xf_warning from '@/purchase-order-financing/demander/warning/warning'
+import zf_warning from '@/purchase-order-financing/investors/warning/warning'
 // 路径path 1 以purchase-order-financing为标准 2 需方 命名 前面 加上xf_  资方 zf_ 供应商 gf_
 
 //货品维护
@@ -156,6 +165,30 @@ export default {
 			path: 'gf_paymentReceiptRecord/gf_paymentReceiptRecordDetail/:paymentId',
 			component: gf_paymentReceiptRecordDetail,
 			meta: ['供应商', '历史付款明细'],
+        },{
+			path: 'gf_address',
+			component: gf_address,
+			meta: ['供应商', '地址维护'],
+        },{
+			path: 'zf_address',
+			component: zf_address,
+			meta: ['资方', '地址维护'],
+        },{
+			path: 'gf_productMaintenance',
+			component: gf_productMaintenance,
+			meta: ['供应商', '货品维护'],
+        },{
+			path: 'zf_productMaintenance',
+			component: zf_productMaintenance,
+			meta: ['资方', '货品维护'],
+        },{
+			path: 'xf_warning',
+			component: xf_warning,
+			meta: ['需方', '风控预警'],
+        },{
+			path: 'zf_warning',
+			component: zf_warning,
+			meta: ['资方', '风控预警'],
         }
     ]
 }

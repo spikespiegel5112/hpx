@@ -89,7 +89,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { afterSaleList ,getSupplierList} from '@/api/orderApi'
+    import { afterSaleList ,roleList} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -167,7 +167,7 @@
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo","projectId"])
         },
         methods: {
             /*
@@ -186,7 +186,8 @@
                     const resp = await afterSaleList(params);
                     const res = await resp.json();
 
-                    const result = await getSupplierList(2);
+                    const param = Object.assign({enterpriseRole:'PRO_ENT_TYPE_SUPPLIER',state:'T'});
+                    const result = await roleList(this.projectId,param);
                     const resu = await result.json();
                     console.log("供应商", resu)
                     let temp = [];

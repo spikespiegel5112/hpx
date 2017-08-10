@@ -92,7 +92,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { afterSaleList ,getCapitalList,refundApproval} from '@/api/orderApi'
+    import { afterSaleList ,roleList,refundApproval} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -169,7 +169,7 @@
 
         },
         computed : {
-            ...mapState(["loginInfo"])
+            ...mapState(["loginInfo","projectId"])
         },
         methods: {
             /*
@@ -188,7 +188,8 @@
                     const resp = await afterSaleList(params);
                     const res = await resp.json();
 
-                    const result = await getCapitalList(2);
+                    const param = Object.assign({enterpriseRole:'PRO_ENT_TYPE_INVESTOR',state:'T'});
+                    const result = await roleList(this.projectId,param);
                     const resu = await result.json();
                     console.log("资方", resu)
                     let temp = [];

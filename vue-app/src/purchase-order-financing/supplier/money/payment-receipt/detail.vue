@@ -45,31 +45,19 @@
             return {
                 //table columns
                 columns : [{
-                    label : '付款银行',
-                    prop  : 'payerBank',
-                    },{
                     label : '付款银行账号',
                     prop  : 'payerBankAccount',
                     minWidth : 130,
                     },{
-                    label : '付款开户名',
-                    prop  : 'payerAccountName',
-                    },{
                     label : '付款方',
-                    prop  : 'payer',
-                    },{
-                    label : '收款银行',
-                    prop  : 'payeeBank',
-                    },{
+                    prop  : 'payerAccountName',
+                    },,{
                     label : '收款银行账号',
                     prop  : 'payeeBankSccount',
                     minWidth : 130,
                     },{
-                    label : '收款开户名',
-                    prop  : 'payeeAccountName',
-                    },{
                     label : '收款方',
-                    prop  : 'payee',
+                    prop  : 'payeeAccountName',
                     },{
                     label : '支付金额',
                     prop  : 'paymentAmount',
