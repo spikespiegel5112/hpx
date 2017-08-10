@@ -6,7 +6,7 @@
 			<div class="enterprise_accountoverview_container">
 				<el-row>
 					<el-col :span="24">
-						<el-button type="primary" @click="openAccountFlag='true'">线上开户</el-button>
+						<el-button type="primary" @click="openAccountFlag=true">线上开户</el-button>
 					</el-col>
 				</el-row>
 				<div class="enterprise_accountoverview_wrapper">
@@ -75,19 +75,33 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item label="虚拟卡号">
+				<el-input v-model="openAccountFormData.title"></el-input>
+			</el-form-item>
 			<el-form-item label="图片验证码">
 				<el-row>
-					<el-col :span="19">
-						<el-input v-model="openAccountFormData.name"></el-input>
+					<el-col :span="15">
+						<el-input v-model="openAccountFormData.strCode"></el-input>
 					</el-col>
 					<el-col :span="5">
-						
+						<img style='width:100%;' :src="kaptchaImagePath" alt="">
+					</el-col>
+					<el-col :span="3">
+						<el-button type="primary" @click='getKptchaImage'>看不清</el-button>
 					</el-col>
 				</el-row>
 
 			</el-form-item>
 			<el-form-item label="短信验证码">
-				<el-input v-model="openAccountFormData.name"></el-input>
+				<el-row>
+					<el-col :span="19">
+						<el-input v-model="openAccountFormData.name"></el-input>
+					</el-col>
+					<el-col :span="3">
+						<el-button type="primary" @click='getSmsCode'>发送验证码</el-button>
+					</el-col>
+				</el-row>
+
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -106,6 +120,9 @@
 import swiper from '@/assets/js/swiper'
 import headTop from '@/components/headTop'
 import {
+	reSmgCode
+} from '@/api/getData';
+import {
 	getDictionaryByCodeRequest
 } from '@/api/dictionaryApi'
 import {
@@ -113,6 +130,9 @@ import {
 	accountStatementListRequest,
 	enterpriseAccountOpenRequest
 } from '@/api/enterpriseApi'
+import {
+	getKaptchaImageRequest
+} from '@/api/publicApi'
 import {
 	mapState
 } from 'vuex'
@@ -150,9 +170,15 @@ export default {
 			deleteNoticeFlag: false,
 			//线上开户
 			openAccountFlag: false,
+			kaptchaImagePath: '',
 			accountTypeList: [],
 			bankList: [],
-			openAccountFormData: {},
+			openAccountFormData: {
+				platBankType: '',
+				strCode: '',
+				name: '',
+				smsCode: ''
+			},
 			openAccountRules: {
 				productCode: [{
 					required: true,
@@ -178,6 +204,7 @@ export default {
 	mounted() {
 		this.initData();
 		this.getBankList();
+		this.getKptchaImage();
 	},
 	computed: {
 		last4Digits(value) {
@@ -261,11 +288,11 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			alert(options.eid)
-			// enterpriseAccountOpenRequest(options).then(response=>{
-			// 	response.json().then(result=>{
-			// 		console.log(result);
-			// 	})
-			// })
+			enterpriseAccountOpenRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
+				})
+			})
 		},
 		async search() {
 			try {
@@ -274,7 +301,30 @@ export default {
 
 			}
 		},
-
+		getKptchaImage() {
+			this.kaptchaImagePath = `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime()
+		},
+		getSmsCode() {
+			this.openAccountFormData.smsCode = '';
+			let options = {
+				phone: this.$store.state.loginInfo.phone,
+				strCode: this.openAccountFormData.strCode
+			}
+			console.log(options);
+			reSmgCode(options.phone, options.strCode).then(response => {
+				console.log(response);
+				response.json().then(result => {
+					console.log(result);
+				})
+			}).catch(e => {``
+				console.log(e);
+				this.$message({
+					showClose: true,
+					message: e,
+					type: 'error'
+				});
+			})
+		}
 
 
 	}
