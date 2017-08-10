@@ -86,10 +86,10 @@
 	<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
 		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
 			<el-form-item v-for="(item,index) in projectRoleList" :key="item.key" :label="item.enterpriseName" prop="enterpriseName">
-				<!-- <el-select v-model="configProjectData[index].role" @change='chooseRole(value)'>
+				<el-select v-model="configProjectData[index].role" @change='chooseRole(value)'>
 					<el-option v-for="item in projectRoleList" :value="item.enterpriseRole" :key="item.enterpriseRole" :label="item.enterpriseTypeName">
 					</el-option>
-				</el-select> -->
+				</el-select>
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -109,7 +109,8 @@ import {
 
 import {
 	getRolesByEnterpriseRequest,
-	bindProjectRequest
+	bindProjectRequest,
+	enterpriseRolesListRequest
 } from '@/api/enterpriseApi'
 import {
 	modifyProjectInfo,
@@ -314,6 +315,7 @@ export default {
 			})
 		},
 		configProject(scope) {
+			console.log(scope);
 			this.configProjectData.eid=scope.row.ownerEnterpriseId
 			this.configProjectData.pid=scope.row.id
 
@@ -321,7 +323,8 @@ export default {
 				pid: scope.row.id,
 				params: {}
 			}
-			options.params = Object.assign(options.params, this.pagination.params)
+			console.log(options);
+			// options.params = Object.assign(options.params, this.pagination.params)
 			getRolesByEnterpriseRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);

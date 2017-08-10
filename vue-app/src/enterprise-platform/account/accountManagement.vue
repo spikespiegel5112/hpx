@@ -71,15 +71,20 @@
 		<el-form :model="openAccountFormData" label-width="120px" :rules="openAccountRules" ref="openAccountFormData">
 			<el-form-item label="账户类型">
 				<el-select v-model="openAccountFormData.platBankType">
-					<el-option v-for="item in accountTypeList" :value="item.code" :key="item.code" :label="item.name">
+					<el-option v-for="item in accountTypeList" :value="item.code" :key="item.name" :label="item.name">
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="手机号">
-				<el-input v-model="openAccountFormData.name"></el-input>
-			</el-form-item>
-			<el-form-item label="获取验证码">
-				<el-input v-model="openAccountFormData.name"></el-input>
+			<el-form-item label="图片验证码">
+				<el-row>
+					<el-col :span="19">
+						<el-input v-model="openAccountFormData.name"></el-input>
+					</el-col>
+					<el-col :span="5">
+						
+					</el-col>
+				</el-row>
+
 			</el-form-item>
 			<el-form-item label="短信验证码">
 				<el-input v-model="openAccountFormData.name"></el-input>
@@ -145,10 +150,10 @@ export default {
 			deleteNoticeFlag: false,
 			//线上开户
 			openAccountFlag: false,
-			accountTypeList:[],
-			bankList:[],
+			accountTypeList: [],
+			bankList: [],
 			openAccountFormData: {},
-			openAccountRules:{
+			openAccountRules: {
 				productCode: [{
 					required: true,
 					message: '请输入项目创建时间',
@@ -239,21 +244,21 @@ export default {
 			// 	})
 			// })
 		},
-		getBankList(){
-			let options={
-				code:'BANK_TYPE'
+		getBankList() {
+			let options = {
+				code: 'BANK_TYPE'
 			}
-			getDictionaryByCodeRequest(options).then(response=>{
-				response.json().then(result=>{
+			getDictionaryByCodeRequest(options).then(response => {
+				response.json().then(result => {
 					console.log(result);
-					this.accountTypeList=result;
+					this.accountTypeList = result;
 				})
 			})
 		},
-		submitOpenAccount(){
-			let options={
-				body:this.openAccountFormData,
-				eid:this.$store.state.loginInfo.enterpriseId
+		submitOpenAccount() {
+			let options = {
+				body: this.openAccountFormData,
+				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			alert(options.eid)
 			// enterpriseAccountOpenRequest(options).then(response=>{
