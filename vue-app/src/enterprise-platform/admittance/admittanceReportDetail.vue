@@ -1,6 +1,7 @@
 <template>
 <div class="fillcontain">
-	<head-top></head-top>
+<!--	<head-top></head-top>-->
+	<commonDetailTitle :title='reportData.enterpriseName' routerName='admittanceReportList'></commonDetailTitle>
 	<section class="admittance_report_container">
 		<h1 class='maintitle'>{{reportData.enterpriseName}}</h1>
 		<div class="summarize block_wrapper">
@@ -48,6 +49,7 @@
 import echarts from '../../assets/js/echarts.common.min'
 // import echarts from 'echarts'
 import headTop from '../../components/headTop'
+import commonDetailTitle from '../../components/commonDetailTitle'
 import {
 	templateReportDetailRequest,
 } from '@/api/templateApi'
@@ -67,11 +69,15 @@ export default {
 		}
 	},
 	components: {
-		headTop
+		headTop,
+        commonDetailTitle
 	},
-	mounted() {
+	activated() {
 		this.getReport();
 	},
+    deacticated(){
+        
+    },
 	methods: {
 		getReport() {
 			let params = {

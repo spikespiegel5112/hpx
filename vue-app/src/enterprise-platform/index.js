@@ -109,6 +109,7 @@ export default {
 			meta:["风控管理","公允参数"]
 		},{
 			path:'enterprise-access-pre',
+            name: 'admittanceManagement',
 			component : admittanceManagement,
 			meta:["风控管理","企业准入"]
 		},{
@@ -118,6 +119,7 @@ export default {
 			meta:["风控管理",'企业准入',"准入评估"]
 		},{
 			path:'report',
+            name : 'admittanceReportList',
 			component : admittanceReportList,
 			meta:["风控管理","准入报告列表"]
 		},{

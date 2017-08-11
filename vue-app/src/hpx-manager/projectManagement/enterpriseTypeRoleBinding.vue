@@ -1,6 +1,6 @@
 <template>
 <div class="fillcontain">
-    <commonDetailTitle routerName='projectsMaintenance' title="企业类型角色绑定"></commonDetailTitle>
+    <commonDetailTitle routerName='admittanceManagement' title="企业类型角色绑定"></commonDetailTitle>
 <!--	<head-top></head-top>-->
 
 	<section class="main-table-container">

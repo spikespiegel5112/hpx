@@ -30,24 +30,31 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/core': {
-//                 target: 'http://10.38.8.44:9000',
-                target: 'http://10.38.8.50:9000',
+                 target: 'http://10.38.8.76:9000',
+//                target: 'http://10.38.8.50:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/core': ''
                 }
             },
+            //王武的地址
             '/credit': {
-//                 target: 'http://10.38.8.44:9000',
-                target: 'http://10.38.8.50:9003',
+                 target: 'http://10.38.8.82:9003',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/credit': '/credit/api/v1'
+                    '^/credit': '/'
                 },
             },
+//            '/credit': {
+//                 target: 'http://10.38.8.50:9000',
+//                changeOrigin: true,
+//                pathRewrite: {
+//                    '^/credit': '/credit/api/v1'
+//                },
+//            },
             '/order': {
-//                 target: 'http://10.38.8.44:9000',
-                target: 'http://10.38.8.50:9000',
+                 target: 'http://10.38.8.76:9000',
+//                target: 'http://10.38.8.50:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/order': '/huaqian/api/v1'
