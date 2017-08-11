@@ -9,9 +9,14 @@
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
 			<el-table-column label="对应角色" prop="enterpriseStatus">
-				<template scope="scope">
-					
-				</template>
+				<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
+                    <el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
+                        <el-select v-model="configProjectData.role">
+                            <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
