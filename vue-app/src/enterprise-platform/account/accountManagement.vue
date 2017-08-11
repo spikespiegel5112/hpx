@@ -75,13 +75,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="虚拟卡号" prop='citicAccNo'>
-				<el-input v-model="openAccountFormData.citicAccNo"></el-input>
-			</el-form-item>
-			<el-form-item label="客户号" prop='hostNo'>
-				<el-input v-model="openAccountFormData.hostNo"></el-input>
-			</el-form-item>
-			
+            
 			<el-form-item label="短信验证码" prop='code'>
 				<el-row>
 					<el-col :span="19">
@@ -173,7 +167,7 @@ export default {
 					message: '请选择项目账户类型',
 					trigger: 'change'
 				}],
-				citicAccNo: [{
+				costActNo: [{
 					required: true,
 					message: '请输入项目虚拟卡号',
 					trigger: 'change'
@@ -280,8 +274,8 @@ export default {
 				if (valid) {
 					let options = {
 						body: {
-                            hostNo:this.openAccountFormData.hostNo,
-                            citicAccNo:this.openAccountFormData.citicAccNo
+//                            hostNo:this.openAccountFormData.hostNo,
+                            platBankType:this.openAccountFormData.platBankType
                         },
 						code: this.openAccountFormData.code,
 						eid: this.$store.state.loginInfo.enterpriseId

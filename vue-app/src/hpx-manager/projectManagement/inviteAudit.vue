@@ -1,7 +1,25 @@
 <template>
 <div class="fillcontain">
 	<head-top></head-top>
-
+    
+    <!--  搜索条件  -->
+	<section class='search-criteria-container'>
+		<el-form :inline="true" :model="query" ref="query">
+			<el-row>
+				<el-col :span="5">
+					<el-form-item prop="name">
+						<el-input v-model="query.name" size="large" placeholder="项目名称"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="7">
+					<el-form-item>
+						<el-button type="primary" icon="search" @click="search">查询</el-button>
+					</el-form-item>
+				</el-col>
+			</el-row>
+		</el-form>
+	</section>
+    
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 			<el-table-column type="index" width='5	0'>
@@ -98,6 +116,8 @@ export default {
 				},
 				total: 0
 			},
+            query:{},
+            
 			//审核弹框
 			auditDialogFlag: false
 		}

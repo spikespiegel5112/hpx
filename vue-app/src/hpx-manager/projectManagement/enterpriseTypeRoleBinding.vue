@@ -1,6 +1,6 @@
 <template>
 <div class="fillcontain">
-    <commonDetailTitle routerName='projectsMaintenance' title="企业类型角色绑定"></commonDetailTitle>
+    <commonDetailTitle routerName='projectsMaintenance' title="产品类型角色绑定"></commonDetailTitle>
 <!--	<head-top></head-top>-->
 
 	<section class="main-table-container">
@@ -9,18 +9,11 @@
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
 			<el-table-column label="对应角色" prop="enterpriseStatus">
-				<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-                    <el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
-                        <el-select v-model="configProjectData.role">
-                            <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-form>
+			  
+               
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
 					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>
 				</template>
 			</el-table-column>
@@ -30,6 +23,25 @@
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
+		
+		<!--项目配置-->
+        <el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
+            <el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
+                <el-form-item label="可绑定角色">
+                    <el-select v-model="configProjectData.role" @change='chooseEnterpriseRoles'>
+                        <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="configProjectFlag = false">取消</el-button>
+                <el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
+            </div>
+        </el-dialog>
+		
+		
+		
 	</section>
 	
 </div>
@@ -39,18 +51,10 @@
 import commonDetailTitle from '@/components/commonDetailTitle'
 import headTop from '@/components/headTop'
 import {
-	getProjectList
-} from '@/api/getData'
-
-import {
     getRolesByProjectRequest,
 	getAllRolesListRequest,
 	bindProjectRequest
 } from '@/api/enterpriseApi'
-import {
-	modifyProjectInfo,
-	deleteProject
-} from '@/api/coreApi'
 import {
 	mapState
 } from 'vuex'
@@ -66,8 +70,8 @@ export default {
 		return {
 			//table columns
 			columns: [{
-				label: '企业类型',
-				prop: 'productCode',
+				label: '产品类型',
+				prop: 'productName',
 				sortable: true,
 			}],
 			//table
@@ -102,33 +106,7 @@ export default {
 			// }],
 			//搜索条件的个数
 			criteriaNum: 3,
-			//编辑项目模态框
-			editProjectDialogFlag: false,
-			editProjetEid: 0,
-			editData: {
-				productCode: '',
-				name: '',
-				remark: '',
-				startTime: '',
-				endTime: ''
-			},
-			editRules: {
-				productCode: [{
-					required: true,
-					message: '请输入项目创建时间',
-					trigger: 'blur'
-				}],
-				createTime: [{
-					required: true,
-					message: '请输入项目创建时间',
-					trigger: 'blur'
-				}],
-				name: [{
-					required: true,
-					message: '请输入项目名称',
-					trigger: 'blur'
-				}]
-			},
+			
             routeParams:{
                 pid:'',
                 eid:''
@@ -139,8 +117,9 @@ export default {
             allRoleList: [],
 			configProjectData: {
 				eid: '',
-				epid: '',
+				pid: '',
 				role: '',
+                id: ''
 			},
 			configProjectRules: {
 				role: [{
@@ -151,10 +130,12 @@ export default {
 		}
 	},
 	activated() {
-		this.initData();
         this.getParams();
-        this.configProject()
+		this.initData();
 	},
+    deactivated(){
+        this.configProjectData.code='';
+    },
 	methods: {
 		initData() {
 			this.listLoading = true;
@@ -168,92 +149,49 @@ export default {
 				this.emptyText = "获取数据失败";
 				this.listLoading = false;
 			}
+            
 		},
         getParams(){
             this.routeParams.pid=this.$route.query.pid;
             this.routeParams.eid=this.$route.query.pid;
         },
+        configProject(scope) {
+            this.configProjectData.eid=scope.row.enterpriseId;
+            
+            getAllRolesListRequest().then(response=>{
+                response.json().then(result=>{
+                    console.log(result);
+                    
+                    this.allRoleList = result;
+                })
+            })
+			this.configProjectFlag = true
+		},
 		getList() {
-			let options = {
-				params: {}
-			}
-			options.params = Object.assign(this.pagination.params, this.query);
-			console.log(options);
-			getProjectList(options).then(response => {
-				this.pagination.total = Number(response.headers.get('x-total-count'))
-				response.json().then(result => {
-					console.log(result);
-					this.tableList = result
-				})
-			})
-		},
-		editProjet(scope) {
-			this.editProjetEid = scope.row.id;
-			this.editProjectDialogFlag = true;
-			this.editData.productCode = scope.row.productCode;
-			this.editData = {
-				productCode: scope.row.productCode,
-				name: scope.row.name,
-				remark: scope.row.remark,
-				startTime: scope.row.startTime,
-				endTime: scope.row.endTime
-			}
-		},
-		async editProjetSubmit() {
-			this.$refs['editData'].validate(async(valid) => {
-				if (valid) {
-					try {
-						const response = await modifyProjectInfo(this.editProjetEid, this.editData);
-						this.editProjectDialogFlag = false;
-						this.initData();
-					} catch (e) {
-						this.$message.error(e)
-					}
-				}
-			})
-		},
-		createProject() {
-			this.$router.push({
-				name: 'projectCreate'
-			})
-		},
-		configProject(scope) {
-			this.configProjectData.eid=this.routeParams.eid;
-			this.configProjectData.pid=this.routeParams.pid;
-
-			let options1 = {
-				pid: this.routeParams.pid,
+            this.configProjectData.pid=this.routeParams.eid;
+            let options1 = {
+				pid: this.configProjectData.pid,
 				params: {}
 			}
 			options1.params = Object.assign(options1.params, this.pagination.params)
 			getRolesByProjectRequest(options1).then(response => {
 				response.json().then(result => {
 					console.log(result);
-					this.projectRoleList = result;
+					this.tableList = result;
 				})
 			})
-            
-            
-            let options2 = {
-				eid: this.routeParams.eid,
-			}
-            getAllRolesListRequest(options2).then(response=>{
-                response.json().then(result=>{
-                    console.log(result);
-                    this.allRoleList = result;
-                })
-            })
-			this.configProjectFlag = true
 		},
+		
 		configProjectSubmit() {
 			this.$refs['configProjectData'].validate(async(valid) => {
 				if (valid) {
 					try {
 						let options = {
 							eid: this.configProjectData.eid,
-							pid: this.configProjectData.pid,
+							pid: Number(this.configProjectData.pid),
 							body: {
-								code: this.configProjectData.role
+								code: this.configProjectData.role,
+                                id: this.configProjectData.id
 							}
 						}
 						console.log(options);
@@ -270,78 +208,21 @@ export default {
 				}
 			})
 		},
-		deleteProjectFunction(scope) {
-			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-				deleteProject(scope.row.id).then(() => {
-					this.getList();
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
-				})
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: '已取消删除'
-				});
-			});
-		},
+		
+        chooseEnterpriseRoles(value){
+            for(var item in this.allRoleList){ if(this.allRoleList[item].code==value){
+                alert(this.allRoleList[item].id)
+                    this.configProjectData.id=this.allRoleList[item].id;
+                }
+            }
+            console.log(this.configProjectData)
+        },
 		search() {
 			this.getList();
 		},
 		flipPage(pageIndex) {
 			this.pagination.params.page = pageIndex;
 			this.getList();
-		},
-		resetTable() {
-			this.query.name = '';
-			this.getList();
-		},
-		projectStateColor(scope) {
-			let stateColor;
-			switch (scope.row.state) {
-				case 'B':
-					stateColor = 'blue';
-					break;
-				case 'R':
-					stateColor = 'Success';
-					break;
-				case 'E':
-					stateColor = 'Black';
-					break;
-				case 'P':
-					stateColor = 'Warning';
-					break;
-				case 'F':
-					stateColor = 'danger';
-					break;
-			}
-			return stateColor;
-		},
-		projectState(scope) {
-			let state;
-			switch (scope.row.state) {
-				case 'B':
-					state = '准备中';
-					break;
-				case 'R':
-					state = '进行中';
-					break;
-				case 'E':
-					state = '正常结束';
-					break;
-				case 'P':
-					state = '暂停';
-					break;
-				case 'F':
-					state = '异常结束';
-					break;
-			}
-			return state;
 		}
 	},
 }

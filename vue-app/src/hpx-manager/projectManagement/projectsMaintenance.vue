@@ -71,6 +71,18 @@
 			<el-form-item label="项目说明">
 				<el-input v-model="editData.remark"></el-input>
 			</el-form-item>
+			<el-form-item label="产品类型" prop="productCode">
+				<el-select v-model="editData.productCode" @change='chooseProductType' placeholder="请选择">
+					<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.code">
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="产品企业类型" prop="type">
+				<el-select v-model="editData.type" placeholder="请选择">
+					<el-option v-for="item in productEnterpriseTypeList" :key="item.name" :label="item.name" :value="item.code">
+					</el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item label="项目开始时间">
 				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
 			</el-form-item>
@@ -104,6 +116,7 @@
 <script>
 import headTop from '@/components/headTop'
 import moment from 'moment'
+
 import {
 	getProjectList
 } from '@/api/getData'
@@ -332,8 +345,8 @@ export default {
 					this.projectRoleList = result;
 				})
 			})
-            
-            
+
+
             let options2 = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 			}
@@ -377,7 +390,7 @@ export default {
                     pid:scope.row.id,
                     eid:scope.row.ownerEnterpriseId
                 }
-            })  
+            })
         },
 		deleteProjectFunction(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
@@ -451,8 +464,31 @@ export default {
 					break;
 			}
 			return state;
-		}
-	},
+		},
+        getProductEnterpriseType(productCode) {
+			let options = {
+				productCode: productCode
+			}
+			for (var item in this.productList) {
+				if (this.productList[item].code == productCode) {
+					options.id = this.productList[item].id;
+				}
+			}
+			console.log(options);
+			enterpriseRolesListRequest(options).then(response => {
+				response.json().then(result => {
+					this.productEnterpriseTypeList = result;
+				})
+			})
+
+		},
+        chooseProductType(){
+            this.productCode = this.formData.productCode;
+			this.getProductEnterpriseType(this.productCode);
+			this.formData.type = '';
+        }
+	}
+    
 }
 </script>
 

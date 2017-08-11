@@ -1,7 +1,8 @@
 <template>
 <div>
-	<head-top></head-top>
-	<div class="search-criteria-container">
+<!--	<head-top></head-top>-->
+	<commonDetailTitle routerName='projectsMaintenance' title="新建项目"></commonDetailTitle>
+	<div>
 		<el-row type="flex" class="row-bg">
 			<el-col :span="3"></el-col>
 			<el-col :span="14">
@@ -41,15 +42,14 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
-
 			<el-col :span="3"></el-col>
 		</el-row>
 	</div>
 
-
 </div>
 </template>
 <script>
+import commonDetailTitle from '@/components/commonDetailTitle'
 import headTop from '@/components/headTop'
 import moment from 'moment'
 import {
@@ -61,6 +61,10 @@ import {
 	enterpriseRolesListRequest
 } from '@/api/enterpriseApi'
 export default {
+    components: {
+		headTop,
+        commonDetailTitle
+	},
 	data() {
 		return {
 			dateFormat: "YYYY-MM-DD",
@@ -115,15 +119,9 @@ export default {
 			}
 		};
 	},
-	components: {
-		headTop
-	},
 	activated(){
 		this.getData();
 		this.$refs['formData'].resetFields();
-	},
-	mounted() {
-
 	},
 	methods: {
 		getData() {
