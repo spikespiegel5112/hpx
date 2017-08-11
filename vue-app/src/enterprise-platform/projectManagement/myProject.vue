@@ -6,8 +6,9 @@
 			<el-table row-key="id" :empty-text="emptyText" :data="myProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
 				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 				</el-table-column>
-				<el-table-column label="操作" width='200'>
+				<el-table-column label="操作" width='230'>
 					<template scope="scope">
+                        <el-button type="text" size="small" @click='editProjet(scope)'>授信</el-button>
                         <el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
                         <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
                         <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
@@ -128,11 +129,12 @@ export default {
 				label: '产品',
 				prop: 'productName',
 				sortable: true,
+                minWidth: 50,
 			}, {
 				label: '项目名称',
 				prop: 'projectName',
 				sortable: true,
-				minWidth: 100,
+				minWidth: 70,
 			}, {
 				label: '参与角色',
 				prop: 'enterpriseTypeName',

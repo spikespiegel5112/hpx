@@ -1,5 +1,6 @@
 <template>
 <div class="fillcontain">
+    <commonDetailTitle title='企业准入评估' routerName='admittanceManagement'></commonDetailTitle>
 	<head-top></head-top>
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" :name="index">
@@ -29,7 +30,8 @@
 </template>
 
 <script>
-import headTop from '../../components/headTop'
+import commonDetailTitle from '@/components/commonDetailTitle'
+import headTop from '@/components/headTop'
 import {
 	allIndustryListRequest,
 	scoringmodelByIndustryRequest,
@@ -69,11 +71,15 @@ export default {
 		}
 	},
 	components: {
-		headTop
+		headTop,
+        commonDetailTitle
 	},
-	mounted() {
+	activated() {
 		this.getTree();
 	},
+    deactivated(){
+          
+    },
 	methods: {
 		getTree() {
 			let that = this;
@@ -117,9 +123,17 @@ export default {
 			// this.$refs['formData'].validate(valid => {
 			// 	if (valid) {
 					submitTemplateReportListRequest(options).then(response => {
-						response.json().then(result => {
+                        response.json().then(result => {
 							console.log(result);
+                            this.$router.push({
+                                    name:'admittanceReportList'
+                                })
+                            if(result.statusCode==200){
+                                
+                            }
+                             
 						})
+                       
 					})
 			// 	}
 			// })

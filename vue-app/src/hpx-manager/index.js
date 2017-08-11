@@ -59,7 +59,7 @@ const router = {
             component: projectCreate,
             meta: ['项目管理', '新建项目'],
         }, {
-            path: 'type-role-binding/:pid',
+            path: 'type-role-binding',
             name: 'enterpriseTypeRoleBinding',
             component: enterpriseTypeRoleBinding,
             meta: ['项目管理', '项目维护', '企业类型角色绑定'],

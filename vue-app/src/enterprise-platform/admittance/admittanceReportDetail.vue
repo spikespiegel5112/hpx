@@ -75,8 +75,10 @@ export default {
 	activated() {
 		this.getReport();
 	},
-    deacticated(){
-        
+    deactivated(){
+        this.evaluatingData=[];
+        this.tpModelData=[];
+        this.chartData=[];
     },
 	methods: {
 		getReport() {

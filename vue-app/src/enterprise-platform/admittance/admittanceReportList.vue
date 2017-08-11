@@ -170,7 +170,7 @@ export default {
 		getDateRange(value) {
 			this.queryParams.startTime = value.substr(0, 10);
 			this.queryParams.endTime = value.substr(13, 10);
-			alert(this.queryParams.endTime)
+//			alert(this.queryParams.endTime)
 		},
 		search() {
 			switch (this.queryOption) {

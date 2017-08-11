@@ -50,7 +50,7 @@
 			<el-form :inline="true">
 				<el-form-item label="请选择行业" inline>
 					<el-select v-model="industryType" placeholder="请选择" @change='selectIndustry'>
-						<el-option v-for="item in industryList" :key='item.key' :label="item.industryName" :value="item.id"></el-option>
+						<el-option v-for="item in industryList" :key='item.id' :label="item.industryName" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="请选择模型" inline>
@@ -161,9 +161,16 @@ export default {
 		headTop,
 		myPagination
 	},
-	mounted() {
+	activated() {
 		this.initData();
 	},
+    deactivated(){
+        this.tableList = [];
+//        this.industryList = [];
+//        this.modelList = [];
+        this.industryType='';
+        this.modelType='';
+    },
 	computed: {
 		...mapState(["loginInfo"])
 	},
@@ -222,7 +229,6 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.industryList = result;
-
 				})
 			})
 		},

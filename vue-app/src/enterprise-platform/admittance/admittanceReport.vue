@@ -54,8 +54,6 @@
 			</my-Pagination>
 		</section>
 	</section>
-	</span>
-	</el-dialog>
 </div>
 </template>
 

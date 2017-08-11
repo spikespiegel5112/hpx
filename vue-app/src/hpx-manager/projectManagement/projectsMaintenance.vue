@@ -373,8 +373,9 @@ export default {
         goToConfigProject(scope){
             this.$router.push({
                 name:'enterpriseTypeRoleBinding',
-                params:{
-                    pid:scope.row.id
+                query:{
+                    pid:scope.row.id,
+                    eid:scope.row.ownerEnterpriseId
                 }
             })  
         },

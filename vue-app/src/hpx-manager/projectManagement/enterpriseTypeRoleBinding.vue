@@ -129,7 +129,10 @@ export default {
 					trigger: 'blur'
 				}]
 			},
-
+            routeParams:{
+                pid:'',
+                eid:''
+            },
 			//配置项目模态框
 			configProjectFlag: false,
 			projectRoleList: [],
@@ -149,6 +152,8 @@ export default {
 	},
 	activated() {
 		this.initData();
+        this.getParams();
+        this.configProject()
 	},
 	methods: {
 		initData() {
@@ -164,6 +169,10 @@ export default {
 				this.listLoading = false;
 			}
 		},
+        getParams(){
+            this.routeParams.pid=this.$route.query.pid;
+            this.routeParams.eid=this.$route.query.pid;
+        },
 		getList() {
 			let options = {
 				params: {}
@@ -209,11 +218,11 @@ export default {
 			})
 		},
 		configProject(scope) {
-			this.configProjectData.eid=scope.row.ownerEnterpriseId
-			this.configProjectData.pid=scope.row.id
+			this.configProjectData.eid=this.routeParams.eid;
+			this.configProjectData.pid=this.routeParams.pid;
 
 			let options1 = {
-				pid: scope.row.id,
+				pid: this.routeParams.pid,
 				params: {}
 			}
 			options1.params = Object.assign(options1.params, this.pagination.params)
@@ -226,7 +235,7 @@ export default {
             
             
             let options2 = {
-				eid: this.$store.state.loginInfo.enterpriseId,
+				eid: this.routeParams.eid,
 			}
             getAllRolesListRequest(options2).then(response=>{
                 response.json().then(result=>{
