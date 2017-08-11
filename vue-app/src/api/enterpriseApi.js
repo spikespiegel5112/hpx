@@ -31,11 +31,11 @@ export const modifyProjectInvitStatusRequest = (options) =>{
 }
 
 /**
- * 根据产品code获取所有企业角色信息
+ * 取得角色信息列表, 支持分页
  */
 
-export const enterpriseRolesListRequest = options =>{
-    return fetch(`/core/core/api/v1/products/${options.productCode}/ent_roles`);
+export const getAllRolesListRequest = options =>{
+    return fetch(`/core/core/api/v1/enterprise/roles`);
 }
 
 /**

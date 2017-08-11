@@ -1,54 +1,22 @@
 <template>
 <div class="fillcontain">
-	<head-top></head-top>
-
-	<!--  搜索条件  -->
-	<section class='search-criteria-container'>
-		<el-form :inline="true" :model="query" ref="query">
-			<el-row>
-				<el-col :span="5">
-					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="项目名称"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="7" :offset="6 * (3 - (criteriaNum % 4))">
-					<el-form-item>
-						<el-button type="primary" icon="search" @click="search">查询</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button type="primary" icon="resetTable" @click="resetTable">重置</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button icon="plus" type="primary" @click='createProject'>新增</el-button>
-					</el-form-item>
-				</el-col>
-			</el-row>
-		</el-form>
-	</section>
+    <commonDetailTitle routerName='projectsMaintenance' title="企业类型角色绑定"></commonDetailTitle>
+<!--	<head-top></head-top>-->
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			<el-table-column type="expand">
-				<template scope="props">
-					<el-form label-position="left" class="demo-table-expand">
-						<el-form-item v-for="(value,i) in expand" :key="i" :label="value.label" :prop="value.prop" :formatter="value.formatter">
-							<span>{{ props.row[value.prop] }}</span>
-						</el-form-item>
-					</el-form>
-				</template>
-			</el-table-column>
+			
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
-			<el-table-column label="状态" prop="enterpriseStatus">
+			<el-table-column label="对应角色" prop="enterpriseStatus">
 				<template scope="scope">
-					<el-tag :type="projectStateColor(scope)">{{projectState(scope)}}</el-tag>
+					
 				</template>
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
-<!--					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>-->
-					<el-button type="text" size="small" @click="goToConfigProject(scope)">配置</el-button>
+					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -59,51 +27,13 @@
 			</el-pagination>
 		</section>
 	</section>
-	<!--编辑界面-->
-	<el-dialog title="修改项目" :visible.sync='editProjectDialogFlag' :close-on-click-modal="false">
-		<el-form :model="editData" label-width="120px" :rules="editRules" ref="editData">
-			<el-form-item label="产品类型" prop="productCode">
-				<el-input v-model="editData.productCode" auto-complete="off" readonly></el-input>
-			</el-form-item>
-			<el-form-item label="项目名称" prop="name">
-				<el-input v-model="editData.name" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="项目说明">
-				<el-input v-model="editData.remark"></el-input>
-			</el-form-item>
-			<el-form-item label="项目开始时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
-			</el-form-item>
-			<el-form-item label="项目终止时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime"></el-date-picker>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="editProjectDialogFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="editProjetSubmit">提交</el-button>
-		</div>
-	</el-dialog>
-	<!--项目配置-->
-	<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
-		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-			<el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
-				<el-select v-model="configProjectData.role">
-					<el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
-					</el-option>
-				</el-select>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="configProjectFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
-		</div>
-	</el-dialog>
+	
 </div>
 </template>
 
 <script>
+import commonDetailTitle from '@/components/commonDetailTitle'
 import headTop from '@/components/headTop'
-import moment from 'moment'
 import {
 	getProjectList
 } from '@/api/getData'
@@ -124,59 +54,16 @@ import {
 
 export default {
 	components: {
-		headTop
+		headTop,
+        commonDetailTitle
 	},
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
 			//table columns
 			columns: [{
-				label: '产品编码',
+				label: '企业类型',
 				prop: 'productCode',
-				sortable: true,
-			}, {
-				label: '项目编号',
-				prop: 'code',
-				sortable: true,
-				minWidth: 120,
-			}, {
-				label: '项目名称',
-				prop: 'name',
-				sortable: true,
-			}, {
-				label: '项目开始时间',
-				prop: 'startTime',
-				sortable: true,
-				formatter: (row, column) => {
-					return row.startTime != null ? moment(row.startTime).format(dateFormat) : ''
-				}
-			}, {
-				label: '项目终止时间',
-				prop: 'endTime',
-				sortable: true,
-				formatter: (row, column) => {
-					return row.endTime != null ? moment(row.endTime).format(dateFormat) : ''
-				}
-			}, {
-				label: '最后更新',
-				prop: 'modifiedTime',
-				sortable: true,
-				formatter: (row, column) => {
-					return row.endTime != null ? moment(row.endTime).format(dateFormat) : ''
-				}
-			}],
-			expand: [{
-				label: '建立人',
-				prop: 'creator',
-				sortable: true,
-			}, {
-				label: '项目说明',
-				prop: 'remark',
-				sortable: true,
-				minWidth: 200
-			}, {
-				label: '更新人',
-				prop: 'modifiedBy',
 				sortable: true,
 			}],
 			//table
@@ -370,14 +257,6 @@ export default {
 				}
 			})
 		},
-        goToConfigProject(scope){
-            this.$router.push({
-                name:'enterpriseTypeRoleBinding',
-                params:{
-                    pid:scope.row.id
-                }
-            })  
-        },
 		deleteProjectFunction(scope) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
 				confirmButtonText: '确定',
