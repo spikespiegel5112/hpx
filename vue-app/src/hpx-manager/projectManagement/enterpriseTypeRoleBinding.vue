@@ -1,6 +1,6 @@
 <template>
 <div class="fillcontain">
-    <commonDetailTitle routerName='admittanceManagement' title="企业类型角色绑定"></commonDetailTitle>
+    <commonDetailTitle routerName='projectsMaintenance' title="企业类型角色绑定"></commonDetailTitle>
 <!--	<head-top></head-top>-->
 
 	<section class="main-table-container">
@@ -27,7 +27,6 @@
 		</el-table>
 
 		<section class="main-pagination">
-			<!-- 特殊情况分页自己按注释的  -->
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>

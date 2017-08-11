@@ -40,10 +40,10 @@ module.exports = {
             //王武的地址
             '/credit': {
                  target: 'http://10.38.8.82:9003',
-                changeOrigin: true,
-                pathRewrite: {
-                    '^/credit': '/'
-                },
+                 changeOrigin: true,
+                 pathRewrite: {
+                     '^/credit': '/'
+                 },
             },
 //            '/credit': {
 //                 target: 'http://10.38.8.50:9000',
