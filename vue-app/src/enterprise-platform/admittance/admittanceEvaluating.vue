@@ -1,7 +1,7 @@
 <template>
 <div class="fillcontain">
-    <commonDetailTitle title='企业准入评估' routerName='admittanceManagement'></commonDetailTitle>
-<!--	<head-top></head-top>-->
+	<commonDetailTitle title='企业准入评估' routerName='admittanceManagement'></commonDetailTitle>
+	<!--	<head-top></head-top>-->
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" :name="index">
 			<el-form label-position="left" :model='formData.labels[index]' ref="validData" label-width="60%">
@@ -58,7 +58,7 @@ export default {
 				mid: this.$route.params.modelId, //模型ID
 				pid: this.$route.params.projectId //项目ID
 			},
-            validData:{},
+			validData: {},
 			form: {
 				name: '',
 				region: '',
@@ -69,25 +69,25 @@ export default {
 				resource: '',
 				desc: ''
 			},
-            fules:{
-                evaluatingItem:[{
-                    required: true,
-                    message: '请选择活动区域',
-                    trigger: 'change'
-                }]
-            }
+			fules: {
+				evaluatingItem: [{
+					required: true,
+					message: '请选择活动区域',
+					trigger: 'change'
+				}]
+			}
 		}
 	},
 	components: {
 		headTop,
-        commonDetailTitle
+		commonDetailTitle
 	},
 	activated() {
 		this.getTree();
 	},
-    deactivated(){
-          
-    },
+	deactivated() {
+
+	},
 	methods: {
 		getTree() {
 			let that = this;
@@ -98,7 +98,7 @@ export default {
 			scoringmodelByIndustryRequest(params).then(response => {
 				response.json().then(result => {
 					let index = 0;
-                    var validDataStr='';
+					var validDataStr = '';
 					for (var labelIndex in result.labelInfos) {
 						let subitems = [];
 						this.activeNames.push(labelIndex);
@@ -108,9 +108,9 @@ export default {
 								subItem: ''
 							});
 							console.log(labelIndex)
-                            validDataStr+="'subItem':'',"
-                            
-                            
+							validDataStr += "'subItem':'',"
+
+
 						}
 						this.$set(that.formData.labels, labelIndex, {
 							labelId: result.labelInfos[labelIndex].id,
@@ -121,11 +121,11 @@ export default {
 						// 	subitems: subitems
 						// }
 					}
-                    validDataStr=validDataStr.substr('-1','')
-                    validDataStr="{"+validDataStr+"}"
-                    console.log(validDataStr)
-                    this.validData=JSON.parse(validDataStr)
-                    
+					validDataStr = validDataStr.substr('-1', '')
+					validDataStr = "{" + validDataStr + "}"
+					console.log(validDataStr)
+					this.validData = JSON.parse(validDataStr)
+
 					console.log(result);
 					that.treeData = result;
 				})
@@ -137,23 +137,33 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			console.log(this.formData);
-//			 this.$refs['formData.labels[0]'].validate(valid => {
-//			 	if (valid) {
-					submitTemplateReportListRequest(options).then(response => {
-                        response.json().then(result => {
-							console.log(result);
-                            this.$router.push({
-                                    name:'admittanceReportList'
-                                })
-                            if(result.statusCode==200){
-                                
-                            }
-                             
-						})
-                       
+			//			 this.$refs['formData.labels[0]'].validate(valid => {
+			//			 	if (valid) {
+			submitTemplateReportListRequest(options).then(response => {
+				console.log(response)
+				response.json().then(result => {
+					console.log(result);
+					this.$message({
+						message: '评估填报成功！',
+						type: 'success'
+					});
+					this.$router.push({
+						name: 'reportDetail',
+						params: {
+							reportId: result.id
+						}
 					})
-//			 	}
-//			 })
+				})
+			}).catch(err => {
+				console.log(err)
+				this.$alert('请确认表单已全部填报完成', '提示', {
+					confirmButtonText: '确定',
+					type: 'error',
+					callback: () => {}
+				});
+			})
+			//			 	}
+			//			 })
 
 		}
 	}

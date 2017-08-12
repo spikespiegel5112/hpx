@@ -110,7 +110,6 @@ export default {
 		chart() {
 			var evaluatechart = echarts.init(document.getElementById('evaluatechart'));
 			evaluatechart.setOption({
-				color: '#323232',
 				title: {
 					text: '',
 					left: 'center',
@@ -157,10 +156,22 @@ export default {
 					},
 					itemStyle: {
 						normal: {
-							color: '#C1232B',
+							color: {
+//                                type: 'radial',
+//                                x: 0.5,
+//                                y: 0.5,
+//                                r: 0.5,
+                                colorStops: [{
+                                    offset: 0, color: 'red' // 0% 处的颜色
+                                }, {
+                                    offset: 1, color: 'blue' // 100% 处的颜色
+                                }],
+                                globalCoord: false // 缺省为 false
+                            },
 							shadowBlur: 200,
 							shadowColor: 'rgba(255, 255, 255, 0.5)'
 						},
+                        
 						radius: ['100%']
 					},
 					animationType: 'scale',

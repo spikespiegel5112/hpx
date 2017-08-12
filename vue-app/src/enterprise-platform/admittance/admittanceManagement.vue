@@ -41,7 +41,7 @@
 			</el-table-column>
 			<el-table-column align="center" label="操作">
 				<template scope='scope'>
-					<el-button type="text" size="small" @click='getEnterpriseReport(scope)'>企业填报信息</el-button>
+<!--					<el-button type="text" size="small" @click='getEnterpriseReport(scope)'>企业填报信息</el-button>-->
 					<el-button type="text" size="small" @click='evaluateEnterprise(scope)'>企业准入</el-button>
 				</template>
 			</el-table-column>
@@ -164,13 +164,13 @@ export default {
 	activated() {
 		this.initData();
 	},
-    deactivated(){
-        this.tableList = [];
-//        this.industryList = [];
-//        this.modelList = [];
-        this.industryType='';
-        this.modelType='';
-    },
+	deactivated() {
+		this.tableList = [];
+		//        this.industryList = [];
+		//        this.modelList = [];
+		this.industryType = '';
+		this.modelType = '';
+	},
 	computed: {
 		...mapState(["loginInfo"])
 	},
@@ -209,7 +209,8 @@ export default {
 				})
 			})
 		},
-		getEnterpriseReport(scope) {modelId
+		getEnterpriseReport(scope) {
+			modelId
 			console.log(scope);
 			let options = {
 				eid: scope.row.employerId,
@@ -248,7 +249,7 @@ export default {
 		},
 		evaluateEnterprise(scope) {
 			console.log(this.pid);
-			this.pid=scope.row.projectId;
+			this.pid = scope.row.projectId;
 			this.evaluateEnterpriseDialogFlag = true;
 			this.getIndustryList();
 		},
