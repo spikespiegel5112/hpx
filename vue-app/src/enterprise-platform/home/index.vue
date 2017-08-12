@@ -48,7 +48,6 @@
                     </div>
                     <ul>
                         <li v-for="elem in noticeList" :key="elem.key">
-                            <!-- <a class='common_carditemtitle_item' href="javascript:;">{{elem.title}}</a> -->
                             <router-link class='common_carditemtitle_item' :to="{ name: 'noticeEdit', params: { noticeId: 'review&'+elem.id}}">{{elem.title}}</router-link>
                         </li>
                     </ul>
@@ -62,10 +61,13 @@
                             <router-link to="/platform/project">更多项目</router-link>
                         </el-button>
                     </div>
-                    <ul class="home-project-list">
-                        <li class="ellipsis" v-for="(item,i) in projectList" :key="i+''" @click="toProject(item.pjId)">
+                    <ul v-if='noProjects==false' class="home-project-list">
+                        <li v-if="item.state=='R'" class="ellipsis" v-for="(item,i) in projectList" :key="i+''" @click="toProject(item)">
                                 {{item.projectName}}
                         </li>
+                    </ul>
+                    <ul v-else>
+                        暂无激活项目
                     </ul>
                 </el-card>
             </el-col>
@@ -87,9 +89,11 @@ export default {
     data(){
         return {
             projectList : [],
+            noProjects:false,
             totalPj : 0,
             upcomingList : [],
-            noticeList:[]
+            noticeList:[],
+            
         }
     },
     created(){
@@ -117,17 +121,32 @@ export default {
                     const res = await resp.json();
                     this.totalPj = resp.headers.get('x-total-count');
                     this.projectList = res;
+                    for(var item in res){
+                        let count=0;
+                        if(res[item].state=='R'){
+                            count++;
+                        }
+                        if(item==res.length-1){
+                            if(count==0){
+                                this.noProjects=true;
+                            }
+                        }
+                    }
+
                 }catch(e){
 
                 }
             })()
         },
-        toProject(pjId){
-            if(pjId){
-                this.getCurrentProjectId(pjId);
-                this.$router.push({path : `/porderf/${pjId}/demander`})
+        toProject(item){
+            console.log(item.state)
+            if(item.state=='R'){
+                this.getCurrentProjectId(item.pjId);
+                this.$router.push({
+                    path:`/porderf/${item.pjId}/demander`
+                })
             }else{
-                this.$message.error('fwssb')
+                this.$message.error('当前项目未激活')
             }
         },
         getNoticeList(){
@@ -138,9 +157,7 @@ export default {
                 }
             }
             noticeListRequest(options).then(response=>{
-
                 response.json().then(result=>{
-                    console.log(result);
                     this.noticeList=result;
                 })
             })

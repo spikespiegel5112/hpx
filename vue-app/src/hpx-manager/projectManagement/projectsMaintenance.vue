@@ -39,13 +39,14 @@
 			</el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
-			<el-table-column label="状态" prop="enterpriseStatus">
+			<el-table-column label="状态" prop="enterpriseStatus" width='90px'>
 				<template scope="scope">
 					<el-tag :type="projectStateColor(scope)">{{projectState(scope)}}</el-tag>
 				</template>
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
+				    <el-button type="text" size="small" @click='activate(scope)'>{{scope.row.state=='B'?'激活':'冻结'}}</el-button>
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
 <!--					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>-->
 					<el-button type="text" size="small" @click="goToConfigProject(scope)">配置</el-button>
@@ -128,7 +129,8 @@ import {
 import {
     getRolesByProjectRequest,
 	getAllRolesListRequest,
-	bindProjectRequest
+	bindProjectRequest,
+    activateProjectRequest
 } from '@/api/enterpriseApi'
 import {
 	modifyProjectInfo,
@@ -150,16 +152,18 @@ export default {
 			columns: [{
 				label: '产品编码',
 				prop: 'productCode',
-				sortable: true,
+//				sortable: true,
+                width:110
 			}, {
 				label: '项目编号',
 				prop: 'code',
-				sortable: true,
-				minWidth: 120,
+//				sortable: true,
+				minWidth: 100,
 			}, {
 				label: '项目名称',
 				prop: 'name',
-				sortable: true,
+//				sortable: true,
+                minWidth: 80,
 			}, {
 				label: '项目开始时间',
 				prop: 'startTime',
@@ -255,7 +259,7 @@ export default {
 					trigger: 'blur'
 				}]
 			},
-
+            
 			//配置项目模态框
 			configProjectFlag: false,
 			projectRoleList: [],
@@ -490,6 +494,33 @@ export default {
             this.productCode = this.formData.productCode;
 			this.getProductEnterpriseType(this.productCode);
 			this.formData.type = '';
+        },
+        activate(scope){
+            console.log(scope)
+            var options={
+                body:{},
+                id:scope.row.id,
+                state:''
+            }
+            if(scope.row.state=='R'){
+                options.state='B';
+                this.$message({
+                        message: '已冻结此项目',
+                        type: 'success'
+                    });
+            }else if(scope.row.state=='B'){
+                options.state='R';
+                this.$message({
+                        message: '已激活此项目',
+                        type: 'success'
+                    });
+            }
+            activateProjectRequest(options).then(response=>{
+                console.log(response);
+                if(response.status==200){
+                    this.getList();
+                }
+            })
         }
 	}
     

@@ -1,15 +1,15 @@
 <template>
 <div class="fillcontain">
     <commonDetailTitle title='企业准入评估' routerName='admittanceManagement'></commonDetailTitle>
-	<head-top></head-top>
+<!--	<head-top></head-top>-->
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" :name="index">
-			<el-form :model='formData' ref="formData" label-width="60%">
+			<el-form :model='formData.labels[index]' ref="validData" label-width="60%">
 				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition" :rules="[{
 					required: true,
 					message: '请输入邮箱地址',
-					trigger: 'blur' }]">
-					<el-select v-model='formData.labels[index].subitems[index2].subItem' placeholder="请选择" style="width: 100px;">
+					trigger: 'change' }]">
+					<el-select v-model='formData.labels[index].subitems[index2].subItem' placeholder="请选择" prop='evaluatingItem' style="width: 100px;">
 						<el-option v-for="(item, index3) in scoreItem.modelTargetInfos" :key='item.key' :label="item.threeLevel" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
@@ -58,6 +58,7 @@ export default {
 				mid: this.$route.params.modelId, //模型ID
 				pid: this.$route.params.projectId //项目ID
 			},
+            validData:{},
 			form: {
 				name: '',
 				region: '',
@@ -68,6 +69,13 @@ export default {
 				resource: '',
 				desc: ''
 			},
+            fules:{
+                evaluatingItem:[{
+                    required: true,
+                    message: '请选择活动区域',
+                    trigger: 'change'
+                }]
+            }
 		}
 	},
 	components: {
@@ -90,6 +98,7 @@ export default {
 			scoringmodelByIndustryRequest(params).then(response => {
 				response.json().then(result => {
 					let index = 0;
+                    var validDataStr='';
 					for (var labelIndex in result.labelInfos) {
 						let subitems = [];
 						this.activeNames.push(labelIndex);
@@ -99,6 +108,9 @@ export default {
 								subItem: ''
 							});
 							console.log(labelIndex)
+                            validDataStr+="'subItem':'',"
+                            
+                            
 						}
 						this.$set(that.formData.labels, labelIndex, {
 							labelId: result.labelInfos[labelIndex].id,
@@ -109,6 +121,11 @@ export default {
 						// 	subitems: subitems
 						// }
 					}
+                    validDataStr=validDataStr.substr('-1','')
+                    validDataStr="{"+validDataStr+"}"
+                    console.log(validDataStr)
+                    this.validData=JSON.parse(validDataStr)
+                    
 					console.log(result);
 					that.treeData = result;
 				})
@@ -120,8 +137,8 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			console.log(this.formData);
-			// this.$refs['formData'].validate(valid => {
-			// 	if (valid) {
+			 this.$refs['formData.labels[0]'].validate(valid => {
+			 	if (valid) {
 					submitTemplateReportListRequest(options).then(response => {
                         response.json().then(result => {
 							console.log(result);
@@ -135,8 +152,8 @@ export default {
 						})
                        
 					})
-			// 	}
-			// })
+			 	}
+			 })
 
 		}
 	}

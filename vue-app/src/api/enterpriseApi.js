@@ -89,3 +89,12 @@ export const getRolesByProjectRequest = options => fetch(`/core/core/api/v1/ente
 ** 新增企业开户申请
 */
 export const enterpriseAccountOpenRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts/${options.code}`, options.body, 'put');
+
+/*
+** 审核企业项目
+*/
+export const activateProjectRequest = options => fetch(`/core/core/api/v1/projects/${options.id}/activation/${options.state}`, options.body, 'patch');
+
+
+
+
