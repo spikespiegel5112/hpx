@@ -1,16 +1,20 @@
 <template>
 <div class="fillcontain">
-    <commonDetailTitle routerName='projectsMaintenance' title="产品类型角色绑定"></commonDetailTitle>
+    <commonDetailTitle routerName='projectsMaintenance' title="企业类型角色绑定"></commonDetailTitle>
 <!--	<head-top></head-top>-->
 
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 			
-			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+			<el-table-column v-for="(item,index) in tableList" :key="item" label="项目企业类型" :prop="value.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">{{item.enterpriseTypeName}}
 			</el-table-column>
 			<el-table-column label="对应角色" prop="enterpriseStatus">
-			  
-               
+               <template scope='scope'>
+                   <el-select v-model="configProjectData.role" @change='chooseEnterpriseRoles'>
+                        <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
+                        </el-option>
+                    </el-select>
+               </template>
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
@@ -18,7 +22,23 @@
 				</template>
 			</el-table-column>
 		</el-table>
-
+        <el-row v-for="(value,i) in tableList">
+            <el-col :span="12">
+                <el-form ref="form" :model="form" label-width="150px">
+                    <el-form-item :label="value.enterpriseTypeName">
+                        <el-select v-model="formInline.region" placeholder="活动区域">
+                            <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                
+            </el-col>
+            <el-col :span="12">
+            
+          </el-col>
+          
+        </el-row>
 		<section class="main-pagination">
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
@@ -68,9 +88,13 @@ export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
+            form:{},
+            formInline:{
+                region:''
+            },
 			//table columns
 			columns: [{
-				label: '产品类型',
+				label: '企业类型',
 				prop: 'productName',
 				sortable: true,
 			}],

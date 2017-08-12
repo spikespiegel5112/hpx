@@ -71,18 +71,22 @@
 			<el-form-item label="项目说明">
 				<el-input v-model="editData.remark"></el-input>
 			</el-form-item>
+<!--
 			<el-form-item label="产品类型" prop="productCode">
 				<el-select v-model="editData.productCode" @change='chooseProductType' placeholder="请选择">
 					<el-option v-for="item in productList" :key="item.name" :label="item.name" :value="item.code">
 					</el-option>
 				</el-select>
 			</el-form-item>
+-->
+<!--
 			<el-form-item label="产品企业类型" prop="type">
 				<el-select v-model="editData.type" placeholder="请选择">
 					<el-option v-for="item in productEnterpriseTypeList" :key="item.name" :label="item.name" :value="item.code">
 					</el-option>
 				</el-select>
 			</el-form-item>
+-->
 			<el-form-item label="项目开始时间">
 				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
 			</el-form-item>
