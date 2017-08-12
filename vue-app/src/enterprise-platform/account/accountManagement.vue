@@ -53,14 +53,12 @@
 			</el-table-column>
 			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
-			<el-table-column align="center" label="操作">
-				<template scope="scope">
-                    <el-button type="text" size="small" @click="reviewNotice(scope)">查询</el-button>
-                    <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
-					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
-</template>
-			</el-table-column>
 		</el-table>
+		<section class="main-pagination">
+			<!-- 特殊情况分页自己按注释的  -->
+			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+			</el-pagination>
+		</section>
 		<!-- <section class="main-pagination">
 			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
 			</my-Pagination>
@@ -127,7 +125,56 @@ export default {
 			eid: this.$store.state.loginInfo.enterpriseId,
 			enterpriseName: this.$store.state.loginInfo.enterpriseName,
 			//table columns
-			columns: [],
+            columns: [{
+				label: '银行流水号',
+				prop: 'accountNo',
+//				sortable: true,
+                width:110
+			}, {
+				label: '交易时间',
+				prop: 'tranDate',
+//				sortable: true,
+				minWidth: 100,
+			}, {
+				label: '借方发生额(元)',
+				prop: 'tranAmt',
+//				sortable: true,
+                minWidth: 80,
+			}, {
+				label: '贷方发生额(元)',
+				prop: 'accBalAmt',
+				sortable: true,
+			}, {
+				label: '金额(元)',
+				prop: 'accBalAmt',
+				sortable: true,
+			}, {
+//				label: '对方账号',
+//				prop: 'modifiedTime',
+//				sortable: true,
+//			}, {
+//				label: '对方户名',
+//				prop: 'modifiedTime',
+//				sortable: true,
+//			}, {
+				label: '凭证号',
+				prop: 'verifyCode',
+				sortable: true,
+			}],
+			expand: [{
+				label: '建立人',
+				prop: 'creator',
+				sortable: true,
+			}, {
+				label: '项目说明',
+				prop: 'remark',
+				sortable: true,
+				minWidth: 200
+			}, {
+				label: '更新人',
+				prop: 'modifiedBy',
+				sortable: true,
+			}],
 			//分页信息
 			pagination: {
 				params: {
@@ -146,6 +193,14 @@ export default {
 			//search params
 			query: {
 
+			},
+            //分页信息
+			pagination: {
+				params: {
+					page: 1,
+					size: 10
+				},
+				total: 0
 			},
 			//搜索条件的个数
 			criteriaNum: 3,
@@ -249,14 +304,15 @@ export default {
 		},
 		getTurnoverList() {
 			let options = {
-				accoundId: this.$store.state.loginInfo.id
+				accoundId: this.$store.state.loginInfo.enterpriseId
 			}
-			// accountStatementListRequest(options).then(result => {
-			// 	result.json().then(response => {
-			// 		console.log(response);
-			// 		this.tableList = response;
-			// 	})
-			// })
+            console.log(options)
+			 accountStatementListRequest(options).then(result => {
+			 	result.json().then(response => {
+			 		console.log(response);
+			 		this.tableList = response;
+			 	})
+			 })
 		},
 		getBankList() {
 			let options = {
@@ -322,8 +378,6 @@ export default {
 				});
 			})
 		}
-
-
 	}
 }
 </script>

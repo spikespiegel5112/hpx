@@ -12,8 +12,8 @@ export const accountInfosListRequest = () =>{
  * 获取企业子账户信息
  */
 
-export const accountStatementListRequest = (options) =>{
-    return fetch(`/core/core/api/v1/financialManager/${options.accountId}/accountStatement`);
+export const accountStatementListRequest = options =>{
+    return fetch(`/core/core/api/v1/financialManager/${options.accoundId}/accountStatement`);
 }
 
 /**

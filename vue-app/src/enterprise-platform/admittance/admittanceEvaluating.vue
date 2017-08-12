@@ -4,7 +4,7 @@
 <!--	<head-top></head-top>-->
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" :name="index">
-			<el-form :model='formData.labels[index]' ref="validData" label-width="60%">
+			<el-form label-position="left" :model='formData.labels[index]' ref="validData" label-width="60%">
 				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition" :rules="[{
 					required: true,
 					message: '请输入邮箱地址',
@@ -137,8 +137,8 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			console.log(this.formData);
-			 this.$refs['formData.labels[0]'].validate(valid => {
-			 	if (valid) {
+//			 this.$refs['formData.labels[0]'].validate(valid => {
+//			 	if (valid) {
 					submitTemplateReportListRequest(options).then(response => {
                         response.json().then(result => {
 							console.log(result);
@@ -152,8 +152,8 @@ export default {
 						})
                        
 					})
-			 	}
-			 })
+//			 	}
+//			 })
 
 		}
 	}
