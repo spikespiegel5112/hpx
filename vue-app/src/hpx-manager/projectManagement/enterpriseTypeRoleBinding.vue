@@ -88,7 +88,7 @@ import {
 	getRolesByProjectRequest,
 	getUnbindedRolesListRequest,
 	bindProjectRequest,
-    debindProjectRequest,
+	debindProjectRequest,
 
 
 	getUnbindedEnterpriseTypesRequest,
@@ -211,7 +211,7 @@ export default {
 				code: this.routeParams.productCode
 			}
 			console.log(options1)
-			getUnbindedEnterpriseTypesRequest(options1).then(response => {
+			getUnbindedEnterpriseTypes(options1).then(response => {
 				response.json().then(result => {
 					console.log(result);
 					this.tableList = result;
@@ -227,10 +227,10 @@ export default {
 			})
 		},
 		getUnbindedRolesList() {
-//			let options = {
-//				pid: this.routeParams.pid,
-//				code: this.routeParams.productCode
-//			}
+			//			let options = {
+			//				pid: this.routeParams.pid,
+			//				code: this.routeParams.productCode
+			//			}
 
 			getUnbindedRolesListRequest().then(response => {
 				response.json().then(result => {
@@ -243,28 +243,28 @@ export default {
 			this.configProjectData.entRole = scope.row.eid;
 			this.getUnbindedRolesList();
 			this.configProjectFlag = true;
-            getUnbindedRolesListRequest().then(response=>{
-                response.json().then(result=>{
-                    console.log(result);
-				    this.unbindedRolesList = result;
-                })
-            })
+			getUnbindedRolesListRequest().then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.unbindedRolesList = result;
+				})
+			})
 		},
-        debindRole(scope){
-            let options={
-                entRole: scope.row.code,
-                pid: this.routeParams.pid,
-                body:{
-                    role: scope.row.code
-                }
-            }
-            debindProjectRequest(options).then(response=>{
-                response.json().then(result=>{
-                    console.log(result);
-                    
-                })
-            })
-        },
+		debindRole(scope) {
+			let options = {
+				entRole: scope.row.code,
+				pid: this.routeParams.pid,
+				body: {
+					role: scope.row.code
+				}
+			}
+			debindProjectRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
+
+				})
+			})
+		},
 
 		configProjectSubmit() {
 			let options = {

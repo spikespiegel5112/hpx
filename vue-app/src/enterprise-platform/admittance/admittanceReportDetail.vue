@@ -28,8 +28,9 @@
 			<div class="title">基本信息</div>
 			<ul>
 				<li>企业名称：{{reportData.enterpriseName}}</li>
-				<li>行业：{{reportData.industryName}}</li>
-				<li>项目名称：{{reportData.score}}</li>
+				<li>行业：{{reportData.tpGradeModelInfoHistoryExtend.gradeCardDescribe}}</li>
+<!--				<li>项目名称：{{reportData.score}}</li>-->
+                <li>项目名称：订单融资/恒昌一期</li>
 			</ul>
 		</div>
 		<div class="block_wrapper" v-for="(item, evaluatingDataIndex) in evaluatingData" :key="item.key">
