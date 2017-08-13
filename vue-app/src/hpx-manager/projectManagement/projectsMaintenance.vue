@@ -503,12 +503,12 @@ export default {
                 state:''
             }
             if(scope.row.state=='R'){
-                options.state='B';
+                options.state='P';
                 this.$message({
-                        message: '已冻结此项目',
+                        message: '已暂停此项目',
                         type: 'success'
                     });
-            }else if(scope.row.state=='B'){
+            }else{
                 options.state='R';
                 this.$message({
                         message: '已激活此项目',

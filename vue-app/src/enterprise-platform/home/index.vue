@@ -61,8 +61,8 @@
                             <router-link to="/platform/project">更多项目</router-link>
                         </el-button>
                     </div>
-                    <ul v-if='noProjects==false' class="home-project-list">
-                        <li v-if="item.state=='R'" class="ellipsis" v-for="(item,i) in projectList" :key="i+''" @click="toProject(item)">
+                    <ul v-if='!noProjects' class="home-project-list">
+                        <li class="ellipsis" v-for="(item,i) in projectList" :key="i+''" @click="toProject(item)">
                                 {{item.projectName}}
                         </li>
                     </ul>
@@ -120,14 +120,17 @@ export default {
                     const resp = await projectsAuditListRequest(params);
                     const res = await resp.json();
                     this.totalPj = resp.headers.get('x-total-count');
-                    this.projectList = res;
+                    
                     for(var item in res){
                         let count=0;
-                        if(res[item].state=='R'){
+                        if(res[item].projectState=='R'){
                             count++;
+                            this.projectList.push(res[item])
+                            console.log(this.projectList)
                         }
                         if(item==res.length-1){
                             if(count==0){
+                                alert('bbb')
                                 this.noProjects=true;
                             }
                         }
@@ -140,7 +143,7 @@ export default {
         },
         toProject(item){
             console.log(item.state)
-            if(item.state=='R'){
+            if(item.projectState=='R'){
                 this.getCurrentProjectId(item.pjId);
                 this.$router.push({
                     path:`/porderf/${item.pjId}/demander`
