@@ -11,7 +11,7 @@
 					<label>评分：</label>
 					<div>
 						<span class='indicator' :style="{left:scoreIndicatorValue.left+'px'}"></span>
-						<i :style="{left:scoreIndicatorValue.left-5+'px'}">{{reportData.score}}</i>
+						<i :style="{left:scoreIndicatorValue.left-5+'px',textAlign:'center',width:'30px'}">{{reportData.score}}</i>
 					</div>
 				</div>
 			</div>
@@ -28,7 +28,7 @@
 			<div class="title">基本信息</div>
 			<ul>
 				<li>企业名称：{{reportData.enterpriseName}}</li>
-				<li>行业：{{reportData.tpGradeModelInfoHistoryExtend.gradeCardDescribe}}</li>
+				<li>行业：{{basicInfo.industry}}</li>
 <!--				<li>项目名称：{{reportData.score}}</li>-->
                 <li>项目名称：订单融资/恒昌一期</li>
 			</ul>
@@ -66,7 +66,10 @@ export default {
 			chartData: [],
 			scoreIndicatorValue: {
 				left: 0
-			}
+			},
+            basicInfo:{
+                industry:''
+            }
 		}
 	},
 	components: {
@@ -95,6 +98,8 @@ export default {
 					this.scoreData = this.reportData.tpScoreGradeHistory;
 					console.log(this.scoreData);
 					this.evaluatingData = this.reportData.tpGradeModelInfoHistoryExtend.tpLabelInfoHistoryExtend;
+                    
+                    this.basicInfo.industry= this.reportData.tpGradeModelInfoHistoryExtend.gradeCardDescribe
 					for (var item in this.evaluatingData) {
 						this.tpModelData[item] = this.evaluatingData[item].tpModelTargetInfoHistory;
 						this.chartData.push({
@@ -156,22 +161,18 @@ export default {
 						}
 					},
 					itemStyle: {
-						normal: {
-							color: {
-//                                type: 'radial',
-//                                x: 0.5,
-//                                y: 0.5,
-//                                r: 0.5,
-                                colorStops: [{
-                                    offset: 0, color: 'red' // 0% 处的颜色
-                                }, {
-                                    offset: 1, color: 'blue' // 100% 处的颜色
-                                }],
-                                globalCoord: false // 缺省为 false
-                            },
-							shadowBlur: 200,
-							shadowColor: 'rgba(255, 255, 255, 0.5)'
-						},
+//						normal: {
+//							color: {
+////                                type: 'radial',
+////                                x: 0.5,
+////                                y: 0.5,
+////                                r: 0.5,
+//                                
+//                                globalCoord: false // 缺省为 false
+//                            },
+//							shadowBlur: 200,
+//							shadowColor: 'rgba(255, 255, 255, 0.5)'
+//						},
                         
 						radius: ['100%']
 					},

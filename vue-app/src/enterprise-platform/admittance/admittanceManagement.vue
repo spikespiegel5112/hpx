@@ -110,10 +110,10 @@ export default {
 				prop: 'projectName',
 				sortable: true,
 			}, {
-				label: '企业类型',
-				prop: 'roleName',
-				sortable: true,
-			}, {
+//				label: '企业类型',
+//				prop: 'roleName',
+//				sortable: true,
+//			}, {
 				label: '组织机构代码',
 				prop: 'codeOrg',
 				sortable: true,

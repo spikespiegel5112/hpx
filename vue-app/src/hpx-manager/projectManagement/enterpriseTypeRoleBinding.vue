@@ -6,7 +6,7 @@
 	<section class="main-table-container">
 		<el-tabs type="border-card">
 			<el-tab-pane label="未绑定">
-				<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+				<el-table row-key="id" :empty-text="emptyText" :data="unbindedTableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 					<el-table-column v-for="(item,index) in columns1" key="index" :label="item.label" :prop="item.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">
 					</el-table-column>
 					<!--
@@ -26,17 +26,13 @@
 					</el-table-column>
 				</el-table>
 			</el-tab-pane>
-			<!--
+
 			<el-tab-pane label="已绑定">
-				<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+				<el-table row-key="id" :empty-text="emptyText" :data="bindedTableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 					<el-table-column v-for="(item,index) in columns2" key="index" :label="item.label" :prop="item.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">
 					</el-table-column>
 					<el-table-column label="选择角色" prop="enterpriseStatus">
 						<template scope='scope'>
-                    <el-select v-model="configProjectData[index].role" @change='chooseEnterpriseRoles'>
-                        <el-option v-for="item in unbindedRolesList" :value="item.code" :key="item.code" :label="item.name">
-                        </el-option>
-                    </el-select>
                </template>
 					</el-table-column>
 					<el-table-column label="操作">
@@ -47,7 +43,7 @@
 					</el-table-column>
 				</el-table>
 			</el-tab-pane>
--->
+
 		</el-tabs>
 
 
@@ -125,7 +121,11 @@ export default {
 				prop: 'name',
 			}],
 			//table
-			tableList: [],
+			unbindedTableList: [],
+			listLoading: false,
+			emptyText: "暂无数据",
+			//table
+			bindedTableList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
 			//分页信息
@@ -189,10 +189,10 @@ export default {
 		initData() {
 			this.listLoading = true;
 			try {
-				this.getEnterpriseTypesList();
+				this.getUnbindedEnterpriseTypes();
 				this.getUnbindedRolesList();
 				this.listLoading = false;
-				if (!this.tableList.length) {
+				if (!this.bindedTableList.length) {
 					this.emptyText = "暂无数据";
 				}
 			} catch (e) {
@@ -205,21 +205,33 @@ export default {
 			this.routeParams.eid = this.$route.query.pid;
 			this.routeParams.productCode = this.$route.query.productCode;
 		},
-		getEnterpriseTypesList() {
+		getBindedEnterpriseTypes() {
 			let options1 = {
 				pid: this.routeParams.pid,
 				code: this.routeParams.productCode
 			}
 			console.log(options1)
-			getUnbindedEnterpriseTypes(options1).then(response => {
+			getBindedEnterpriseTypesRequest(options1).then(response => {
 				response.json().then(result => {
 					console.log(result);
-					this.tableList = result;
-					//                    for(var index in tableList){
-					//                        this.configProjectData[index].push({
-					//                            entRole:''
-					//                        })
-					//                    }
+					this.bindedTableList = result;
+					console.log(this.configProjectData)
+				})
+			}).catch(err => {
+				console.log(err)
+			})
+		},
+		getUnbindedEnterpriseTypes() {
+			let options1 = {
+				pid: this.routeParams.pid,
+				code: this.routeParams.productCode
+			}
+			console.log(options1)
+			getUnbindedEnterpriseTypesRequest(options1).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.bindedTableList = result;
+					this.getBindedEnterpriseTypes();
 					console.log(this.configProjectData)
 				})
 			}).catch(err => {
@@ -227,15 +239,15 @@ export default {
 			})
 		},
 		getUnbindedRolesList() {
-			//			let options = {
-			//				pid: this.routeParams.pid,
-			//				code: this.routeParams.productCode
-			//			}
+			let options = {
+				pid: this.routeParams.pid,
+				code: this.routeParams.productCode
+			}
 
 			getUnbindedRolesListRequest().then(response => {
 				response.json().then(result => {
 					console.log(result)
-					this.unbindedRolesList = result;
+					this.unbindedTableList = result;
 				})
 			})
 		},
@@ -259,10 +271,9 @@ export default {
 				}
 			}
 			debindProjectRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result);
+				if (response.status == '200') {
 
-				})
+				}
 			})
 		},
 
