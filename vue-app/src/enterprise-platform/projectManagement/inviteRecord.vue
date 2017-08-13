@@ -70,7 +70,7 @@ export default {
 				label: '创建时间',
 				prop: 'createTime',
 				sortable: true,
-				formatter: (row, column) => moment(column.createTime).format(dateFormat)
+				formatter: row => moment(row.createTime).format(dateFormat)
 			}, {
 				label: '受邀企业名称',
 				prop: 'enterpriseName',
@@ -78,7 +78,17 @@ export default {
 			}, {
 				label: '邀请状态',
 				prop: 'inviteStatus',
-				sortable: true
+				sortable: true,
+				formatter: row => {
+					switch (row.state) {
+						case 'T':
+							return '邀请接受';
+						case 'F':
+							return '邀请拒绝';
+						case 'I':
+							return '邀请中';
+					}
+				}
 			}, {
 				label: '企业角色类型',
 				prop: 'productName',
@@ -87,11 +97,20 @@ export default {
 				label: '项目开始时间',
 				prop: 'startTime',
 				sortable: true,
-				formatter: (row, column) => moment(column.createTime).format(dateFormat)
+				formatter: row => moment(row.startTime).format(dateFormat)
 			}, {
 				label: '审核状态',
 				prop: 'state',
-				sortable: true
+				sortable: true,
+				formatter: row => {
+					switch (row.state) {
+						case 'T':
+							return '审核通过';
+						case 'F':
+							return '审核未通过';
+					}
+
+				}
 			}],
 
 			//table
