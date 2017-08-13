@@ -162,9 +162,12 @@ export default {
 		this.initData();
 	},
 	methods: {
-		async initData() {
-			await this.getList1();
-			await this.getList2();
+		 initData() {
+			 
+			 
+             this.getList1();
+             
+             
 		},
 		getList1() {
 			let that = this;
@@ -186,7 +189,7 @@ export default {
 					for (var item in result) {
 						that.myProjectList.push(result[item]);
 					}
-					console.log(that.myProjectList);
+                    this.getList2();
 				})
 			})
 		},
@@ -204,16 +207,16 @@ export default {
 				this.pagination2.total = Number(response.headers.get('x-total-count'))
 				console.log(response);
 				response.json().then(result => {
-					console.log(result);
+					
 					this.invitedProjectList = [];
 					for (var item in result) {
 						that.invitedProjectList.push(result[item]);
 					}
+                    console.log(that.invitedProjectList);
 				})
 			})
 		},
 		inviteEnterprise(scope) {
-			console.log(scope);
 			this.inviteData.eid = '';
 			this.inviteData.enterpriseRole = '';
 			this.inviteData.pid = scope.row.pjId;
