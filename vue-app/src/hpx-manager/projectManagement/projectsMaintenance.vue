@@ -128,7 +128,7 @@ import {
 
 import {
     getRolesByProjectRequest,
-	getAllRolesListRequest,
+	getUnbindedRolesListRequest,
 	bindProjectRequest,
     activateProjectRequest
 } from '@/api/enterpriseApi'
@@ -358,7 +358,7 @@ export default {
             let options2 = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 			}
-            getAllRolesListRequest(options2).then(response=>{
+            getUnbindedRolesListRequest(options2).then(response=>{
                 response.json().then(result=>{
                     console.log(result);
                     this.allRoleList = result;
@@ -396,7 +396,8 @@ export default {
                 name:'enterpriseTypeRoleBinding',
                 query:{
                     pid:scope.row.id,
-                    eid:scope.row.ownerEnterpriseId
+                    eid:scope.row.ownerEnterpriseId,
+                    productCode:scope.row.productCode,
                 }
             })
         },

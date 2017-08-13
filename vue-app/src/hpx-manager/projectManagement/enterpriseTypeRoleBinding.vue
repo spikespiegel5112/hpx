@@ -1,69 +1,83 @@
 <template>
 <div class="fillcontain">
-    <commonDetailTitle routerName='projectsMaintenance' title="企业类型角色绑定"></commonDetailTitle>
-<!--	<head-top></head-top>-->
+	<commonDetailTitle routerName='projectsMaintenance' title="企业类型角色绑定"></commonDetailTitle>
+	<!--	<head-top></head-top>-->
 
 	<section class="main-table-container">
-		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			
-			<el-table-column v-for="(item,index) in tableList" :key="item" label="项目企业类型" :prop="value.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">{{item.enterpriseTypeName}}
-			</el-table-column>
-			<el-table-column label="对应角色" prop="enterpriseStatus">
-               <template scope='scope'>
-                   <el-select v-model="configProjectData.role" @change='chooseEnterpriseRoles'>
-                        <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
+		<el-tabs type="border-card">
+			<el-tab-pane label="未绑定">
+				<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+					<el-table-column v-for="(item,index) in columns1" key="index" :label="item.label" :prop="item.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">
+					</el-table-column>
+					<!--
+					<el-table-column label="选择角色">
+						<template scope='scope'>
+                            <el-select v-model="configProjectData.entRole" @change='chooseEnterpriseRoles'>
+                                <el-option v-for="item in unbindedRolesList" :value="item.code" :key="item.code" :label="item.name"></el-option>
+                            </el-select>
+                        </template>
+					</el-table-column>
+-->
+					<el-table-column label="操作">
+						<template scope="scope">
+                            <el-button type="text" size="small" @click="configProject(scope)">绑定</el-button>
+                            <el-button type="text" size="small" @click="debindRole(scope)">解绑</el-button>
+                        </template>
+					</el-table-column>
+				</el-table>
+			</el-tab-pane>
+			<!--
+			<el-tab-pane label="已绑定">
+				<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+					<el-table-column v-for="(item,index) in columns2" key="index" :label="item.label" :prop="item.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">
+					</el-table-column>
+					<el-table-column label="选择角色" prop="enterpriseStatus">
+						<template scope='scope'>
+                    <el-select v-model="configProjectData[index].role" @change='chooseEnterpriseRoles'>
+                        <el-option v-for="item in unbindedRolesList" :value="item.code" :key="item.code" :label="item.name">
                         </el-option>
                     </el-select>
                </template>
-			</el-table-column>
-			<el-table-column label="操作">
-				<template scope="scope">
-					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>
+					</el-table-column>
+					<el-table-column label="操作">
+						<template scope="scope">
+					<el-button type="text" size="small" @click="configProject(scope)">绑定</el-button>
+					<el-button type="text" size="small" @click="configProject(scope)">解绑</el-button>
 				</template>
-			</el-table-column>
-		</el-table>
-        <el-row v-for="(value,i) in tableList">
-            <el-col :span="12">
-                <el-form ref="form" :model="form" label-width="150px">
-                    <el-form-item :label="value.enterpriseTypeName">
-                        <el-select v-model="formInline.region" placeholder="活动区域">
-                            <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-form>
-                
-            </el-col>
-            <el-col :span="12">
-            
-          </el-col>
-          
-        </el-row>
+					</el-table-column>
+				</el-table>
+			</el-tab-pane>
+-->
+		</el-tabs>
+
+
+
+
+
+
 		<section class="main-pagination">
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
-		
+
 		<!--项目配置-->
-        <el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
-            <el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-                <el-form-item label="可绑定角色">
-                    <el-select v-model="configProjectData.role" @change='chooseEnterpriseRoles'>
-                        <el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="configProjectFlag = false">取消</el-button>
-                <el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
-            </div>
-        </el-dialog>
-		
-		
-		
+		<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
+			<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
+				<el-form-item label="可绑定角色">
+					<el-select v-model="configProjectData.role" @change='chooseEnterpriseRoles'>
+						<el-option v-for="item in unbindedRolesList" :value="item.productCode" :key="item.name" :label="item.name">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="configProjectFlag = false">取消</el-button>
+				<el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
+			</div>
+		</el-dialog>
+
 	</section>
-	
+
 </div>
 </template>
 
@@ -71,9 +85,14 @@
 import commonDetailTitle from '@/components/commonDetailTitle'
 import headTop from '@/components/headTop'
 import {
-    getRolesByProjectRequest,
-	getAllRolesListRequest,
-	bindProjectRequest
+	getRolesByProjectRequest,
+	getUnbindedRolesListRequest,
+	bindProjectRequest,
+    debindProjectRequest,
+
+
+	getUnbindedEnterpriseTypesRequest,
+	getBindedEnterpriseTypesRequest
 } from '@/api/enterpriseApi'
 import {
 	mapState
@@ -83,20 +102,27 @@ import {
 export default {
 	components: {
 		headTop,
-        commonDetailTitle
+		commonDetailTitle
 	},
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
-            form:{},
-            formInline:{
-                region:''
-            },
-			//table columns
-			columns: [{
+			form: {},
+			formInline: {
+				region: ''
+			},
+			//table columns1
+			columns1: [{
 				label: '企业类型',
-				prop: 'productName',
-				sortable: true,
+				prop: 'name',
+			}],
+			//table columns2
+			columns2: [{
+				label: '企业类型',
+				prop: 'name',
+			}, {
+				label: '对应角色',
+				prop: 'name',
 			}],
 			//table
 			tableList: [],
@@ -130,20 +156,19 @@ export default {
 			// }],
 			//搜索条件的个数
 			criteriaNum: 3,
-			
-            routeParams:{
-                pid:'',
-                eid:''
-            },
+
+			routeParams: {
+				pid: '',
+				eid: ''
+			},
 			//配置项目模态框
 			configProjectFlag: false,
-			projectRoleList: [],
-            allRoleList: [],
+			enterpriseList: [],
+			unbindedRolesList: [],
 			configProjectData: {
-				eid: '',
+				entRole: '',
 				pid: '',
-				role: '',
-                id: ''
+				role: ''
 			},
 			configProjectRules: {
 				role: [{
@@ -154,17 +179,18 @@ export default {
 		}
 	},
 	activated() {
-        this.getParams();
+		this.getParams();
 		this.initData();
 	},
-    deactivated(){
-        this.configProjectData.code='';
-    },
+	deactivated() {
+		this.configProjectData = {};
+	},
 	methods: {
 		initData() {
 			this.listLoading = true;
 			try {
-				this.getList();
+				this.getEnterpriseTypesList();
+				this.getUnbindedRolesList();
 				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
@@ -173,80 +199,114 @@ export default {
 				this.emptyText = "获取数据失败";
 				this.listLoading = false;
 			}
-            
 		},
-        getParams(){
-            this.routeParams.pid=this.$route.query.pid;
-            this.routeParams.eid=this.$route.query.pid;
-        },
-        configProject(scope) {
-            this.configProjectData.eid=scope.row.enterpriseId;
-            
-            getAllRolesListRequest().then(response=>{
-                response.json().then(result=>{
-                    console.log(result);
-                    
-                    this.allRoleList = result;
-                })
-            })
-			this.configProjectFlag = true
+		getParams() {
+			this.routeParams.pid = this.$route.query.pid;
+			this.routeParams.eid = this.$route.query.pid;
+			this.routeParams.productCode = this.$route.query.productCode;
 		},
-		getList() {
-            this.configProjectData.pid=this.routeParams.eid;
-            let options1 = {
-				pid: this.configProjectData.pid,
-				params: {}
+		getEnterpriseTypesList() {
+			let options1 = {
+				pid: this.routeParams.pid,
+				code: this.routeParams.productCode
 			}
-			options1.params = Object.assign(options1.params, this.pagination.params)
-			getRolesByProjectRequest(options1).then(response => {
+			console.log(options1)
+			getUnbindedEnterpriseTypesRequest(options1).then(response => {
 				response.json().then(result => {
 					console.log(result);
 					this.tableList = result;
+					//                    for(var index in tableList){
+					//                        this.configProjectData[index].push({
+					//                            entRole:''
+					//                        })
+					//                    }
+					console.log(this.configProjectData)
+				})
+			}).catch(err => {
+				console.log(err)
+			})
+		},
+		getUnbindedRolesList() {
+//			let options = {
+//				pid: this.routeParams.pid,
+//				code: this.routeParams.productCode
+//			}
+
+			getUnbindedRolesListRequest().then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.unbindedRolesList = result;
 				})
 			})
 		},
-		
-		configProjectSubmit() {
-			this.$refs['configProjectData'].validate(async(valid) => {
-				if (valid) {
-					try {
-						let options = {
-							eid: this.configProjectData.eid,
-							pid: Number(this.configProjectData.pid),
-							body: {
-								code: this.configProjectData.role,
-                                id: this.configProjectData.id
-							}
-						}
-						console.log(options);
-						bindProjectRequest(options).then(response => {
-							response.json().then(result => {
-								console.log(result);
-								this.configProjectFlag = false;
-							})
-						})
-						this.initData();
-					} catch (e) {
-						this.$message.error(e)
-					}
-				}
-			})
+		configProject(scope) {
+			this.configProjectData.entRole = scope.row.eid;
+			this.getUnbindedRolesList();
+			this.configProjectFlag = true;
+            getUnbindedRolesListRequest().then(response=>{
+                response.json().then(result=>{
+                    console.log(result);
+				    this.unbindedRolesList = result;
+                })
+            })
 		},
-		
-        chooseEnterpriseRoles(value){
-            for(var item in this.allRoleList){ if(this.allRoleList[item].code==value){
-                alert(this.allRoleList[item].id)
-                    this.configProjectData.id=this.allRoleList[item].id;
+        debindRole(scope){
+            let options={
+                entRole: scope.row.code,
+                pid: this.routeParams.pid,
+                body:{
+                    role: scope.row.code
                 }
             }
-            console.log(this.configProjectData)
+            debindProjectRequest(options).then(response=>{
+                response.json().then(result=>{
+                    console.log(result);
+                    
+                })
+            })
         },
+
+		configProjectSubmit() {
+			let options = {
+				entRole: this.configProjectData.eid,
+				pid: this.configProjectData.pid,
+				body: {
+					role: this.configProjectData.role,
+				}
+			}
+			console.log(options);
+			bindProjectRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.configProjectFlag = false;
+				})
+			})
+			this.initData();
+			//			this.$refs['configProjectData'].validate(async(valid) => {
+			//				if (valid) {
+			//					try {
+			//
+			//					} catch (e) {
+			//						this.$message.error(e)
+			//					}
+			//				}
+			//			})
+		},
+
+		chooseEnterpriseRoles(value) {
+			//			for (var item in this.unbindedRolesList) {
+			//				if (this.unbindedRolesList[item].code == value) {
+			//					this.configProjectData.id = this.unbindedRolesList[item].id;
+			//				}
+			//			}
+			console.log(this.configProjectData)
+		},
 		search() {
-			this.getList();
+			this.getEnterpriseTypesList();
 		},
 		flipPage(pageIndex) {
 			this.pagination.params.page = pageIndex;
-			this.getList();
+			this.getEnterpriseTypesList();
 		}
 	},
 }

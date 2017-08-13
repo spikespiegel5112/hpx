@@ -41,7 +41,7 @@ export const enterpriseRolesListRequest = options =>{
  * 取得角色信息列表, 支持分页
  */
 
-export const getAllRolesListRequest = () =>{
+export const getUnbindedRolesListRequest = () =>{
     return fetch(`/core/core/api/v1/enterprise/roles`, {});
 }
 
@@ -76,6 +76,11 @@ export const enterpriseProjectListRequest = options => fetch(`/core/core/api/v1/
 export const bindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.eid}/roles${options.pid}`, options.body, 'put');
 
 /*
+** 绑定企业项目和角色
+*/
+export const debindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.eid}/roles${options.pid}/remove`, options.body, 'put');
+
+/*
 ** 取得指企业角色信息
 */
 export const getRolesByEnterpriseRequest = options => fetch(`/core/core/api/v1/products/${options.code}/ent_roles/${options.id}`, options.id);
@@ -94,6 +99,18 @@ export const enterpriseAccountOpenRequest = options => fetch(`/core/core/api/v1/
 ** 审核企业项目
 */
 export const activateProjectRequest = options => fetch(`/core/core/api/v1/projects/${options.id}/activation/${options.state}`, options.body, 'patch');
+
+/*
+** 取得项目未绑定的产品类型
+*/
+export const getUnbindedEnterpriseTypesRequest = options => fetch(`/core/core/api/v1/project/${options.pid}/product/${options.code}`);
+
+/*
+** 取得项目已绑定的产品类型
+*/
+export const getBindedEnterpriseTypesRequest = options => fetch(`/core/core/api/v1/project/${options.pid}/product/${options.code}/binding`);
+
+
 
 
 
