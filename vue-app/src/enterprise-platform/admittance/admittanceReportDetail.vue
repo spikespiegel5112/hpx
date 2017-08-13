@@ -19,8 +19,8 @@
 				<div class="title">综合评定</div>
 				<ul>
 					<li>得分：{{reportData.score}}</li>
-					<li>风险定价（%）：{{reportData.riskPricing}}</li>
-					<li>评级：{{reportData.costRates}}</li>
+					<li>风险定价（%）：{{reportData.riskPricing}}%</li>
+					<li>评级：{{basicInfo.rate}}</li>
 				</ul>
 			</div>
 		</div>
@@ -68,7 +68,8 @@ export default {
 				left: 0
 			},
             basicInfo:{
-                industry:''
+                industry:'',
+                rate:''
             }
 		}
 	},
@@ -85,6 +86,25 @@ export default {
         this.chartData=[];
     },
 	methods: {
+        getGrade(){
+            let rate=this.reportData.costRates;
+            
+            for(var index in this.scoreData){
+                if(rate<this.scoreData[index].gradeMax){
+                    this.basicInfo.rate= this.scoreData[index].gradeName;
+                }
+                if(index==this.scoreData.length){
+                    this.basicInfo.rate='未定义'
+                }
+            }
+//            if(rate>0&&rate<30){
+//                this.basicInfo.rate= 'C';
+//            }else if(rate>30&&rate<70){
+//                this.basicInfo.rate= 'B';
+//            }else if(rate>70&&rate<100){
+//                this.basicInfo.rate= 'A';
+//            }
+        },
 		getReport() {
 			let params = {
 				eid: this.$store.state.loginInfo.enterpriseId,
@@ -108,6 +128,7 @@ export default {
 						})
 					}
 					this.chart();
+                    this.getGrade();
 					this.scoreIndicatorValue.left = 370 * result.score * 0.01;
 					console.log(this.scoreIndicatorValue);
 				})
