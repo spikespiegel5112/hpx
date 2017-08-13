@@ -116,7 +116,7 @@ export const auithcertification = (id, type, nodes,amount) => fetch(`/core/core/
 /*
  ** 获取 增值服务列表
  */
-export const servicesList = (params) => fetch(`/core` + `/core/api/v1/vEnterpriseServiceApplication`, params)
+export const servicesList = (params) => fetch(`/core` + `/core/api/v1/vEnterpriseServiceApplication/admin`, params)
 
 /*
  ** 获取 增值服务申请记录列表
@@ -209,6 +209,16 @@ export const addUser= (eid, params) => fetch(`/core/core/api/v1/enterprise/${eid
 export const editUser= (id, eid, params) => fetch(`/core/core/api/v1/enterprise/${eid}/users/${id}`,params, 'patch');
 
 /**
+ * 用户管理--获取所有企业用户列表
+ */
+export const getEUserList = (params) => fetch(`/core/core/api/v1/user`,params);
+
+/**
+ * 用户管理--获取所有企业列表
+ */
+export const getEnterpriseList = () => fetch(`/core/core/api/v1/enterprises`,{});
+
+/**
  * 审核项目
  */
 
@@ -246,9 +256,14 @@ export const addAgreement = (params) => fetch(`/core/core/api/v1/agreements`,par
 export const editAgreement = (id, params) => fetch(`/core/core/api/v1/agreements/${id}`,params, 'patch');
 
 /**
- * 字典管理--获取用户列表
+ * 字典管理--获取所有字典列表
  */
 export const getDictionaryList = (params) => fetch('/core/core/api/v1/dictionary',params);
+
+/**
+ * 字典管理--获取父字典列表
+ */
+export const getParentDictionaryList = () => fetch('/core/core/api/v1/dictionaryOnlyParent',{});
 
 /*
 ** 字典管理--删除

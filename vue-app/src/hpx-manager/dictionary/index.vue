@@ -6,13 +6,20 @@
 			<el-form :inline="true" :model="query"  ref="query">
                 <el-row>
                     <el-col :span="6">
-                        <el-form-item prop="code">
-                            <el-input v-model="query.code" size="large" placeholder="字典编码"></el-input>
+                        <el-form-item prop="name">
+                            <el-input v-model="query.name" size="large" placeholder="字典名称"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
                         <el-form-item prop="parentCode">
-                            <el-input v-model="query.parentCode" size="large" placeholder="父字典编码"></el-input>
+                            <el-select v-model="query.parentCode" size="large" placeholder="父字典">
+                                <el-option
+                                    v-for="item in parentDictionaryList"
+                                    :key="item.code"
+                                    :label="item.name"
+                                    :value="item.code">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style="float: right"> 
@@ -69,63 +76,64 @@
                                 <i style="color:#ffbf00" class="el-icon-information"></i> 确定删除？</p>
                             <div style="margin-top:15px;">
                                 <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
-                                <el-button type="primary" size="mini" @click="del(scope.row.id)">确定</el-button>
+                                <el-button type="primary" size="mini" @click="del(scope.row.code)">确定</el-button>
                             </div>
                         </el-popover>                         
                     </template>
                 </el-table-column>
             </el-table>
             <section class="main-pagination">
-                <my-Pagination :callback="getList" :total="total">
+                <my-Pagination @pageChange="pageChange" :total="total">
                 </my-Pagination>
             </section>
         </section>
         <!--编辑界面-->
 		<el-dialog :title="modalTitle" v-model="editeModalVisible" :close-on-click-modal="false">
-			<el-form :model="editeData" label-width="110px" :rules="editRules" ref="editeData">
+			<el-form :model="editeData" label-width="110px" :rules="sortNum" ref="editeData">
+                 <el-form-item 
+                label="父字典" 
+                prop="parentCode"
+                >
+                    <el-select v-model="editeData.parentCode">
+                        <el-option
+                            v-for="item in parentDictionaryList"
+                            :key="item.code"
+                            :label="item.name"
+                            :value="item.code">
+                        </el-option>
+                    </el-select>
+				</el-form-item>
                 <el-form-item 
                 label="字典编码" 
                 prop="code" 
                  :rules="[
-                { required: true, message: '请输入字典编码'},
+                { required: true, message: '请输入字典编码', trigger: 'blur'},
                 ]"
                 >
-					<el-input v-model="editeData.code" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item 
-                label="父字典编码" 
-                prop="parentCode"
-                 :rules="[
-                { required: true, message: '请输入父字典编码'},
-                ]"
-                >
-					<el-input v-model="editeData.parentCode" auto-complete="off"></el-input>
+					<el-input v-model="editeData.code"></el-input>
 				</el-form-item>
                 <el-form-item 
                 label="字典名称" 
                 prop="name"
                  :rules="[
-                { required: true, message: '请输入字典名称'},
+                { required: true, message: '请输入字典名称', trigger: 'blur'},
                 ]"
                 >
-					<el-input v-model="editeData.name" auto-complete="off"></el-input>
+					<el-input v-model="editeData.name"></el-input>
 				</el-form-item>
                 <el-form-item 
                 label="排序号"
-                prop="sortNum"
-                :rules="[
-                { required: true, message: '请输入排序号'},
-                ]">
-                    <el-input v-model="editeData.sortNum" auto-complete="off"></el-input>
+                prop="sortNum">
+                    <el-input :maxlength="3" v-model="editeData.sortNum"></el-input>
 				</el-form-item>
-				<el-form-item 
+				<!--<el-form-item 
                 label='描述' 
                 prop="description"
                 :rules="[
-                { required: true, message: '请输入字典描述'},
+                { required: true, message: '请输入字典描述', trigger: 'blur'},
                 ]">
-                   <el-input v-model="editeData.description" auto-complete="off"></el-input>
-                </el-form-item>
+                   <el-input type="textarea" placeholder="最多可输入50个字" :maxlength="50" v-model="editeData.description" ></el-input>
+                </el-form-item>-->
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="editeModalVisible = false">取消</el-button>
@@ -138,22 +146,18 @@
 <script>
     import headTop from '../../components/headTop'
     import myPagination from '../../components/myPagination'
-    import { getDictionaryList, delDictionary, addDictionary, editDictionary } from '@/api/coreApi'
+    import { getDictionaryList, getParentDictionaryList, delDictionary, addDictionary, editDictionary } from '@/api/coreApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
-    import { checkEmail, checkPhone } from '../../config/mUtils'
+    import myJS from '../../config/mUtils'
     export default {
         data(){
-            var validateEmail = (rule, value, callback) => {
-                if(!checkEmail(value)) {
-                    callback(new Error('邮箱格式不对'))
-                } else {
-                    callback();
-                }
-            }
-            var validatePhone = (rule, value, callback) => {
-                if(!checkPhone(value)) {
-                    callback(new Error('手机号码格式不对'))
+            var checkNum = (rule, value, callback) => {
+                const tmp = myJS.checkType(value, 'number');
+                if(!value) {
+                    callback(new Error('请输入排序号'));
+                } else if (!tmp) {
+                    callback(new Error('只能输入数字'));
                 } else {
                     callback();
                 } 
@@ -161,72 +165,46 @@
             return {
                 //table columns
                 columns : [{
+                    label : '父字典',
+                    prop  : 'parentName',
+                    },{
                     label : '字典编码',
                     prop  : 'code',
                     },{
                     label : '字典名称',
                     prop  : 'name',
                     },{
-                    label : '父字典编码',
-                    prop  : 'parentCode',
-                    },{
                     label : '排序号',
                     prop  : 'sortNum',
-                    },{
-                    label : '描述',
-                    prop  : 'description',
-                    },{
-                    label : '记录时间',
-                    prop  : 'createTime',
-                    formatter : (row, column) => moment(column.createTime).format('YYYY-MM-DD')                    
+                    width : '80'
                     },{
                     label : '最后更新时间',
                     prop  : 'modifiedTime',
-                    formatter : (row, column) => moment(column.modifiedTime).format('YYYY-MM-DD')                    
+                    formatter : (row, column) => moment(row.modifiedTime).format('YYYY-MM-DD')                    
                     },
+                    //  {
+                    // label : '描述',
+                    // prop  : 'description',
+                    // minWidth : '150'
+                    // },
                 ],
                 //总页数
                 total : 0,
+                pagination : {
+                    page : 1,
+                    size : 10
+                },
                 //table
                 tableList: [],
+                parentDictionaryList: [],
                 listLoading:false,
                 emptyText:"暂无数据",
 
                 //search params
                 query : {
-                    code : '',
+                    name : '',
                     parentCode : '',
                 },
-                enabledOptions : [
-                    {
-                        value : '启用',
-                        enabled : 'T'
-                    },
-                    {
-                        value : '禁用',
-                        enabled : 'F'
-                    }
-                ],
-                genderOptions : [
-                    {
-                        value : '女',
-                        gender : 'F'
-                    },
-                    {
-                        value : '男',
-                        gender : 'M'
-                    }
-                ],
-                lockedOptions : [
-                    {
-                        value : '是',
-                        locked : 'T'
-                    },
-                    {
-                        value : '否',
-                        locked : 'F'
-                    }
-                ],
                 //搜索条件的个数
                 criteriaNum : 2,
 
@@ -241,16 +219,8 @@
                     sortNum : '',
                     description: '',
                 },
-                editRules : {
-                    name : [
-						{ required: true, message: '请输入用户名', trigger: 'blur' }
-					],
-                    phone : [
-                        { validator: validatePhone, required: true, message: '请输入手机号码', trigger: 'blur' }
-                    ],
-                    email : [
-                        { validator: validateEmail, required: true, message: '请输入邮箱', trigger: 'blur' }
-                    ],
+                sortNum: {
+                   sortNum: [{required: true, validator: checkNum, trigger: 'blur'}]
                 }
             }
         },
@@ -268,36 +238,39 @@
             ...mapState(["loginInfo"])
         },
         methods: {
+            pageChange(data) {
+                this.pagination = data;
+            },
             async initData(){
+                this.getList();
+            },
+            async getList(){
                 this.listLoading = true;
                 try{
-                    this.getList();
+                    const params = Object.assign({},this.query,this.pagination);
+                    const resp = await getDictionaryList(params);
+                    const res = await resp.json();
+                    const result = await getParentDictionaryList();
+                    const resu = await result.json();
+                    this.parentDictionaryList = resu;
+                    res.map((v) => {
+                        Object.assign(v, {confirmVisible: false})
+                    })
+                    const total = resp.headers.get('x-total-count')
+                    this.tableList = [...res];
+                    this.total = parseInt(total);
                     this.listLoading = false;
                     if(!this.tableList.length){
                         this.emptyText = "暂无数据";
                     }
-                }catch(e){
+                } catch(e){
                     this.emptyText = "获取数据失败";
                     this.listLoading = false;
                 }
-            },
-            async getList(pagination={page:1,size:10}){
-                const params = Object.assign({},this.query,pagination);
-                const resp = await getDictionaryList(params);
-                const res = await resp.json();
-                 res.map((v) => {
-                    Object.assign(v, {confirmVisible: false})
-                })
-                const total = resp.headers.get('x-total-count')
-                this.tableList = [...res];
-                this.total = parseInt(total);
+                
             },
             async search () {
-                try{
-                    this.getList();
-                }catch(e){
-                    
-                }
+               this.getList();
             },
 
             resetForm(formName) {
@@ -305,19 +278,29 @@
             },
 
            add () {
-               this.modalTitle = '新增',
+               this.modalTitle = '新增';
                this.editeModalVisible = true; 
+               this.editeData = {
+                    id: '',
+                    code : '',
+                    name : '',
+                    parentCode :'',
+                    sortNum : '',
+                    description: '',
+                }
             },
            edite (index,row) {
                 this.modalTitle = '编辑',
                 this.editeModalVisible = true;
-                this.editeData = {...row};
+                Object.keys(this.editeData).forEach(
+                    (key)=>{
+                         this.editeData[key] = row[key].toString();
+                    }
+                )
             },
             async editSubmit (formName) {
                 this.$refs[formName].validate(async (valid) => {
                     if (!valid) return false;
-                    
-                    const eid = this.loginInfo.enterpriseId;
                     const id = this.editeData.id;
                     try{
                         const resp = id
@@ -346,6 +329,14 @@
                 }
             }
         },
+        watch : {
+            pagination : {
+                handler : function() {
+                    this.getList();
+                },
+                deep : true
+            }
+        }
     }
 </script>
 

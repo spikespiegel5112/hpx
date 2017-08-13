@@ -88,22 +88,12 @@ export default {
 	methods: {
         getGrade(){
             let rate=this.reportData.costRates;
-            
-            for(var index in this.scoreData){
-                if(rate<this.scoreData[index].gradeMax){
+            this.basicInfo.rate='未定义'
+            for(var index in this.scoreData){   
+                if(rate>=this.scoreData[index].gradeMin&&rate<=this.scoreData[index].gradeMax){
                     this.basicInfo.rate= this.scoreData[index].gradeName;
                 }
-                if(index==this.scoreData.length){
-                    this.basicInfo.rate='未定义'
-                }
             }
-//            if(rate>0&&rate<30){
-//                this.basicInfo.rate= 'C';
-//            }else if(rate>30&&rate<70){
-//                this.basicInfo.rate= 'B';
-//            }else if(rate>70&&rate<100){
-//                this.basicInfo.rate= 'A';
-//            }
         },
 		getReport() {
 			let params = {
