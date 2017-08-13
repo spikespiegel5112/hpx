@@ -101,7 +101,7 @@ export default {
 				prop: 'enterpriseName',
 				sortable: true,
 			}, {
-				label: '企业ID',
+				label: '创建时间',
 				prop: 'id',
 				sortable: true,
 				formatter: (row, column) => moment(column.createTime).format(dateFormat)
@@ -130,9 +130,17 @@ export default {
 				prop: 'contactsPhone',
 				sortable: true,
 			}, {
-				label: '状态',
+				label: '授信状态',
 				prop: 'creditState',
 				sortable: true,
+                formatter:row=>{
+                    switch (row.creditState) {
+						case 'T':
+							return '可用';
+						case 'F':
+							return '不可用';
+					}
+                }
 			}],
 			//分页信息
 			pagination: {

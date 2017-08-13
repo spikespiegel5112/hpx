@@ -130,7 +130,6 @@ export default {
                         }
                         if(item==res.length-1){
                             if(count==0){
-                                alert('bbb')
                                 this.noProjects=true;
                             }
                         }
