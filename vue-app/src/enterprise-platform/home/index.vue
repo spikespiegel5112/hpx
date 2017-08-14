@@ -53,7 +53,7 @@
                     </ul>
                 </el-card>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="17">
                 <el-card>
                     <div slot="header" class="card-header">
                         <span>我的项目</span>
