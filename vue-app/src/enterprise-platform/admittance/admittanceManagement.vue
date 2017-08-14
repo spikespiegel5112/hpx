@@ -217,21 +217,21 @@ export default {
 				})
 			})
 		},
-		getEnterpriseReport(scope) {
-//			modelId
-			console.log(scope);
-			let options = {
-				eid: scope.row.employerId,
-				// params:{}
-			}
-			console.log(options);
-			templateReportListRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result);
-
-				})
-			})
-		},
+//		getEnterpriseReport(scope) {
+////			modelId
+//			console.log(scope);
+//			let options = {
+//				eid: scope.row.enterpriseId2,
+//				// params:{}
+//			}
+//			console.log(options);
+//			templateReportListRequest(options).then(response => {
+//				response.json().then(result => {
+//					console.log(result);
+//
+//				})
+//			})
+//		},
 		getIndustryList() {
 			let options = {}
 			allIndustryListRequest().then(response => {
@@ -258,9 +258,13 @@ export default {
 		evaluateEnterprise(scope) {
 			console.log(this.pid);
 			this.pid = scope.row.projectId;
-            this.employerId = scope.row.employerId;
+            this.enterpriseId2 = scope.row.enterpriseId2;
 			this.evaluateEnterpriseDialogFlag = true;
 			this.getIndustryList();
+            
+            this.modelList=[];
+            this.industryType = '';
+            this.modelType = '';
 		},
 		selectIndustry() {
 			this.getModelList();
@@ -272,7 +276,7 @@ export default {
 				name: 'admittanceEvaluating',
 				params: {
 					modelId: this.modelType,
-					employerId: this.employerId,
+					eid: this.eid,
                     projectId: this.pid
 				}
 			})

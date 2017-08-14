@@ -78,7 +78,7 @@ export const bindProjectRequest = options => fetch(`/core/core/api/v1/entProject
 /*
 ** 解绑企业项目和角色
 */
-export const debindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.entRole}/roles${options.pid}/remove`, options.body, 'put');
+export const debindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.entRole}/roles/${options.pid}/remove`, options.body, 'put');
 
 /*
 ** 取得指企业角色信息

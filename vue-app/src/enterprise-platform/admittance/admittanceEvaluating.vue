@@ -63,7 +63,7 @@ export default {
 			activeNames: [],
 			formData: {
 				badRate: 0,
-                eid: this.$route.params.employerId,
+                eid: this.$route.params.enterpriseId2,
 				labels: [],
 				mid: this.$route.params.modelId, //模型ID
 				pid: this.$route.params.projectId //项目ID
@@ -114,8 +114,9 @@ export default {
 			let that = this;
 			let params = {
 				id: this.$route.params.modelId,
-				eid: this.$route.params.employerId,
+				eid: this.$route.params.eid,
 			}
+            console.log(params)
 			scoringmodelByIndustryRequest(params).then(response => {
 				response.json().then(result => {
 					let index = 0;
