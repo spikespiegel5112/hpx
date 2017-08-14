@@ -37,8 +37,7 @@
 					</el-table-column>
 					<el-table-column label="操作">
 						<template scope="scope">
-					<el-button type="text" size="small" @click="configProject(scope)">绑定</el-button>
-					<el-button type="text" size="small" @click="configProject(scope)">解绑</el-button>
+					<el-button type="text" size="small" @click="debindRole(scope)">解绑</el-button>
 				</template>
 					</el-table-column>
 				</el-table>
@@ -189,7 +188,7 @@ export default {
 		initData() {
 			this.listLoading = true;
 			try {
-				this.getUnbindedEnterpriseTypes();
+				this.getBindedEnterpriseTypes();
 				this.getUnbindedRolesList();
 				this.listLoading = false;
 				if (!this.bindedTableList.length) {
@@ -202,7 +201,7 @@ export default {
 		},
 		getParams() {
 			this.routeParams.pid = this.$route.query.pid;
-			this.routeParams.eid = this.$route.query.pid;
+			this.routeParams.eid = this.$route.query.eid;
 			this.routeParams.productCode = this.$route.query.productCode;
 		},
 		getBindedEnterpriseTypes() {
@@ -216,6 +215,7 @@ export default {
 					console.log(result);
 					this.bindedTableList = result;
 					console.log(this.configProjectData)
+                    this.getUnbindedEnterpriseTypes();
 				})
 			}).catch(err => {
 				console.log(err)
@@ -231,7 +231,6 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.bindedTableList = result;
-					this.getBindedEnterpriseTypes();
 					console.log(this.configProjectData)
 				})
 			}).catch(err => {
@@ -243,7 +242,7 @@ export default {
 				pid: this.routeParams.pid,
 				code: this.routeParams.productCode
 			}
-
+            console.log(options)
 			getUnbindedRolesListRequest().then(response => {
 				response.json().then(result => {
 					console.log(result)

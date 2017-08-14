@@ -89,7 +89,7 @@ export default {
         getGrade(){
             let rate=this.reportData.costRates;
             this.basicInfo.rate='未定义'
-            for(var index in this.scoreData){   
+            for(var index in this.scoreData){
                 if(rate>=this.scoreData[index].gradeMin&&rate<=this.scoreData[index].gradeMax){
                     this.basicInfo.rate= this.scoreData[index].gradeName;
                 }
