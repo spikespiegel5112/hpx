@@ -2,6 +2,15 @@
 <div class="fillcontain">
 	<commonDetailTitle title='企业准入评估' routerName='admittanceManagement'></commonDetailTitle>
 	<!--	<head-top></head-top>-->
+	<el-row>
+		<el-col :span="8">
+			<el-form ref="form" :model="form" label-width="130px" :rules="badrateRule">
+				<el-form-item label="预期不良率（%）">
+					<el-input v-model="formData.badRate"></el-input>
+				</el-form-item>
+			</el-form>
+		</el-col>
+	</el-row>
 	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
 		<el-collapse-item :title="tagItem.scoreCardName" :name="index">
 			<el-form label-position="left" :model='formData.labels[index]' ref="validData" label-width="60%">
@@ -54,6 +63,7 @@ export default {
 			activeNames: [],
 			formData: {
 				badRate: 0,
+                employId: this.$route.params.employId,
 				labels: [],
 				mid: this.$route.params.modelId, //模型ID
 				pid: this.$route.params.projectId //项目ID
@@ -69,10 +79,21 @@ export default {
 				resource: '',
 				desc: ''
 			},
-			fules: {
+			rules: {
 				evaluatingItem: [{
 					required: true,
+					message: '请输入预期不良率',
+					trigger: 'change'
+				}, {
+					required: true,
 					message: '请选择活动区域',
+					trigger: 'change'
+				}]
+			},
+			badrateRule: {
+				badrate: [{
+					required: true,
+					message: '请输入预期不良率',
 					trigger: 'change'
 				}]
 			}
@@ -93,7 +114,7 @@ export default {
 			let that = this;
 			let params = {
 				id: this.$route.params.modelId,
-				eid: this.$store.state.loginInfo.enterpriseId,
+				eid: this.$route.params.employerId,
 			}
 			scoringmodelByIndustryRequest(params).then(response => {
 				response.json().then(result => {
@@ -137,33 +158,33 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			console.log(this.formData);
-			//			 this.$refs['formData.labels[0]'].validate(valid => {
-			//			 	if (valid) {
-			submitTemplateReportListRequest(options).then(response => {
-				console.log(response)
-				response.json().then(result => {
-					console.log(result);
-					this.$message({
-						message: '评估填报成功！',
-						type: 'success'
-					});
-					this.$router.push({
-						name: 'reportDetail',
-						params: {
-							reportId: result.id
-						}
+			// this.$refs['formData.badrate'].validate(valid => {
+			// 	if (valid) {
+					submitTemplateReportListRequest(options).then(response => {
+						console.log(response)
+						response.json().then(result => {
+							console.log(result);
+							this.$message({
+								message: '评估填报成功！',
+								type: 'success'
+							});
+							this.$router.push({
+								name: 'reportDetail',
+								params: {
+									reportId: result.id
+								}
+							})
+						})
+					}).catch(err => {
+						console.log(err)
+						this.$alert('请确认表单已全部填报完成', '提示', {
+							confirmButtonText: '确定',
+							type: 'error',
+							callback: () => {}
+						});
 					})
-				})
-			}).catch(err => {
-				console.log(err)
-				this.$alert('请确认表单已全部填报完成', '提示', {
-					confirmButtonText: '确定',
-					type: 'error',
-					callback: () => {}
-				});
-			})
-			//			 	}
-			//			 })
+			// 	}
+			// })
 
 		}
 	}

@@ -21,7 +21,6 @@
 					<el-table-column label="操作">
 						<template scope="scope">
                             <el-button type="text" size="small" @click="configProject(scope)">绑定</el-button>
-                            <el-button type="text" size="small" @click="debindRole(scope)">解绑</el-button>
                         </template>
 					</el-table-column>
 				</el-table>
@@ -31,14 +30,10 @@
 				<el-table row-key="id" :empty-text="emptyText" :data="bindedTableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 					<el-table-column v-for="(item,index) in columns2" key="index" :label="item.label" :prop="item.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">
 					</el-table-column>
-					<el-table-column label="选择角色" prop="enterpriseStatus">
-						<template scope='scope'>
-               </template>
-					</el-table-column>
 					<el-table-column label="操作">
 						<template scope="scope">
-					<el-button type="text" size="small" @click="debindRole(scope)">解绑</el-button>
-				</template>
+                            <el-button type="text" size="small" @click="debindRole(scope)">解绑</el-button>
+                        </template>
 					</el-table-column>
 				</el-table>
 			</el-tab-pane>
@@ -264,14 +259,15 @@ export default {
 		debindRole(scope) {
 			let options = {
 				entRole: scope.row.code,
-				pid: this.routeParams.pid,
+				pid: scope.row.productCode,
 				body: {
-					role: scope.row.code
+					role: scope.row.productCode
 				}
 			}
+            console.log(options)
 			debindProjectRequest(options).then(response => {
 				if (response.status == '200') {
-
+                    alert('dsds')
 				}
 			})
 		},

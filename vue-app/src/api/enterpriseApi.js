@@ -76,9 +76,9 @@ export const enterpriseProjectListRequest = options => fetch(`/core/core/api/v1/
 export const bindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.eid}/roles${options.pid}`, options.body, 'put');
 
 /*
-** 绑定企业项目和角色
+** 解绑企业项目和角色
 */
-export const debindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.eid}/roles${options.pid}/remove`, options.body, 'put');
+export const debindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.entRole}/roles${options.pid}/remove`, options.body, 'put');
 
 /*
 ** 取得指企业角色信息

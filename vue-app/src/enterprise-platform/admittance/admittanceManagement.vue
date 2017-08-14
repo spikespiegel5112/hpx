@@ -218,7 +218,7 @@ export default {
 			})
 		},
 		getEnterpriseReport(scope) {
-			modelId
+//			modelId
 			console.log(scope);
 			let options = {
 				eid: scope.row.employerId,
@@ -258,6 +258,7 @@ export default {
 		evaluateEnterprise(scope) {
 			console.log(this.pid);
 			this.pid = scope.row.projectId;
+            this.employerId = scope.row.employerId;
 			this.evaluateEnterpriseDialogFlag = true;
 			this.getIndustryList();
 		},
@@ -271,7 +272,7 @@ export default {
 				name: 'admittanceEvaluating',
 				params: {
 					modelId: this.modelType,
-					projectId: this.pid
+					employerId: this.employerId
 				}
 			})
 		}
