@@ -26,22 +26,26 @@
                     </el-col>
                 </el-row>
             </el-form>
-            </el-col>
+            <el-button type="primary" @click="signature">签章</el-button>
+            <el-button type="primary" >预览</el-button>
+            <el-button type="primary" @click="receipt">确认收货</el-button>
+            <el-button type="primary" @click="uploadContract">上传文件</el-button>
         </section>
 
         <section class="main-table-container">
-            <el-table row-key="id" max-height="250" border :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-                <el-table-column fixed prop="name" width = '160px' label="合同名称"></el-table-column>
+            <el-table  @selection-change="handleSelectionChange" row-key="id" max-height="250" border :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+                <el-table-column type="selection"></el-table-column>
+                <el-table-column prop="name" label="合同名称"></el-table-column>
                 <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
                 </el-table-column>
-                <el-table-column fixed="right" width="238" label="操作">
+                <!--<el-table-column label="操作">
                     <template scope="scope">
                         <el-button type="text" size="small" @click="signature(scope.$index, scope.row)" >签章</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">预览</el-button>
                         <el-button type="text" size="small" @click="receipt(scope.$index, scope.row)">确认收货</el-button>
-                        <!--<el-button type="text" size="small" @click="uploadContract(scope.$index, scope.row)">上传合同</el-button>-->
-                         <!--action="/order/contract/uploadingContract/"+{scope.row.id}-->
-                        <!--<el-upload
+                        <el-button type="text" size="small" @click="uploadContract(scope.$index, scope.row)">上传合同</el-button>
+                         action="/order/contract/uploadingContract/"+{scope.row.id}
+                        <el-upload
                             :action="`/order/contract/uploadingContract/${scope.row.id}`"
                             :file-list="excelList"
                             :on-change="excelChange"
@@ -49,7 +53,7 @@
                             :on-success="excelSuccess"
                         >
                         <el-button size="small" type="text">上传合同</el-button>
-                    </el-upload>-->
+                    </el-upload>
                          <el-upload
                             :action="uploadActionUrl(scope.row.code)"
                             list-type="picture"
@@ -60,11 +64,8 @@
                             <el-button icon="upload" type="primary" size="small">上传文件</el-button>
                          </el-upload>
                     </template>
-                </el-table-column>
+                </el-table-column>-->
             </el-table>
-            <!--
-                    分页需改4
-                    -->
             <my-Pagination @pageChange="pageChange" :total="total">
             </my-Pagination>
         </section>
@@ -104,7 +105,7 @@
 <script>
 import headTop from '../../../components/headTop'
 import myPagination from '../../../components/myPagination'
-import { getPurchaseContractList, getSupplierList, uploadContract } from '@/api/orderApi'
+import { getPurchaseContractList, roleList, uploadContract } from '@/api/orderApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
 export default {
@@ -114,32 +115,25 @@ export default {
             columns: [{
                     label: '合同编号',
                     prop: 'code',
-                    width: '160px'
                 }, {
                     label: '订单编号',
                     prop: 'orderCode',
-                    width: '160px'
                 }, {
                     label: '供应商',
                     prop: 'firstParty',
-                    width: '160px'
                 }, {
                     label: '合同金额',
                     prop: 'money',
-                    width: '160px'
                 }, {
                     label: '收货状态',
                     prop: 'receivingStatus',
-                    width: '160px'
                 }, {
                     label: '创建时间',
                     prop: 'createTime',
-                    width: '160px',
                     formatter: (row, column) => moment(column.createTime).format('YYYY-MM-DD')
                 }, {
                     label: '收货日期',
                     prop: 'receivingDate',
-                    width: '160px',
                     formatter: (row, column) => moment(column.receivingDate).format('YYYY-MM-DD')
                 }, {
                     label: '文件',
@@ -148,10 +142,6 @@ export default {
             ],
             //总页数
             total: 0,
-            //分页
-            /*
-            ** 分页需改1
-            */
             pagination: {},
 
             excelList: [],
@@ -166,16 +156,6 @@ export default {
                 code: '',
                 firstParty: '',
             },
-            auditStateOptions: [
-                {
-                    value: '已认证',
-                    auditState: 'T'
-                },
-                {
-                    value: '未认证',
-                    auditState: 'F'
-                }
-            ],
             //搜索条件的个数
             criteriaNum: 3,
 
@@ -207,31 +187,23 @@ export default {
 
     },
     computed: {
-        ...mapState(["loginInfo"]),
-        // excelAction(){
-        //     return uploadContract();
-        // }
+        ...mapState(["loginInfo","projectId"]),
     },
     methods: {
-        /*
-        ** 分页需改2
-        */
         pageChange(data) {
             this.pagination = data;
         },
-        // async initData(){
-        //     this.getList();
-        // },
+        async initData(){
+            this.getList();
+        },
         async getList() {
-            /*
-            ** 分页需改5
-            */
             this.listLoading = true;
             try {
                 const params = Object.assign({}, this.query, this.pagination);
                 const resp = await getPurchaseContractList(params);
                 const res = await resp.json();
-                const result = await getSupplierList(2);
+                const param = Object.assign({enterpriseRole:'PRO_ENT_TYPE_SUPPLIER',state:'T'});
+                const result = await roleList(this.projectId,param);
                 const resu = await result.json();
                 let temp = [];
                 resu.forEach((v) =>{
@@ -252,6 +224,10 @@ export default {
         },
         async search() {
             this.getList();
+        },
+
+         handleSelectionChange(val) {
+           console.log("选取数据", val);
         },
 
         // 上传合同

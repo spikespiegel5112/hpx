@@ -185,7 +185,7 @@ export default {
         this.getIndustry();
     },
     computed: {
-        ...mapState(["loginInfo"])
+        ...mapState(["loginInfo"]),
     },
     methods: {
         handleClose(done) {
@@ -201,6 +201,7 @@ export default {
             this.industryList = [...res];
         },
         async initData() {
+            // debugger;
             const eid = this.loginInfo.enterpriseId;
             const id = this.$route.params.id;
             const resp = await labelList(this.loginInfo.enterpriseId);
@@ -210,15 +211,24 @@ export default {
             this.modelMsg = '编辑模型信息';
             const result = await modelData(id, eid);
             const resu = await result.json();
+           
+           
             this.addForm.gradeCardName = resu.gradeCardName;
             this.addForm.industryid = resu.industryid;
             this.addForm.gradeCardDescribe = resu.gradeCardDescribe;
             this.selectLabelList = resu.labelInfos;
-            this.total = resu.total;
             this.selectLabelList.map((v) => {
-                this.scoreList.push({ scoreCardName: v.scoreCardName, maxScore: (v.maxScore * v.weight).toFixed(2) })
+                this.scoreList.push({ scoreCardName: v.scoreCardName, maxScore: (v.maxScore * v.weight/100).toFixed(2) })
             });
-            this.scoreList.push({ scoreCardName: "总分", maxScore: this.total })
+            this.total = 0;
+            resu.labelInfos.forEach((v) => {
+                this.total += v.maxScore * v.weight/100;
+            });
+            this.total.toFixed(2);
+            this.scoreList.push({ scoreCardName: "总分", maxScore: this.total})
+            if (this.scoreList.length > 1) {
+                this.addGradeBtn = false;
+            }
             this.gradeList = resu.scoreGrades;
         },
         async handleIconClick(ev) {
@@ -318,7 +328,9 @@ export default {
                         return false;
                     }
                 })
+                console.log(" 编辑保存", newData)
                 try {
+                    console.log(id)
                     const resp = id ? await modelEdit(id, eid, newData) : await modelAdd(eid, newData);
                     this.$message({
                         message: '提交成功！',

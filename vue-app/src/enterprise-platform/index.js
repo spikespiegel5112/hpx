@@ -13,6 +13,7 @@ const accountOpening = r => require.ensure([], () => r(require('@/enterprise-pla
 const servicesRecord = r => require.ensure([], () => r(require('@/enterprise-platform/services-open/servicesRecord')), 'servicesRecord');
 const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterpriseSignature');
 const addSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature/add-signature')), 'addSignature');
+const user = r => require.ensure([], () => r(require('@/enterprise-platform/user')), 'user');
 
 // 项目管理
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
@@ -127,6 +128,11 @@ export default {
             name: 'reportDetail',
 			component : admittanceReportDetail,
 			meta:["风控管理","准入报告列表","准入报告详情"]
+		},{
+			path:'user',
+            name: 'user',
+			component : user,
+			meta:["企业管理","用户管理"]
 		},
 		modelRouter,
 		labelRouter,

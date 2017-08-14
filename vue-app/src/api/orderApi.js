@@ -41,7 +41,17 @@ export const updateInterest = (id, params) => fetch(`/order/interestRate/${id}`,
 /**
  * 资方--采购合同--获取采购合同列表
  */
-export const getPurchaseContractList = (query) => fetch('/order/contract/listC', query);
+export const getPurchaseContractList = (query) => fetch(`/order/contract/listC`, query);
+
+/**
+ * 资方--销售合同--获取销售合同列表
+ */
+export const getSalesContractList = (query) => fetch(`/order/contract/listS`, query);
+
+/**
+ * 资方--销售合同--查看融资详情
+ */
+export const getFinancingDetail = (id) => fetch(`/order/contract/queryFinancingSituation/${id}`);
 
 /**
  * 资方--采购合同--签章预览
@@ -54,8 +64,8 @@ export const getAppendixList = (id) => fetch(`/order/contract/preview/${id}`, {}
 export const getAllSignature = (eid) => fetch(`/core/core/api/v1/venterprise/${eid}/esigns`, {});
 // 发送签章短信验证码
 export const coSmgCode = (phone, strCode) => fetch(`/order/contract/SendSms?phone=${phone}&strCode=${strCode}`, {}, 'post');
-// 提交签章
-export const subSignature = (eid) => fetch(`/core/core/api/v1/venterprise/${eid}/esigns`, {});
+// 提交确定签章
+export const subSignature = (params) => fetch(`/order/contract/signature`, params);
 
 /**
  * 资方--采购合同--确认收货列表
@@ -214,3 +224,22 @@ export const warningList =(params) => fetch(`/order/riskControl/list`,params)
  */
 export const addWarning =(params) => fetch(`/order/riskControl/add`,params,'post')
 
+/**
+ * 修改风控预警状态(确认追加保证金)
+ */
+export const updateWarningStatus =(id) => fetch(`/order/riskControl/updateStatus/${id}`,{},'patch')
+
+/**
+ * 提货单列表
+ */
+export const deliveryNoteList =(params) => fetch(`/order/deliveryNote/search`,params)
+
+/**
+ * 提货单明细信息列表
+ */
+export const deliveryNoteDetailList =(params) => fetch(`/order/deliveryNote/getDetail`,params)
+
+/**
+ * 允许发货
+ */
+export const updateDeliveryNote =(id) => fetch(`/order/deliveryNote/updateStatus/${id}`,{},'patch')

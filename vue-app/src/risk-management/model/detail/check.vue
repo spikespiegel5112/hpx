@@ -107,7 +107,7 @@ export default {
                 prop  : 'scoreCardName',
             },{
                 label : '分数',
-                prop  : 'total',
+                prop  : 'labelScore',
             }
         ];
         this.gradeColumns = [
@@ -152,9 +152,14 @@ export default {
             try{
                 const resp = await modelCheck(id, eid) ;
                 const res = await resp.json();
-                this.modelData = {...res};
-            }catch(e) {
 
+                this.modelData = {...res};
+                this.modelData.labelInfos.map((v) => {
+                    Object.assign(v,{labelScore: (v.maxScore*v.weight/100).toFixed(2)})
+                })
+
+            }catch(e) {
+                
             }
         },
     }
