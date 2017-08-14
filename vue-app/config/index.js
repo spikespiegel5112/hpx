@@ -30,8 +30,8 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/core': {
-//                target: 'http://10.38.8.23:9000',
-                target: 'http://120.132.124.88:9000',
+                target: 'http://10.38.8.63:9000',
+//                target: 'http://120.132.124.88:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/core': ''
@@ -46,8 +46,8 @@ module.exports = {
                 },
             },
             '/order': {
-//                 target: 'http://10.38.8.23:9000',
-                target: 'http://120.132.124.88:9000',
+                 target: 'http://10.38.8.63:9000',
+//                target: 'http://120.132.124.88:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/order': '/huaqian/api/v1'

@@ -96,10 +96,13 @@ export default {
             
         }
     },
-    created(){
+    activated(){
         this.showUpcomingList()
         this.getNoticeList();
         this.initProjectList()
+    },
+    deactivated(){
+        this.projectList=[];
     },
     computed : {
         ...mapState(['loginInfo']),
@@ -110,35 +113,34 @@ export default {
     methods:{
         ...mapActions(['getCurrentProjectId']),
         initProjectList(){
-            (async () => {
-                try{
-                    const params = {
+            const params = {
                         eid : this.loginInfo.enterpriseId,
                         page : 1,
                         size : 6,
                     };
-                    const resp = await projectsAuditListRequest(params);
-                    const res = await resp.json();
-                    this.totalPj = resp.headers.get('x-total-count');
-                    
-                    for(var item in res){
+            projectsAuditListRequest(params).then(response=>{
+                this.totalPj = response.headers.get('x-total-count');
+                response.json().then(result=>{
+                    for(var item in result){
                         let count=0;
-                        if(res[item].projectState=='R'){
+                        if(result[item].projectState=='R'){
                             count++;
-                            this.projectList.push(res[item])
+                            this.projectList.push(result[item])
                             console.log(this.projectList)
                         }
-                        if(item==res.length-1){
+                        if(item==result.length-1){
                             if(count==0){
                                 this.noProjects=true;
                             }
                         }
                     }
-
-                }catch(e){
-
-                }
-            })()
+                })
+            })
+//                    const resp = await projectsAuditListRequest(params);
+//                    const res = await resp.json();
+                    
+                    
+                    
         },
         toProject(item){
             console.log(item.state)
