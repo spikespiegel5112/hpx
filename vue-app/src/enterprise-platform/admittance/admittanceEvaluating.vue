@@ -63,7 +63,7 @@ export default {
 			activeNames: [],
 			formData: {
 				badRate: 0,
-                employId: this.$route.params.employId,
+                eid: this.$route.params.employerId,
 				labels: [],
 				mid: this.$route.params.modelId, //模型ID
 				pid: this.$route.params.projectId //项目ID

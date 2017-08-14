@@ -54,7 +54,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="请选择模型" inline>
-					<el-select v-model="modelType" placeholder="请选择">
+					<el-select v-model="modelType" placeholder="请选择" @change='aaa'>
 						<el-option v-for="item in modelList" :key='item.key' :label="item.gradeCardName" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
@@ -272,10 +272,14 @@ export default {
 				name: 'admittanceEvaluating',
 				params: {
 					modelId: this.modelType,
-					employerId: this.employerId
+					employerId: this.employerId,
+                    projectId: this.pid
 				}
 			})
-		}
+		},
+        aaa(value){
+//            alert(value)
+        }
 
 
 	}
