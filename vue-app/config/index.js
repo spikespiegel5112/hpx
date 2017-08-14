@@ -38,13 +38,20 @@ module.exports = {
                 }
             },
             '/credit': {
-//                 target: 'http://10.38.8.23:9000',
-                target: 'http://120.132.124.88:9000',
+                 target: 'http://10.38.8.63:9000',
+//                target: 'http://120.132.124.88:9000',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/credit': '/credit/api/v1'
                 },
             },
+//            '/credit': {
+//                target: 'http://120.132.124.88:9000',
+//                changeOrigin: true,
+//                pathRewrite: {
+//                    '^/credit': '/credit/api/v1'
+//                },
+//            },
             '/order': {
                  target: 'http://10.38.8.63:9000',
 //                target: 'http://120.132.124.88:9000',

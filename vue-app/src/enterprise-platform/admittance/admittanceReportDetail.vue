@@ -1,7 +1,7 @@
 <template>
 <div class="fillcontain">
 <!--	<head-top></head-top>-->
-	<commonDetailTitle :title='reportData.enterpriseName' routerName='admittanceReportList'></commonDetailTitle>
+	<commonDetailTitle title='企业准入报告' routerName='admittanceReportList'></commonDetailTitle>
 	<section class="admittance_report_container">
 		<h1 class='maintitle'>{{reportData.enterpriseName}}</h1>
 		<div class="summarize block_wrapper">
@@ -109,7 +109,7 @@ export default {
 					console.log(this.scoreData);
 					this.evaluatingData = this.reportData.tpGradeModelInfoHistoryExtend.tpLabelInfoHistoryExtend;
                     
-                    this.basicInfo.industry= this.reportData.tpGradeModelInfoHistoryExtend.gradeCardDescribe
+                    this.basicInfo.industry= this.reportData.tpGradeModelInfoHistoryExtend.industryName
 					for (var item in this.evaluatingData) {
 						this.tpModelData[item] = this.evaluatingData[item].tpModelTargetInfoHistory;
 						this.chartData.push({
