@@ -55,7 +55,7 @@
 			<el-form :model="bindRoleData" label-width="120px" :rules="configProjectRules" ref="bindRoleData">
 				<el-form-item label="可绑定角色">
 					<el-select v-model="bindRoleData.role" @change='chooseEnterpriseRoles'>
-						<el-option v-for="item in unbindedRolesList" :value="item.productCode" :key="item.name" :label="item.name">
+						<el-option v-for="item in unbindedRolesList" :value="item.id" :key="item.name" :label="item.name">
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -198,24 +198,32 @@ export default {
 			this.routeParams.eid = this.$route.query.eid;
 			this.routeParams.productCode = this.$route.query.productCode;
 		},
-		getBindedEnterpriseTypes() {
-			let options1 = {
-				pid: this.routeParams.pid,
-				code: this.routeParams.productCode
+        configProjectSubmit() {
+			let options = {
+				entRole: this.bindRoleData.entRole,
+				pid: this.bindRoleData.pid,
+				body: {
+					id: this.bindRoleData.role,
+				}
 			}
-			console.log(options1)
-			getBindedEnterpriseTypesRequest(options1).then(response => {
+			console.log(options);
+			bindProjectRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);
-					this.bindedTableList = result;
-					console.log(this.bindRoleData)
-                    this.getUnbindedEnterpriseTypes();
+					this.configProjectFlag = false;
 				})
-			}).catch(err => {
-				console.log(err)
 			})
+			this.initData();
 		},
-		getUnbindedEnterpriseTypes() {
+		chooseEnterpriseRoles(value) {
+			for (var item in this.unbindedRolesList) {
+				if (this.unbindedRolesList[item].code == value) {
+					this.bindRoleData.id = this.unbindedRolesList[item].id;
+				}
+			}
+			console.log(this.bindRoleData)
+		},
+        getUnbindedEnterpriseTypes() {
 			let options1 = {
 				pid: this.routeParams.pid,
 				code: this.routeParams.productCode
@@ -223,9 +231,8 @@ export default {
 			console.log(options1)
 			getUnbindedEnterpriseTypesRequest(options1).then(response => {
 				response.json().then(result => {
-					console.log(result);
+//					console.log(result);
 					this.unbindedTableList = result;
-					console.log(this.bindRoleData)
 				})
 			}).catch(err => {
 				console.log(err)
@@ -236,7 +243,7 @@ export default {
 				pid: this.routeParams.pid,
 				code: this.routeParams.productCode
 			}
-            console.log(options)
+			console.log(options)
 			getUnbindedRolesListRequest().then(response => {
 				response.json().then(result => {
 					console.log(result)
@@ -245,12 +252,29 @@ export default {
 			})
 		},
 		configProject(scope) {
-            this.bindRoleData.pid = this.routeParams.pid;
-            this.bindRoleData.role=scope.row.id;
-            
+			this.bindRoleData.pid = Number(this.routeParams.pid);
+			this.bindRoleData.entRole = scope.row.code;
+
 			this.getUnbindedRolesList();
 			this.configProjectFlag = true;
 		},
+		getBindedEnterpriseTypes() {
+			let options1 = {
+				pid: this.routeParams.pid,
+				code: this.routeParams.productCode
+			}
+			console.log(options1)
+			getBindedEnterpriseTypesRequest(options1).then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.bindedTableList = result;
+					this.getUnbindedEnterpriseTypes();
+				})
+			}).catch(err => {
+				console.log(err)
+			})
+		},
+		
 		debindRole(scope) {
 			let options = {
 				entRole: scope.row.code,
@@ -259,49 +283,16 @@ export default {
 					id: scope.row.roleId
 				}
 			}
-            console.log(options)
+			console.log(options)
 			debindProjectRequest(options).then(response => {
 				if (response.status == '200') {
-                    alert('dsds')
+					alert('dsds')
+                    this.getBindedEnterpriseTypes();
 				}
 			})
 		},
 
-		configProjectSubmit() {
-			let options = {
-				entRole: this.bindRoleData.entRole,
-				pid: this.bindRoleData.pid,
-				body: {
-					role: this.bindRoleData.role,
-				}
-			}
-			console.log(options);
-//			bindProjectRequest(options).then(response => {
-//				response.json().then(result => {
-//					console.log(result);
-//					this.configProjectFlag = false;
-//				})
-//			})
-//			this.initData();
-			//			this.$refs['bindRoleData'].validate(async(valid) => {
-			//				if (valid) {
-			//					try {
-			//
-			//					} catch (e) {
-			//						this.$message.error(e)
-			//					}
-			//				}
-			//			})
-		},
-
-		chooseEnterpriseRoles(value) {
-//						for (var item in this.unbindedRolesList) {
-//							if (this.unbindedRolesList[item].code == value) {
-//								this.bindRoleData.id = this.unbindedRolesList[item].id;
-//							}
-//						}
-			console.log(this.bindRoleData)
-		},
+		
 		search() {
 			this.getEnterpriseTypesList();
 		},
