@@ -193,6 +193,7 @@ export default {
 			this.getUnbindedRolesList();
 			this.bindEnterpriseTypeFlag = true;
 		},
+        
         bindEnterpriseTypeSubmit() {
             this.$refs['bindRoleData'].validate((valid) => {
 //                if(valid){
