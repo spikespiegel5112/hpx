@@ -240,7 +240,7 @@ export const auditProjectRequest = options => {
  * 获取项目下资方企业列表
  */
 
-export const pjCapitalListRequest = (pid,eid) => fetch(`/core/core/api/v1/enterpriseProjects/${pid}/capitalist/${eid}`);
+export const pjCapitalListRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.pid}/capitalist/${options.eid}`);
 // export const pjCapitalListRequest = (pid) => fetch(`/core/core/api/v1/enterpriseProjects/${pid}/capitalist`);
 /**
  * 获取授信资方

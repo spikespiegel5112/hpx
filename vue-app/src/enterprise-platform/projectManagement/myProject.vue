@@ -257,8 +257,13 @@ export default {
 		},
         async applyCredit(scope){
             alert(scope.row.pjId)
+            let options={
+                pid:scope.row.pjId,
+                eid:scope.row.enterpriseId,
+            }
+            
 			try{
-				const resp = await pjCapitalListRequest(scope.row.pjId)
+				const resp = await pjCapitalListRequest(options)
 				const res = await resp.json();
 				this.capitalSelection = res;
 				this.creditVisble = true;
