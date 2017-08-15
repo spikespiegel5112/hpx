@@ -47,14 +47,14 @@
 			</el-table-column>
 		</el-table>
 		<el-dialog title="请选择评估模型" :visible.sync="evaluateEnterpriseDialogFlag">
-			<el-form :inline="true">
-				<el-form-item label="请选择行业" inline>
-					<el-select v-model="industryType" placeholder="请选择" @change='selectIndustry'>
+			<el-form :inline="true" :model='formData' :rules='rules' ref='formData'>
+				<el-form-item label="请选择行业" prop='industryType' inline>
+					<el-select v-model="formData.industryType" placeholder="请选择" @change='selectIndustry'>
 						<el-option v-for="item in industryList" :key='item.id' :label="item.industryName" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="请选择模型" inline>
-					<el-select v-model="modelType" placeholder="请选择" @change='aaa'>
+				<el-form-item label="请选择模型" prop='modelType' inline>
+					<el-select v-model="formData.modelType" placeholder="请选择" @change='aaa'>
 						<el-option v-for="item in modelList" :key='item.key' :label="item.gradeCardName" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
@@ -142,6 +142,18 @@ export default {
 					}
                 }
 			}],
+            rules:{
+                industryType: [{
+					required: true,
+					message: '请选择行业',
+                    trigger: 'blur'
+				}],
+                modelType:[{
+                    required: true,
+					message: '请选择模型',
+                    trigger: 'blur'
+                }]
+            },
 			//分页信息
 			pagination: {
 				params: {
@@ -159,9 +171,11 @@ export default {
 			//选择模型模态框
 			evaluateEnterpriseDialogFlag: false,
 			industryList: [],
-			industryType: '',
-			modelList: [],
-			modelType: ''
+            modelList: [],
+            formData:{
+                industryType: '',
+                modelType: ''
+            }
 
 		}
 	},
@@ -174,10 +188,10 @@ export default {
 	},
 	deactivated() {
 		this.tableList = [];
-		//        this.industryList = [];
-		//        this.modelList = [];
-		this.industryType = '';
-		this.modelType = '';
+        this.industryList = [];
+        this.modelList = [];
+		this.formData.industryType = '';
+		this.formData.modelType = '';
 	},
 	computed: {
 		...mapState(["loginInfo"])
@@ -245,7 +259,7 @@ export default {
 			let options = {
 				params: {
 					eid: this.eid,
-					hid: this.industryType
+					hid: this.formData.industryType
 				}
 			}
 			scoringmodelNameByIndustryRequest(options).then(response => {
@@ -263,23 +277,28 @@ export default {
 			this.getIndustryList();
             
             this.modelList=[];
-            this.industryType = '';
-            this.modelType = '';
+            this.formData.industryType = '';
+            this.formData.modelType = '';
 		},
 		selectIndustry() {
 			this.getModelList();
 		},
 		toEvaluate() {
-			console.log(this.industryType);
-			this.evaluateEnterpriseDialogFlag = false;
-			this.$router.push({
-				name: 'admittanceEvaluating',
-				params: {
-					modelId: this.modelType,
-					eid: this.eid,
-                    projectId: this.pid
-				}
-			})
+            this.$refs['formData'].validate(valid=>{
+                if(valid){
+                    console.log(this.formData.industryType);
+                    this.evaluateEnterpriseDialogFlag = false;
+                    this.$router.push({
+                        name: 'admittanceEvaluating',
+                        params: {
+                            modelId: this.formData.modelType,
+                            eid: this.eid,
+                            projectId: this.pid
+                        }
+                    })
+                }
+            })
+			
 		},
         aaa(value){
 //            alert(value)
