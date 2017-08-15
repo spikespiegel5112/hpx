@@ -8,8 +8,8 @@
 				</el-table-column>
 				<el-table-column label="操作" width='230'>
 					<template scope="scope">
-                        <el-button type="text" size="small" @click='editProjet(scope)'>授信</el-button>
-                        <el-button v-if="scope.row.projectState='R'" type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
+                        <el-button type="text" size="small" @click='applyCredit(scope)'>授信</el-button>
+                        <el-button v-if="scope.row.projectState=='R'" type="text" size="small" @click='toProject(scope)'>进入项目</el-button>
                         <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
                         <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
                     </template>
@@ -58,6 +58,25 @@
 			<el-button type="primary" @click="submitInvite()">确 定</el-button>
 		</div>
 	</el-dialog>
+	<!-- 授信 -->
+	<el-dialog title='资方授信' :visible.sync='creditVisble'>
+		<el-form :model="creditData" :rules="creditRules" ref='creditData' label-width="110px">
+			<el-form-item label="资方企业 : " prop='capitalList'>
+				<div v-if="!capitalSelection.length">
+					此项目暂无需方/融资方,请去邀请他们加入
+				</div>
+				<el-checkbox-group v-else v-model="creditData.capitalList">
+					<template v-for="(item,i) in capitalSelection">
+						<el-checkbox :label="item.enterpriseName" name="capital"></el-checkbox>
+					</template>
+				</el-checkbox-group>
+			</el-form-item>
+		</el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button @click="creditVisble=false">取 消</el-button>
+			<el-button type="primary" @click="submitInvite()">确 定</el-button>
+		</div>
+	</el-dialog>
 </div>
 </template>
 <script>
@@ -70,8 +89,10 @@ import {
 	modifyProjectInvitStatusRequest
 } from '@/api/enterpriseApi'
 import {
-	addProjectRequest
+	addProjectRequest,
+	pjCapitalListRequest
 } from '@/api/coreApi'
+import { mapState , mapActions } from 'vuex';
 export default {
 	components: {
 		headTop
@@ -124,6 +145,15 @@ export default {
 			},
 			emptyText: "暂无数据",
 			inviteEnterpriseFlag: false,
+            // 授信
+			creditVisble: false,
+			creditData : {
+				capitalList : [],
+			},
+			creditRules : {
+
+			},
+			capitalSelection:[],
 			//table columns
 			columns: [{
 				label: '产品',
@@ -162,7 +192,8 @@ export default {
 		this.initData();
 	},
 	methods: {
-		 initData() {
+        ...mapActions(['getCurrentProjectId']),
+        initData() {
 			 
 			 
              this.getList1();
@@ -223,6 +254,18 @@ export default {
 			this.inviteEnterpriseFlag = true;
 			this.getEnterpriseList();
 			this.getEnterpriseTypeNameList(scope);
+		},
+        async applyCredit(scope){
+            alert(scope.row.pjId)
+			try{
+				const resp = await pjCapitalListRequest(scope.row.pjId)
+				const res = await resp.json();
+				this.capitalSelection = res;
+				this.creditVisble = true;
+			}catch(e){
+
+			}
+			
 		},
 		submitInvite() {
 			this.$refs['inviteData'].validate(async valid => {
@@ -347,6 +390,13 @@ export default {
 				}
 			})
 		},
+        toProject(scope){
+            console.log(scope.row.state)
+            this.getCurrentProjectId(scope.row.pjId);
+            this.$router.push({
+                path:`/porderf/${scope.row.pjId}/demander`
+            })
+        },
 		aaa(value) {
 			// alert(value)
 		}
