@@ -9,18 +9,9 @@
 				<el-table row-key="id" :empty-text="emptyText" :data="unbindedTableList" v-loading="listLoading" highlight-current-row style="width: 100%">
 					<el-table-column v-for="(item,index) in columns1" key="index" :label="item.label" :prop="item.prop" :sortable="item.sortable" :width="item.width ? item.width : 'auto'" :formatter="item.formatter" :min-width="item.minWidth ? item.minWidth : 'auto'">
 					</el-table-column>
-					<!--
-					<el-table-column label="选择角色">
-						<template scope='scope'>
-                            <el-select v-model="bindRoleData.entRole" @change='chooseEnterpriseRoles'>
-                                <el-option v-for="item in unbindedRolesList" :value="item.code" :key="item.code" :label="item.name"></el-option>
-                            </el-select>
-                        </template>
-					</el-table-column>
--->
 					<el-table-column label="操作">
 						<template scope="scope">
-                            <el-button type="text" size="small" @click="configProject(scope)">绑定</el-button>
+                            <el-button type="text" size="small" @click="bindEnterpriseType(scope)">绑定</el-button>
                         </template>
 					</el-table-column>
 				</el-table>
@@ -41,19 +32,15 @@
 		</el-tabs>
 
 
-
-
-
-
 		<section class="main-pagination">
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
 
 		<!--项目配置-->
-		<el-dialog title="项目配置" :visible.sync='configProjectFlag' :close-on-click-modal="true">
-			<el-form :model="bindRoleData" label-width="120px" :rules="configProjectRules" ref="bindRoleData">
-				<el-form-item label="可绑定角色">
+		<el-dialog title="角色配置" :visible.sync='bindEnterpriseTypeFlag' :close-on-click-modal="true">
+			<el-form :model="bindRoleData" label-width="120px" :rules="bindEnterpriseTypeRules" ref="bindRoleData">
+				<el-form-item label="可绑定角色" prop='role'>
 					<el-select v-model="bindRoleData.role" @change='chooseEnterpriseRoles'>
 						<el-option v-for="item in unbindedRolesList" :value="item.id" :key="item.name" :label="item.name">
 						</el-option>
@@ -61,8 +48,8 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="configProjectFlag = false">取消</el-button>
-				<el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
+				<el-button @click.native="bindEnterpriseTypeFlag = false">取消</el-button>
+				<el-button type="primary" @click.native="bindEnterpriseTypeSubmit">提交</el-button>
 			</div>
 		</el-dialog>
 
@@ -156,24 +143,26 @@ export default {
 				eid: ''
 			},
 			//配置项目模态框
-			configProjectFlag: false,
+			bindEnterpriseTypeFlag: false,
 			enterpriseList: [],
 			unbindedRolesList: [],
 			bindRoleData: {
 				entRole: '',
 				pid: '',
+                productCode:'',
 				role: ''
 			},
-			configProjectRules: {
+			bindEnterpriseTypeRules: {
 				role: [{
 					required: true,
-					message: '请选择企业项目类型'
+					message: '请选择需绑定的角色',
+                    trigger: 'blur'
 				}]
 			}
 		}
 	},
 	activated() {
-		this.getParams();
+//		this.getParams();
 		this.initData();
 	},
 	deactivated() {
@@ -198,22 +187,33 @@ export default {
 			this.routeParams.eid = this.$route.query.eid;
 			this.routeParams.productCode = this.$route.query.productCode;
 		},
-        configProjectSubmit() {
-			let options = {
-				entRole: this.bindRoleData.entRole,
-				pid: this.bindRoleData.pid,
-				body: {
-					id: this.bindRoleData.role,
-				}
-			}
-			console.log(options);
-			bindProjectRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result);
-					this.configProjectFlag = false;
-				})
-			})
-			this.initData();
+        bindEnterpriseType(scope) {
+			this.bindRoleData.pid = Number(this.$route.query.pid);
+			this.bindRoleData.entRole = scope.row.code;
+			this.getUnbindedRolesList();
+			this.bindEnterpriseTypeFlag = true;
+		},
+        bindEnterpriseTypeSubmit() {
+            this.$refs['bindRoleData'].validate((valid) => {
+//                if(valid){
+//                    alert('dsds')
+//                }
+                let options = {
+                    entRole: this.bindRoleData.entRole,
+                    pid: this.bindRoleData.pid,
+                    productCode: this.$route.query.productCode,
+                    body: {
+                        id: this.bindRoleData.role,
+                    }
+                }
+                console.log(options);
+//                bindProjectRequest(options).then(response => {
+//                    if (response.status == '200') {
+//                        this.bindEnterpriseTypeFlag = false;
+//                        this.initData();
+//                    }
+//                })
+            })
 		},
 		chooseEnterpriseRoles(value) {
 			for (var item in this.unbindedRolesList) {
@@ -225,8 +225,8 @@ export default {
 		},
         getUnbindedEnterpriseTypes() {
 			let options1 = {
-				pid: this.routeParams.pid,
-				code: this.routeParams.productCode
+				pid: this.$route.query.pid,
+				code: this.$route.query.productCode
 			}
 			console.log(options1)
 			getUnbindedEnterpriseTypesRequest(options1).then(response => {
@@ -239,6 +239,7 @@ export default {
 			})
 		},
 		getUnbindedRolesList() {
+            this.bindRoleData.role='';
 			let options = {
 				pid: this.routeParams.pid,
 				code: this.routeParams.productCode
@@ -251,17 +252,11 @@ export default {
 				})
 			})
 		},
-		configProject(scope) {
-			this.bindRoleData.pid = Number(this.routeParams.pid);
-			this.bindRoleData.entRole = scope.row.code;
-
-			this.getUnbindedRolesList();
-			this.configProjectFlag = true;
-		},
+		
 		getBindedEnterpriseTypes() {
 			let options1 = {
-				pid: this.routeParams.pid,
-				code: this.routeParams.productCode
+				pid: this.$route.query.pid,
+				code: this.$route.query.productCode
 			}
 			console.log(options1)
 			getBindedEnterpriseTypesRequest(options1).then(response => {
@@ -286,15 +281,9 @@ export default {
 			console.log(options)
 			debindProjectRequest(options).then(response => {
 				if (response.status == '200') {
-					alert('dsds')
                     this.getBindedEnterpriseTypes();
 				}
 			})
-		},
-
-		
-		search() {
-			this.getEnterpriseTypesList();
 		},
 		flipPage(pageIndex) {
 			this.pagination.params.page = pageIndex;
