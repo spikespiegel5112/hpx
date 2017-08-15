@@ -156,8 +156,7 @@ export default {
 		submitEvaluation() {
 			let options = {
 				params: this.formData,
-                eid: this.$route.params.enterpriseId2,
-//				eid: this.$store.state.loginInfo.enterpriseId
+				eid: this.$store.state.loginInfo.enterpriseId
 			}
 			console.log(this.formData);
 			// this.$refs['formData.badrate'].validate(valid => {
