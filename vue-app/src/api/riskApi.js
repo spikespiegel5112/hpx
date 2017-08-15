@@ -33,7 +33,7 @@ export const modelAdd = (eid, params) => fetch(`/credit/tp/scoringmodel/${eid}`,
 /**
  * 模型--查询单个打分卡模型
  */
-export const modelData = (id, eid) => fetch(`/credit/tp/scoringmodel/${eid}/${id}`,{})
+export const modelData = (id, eid) => fetch(`/credit/tp/scoringmodel/${eid}/${id}`)
 
 /**
  * 模型--编辑

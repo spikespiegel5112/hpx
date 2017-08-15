@@ -104,14 +104,14 @@ export default {
 		},
 		toHome() {
 			const path = this.loginInfo.enterpriseId === '1' ? '/manager' : '/platform';
-			// this.$alert('没有选取项目或者没权限', '提示', {
-			// 	confirmButtonText: '确定',
-			// 	callback: action => {
-			// 		this.$router.push({
-			// 			path
-			// 		});
-			// 	}
-			// })
+			this.$alert('没有选取项目或者没权限', '提示', {
+				confirmButtonText: '确定',
+				callback: action => {
+					this.$router.push({
+						path
+					});
+				}
+			})
 		}
 	}
 }

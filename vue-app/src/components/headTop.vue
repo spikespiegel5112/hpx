@@ -2,7 +2,7 @@
 <div class="header_container">
 
 	<el-breadcrumb separator="/">
-		<el-breadcrumb-item :to="{ name: 'manager' }">首页</el-breadcrumb-item>
+		<el-breadcrumb-item :to="home">首页</el-breadcrumb-item>
 		<el-breadcrumb-item v-for="(item, index) in $route.meta" key="index">{{item}}</el-breadcrumb-item>
 	</el-breadcrumb>
 	<el-dropdown @command="handleCommand" menu-align='start'>
@@ -33,6 +33,9 @@ export default {
 	},
 	computed: {
 		...mapState(['adminInfo']),
+		home(){
+			return `/${this.$route.path.split('/')[1]}`;
+		}
 	},
 	methods: {
 		...mapActions(['getAdminData', 'loginNot']),

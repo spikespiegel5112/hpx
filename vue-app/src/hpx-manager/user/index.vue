@@ -53,6 +53,7 @@
                     <template scope="scope">
                         <el-button type="text" size="small" @click="abled(scope.row.id, scope.row.eid)">{{scope.row.enabled === 'F' ? '禁用' : '启用'}}</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
+                        <el-button type="text" size="small" @click="configure(scope.$index, scope.row)">配置角色</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -103,13 +104,27 @@
                 <el-button type="primary" @click.native="editSubmit('editeData')">提交</el-button>
             </div>
         </el-dialog>
+        <!--配置角色页面-->
+        <el-dialog title="配置角色" v-model="configureVisible" :close-on-click-modal="false">
+             <el-checkbox-group 
+                v-model="checkedCities1"
+                :min="1"
+                :max="2">
+                <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+            </el-checkbox-group>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="configureVisible = false">取消</el-button>
+                <el-button type="primary" @click.native="editSubmit('editeData')">提交</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+const cityOptions = ['上海', '北京', '广州', '深圳'];
 import headTop from '../../components/headTop'
 import myPagination from '../../components/myPagination'
-import { getEUserList, getEnterpriseList, abledUser, addUser, editUser } from '@/api/coreApi'
+import { getEUserList, getEnterpriseList, abledUser, addUser, editUser, getroleList } from '@/api/coreApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
 import { checkEmail, checkPhone, checkPassword } from '../../config/mUtils'
@@ -148,6 +163,8 @@ export default {
             }
         };
         return {
+            checkedCities1: ['上海', '北京'],
+            cities: cityOptions,
             //table columns
             columns: [{
                 label: '企业名称',
@@ -158,13 +175,16 @@ export default {
                 }, {
                     label: '手机号码',
                     prop: 'phone',
-                }, {
-                    label: '邮箱',
-                    prop: 'email',
-                }, {
-                    label: '性别',
-                    prop: 'gender',
-                }, {
+                }, 
+                // {
+                //     label: '邮箱',
+                //     prop: 'email',
+                // }, 
+                // {
+                //     label: '性别',
+                //     prop: 'gender',
+                // }, 
+                {
                     label: '注册时间',
                     prop: 'registerTime',
                     formatter: (row, column) => moment(row.registerTime).format('YYYY-MM-DD')
@@ -233,6 +253,9 @@ export default {
                     { required: true, validator: checkPassOk, trigger: 'blur' }
                 ],
             },
+            // 配置角色
+            configureVisible: false,
+            roleList: [],     
         }
     },
     components: {
@@ -321,6 +344,11 @@ export default {
             this.modalTitle = '编辑',
             this.editeModalVisible = true;
         },
+        configure(index, row) {
+            this.editeData = { ...row };
+            this.configureVisible = true;
+        },
+        
         async editSubmit(formName) {
             this.editeData.eid = this.editeData.eid.toString();
             this.editeData.gender = this.editeData.gender === '女' ? 'F' : 'T';

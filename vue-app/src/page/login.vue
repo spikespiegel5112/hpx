@@ -24,7 +24,7 @@
 </template>
 
 <script>
-	import {login,getAdminInfo} from '@/api/getData'
+	import {login} from '@/api/getData'
 	import {mapActions, mapState} from 'vuex'
 	export default {
 	    data(){
@@ -45,16 +45,16 @@
 			}
 		},
 		created () {
-			this.$store.dispatch('loginNot')
+			// 更新企业状态
+			this.$store.dispatch('loginNot');
+			this.$store.dispatch('removeStateInfo');
+			console.log(this.$store.state)
 		},
 		mounted(){
 			this.showLogin = true;
-			if (!this.adminInfo.id) {
-    			this.getAdminData()
-    		}
 		},
 		computed: {
-			...mapState(['adminInfo']),
+
 		},
 		methods: {
 			...mapActions(['getAdminData']),
@@ -97,19 +97,6 @@
 				this.$router.push('/forgetPwd');
 			}
 		},
-		watch: {
-			adminInfo: function (newValue){
-				if (newValue.id) {
-					this.$message({
-                        type: 'success',
-                        message: '检测到您之前登录过，将自动登录'
-                    });
-					this.$router.push({
-                        name:'platform'
-                    })
-				}
-			}
-		}
 	}
 </script>
 

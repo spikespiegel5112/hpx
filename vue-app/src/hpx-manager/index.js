@@ -82,7 +82,7 @@ const router = {
         },{
             path: 'added-services',
             component: addedServices,
-            meta: ['企业管理', '增值服务管理'],
+            meta: ['企业管理', '增值服务审核'],
         },{
             path: 'maintain',
             component: enterpriseManager,
@@ -109,7 +109,7 @@ const router = {
             path: 'dictionary',
             component: dictionary,
             name: 'dictionary',
-            meta: ['平台基础管理', '字典项'],
+            meta: ['基础管理', '字典管理'],
         }, {
 			path: 'signature',
 			component: signatureManager,

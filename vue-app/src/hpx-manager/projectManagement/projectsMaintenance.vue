@@ -397,7 +397,7 @@ export default {
                 query:{
                     pid:scope.row.id,
                     eid:scope.row.ownerEnterpriseId,
-                    productCode:scope.row.productCode,
+                    productCode:scope.row.productCode
                 }
             })
         },

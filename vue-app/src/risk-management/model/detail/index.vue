@@ -56,8 +56,8 @@
                     </el-table-column>
                     <el-table-column prop="scoreCardName" label="已选标签名称" align="center">
                     </el-table-column>
-                    <el-table-column prop="addUserid" label="创建人ID" align="center">
-                    </el-table-column>
+                    <!--<el-table-column prop="addUserid" label="创建人ID" align="center">
+                    </el-table-column>-->
                     <el-table-column prop="weight" label="权重（%）" align="center">
                         <template scope="scope">
                             <el-input-number :min="0" :max="100" v-if="scope.row.isWeightEdite" v-model="selectLabelList[scope.$index].weight" size="small"></el-input-number>
@@ -211,8 +211,6 @@ export default {
             this.modelMsg = '编辑模型信息';
             const result = await modelData(id, eid);
             const resu = await result.json();
-           
-           
             this.addForm.gradeCardName = resu.gradeCardName;
             this.addForm.industryid = resu.industryid;
             this.addForm.gradeCardDescribe = resu.gradeCardDescribe;
@@ -224,8 +222,8 @@ export default {
             resu.labelInfos.forEach((v) => {
                 this.total += v.maxScore * v.weight/100;
             });
-            this.total.toFixed(2);
-            this.scoreList.push({ scoreCardName: "总分", maxScore: this.total})
+       
+            this.scoreList.push({ scoreCardName: "总分", maxScore: this.total.toFixed(2)})
             if (this.scoreList.length > 1) {
                 this.addGradeBtn = false;
             }

@@ -29,7 +29,7 @@
                     </el-form-item>
                     <el-form-item>
                         <div class="sub-button">
-                            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                            <el-button type="primary" :disabled="subButton.disabled" @click="submitForm('ruleForm')">{{subButton.msg}}</el-button>
                             <el-button @click="resetForm('ruleForm')">重置</el-button>
                         </div>
                     </el-form-item>
@@ -91,6 +91,10 @@ export default {
                 password: '',
                 passwordOk: '',
             },
+            subButton : {
+                msg: '修改',
+                disabled: false
+            },
             rules: {
                 phone: [
                     { required: true, validator: checkPhone, trigger: 'blur' }
@@ -149,6 +153,10 @@ export default {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
                     try {
+                        this.subButton = {
+                            msg: '提交中...',
+                            disabled: true
+                        }
                         const resp = await subForgetPwd(this.ruleForm);
                         this.$message({
                             message: '修改密码成功，去登录！',
@@ -157,6 +165,10 @@ export default {
                         this.$router.push('/')
                     } catch (e) {
                         this.$message.error(e);
+                        this.subButton = {
+                            msg: '修改',
+                            disabled: false
+                        }
                     }
                 } else {
                     return false;

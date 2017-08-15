@@ -11,15 +11,15 @@ const router = {
         {
             path : '',
             component : model,
-            meta:["模型管理"]
+            meta:["风控管理","模型"]
 		},{
             path : 'check/:id',
             component : check,
-            meta:["模型信息"]
+            meta:["风控管理","模型","模型信息"]
 		},{
             path : 'detail/:id?',
             component : detail,
-            meta:["模型编辑"]
+            meta:["风控管理","模型","模型编辑"]
 		}
     ]
 }

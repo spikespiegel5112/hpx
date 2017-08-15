@@ -30,7 +30,7 @@
 <script>
     import { mapState } from 'vuex';
     import moment from 'moment';
-    import { applyReview , checkAccountM} from '@/api/coreApi'
+    import { applyReview , checkAccountM , getEnterpriseInfo , eidAccCountInfo} from '@/api/coreApi'
     export default {
         data(){
             return {
@@ -60,6 +60,34 @@
                     message: '相关信息填写不全,审核会被拒绝!',
                     offset: 300
                 });
+                const baseInfoRes = this.judgeBaseInfo();
+                const bankAccoutRes = this.judgeBankAccount();
+                baseInfoRes.then(
+                    (response) => {
+                       if(!response){
+                           this.$alert('请查看基本信息是否完整或网络', '提示', {
+                                confirmButtonText: '确定',
+                                type:'warning'
+                            });
+                           return;
+                       }
+                    }
+                ).then(
+                    () => {
+                        bankAccoutRes.then(
+                            respg => {
+                                if(!respg){
+                                    this.$alert('请查看银行账户信息是否完整或网络', '提示', {
+                                        confirmButtonText: '确定',
+                                        type:'warning'
+                                    });
+                                    return;
+                                }
+                            }
+                        )
+                    }
+                )
+                return;
                 try{
                     const resp = await applyReview(this.loginInfo.enterpriseId);
                     const msg = decodeURIComponent(resp.headers.get('x-hpx-alert'));
@@ -70,7 +98,7 @@
                 }
             },
             accMoney(){
-                this.$prompt('请输入金额', '提示', {
+                this.$prompt('请输入认证账户收到的金额,2次输错后账户将被锁定，解锁请联系海平线客服400-080-0880', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     inputPattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
@@ -94,6 +122,35 @@
                         message: '取消输入'
                     });       
                 });
+            },
+            // 判断是否可以提交审核 需要验证基本信息和账户信息
+            async judgeBaseInfo(){
+                try{
+                    const resp = await getEnterpriseInfo(this.loginInfo.enterpriseId);
+                    const res = await resp.json();
+                    const { name , regDate , address , taxType} = res;
+                    if(name && regDate && address && taxType){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }catch(e){
+                    return false
+                }
+            },
+            async judgeBankAccount(){
+                try{
+                    const resp = await eidAccCountInfo(this.loginInfo.enterpriseId);
+                    const res = await resp.json();
+                    const { bankAccount } = res;
+                    if(bankAccount){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }catch(e){
+                    return false;
+                }
             }
         }
     }

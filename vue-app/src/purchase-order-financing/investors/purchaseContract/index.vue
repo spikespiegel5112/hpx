@@ -23,13 +23,16 @@
                         <el-form-item>
                             <el-button type="primary" icon="search" @click="search">查询</el-button>
                         </el-form-item>
+                        <el-form-item>
+                            <el-button class="reset-b" type="primary" icon="circle-close" @click="resetForm('query')">重置</el-button>
+                        </el-form-item>
                     </el-col>
                 </el-row>
             </el-form>
             <el-button type="primary" @click="signature">签章</el-button>
             <el-button type="primary" >预览</el-button>
             <el-button type="primary" @click="receipt">确认收货</el-button>
-            <el-button type="primary" @click="uploadContract">上传文件</el-button>
+          
         </section>
 
         <section class="main-table-container">
@@ -38,40 +41,44 @@
                 <el-table-column prop="name" label="合同名称"></el-table-column>
                 <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
                 </el-table-column>
-                <!--<el-table-column label="操作">
+                <el-table-column label="文件" align="center" prop="webPath" min-width="120px">
                     <template scope="scope">
-                        <el-button type="text" size="small" @click="signature(scope.$index, scope.row)" >签章</el-button>
-                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">预览</el-button>
-                        <el-button type="text" size="small" @click="receipt(scope.$index, scope.row)">确认收货</el-button>
-                        <el-button type="text" size="small" @click="uploadContract(scope.$index, scope.row)">上传合同</el-button>
-                         action="/order/contract/uploadingContract/"+{scope.row.id}
-                        <el-upload
-                            :action="`/order/contract/uploadingContract/${scope.row.id}`"
-                            :file-list="excelList"
-                            :on-change="excelChange"
-                            :before-upload="excelBefore"
-                            :on-success="excelSuccess"
+                          <upload-pic
+                            v-show="scope.row.thumbUrl"
+                            :index="scope.$index" 
+                            :thumbUrl="scope.row.thumbUrl" 
+                            :name="scope.row.fileName"
+                            :removeFile="removeFile"
                         >
-                        <el-button size="small" type="text">上传合同</el-button>
-                    </el-upload>
+                        </upload-pic>
+                        <el-button v-if="scope.row.fileId" type="text" @click="clickLoad(scope.row.fileId)">点击下载查看</el-button>
+                    </template>
+                </el-table-column> 
+                <el-table-column label="操作" align="center" class-name="acc-action-upload"> 
+                    <template scope="scope">
                          <el-upload
-                            :action="uploadActionUrl(scope.row.code)"
+                            v-if="allEdite"
+                            :action="uploadContractUrl(scope.row.id)"
                             list-type="picture"
                             :auto-upload="false"
                             accept="image/gif, image/jpeg, image/png, image/jpg"
                             :on-change="(file,filesList)=>filesChange(scope.$index,file,filesList)"
-                            :on-remove="()=>removeFile(scope.$index)">
+                            :on-remove="()=>removeFile(scope.$index)"
+                        >
                             <el-button icon="upload" type="primary" size="small">上传文件</el-button>
                          </el-upload>
+                         <div v-else>
+                             {{scope.row.id ? "已经上传" : "未上传"}}
+                         </div>
                     </template>
-                </el-table-column>-->
+                </el-table-column>
             </el-table>
             <my-Pagination @pageChange="pageChange" :total="total">
             </my-Pagination>
         </section>
         <!--编辑界面-->
         <el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
-            <el-form :model="editeData" label-width="80px" :rules="editRules" ref="editeData">
+            <el-form :model="editeData" label-width="80px" ref="editeData">
                 <el-form-item label="企业编号" prop="id" readonly>
                     <el-input v-model="editeData.id" auto-complete="off"></el-input>
                 </el-form-item>
@@ -106,6 +113,7 @@
 import headTop from '../../../components/headTop'
 import myPagination from '../../../components/myPagination'
 import { getPurchaseContractList, roleList, uploadContract } from '@/api/orderApi'
+import { filesTypes , uploadAction ,loadUrl} from '@/api/publicApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
 export default {
@@ -135,10 +143,11 @@ export default {
                     label: '收货日期',
                     prop: 'receivingDate',
                     formatter: (row, column) => moment(column.receivingDate).format('YYYY-MM-DD')
-                }, {
-                    label: '文件',
-                    prop: 'fileId',
-                }
+                }, 
+                // {
+                //     label: '文件',
+                //     prop: 'fileId',
+                // }
             ],
             //总页数
             total: 0,
@@ -148,6 +157,7 @@ export default {
             //table
             tableList: [],
             supplierList: [],
+            selectContractList: [],
             listLoading: false,
             emptyText: "暂无数据",
 
@@ -169,25 +179,23 @@ export default {
                 contactsNumber: '',
                 birth: ''
             },
-            editRules: {
-                name: [
-                    { required: true, message: '请输入姓名', trigger: 'blur' }
-                ]
-            }
         }
     },
     components: {
         headTop,
         myPagination,
     },
-    created() {
-        // this.initData();
+    activated() {
+        this.initData();
     },
     mounted() {
 
     },
     computed: {
         ...mapState(["loginInfo","projectId"]),
+        allEdite(){
+            // return !this.accStatusInfo.authenticateStatus || this.accStatusInfo.authenticateStatus === 'F' ? true : false;
+        }
     },
     methods: {
         pageChange(data) {
@@ -202,6 +210,12 @@ export default {
                 const params = Object.assign({}, this.query, this.pagination);
                 const resp = await getPurchaseContractList(params);
                 const res = await resp.json();
+                
+                for(let i = 0,len = res.length; i < len ; i++){
+                    res[i].fileName = '';
+                    res[i].fileLength = '';
+                    res[i].thumbUrl = '';
+                };
                 const param = Object.assign({enterpriseRole:'PRO_ENT_TYPE_SUPPLIER',state:'T'});
                 const result = await roleList(this.projectId,param);
                 const resu = await result.json();
@@ -227,35 +241,17 @@ export default {
         },
 
          handleSelectionChange(val) {
-           console.log("选取数据", val);
+            this.selectContractList = val;
         },
 
         // 上传合同
-        excelChange(file,list){
-                this.excelList = list;
-            },
-        excelBefore(){
-                if(this.excelList.length > 1){
-                    this.$message({
-                        type:'info',
-                        message:'每次只能上传一个 '
-                    });
-                    return false;
-                }
-            },
-        excelSuccess(response){
-                this.excelPath = response
-                this.$message({
-                    type : 'success',
-                    message : '上传成功'
-                })
-            },
-
-        handleSelectionChange(val) {
-            // this.multipleSelection = val;
-        },
-        signature(index, row) {
-            this.$router.push({ path: this.$route.path + '/signature/' + row.id})
+        signature() {
+            if(this.selectContractList.length > 1) {
+                this.$message.error("只能选择一个合同进行签章");
+                return;
+            }
+            const id = this.selectContractList[0].id;
+            this.$router.push({ path: this.$route.path + '/signature/' + id})
         },
 
         check(index, row) {
@@ -265,12 +261,26 @@ export default {
             this.editeModalVisible = true;
             this.editeData = Object.assign({}, { ...row })
         },
-        receipt(index, row) {
-             this.$router.push({ path: this.$route.path + '/receipt/' + row.id })
+        receipt() {
+            if(this.selectContractList.length > 1) {
+                this.$message.error("只能选择一个合同确认收货");
+                return;
+            }
+            const id = this.selectContractList[0].id;
+            this.$router.push({ path: this.$route.path + '/receipt/' + id })
         },
-        uploadActionUrl (code) {
-            return uploadContract(this.loginInfo.enterpriseId,code)
+       
+        clickLoad(fileId){
+            window.location.href = loadUrl(fileId);
         },
+        resetForm(formName) {
+            this.$refs[formName].resetFields();
+        },
+
+        uploadContractUrl (id) {
+            return uploadContract(id)
+        },
+
         filesChange(index,file,filesList){
             console.log(file,filesList,index)
             this.tableList[index].fileName = file.name;

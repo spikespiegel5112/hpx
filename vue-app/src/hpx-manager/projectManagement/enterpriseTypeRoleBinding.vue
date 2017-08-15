@@ -38,7 +38,7 @@
 		<!--项目配置-->
 		<el-dialog title="角色配置" :visible.sync='bindEnterpriseTypeFlag' :close-on-click-modal="true">
 			<el-form :model="bindRoleData" label-width="120px" :rules="bindRoleDataRules" ref="bindRoleData">
-				<el-form-item label="可绑定角色" prop='role'>
+				<el-form-item label="可绑定角色">
 					<el-select v-model="bindRoleData.role" @change='chooseEnterpriseRoles'>
 						<el-option v-for="item in unbindedRolesList" :value="item.id" :key="item.id" :label="item.name">
 						</el-option>
@@ -176,7 +176,7 @@ export default {
         bindEnterpriseType(scope) {
 			this.bindRoleData.pid = Number(this.$route.query.pid);
 			this.bindRoleData.entRole = scope.row.code;
-//			this.getUnbindedRolesList();
+			this.getUnbindedRolesList();
             this.bindRoleData.role='';
 			this.bindEnterpriseTypeFlag = true;
 		},
@@ -194,7 +194,7 @@ export default {
 			})
 		},
         bindEnterpriseTypeSubmit() {
-            this.$refs['bindRoleData'].validate(async valid => {
+//            this.$refs['bindRoleData'].validate(async valid => {
 //                if(valid){
 //                    alert('dsds')
 //                }
@@ -213,10 +213,10 @@ export default {
                         this.initData();
                     }
                 })
-            })
+//            })
 		},
 		chooseEnterpriseRoles(value) {
-			alert(this.bindRoleData.role)
+//			alert(this.bindRoleData.role)
 			console.log(this.bindRoleData)
 		},
         getUnbindedEnterpriseTypes() {

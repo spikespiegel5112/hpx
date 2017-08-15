@@ -19,7 +19,6 @@ export const getCapitalList = (pid) => fetch(`/core/core/api/v1/enterpriseProjec
  */
 export const getDemanderList = (pjId, params) => fetch(`/core/core/api/v1/enterpriseProjects/${pjId}/demandSide`, params)
 
-
 /**
  * 新增客户利率信息
  */
@@ -73,8 +72,8 @@ export const subSignature = (params) => fetch(`/order/contract/signature`, param
 export const getReceiptList = (tContractId) => fetch(`/order/contract/queryReceivingDetail?tContractId=${tContractId}`, {});
 
 // 上传合同
-// export const uploadContract = (id) => `/order/contract/uploadingContract/${id}`;
-export const uploadContract = (eid,code) => `/core/core/api/v1/enterpriseFiles/enterprise/${eid}/dictionary/${code}/enterpriseFiles`;
+export const uploadContract = (id) => `/order/contract/uploadingContract/${id}`;
+// export const uploadContract = (eid,code) => `/core/core/api/v1/enterpriseFiles/enterprise/${eid}/dictionary/${code}/enterpriseFiles`;
 
 /**
  * 资方--采购合同--确认收货
@@ -92,24 +91,23 @@ export const supplementOrder = (id) => fetch(`/order/refund/get/${id}`, {});
 
 
 /**
- * 获取订单列表 ordersList
+ * 订单 
  */
+// 列表 ordersList
 export const ordersList = (params) => fetch(`/order/salesOrder/search`, params)
 
-/**
- * 获取订单详情 ordersDetail
- */
+// 订单详情 ordersDetail
 export const ordersDetail = (orderId) => fetch(`/order/salesOrder/getDetail/${orderId}`)
 
-/**
- * 下载订单详情 ordersDetailDownload
- */
+// 下载订单详情 ordersDetailDownload
 export const ordersDetailDownload = (orderId) => `/order/salesOrder/downloadDetail/${orderId}`;
 
-/**
- * 修改订单详情 salesOrder/updateDetail
- */
+// 修改订单详情 salesOrder/updateDetail
 export const ordersDetailRevise = (params) => fetch(`/order/salesOrder/updateDetail`,params,'patch');
+ 
+//确定订单
+export const orderSure = (orderId) => fetch(`/order/salesOrder/confirm/${orderId}`,{} ,'patch');
+
 
 /**
  * 获取售后管理单据列表

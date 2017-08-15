@@ -130,7 +130,7 @@ import {
     countries,
     bankdes,
 } from '@/api/publicApi';
-import { accountFill , eidAccCountInfo } from '@/api/coreApi'
+import { accountFill , eidAccCountInfo} from '@/api/coreApi'
 import { mapState } from 'vuex';
 export default {
     data(){

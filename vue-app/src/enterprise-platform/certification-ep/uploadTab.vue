@@ -36,14 +36,13 @@
                         </upload-pic>
                         <el-button v-if="scope.row.fileId" type="text" @click="clickLoad(scope.row.fileId)">点击下载查看</el-button>
                     </template>
-                </el-table-column>
+                </el-table-column> 
                 <el-table-column label="操作" align="center" class-name="acc-action-upload"> 
                     <template scope="scope">
                          <el-upload
                             v-if="allEdite"
                             :action="uploadActionUrl(scope.row.code)"
                             list-type="picture"
-                            :auto-upload="false"
                             accept="image/gif, image/jpeg, image/png, image/jpg"
                             :on-change="(file,filesList)=>filesChange(scope.$index,file,filesList)"
                             :on-remove="()=>removeFile(scope.$index)"

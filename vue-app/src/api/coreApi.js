@@ -39,14 +39,14 @@ export const checkNewPhone = (newPhone, code) => fetch('/core/core/api/v1/modify
 export const getEnterpriseInfo = (eid) => fetch(`/core/core/api/v1/enterprises/${eid}`);
 
 /*
- ** 企业认证账户信息
+ ** 平台企业认证账户信息
  */
-export const eidAccCountInfo = (eid) => fetch(`/core/core/api/v1/enterpriseAccountEntity/enterpriseAccountEntity/${eid}`);
+export const eidAccCountInfo = (eid) => fetch(`/core/core/api/v1/enterpriseAccountEntity/${eid}`);
 
 /*
- ** 填写 认证账户信息
+ ** 企业认证账户信息
  */
-export const accountFill = (eid,data) => fetch(`/core` + `/core/api/v1/enterpriseAccountEntity/enterprise/${eid}/enterpriseAccountEntity`, data,'put')
+export const showAccCountInfo = (eid) => fetch(`/core/core/api/v1/palt/enterpriseAccountEntity/${eid}`);
 
 /*
  ** 获取 认证 已上传文件信息
@@ -72,7 +72,7 @@ export const applyReview  = (eid) => fetch(`/core/core/api/v1/enterprise/${eid}/
 /*
  ** 企业认证 金额确认
  */
-export const checkAccountM  = (eid,params) => fetch(`/core/core/api/v1/enterpriseAccountEntity/enterprise/${eid}/checkAccount?val=${params}`, {}, 'PATCH')
+export const checkAccountM  = (eid,params) => fetch(`/core/core/api/v1/enterprise/${eid}/checkAccount?val=${params}`, {}, 'PATCH')
 
 /*
  ** 管理签章 -- 获取企业电子签章列表
@@ -100,9 +100,14 @@ export const getSignatureList = (query, eid) => fetch(`/core/core/api/v1/enterpr
 export const addSignature = (eid, query) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns`, query, 'put');
 
 /*
+ ** 修改企业电子签章列表
+ */
+export const editSignature = (id, eid, name) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns/${id}?name=${name}&enabled=`, {}, 'patch');
+
+/*
  ** 禁用企业电子签章
  */
-export const abledSignature = (name, id, eid, enabled) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns/${id}?name=${name}&enabled=${enabled}`, {}, 'patch');
+export const abledSignature = (id, eid, enabled) => fetch(`/core/core/api/v1/enterprise/${eid}/esigns/${id}?name=&enabled=${enabled}`, {}, 'patch');
 
 /*
  ** 删除企业电子签章
@@ -193,6 +198,11 @@ export const deleteProject = (id) => {
  */
 export const getUserList = (eid, params) => fetch(`/core/core/api/v1/enterprise/${eid}/users`,params);
 
+/**
+ * 用户管理--获取所有角色列表
+ */
+export const getroleList = (eid, params) => fetch(`/core/core/api/v1/enterprise/${eid}/users`,params);
+
 /*
 ** 用户管理--禁用
 */
@@ -225,6 +235,18 @@ export const getEnterpriseList = () => fetch(`/core/core/api/v1/enterprises`,{})
 export const auditProjectRequest = options => {
     return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}/state/${options.state}`, {}, 'patch');
 }
+
+/**
+ * 获取项目下资方企业列表
+ */
+
+export const pjCapitalListRequest = (pid,eid) => fetch(`/core/core/api/v1/enterpriseProjects/${pid}/capitalist/${eid}`);
+// export const pjCapitalListRequest = (pid) => fetch(`/core/core/api/v1/enterpriseProjects/${pid}/capitalist`);
+/**
+ * 获取授信资方
+ */
+
+export const capitalApply = (eid,pid,CapitalEid) => fetch(`/core/core/api/v1/enterprise/${eid}/projects/${pid}/credits/${CapitalEid}`,{},'put');
 
 /**
  * 新增企业项目信息
@@ -284,3 +306,16 @@ export const editDictionary = (id, params) => fetch(`/core/core/api/v1/dictionar
 ** 字典管理--编辑
 */
 export const servicesTypes = (code) => fetch(`/core/core/api/v1/dictionary/${code}/children`);
+
+
+/**
+ * 代办事宜
+ */
+// 获取
+export const getUpcomingList = (params) => fetch(`/core/core/api/v1/upcoming/upcoming/list`,params);
+// 新增
+export const addUpcoming = (params) => fetch(`/core/core/api/v1/upcoming/upcoming`,params,'put');
+// 处理
+export const updateUpcoming = (id,type) => fetch(`/core/core/api/v1/upcoming/upcoming/updateType/${id}?type=${type}`,{},'patch');
+
+

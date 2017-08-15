@@ -97,7 +97,15 @@
                         <el-button type="text" size="small" @click="check(scope.$index, scope.row)" >查看</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" size="small" @click="abled(scope.$index, scope.row)" >{{scope.row.gradeCardState==="1" ? "启用" : "禁用"}}</el-button>
-                        <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+                        <el-button type="text" size="small" @click="scope.row.confirmVisible=true">删除</el-button>
+                        <el-popover v-model="scope.row.confirmVisible">
+                            <p>
+                                <i style="color:#ffbf00" class="el-icon-information"></i> 确定删除？</p>
+                            <div style="margin-top:15px;">
+                                <el-button size="mini" @click="scope.row.confirmVisible= false">取消</el-button>
+                                <el-button type="primary" size="mini" @click="del(scope.row)">确定</el-button>
+                            </div>
+                        </el-popover>              
                     </template>
                 </el-table-column>
             </el-table>
@@ -121,11 +129,11 @@ export default {
         this.format = 'YYYY-MM-DD';
         this.status = [
             {
-                label:'已禁用',
-                value:'0'
-            },{
-                label:'已启用',
+                label:'禁用',
                 value:'1'
+            },{
+                label:'启用',
+                value:'0'
             }
         ];
         return {
@@ -193,6 +201,9 @@ export default {
                 const params = Object.assign({},pagination, this.query);
                 const resp = await modelList(this.loginInfo.enterpriseId,params);
                 const res = await resp.json();
+                res.map((v) => {
+                        Object.assign(v, {confirmVisible: false})
+                    })
                 const total = resp.headers.get('x-total-count')
                 this.tableList = [...res];
                 this.total = parseInt(total);

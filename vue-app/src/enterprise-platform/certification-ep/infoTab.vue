@@ -34,7 +34,10 @@
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="企业类型" prop="enterpriseType">
-                                <el-input v-show="!isEdite.base" v-model="baseInfoForm.enterpriseType" placeholder="请输入企业类型"></el-input>
+                                <el-select v-show="!isEdite.base" v-model="baseInfoForm.enterpriseType">
+                                    <el-option v-for="item in entType" :value="item.name" :key="item.name" :label="item.name">
+                                    </el-option>
+                                </el-select>
                                 <div class='cer-text-div' v-show="isEdite.base">{{baseInfoForm.enterpriseType}}</div>
                             </el-form-item>
                         </el-col>
@@ -254,6 +257,7 @@
 <script>
 import { mapState } from 'vuex';
 import { getEnterpriseInfo, patchEnterpriseInfo } from '../../api/coreApi';
+import { getDictionaryByCodeRequest } from '@/api/dictionaryApi'
 import myJs from '../../config/mUtils'
 import moment from 'moment';
 export default {
@@ -419,11 +423,13 @@ export default {
                 taxType: [
                     { required: true, message: '请输入税务类型', trigger: 'blur' },
                 ]
-            }
+            },
+            entType:[]
         }
     },
     created() {
         this.getBaseData();
+        this.getDictionary();
     },
     computed: {
         ...mapState(['loginInfo','accStatusInfo']),
@@ -432,6 +438,12 @@ export default {
         }
     },
     methods: {
+        async getDictionary(){
+            const params = {code : 'ENT_TYPE'};
+            const resp = await getDictionaryByCodeRequest(params);
+            const res = await resp.json();
+            this.entType = res;
+        },
         async getBaseData() {
             try {
                 const resp = await getEnterpriseInfo(this.loginInfo.enterpriseId);
@@ -485,7 +497,6 @@ export default {
                                 message: '保存成功',
                                 type: 'success'
                             });
-                            console.log(this.contactsInfoForm)
                             this.isEdite[type] = true;
                         } catch (e) {
                             this.$message.error(e);

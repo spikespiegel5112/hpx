@@ -42,8 +42,7 @@
                     </el-form-item>
                     <el-form-item>
                         <div class="sub-button">
-                            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-                            <el-button @click="resetForm('ruleForm')">重置</el-button>
+                            <el-button type="primary" :disabled="subButton.disabled" @click="submitForm('ruleForm')">{{subButton.msg}}</el-button>
                         </div>
                     </el-form-item>
                 </el-form>
@@ -96,6 +95,10 @@ export default {
         };
         return {
             agreementVisible: false,
+            subButton: {
+                msg: '注册',
+                disabled: false
+            },
             strCode: {
                 src: '/core/core/api/v1/getKaptchaImage',
             },
@@ -176,6 +179,10 @@ export default {
             this.$refs[formName].validate(async (valid) => {
                 if (valid) {
                     try {
+                        this.subButton = {
+                            msg: '提交中...',
+                            disabled: true
+                        }
                         const resp = await subRegister(this.ruleForm);
                         this.$message({
                             message: '注册成功，去登录！',
@@ -185,6 +192,10 @@ export default {
                         location.reload()
                     } catch (e) {
                         this.$message.error(e);
+                        this.subButton = {
+                            msg: '注册',
+                            disabled: false
+                        }
                     }
                 } else {
                     return false;
@@ -270,7 +281,7 @@ export default {
 
 .sub-button {
     margin-left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-10%);
     margin-top: 30px;
 }
 

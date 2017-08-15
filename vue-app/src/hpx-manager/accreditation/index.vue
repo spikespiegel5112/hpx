@@ -104,11 +104,9 @@
                 columns : [{
                     label : '企业编号',
                     prop  : 'id',
-                    sortable : true,
                     },{
                     label : '企业名称',
                     prop  : 'name',
-                    sortable : true,
                     minWidth : 120,
                     },{
                     label : '企业状态',
@@ -118,16 +116,13 @@
                     },{
                     label : '地址',
                     prop  : 'address',
-                    sortable : true,
                     minWidth : 150
                     },{
                     label : '联系人',
                     prop  : 'contacts',
-                    sortable : true,
                     },{
                     label : '联系方式',
                     prop  : 'contactsNumber',
-                    sortable : true,
                     minWidth : 100
                     }
                 ],
@@ -196,7 +191,6 @@
             async getList(){
                 this.listLoading = true;
                 try{
-                    this.listLoading = false;
                     const params = Object.assign({},this.query,this.pagination);
                     const resp = await getEnterprisesList(params);
                     const res = await resp.json();
@@ -205,7 +199,8 @@
                     this.total = parseInt(total);
                     if(!this.tableList.length){
                         this.emptyText = "暂无数据";
-                    }
+                    };
+                    this.listLoading = false;
                 }catch(e){
                     this.emptyText = "获取数据失败";
                     this.listLoading = false;
