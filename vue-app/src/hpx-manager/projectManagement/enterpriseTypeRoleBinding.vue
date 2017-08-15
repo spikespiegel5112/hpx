@@ -28,9 +28,7 @@
 					</el-table-column>
 				</el-table>
 			</el-tab-pane>
-
 		</el-tabs>
-
 
 		<section class="main-pagination">
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
@@ -39,10 +37,10 @@
 
 		<!--项目配置-->
 		<el-dialog title="角色配置" :visible.sync='bindEnterpriseTypeFlag' :close-on-click-modal="true">
-			<el-form :model="bindRoleData" label-width="120px" :rules="bindEnterpriseTypeRules" ref="bindRoleData">
+			<el-form :model="bindRoleData" label-width="120px" :rules="bindRoleDataRules" ref="bindRoleData">
 				<el-form-item label="可绑定角色" prop='role'>
 					<el-select v-model="bindRoleData.role" @change='chooseEnterpriseRoles'>
-						<el-option v-for="item in unbindedRolesList" :value="item.id" :key="item.name" :label="item.name">
+						<el-option v-for="item in unbindedRolesList" :value="item.id" :key="item.id" :label="item.name">
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -84,10 +82,6 @@ export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
-			form: {},
-			formInline: {
-				region: ''
-			},
 			//table columns1
 			columns1: [{
 				label: '企业类型',
@@ -138,10 +132,6 @@ export default {
 			//搜索条件的个数
 			criteriaNum: 3,
 
-			routeParams: {
-				pid: '',
-				eid: ''
-			},
 			//配置项目模态框
 			bindEnterpriseTypeFlag: false,
 			enterpriseList: [],
@@ -152,11 +142,11 @@ export default {
                 productCode:'',
 				role: ''
 			},
-			bindEnterpriseTypeRules: {
+			bindRoleDataRules: {
 				role: [{
 					required: true,
 					message: '请选择需绑定的角色',
-                    trigger: 'blur'
+                    trigger: 'change'
 				}]
 			}
 		}
@@ -173,6 +163,7 @@ export default {
 			this.listLoading = true;
 			try {
 				this.getBindedEnterpriseTypes();
+                this.getUnbindedRolesList();
 				this.listLoading = false;
 				if (!this.bindedTableList.length) {
 					this.emptyText = "暂无数据";
@@ -182,20 +173,28 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		getParams() {
-			this.routeParams.pid = this.$route.query.pid;
-			this.routeParams.eid = this.$route.query.eid;
-			this.routeParams.productCode = this.$route.query.productCode;
-		},
         bindEnterpriseType(scope) {
 			this.bindRoleData.pid = Number(this.$route.query.pid);
 			this.bindRoleData.entRole = scope.row.code;
-			this.getUnbindedRolesList();
+//			this.getUnbindedRolesList();
+            this.bindRoleData.role='';
 			this.bindEnterpriseTypeFlag = true;
 		},
-        
+        getUnbindedRolesList() {
+			let options = {
+				pid: this.$route.query.pid,
+				code: this.$route.query.productCode
+			}
+			console.log(options)
+			getUnbindedRolesListRequest().then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.unbindedRolesList = result;
+				})
+			})
+		},
         bindEnterpriseTypeSubmit() {
-            this.$refs['bindRoleData'].validate((valid) => {
+            this.$refs['bindRoleData'].validate(async valid => {
 //                if(valid){
 //                    alert('dsds')
 //                }
@@ -208,20 +207,16 @@ export default {
                     }
                 }
                 console.log(options);
-//                bindProjectRequest(options).then(response => {
-//                    if (response.status == '200') {
-//                        this.bindEnterpriseTypeFlag = false;
-//                        this.initData();
-//                    }
-//                })
+                bindProjectRequest(options).then(response => {
+                    if (response.status == '200') {
+                        this.bindEnterpriseTypeFlag = false;
+                        this.initData();
+                    }
+                })
             })
 		},
 		chooseEnterpriseRoles(value) {
-			for (var item in this.unbindedRolesList) {
-				if (this.unbindedRolesList[item].code == value) {
-					this.bindRoleData.id = this.unbindedRolesList[item].id;
-				}
-			}
+			alert(this.bindRoleData.role)
 			console.log(this.bindRoleData)
 		},
         getUnbindedEnterpriseTypes() {
@@ -239,20 +234,7 @@ export default {
 				console.log(err)
 			})
 		},
-		getUnbindedRolesList() {
-            this.bindRoleData.role='';
-			let options = {
-				pid: this.routeParams.pid,
-				code: this.routeParams.productCode
-			}
-			console.log(options)
-			getUnbindedRolesListRequest().then(response => {
-				response.json().then(result => {
-					console.log(result)
-					this.unbindedRolesList = result;
-				})
-			})
-		},
+		
 		
 		getBindedEnterpriseTypes() {
 			let options1 = {
@@ -274,7 +256,7 @@ export default {
 		debindRole(scope) {
 			let options = {
 				entRole: scope.row.code,
-				pid: this.routeParams.pid,
+				pid: this.$route.query.pid,
 				body: {
 					id: scope.row.roleId
 				}
