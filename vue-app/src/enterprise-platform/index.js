@@ -93,6 +93,7 @@ export default {
             meta: ["服务开通"],
         },{
             path: 'accountopening',
+            name: 'accountOpening',
             component: accountOpening,
             meta: ["服务开通","线上开户"],
         },{
