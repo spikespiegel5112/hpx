@@ -109,7 +109,7 @@ export default {
 			component : admittanceManagement,
 			meta:["风控管理","企业准入"]
 		},{
-			path:'evaluating/:eid&:modelId&:projectId',
+			path:'evaluating/:enterpriseId2&:modelId&:projectId',
             name:'admittanceEvaluating',
 			component : admittanceEvaluating,
 			meta:["风控管理",'企业准入',"准入评估"]

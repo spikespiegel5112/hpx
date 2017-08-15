@@ -94,6 +94,7 @@ export default {
 		const dateFormat = "YYYY-MM-DD";
 		return {
 			eid: this.$store.state.loginInfo.enterpriseId,
+            enterpriseId2: this.$store.state.loginInfo.enterpriseId2,
 			pid: '',
 			//table columns
 			columns: [{
@@ -292,7 +293,7 @@ export default {
                         name: 'admittanceEvaluating',
                         params: {
                             modelId: this.formData.modelType,
-                            eid: this.eid,
+                            enterpriseId2: this.enterpriseId2,
                             projectId: this.pid
                         }
                     })
