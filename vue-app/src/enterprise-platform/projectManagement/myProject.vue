@@ -8,9 +8,9 @@
 				</el-table-column>
 				<el-table-column label="操作" width='230'>
 					<template scope="scope">
-                        <el-button type="text" size="small" @click='applyCredit(scope)'>授信</el-button>
-                        <el-button v-if="scope.row.projectState=='R'" type="text" size="small" @click='toProject(scope)'>进入项目</el-button>
+                        <el-button v-if="scope.row.projectState=='R'" type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
                         <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
+						<el-button v-if="scope.row.enterpriseRole === 'PRO_ENT_TYPE_DEALER'" type="text" size="small" @click="applyCredit(scope.row.pjId)">申请授信</el-button>
                         <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
                     </template>
 				</el-table-column>
@@ -74,7 +74,7 @@
 		</el-form>
 		<div slot="footer" class="dialog-footer">
 			<el-button @click="creditVisble=false">取 消</el-button>
-			<el-button type="primary" @click="submitInvite()">确 定</el-button>
+			<el-button type="primary" :disabled="!creditData.capitalList.length" @click="creditSumit()">确 定</el-button>
 		</div>
 	</el-dialog>
 </div>
@@ -90,7 +90,8 @@ import {
 } from '@/api/enterpriseApi'
 import {
 	addProjectRequest,
-	pjCapitalListRequest
+	pjCapitalListRequest,
+	capitalApply
 } from '@/api/coreApi'
 import { mapState , mapActions } from 'vuex';
 export default {
@@ -186,6 +187,15 @@ export default {
 					return row.endTime != null ? moment(row.endTime).format(dateFormat) : ''
 				}
 			}],
+			// 授信
+			creditVisble: false,
+			creditData : {
+				capitalList : [],
+			},
+			creditRules : {
+
+			},
+			capitalSelection:[],
 		}
 	},
 	activated() {
@@ -199,6 +209,7 @@ export default {
              this.getList1();
              
              
+			
 		},
 		getList1() {
 			let that = this;
@@ -209,6 +220,7 @@ export default {
 					state: 'T'
 				}
 			}
+			
 			options.params = Object.assign(options.params, this.pagination1.params)
 			console.log(options);
 			projectListRequest(options).then(response => {
@@ -255,15 +267,10 @@ export default {
 			this.getEnterpriseList();
 			this.getEnterpriseTypeNameList(scope);
 		},
-        async applyCredit(scope){
-            alert(scope.row.pjId)
-            let options={
-                pid:scope.row.pjId,
-                eid:scope.row.enterpriseId,
-            }
-            
+        async applyCredit(pjId){          
+			this.inviteData.pid = pjId;
 			try{
-				const resp = await pjCapitalListRequest(options)
+				const resp = await pjCapitalListRequest(pjId,this.$store.state.loginInfo.enterpriseId)
 				const res = await resp.json();
 				this.capitalSelection = res;
 				this.creditVisble = true;
@@ -404,6 +411,19 @@ export default {
         },
 		aaa(value) {
 			// alert(value)
+		},
+		async creditSumit(){
+			const eid = this.$store.state.loginInfo.enterpriseId;
+			const pid = this.inviteData.pid;
+			console.log(this.creditData.capitalList)
+			try{
+				const resp = await capitalApply(this.creditData.capitalList[0],pid,eid);
+				const res = await resp.json();
+				this.creditVisble = false;
+				this.$message.success('申请成功!')
+			}catch(e){
+
+			}
 		}
 	}
 }
