@@ -82,6 +82,10 @@ export const uploadContract = (id) => `/order/contract/uploadingContract/${id}`;
 export const saleManager = (type,params) => fetch(`/order/refund/add?receiptsType=${type}`, params,'post');
 // 修改实收数量
 export const changeReceivedAmount = (id, amount) => fetch(`/order/contract/updateReceivedAmount/${id}?amount=${amount}`, {}, 'patch');
+// 暂不处理
+export const noTreatment = (idList) => fetch(`/order/contract/noTreatment`, idList, 'patch');
+// 确认收货
+export const confirmReceipt = (id) => fetch(`/order/contract/confirm/${id}`, {}, 'patch');
 
 
 /**
