@@ -9,7 +9,7 @@
 				<el-table-column label="操作" width='230'>
 					<template scope="scope">
                         <el-button type="text" size="small" @click='editProjet(scope)'>授信</el-button>
-                        <el-button type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
+                        <el-button v-if="scope.row.projectState='R'" type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
                         <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
                         <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
                     </template>
