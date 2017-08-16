@@ -2,10 +2,7 @@
 <div class='fillcontain'>
 	<headTop></headTop>
 	<h3 class='common_formtitle_item'>线上开户</h3>
-	<el-row>
-		<el-col :span="5">
-			<img src="" alt="">
-		</el-col>
+	<el-row type="flex" justify="center">
 		<el-col :span="12">
 			<el-form :model="formData" :rules="rules" ref="formData" label-width="120px">
 				<el-form-item label="账户类型" prop='platBankType'>
@@ -16,13 +13,13 @@
 				<el-form-item label="账户卡号" prop='citicAccNo'>
 					<el-input v-model.number="formData.citicAccNo"></el-input>
 				</el-form-item>
-                <el-form-item label="账户名称" prop='citicAccName'>
+				<el-form-item label="账户名称" prop='citicAccName'>
 					<el-input v-model="formData.citicAccName"></el-input>
 				</el-form-item>
-                <el-form-item label="客户号" prop='hostNo'>
+				<el-form-item label="客户号" prop='hostNo'>
 					<el-input v-model.number="formData.hostNo"></el-input>
 				</el-form-item>
-<!--
+				<!--
 				<el-form-item label="获取验证码" prop='direction'>
 					<el-row>
 						<el-col :span="5">
@@ -37,34 +34,26 @@
 					</el-row>
 				</el-form-item>
 -->
-				<el-form-item label="短信验证码" prop='code' :span="10">
-					<el-input v-model="formData.code" :span="8"></el-input>
-					<el-button type="primary" @click='openAccountSubmit' :span="2">发送验证码</el-button>
-				</el-form-item>
+				<el-row type="flex">
+					<el-col :span="19">
+						<el-form-item label="短信验证码" prop='code' :span="10">
+							<el-input v-model="formData.code" :span="8"></el-input>
+
+						</el-form-item>
+					</el-col>
+					<el-col :span="5" class="row-bg" justify="end">
+						<el-button type="primary" @click='sendSmsCode' :span="2">发送验证码</el-button>
+					</el-col>
+				</el-row>
 			</el-form>
 		</el-col>
-		<el-col :span="6">
-			<div class=""></div>
+	</el-row>
+
+	<el-row type="flex" justify="center">
+		<el-col :span='1'>
+			<el-button type="primary" @click='openAccountSubmit'>提交</el-button>
 		</el-col>
 	</el-row>
-    <el-row type="flex" justify="center">
-<!--
-        <el-col :span='5'>
-            <img src="" alt=""/>
-        </el-col>
--->
-        <el-col :span='12'>
-            <el-button type="primary" @click='openAccountSubmit'>提交</el-button>
-        </el-col>
-<!--
-        <el-col :span='5'>
-            <img src="" alt=""/>
-        </el-col>
--->
-    </el-row>
-	<div class="common_editor_wrapper">
-
-	</div>
 </div>
 </template>
 
@@ -80,7 +69,7 @@ import {
 	accountInfosListRequest,
 	accountStatementListRequest,
 	enterpriseAccountOpenRequest,
-    openAccSendSmsRequest
+	openAccSendSmsRequest
 } from '@/api/enterpriseApi'
 import headTop from '@/components/headTop'
 
@@ -91,13 +80,13 @@ export default {
 	data() {
 		return {
 			formData: {
-                eid:this.$store.state.loginInfo.enterpriseId,
-                code:'',
-                platBankType:'',
-                citicAccNo:'',
-                citicAccName:'',
-                hostNo:null,
-                phone: this.$store.state.loginInfo.phone
+				eid: this.$store.state.loginInfo.enterpriseId,
+				code: '',
+				platBankType: '',
+				citicAccNo: '',
+				citicAccName: '',
+				hostNo: null,
+				phone: this.$store.state.loginInfo.phone
 			},
 			rules: {
 				platBankType: [{
@@ -105,22 +94,22 @@ export default {
 					message: '请选择账户类型',
 					trigger: 'change'
 				}],
-                citicAccNo: [{
-                    type: 'number',
+				citicAccNo: [{
+					type: 'number',
 					message: '账户卡号必须为数字值'
 				}, {
 					required: true,
 					message: '请输入账户卡号'
 				}],
-                citicAccName: [{
+				citicAccName: [{
 					required: true,
 					message: '请输入账户名称'
 				}],
-                hostNo: [{
+				hostNo: [{
 					type: 'number',
 					message: '客户号必须为数字值'
 				}],
-                code: [{
+				code: [{
 					required: true,
 					message: '请输入短信验证码'
 				}]
@@ -130,10 +119,10 @@ export default {
 		}
 	},
 	mounted() {
-        this.getBankList();
+		this.getBankList();
 	},
 	methods: {
-        getBankList() {
+		getBankList() {
 			let options = {
 				code: 'BANK_TYPE'
 			}
@@ -144,36 +133,45 @@ export default {
 				})
 			})
 		},
-        openAccountSubmit(){
-            let options={
-                eid: this.$store.state.loginInfo.enterpriseId,
-                code:this.formData.code,
-                body:{
-                    platBankType:this.formData.platBankType,
-                    citicAccNo:this.formData.citicAccNo,
-                    citicAccName:this.formData.citicAccName,
-                    hostNo:this.formData.hostNo,
-                    phone: this.$store.state.loginInfo.phone
-                }
-            }
-            this.$refs['formData'].validate(valid=>{
-                if(valid){
-                    enterpriseAccountOpenRequest(options).then(response=>{
-                        response.json().then(result=>{
-                            console.log(result)
+		openAccountSubmit() {
+			let options = {
+				eid: this.$store.state.loginInfo.enterpriseId,
+				code: this.formData.code,
+				body: {
+					platBankType: this.formData.platBankType,
+					citicAccNo: this.formData.citicAccNo,
+					citicAccName: this.formData.citicAccName,
+					hostNo: this.formData.hostNo,
+					phone: this.$store.state.loginInfo.phone
+				}
+			}
+			this.$refs['formData'].validate(valid => {
+				if (valid) {
+					enterpriseAccountOpenRequest(options).then(response => {
+						response.json().then(result => {
+							console.log(result)
 
-                        })
-                    })
-                }
-            })
-        },
-        sendSmsCode(){
-            openAccSendSmsRequest().then(response=>{
-                response.json().then(result=>{
-                    console.log(result)
-                })
-            })
-        },
+						})
+					})
+				}
+			})
+		},
+		sendSmsCode() {
+			console.log(this.$refs['formData'].validateField('code'))
+			//            this.$refs['formData'].validateField('code')(valid => {
+			//				if (valid) {
+			//					enterpriseAccountOpenRequest(options).then(response => {
+			//						response.json().then(result => {
+			//							console.log(result)
+			//
+			//						})
+			//					})
+			//				}
+			//			})
+			//			openAccSendSmsRequest().then(response => {
+			//                console.log(response)
+			//			})
+		},
 		refresh() {
 			this.kaptchaImagePath = `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime()
 		}

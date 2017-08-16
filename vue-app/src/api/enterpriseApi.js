@@ -113,7 +113,7 @@ export const getBindedEnterpriseTypesRequest = options => fetch(`/core/core/api/
 /*
 ** 开户发送短信验证码
 */
-export const openAccSendSmsRequest = options => fetch(`/core/core//api/v1/sms/openAccSendSms`);
+export const openAccSendSmsRequest = () => fetch(`/core/core/api/v1/sms/openAccSendSms`,{},'post');
 
 
 
