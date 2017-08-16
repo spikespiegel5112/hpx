@@ -69,36 +69,34 @@
                                 confirmButtonText: '确定',
                                 type:'warning'
                             });
-                           return;
+                           return false;
+                       }else{
+                           bankAccoutRes.then(
+                                async respg => {
+                                    if(!respg){
+                                        this.$alert('请查看银行账户信息是否完整或网络', '提示', {
+                                            confirmButtonText: '确定',
+                                            type:'warning'
+                                        });
+                                        return false;
+                                    }else{
+                                         try{
+                                            const resp = await applyReview(this.loginInfo.enterpriseId);
+                                            const msg = decodeURIComponent(resp.headers.get('x-hpx-alert'));
+                                            this.$message.success(msg)
+                                            this.$store.dispatch('getAccStatusInfo');
+                                        }catch(e){
+                                            this.$message.error(e)
+                                        }
+                                    }
+                                }
+                            )
                        }
                     }
-                ).then(
-                    () => {
-                        bankAccoutRes.then(
-                            respg => {
-                                if(!respg){
-                                    this.$alert('请查看银行账户信息是否完整或网络', '提示', {
-                                        confirmButtonText: '确定',
-                                        type:'warning'
-                                    });
-                                    return;
-                                }
-                            }
-                        )
-                    }
                 )
-                return;
-                try{
-                    const resp = await applyReview(this.loginInfo.enterpriseId);
-                    const msg = decodeURIComponent(resp.headers.get('x-hpx-alert'));
-                    this.$message.success(msg)
-                    this.$store.dispatch('getAccStatusInfo');
-                }catch(e){
-                    this.$message.error(e)
-                }
             },
             accMoney(){
-                this.$prompt('请输入认证账户收到的金额,2次输错后账户将被锁定，解锁请联系海平线客服400-080-0880', '提示', {
+                this.$prompt('请输入认证账户收到的金额,3次输错后账户将被锁定，解锁请联系海平线客服400-080-0880', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     inputPattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,

@@ -28,8 +28,11 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
+				    <el-button type="text" size="small">
+                        <router-link :to="`/manager/etpde/${scope.row.enterpriseId}`">查看</router-link>
+                    </el-button>
 					<el-button type="text" size="small" @click="auditProject(scope)">审核</el-button>
-</template>
+                </template>
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">

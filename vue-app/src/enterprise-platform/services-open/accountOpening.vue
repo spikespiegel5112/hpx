@@ -37,8 +37,9 @@
 					</el-row>
 				</el-form-item>
 -->
-				<el-form-item label="短信验证码" prop='code'>
-					<el-input v-model="formData.code"></el-input>
+				<el-form-item label="短信验证码" prop='code' :span="10">
+					<el-input v-model="formData.code" :span="8"></el-input>
+					<el-button type="primary" @click='openAccountSubmit' :span="2">发送验证码</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -78,7 +79,8 @@ import {
 import {
 	accountInfosListRequest,
 	accountStatementListRequest,
-	enterpriseAccountOpenRequest
+	enterpriseAccountOpenRequest,
+    openAccSendSmsRequest
 } from '@/api/enterpriseApi'
 import headTop from '@/components/headTop'
 
@@ -94,7 +96,7 @@ export default {
                 platBankType:'',
                 citicAccNo:'',
                 citicAccName:'',
-                hostNo:'',
+                hostNo:null,
                 phone: this.$store.state.loginInfo.phone
 			},
 			rules: {
@@ -163,6 +165,13 @@ export default {
                         })
                     })
                 }
+            })
+        },
+        sendSmsCode(){
+            openAccSendSmsRequest().then(response=>{
+                response.json().then(result=>{
+                    console.log(result)
+                })
             })
         },
 		refresh() {

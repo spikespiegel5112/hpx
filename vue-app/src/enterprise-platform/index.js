@@ -14,10 +14,13 @@ const servicesRecord = r => require.ensure([], () => r(require('@/enterprise-pla
 const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterpriseSignature');
 const user = r => require.ensure([], () => r(require('@/enterprise-platform/user')), 'user');
 
-// 项目管理
+// 我的项目
 const myProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/myProject')), 'myProject');
 
-// 项目管理
+// 历史记录
+const historyProject = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/historyProject')), 'historyProject');
+
+// 邀请记录
 const inviteRecord = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/inviteRecord')), 'inviteRecord');
 
 //账户总览
@@ -59,6 +62,11 @@ export default {
             name: 'inviteRecord',
 			component: inviteRecord,
 			meta: ['项目管理', '我的项目', '邀请记录'],
+		},{
+			path: 'history-project',
+            name: 'historyProject',
+			component: historyProject,
+			meta: ['项目管理', '我的项目', '历史记录'],
 		},{
 			path: 'account-management',
 			component: accountManagement,

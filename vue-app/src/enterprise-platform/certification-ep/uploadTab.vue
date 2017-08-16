@@ -78,7 +78,7 @@
                     },{
                     label : '文件大小',
                     prop  : 'fileLength',
-                    formatter : (row,column) =>{ return row.fileLength ? (parseInt(row.fileLength)/1024).toFixed(2) + 'M' : ''}
+                    formatter : (row,column) =>{ return row.fileLength ? (parseInt(row.fileLength)/1024/1024).toFixed(2) + 'M' : ''}
                     },
                     // {
                     // label : '上传人',

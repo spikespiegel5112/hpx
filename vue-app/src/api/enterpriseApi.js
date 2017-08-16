@@ -110,6 +110,12 @@ export const getUnbindedEnterpriseTypesRequest = options => fetch(`/core/core/ap
 */
 export const getBindedEnterpriseTypesRequest = options => fetch(`/core/core/api/v1/project/${options.pid}/product/${options.code}/binding`);
 
+/*
+** 开户发送短信验证码
+*/
+export const openAccSendSmsRequest = options => fetch(`/core/core//api/v1/sms/openAccSendSms`);
+
+
 
 
 

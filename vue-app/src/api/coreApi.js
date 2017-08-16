@@ -42,6 +42,10 @@ export const getEnterpriseInfo = (eid) => fetch(`/core/core/api/v1/enterprises/$
  ** 平台企业认证账户信息
  */
 export const eidAccCountInfo = (eid) => fetch(`/core/core/api/v1/enterpriseAccountEntity/${eid}`);
+/*
+ ** 填写 认证账户信息
+ */
+export const accountFill = (eid,data) => fetch(`/core` + `/core/api/v1/enterprise/${eid}/enterpriseAccountEntity`, data,'put')
 
 /*
  ** 企业认证账户信息
