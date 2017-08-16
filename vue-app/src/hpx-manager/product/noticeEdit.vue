@@ -100,14 +100,14 @@ export default {
 				}]
 			},
 			noticeId: null,
-			operationType:'',
+			operationType: '',
 			publishDirection: [],
 			publishDirectionList: [],
 			newsType: [],
 			description: '',
 			notice: '',
 			endTimeString: '``',
-			title:''
+			title: ''
 		}
 	},
 	activated() {
@@ -117,11 +117,11 @@ export default {
 		this.getNoticeContent();
 		this.getTitle();
 	},
-	deactivated(){
-		this.noticeId='';
-		this.operationType='';
+	deactivated() {
+		this.noticeId = '';
+		this.operationType = '';
 		this.$refs['formData'].resetFields();
-		this.formData.content='';
+		this.formData.content = '';
 	},
 	methods: {
 		getRouteParams() {
@@ -153,20 +153,34 @@ export default {
 				url: '',
 			}
 			console.log(this.formData);
-			this.$refs['formData'].validate((valid) => {
+			this.$refs['formData'].validate(valid => {
 				if (valid) {
 					// alert('submit!');
 
 					this.mergePublishDirection();
 					this.convertDateObjToDateString();
-					publishnoticeListRequest(this.formData);
-					this.$router.push({
-						name: 'noticeList'
+					publishnoticeListRequest(this.formData).then(response => {
+						alert(response.status)
+						if (response.status == '200') {
+							this.$message({
+								message: '消息发布成功',
+								type: 'success'
+							});
+							this.$router.push({
+								name: 'noticeList'
+							})
+							console.log(this.formData);
+						} else {
+
+						}
+					}).catch(err => {
+						{
+							this.$message({
+								message: '消息发布失败',
+								type: 'error'
+							});
+						}
 					})
-					console.log(this.formData);
-				} else {
-					console.log('error submit!!');
-					return false;
 				}
 			});
 		},
@@ -241,11 +255,11 @@ export default {
 				})
 			})
 		},
-		getTitle(){
-			if (this.operationType=='review') {
-				this.title='查看新闻公告';
-			}else if (this.operationType=='modify') {
-				this.title='编辑新闻公告';
+		getTitle() {
+			if (this.operationType == 'review') {
+				this.title = '查看新闻公告';
+			} else if (this.operationType == 'modify') {
+				this.title = '编辑新闻公告';
 			}
 		}
 	}

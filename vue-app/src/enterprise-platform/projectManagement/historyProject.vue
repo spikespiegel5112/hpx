@@ -6,21 +6,13 @@
 			<el-table row-key="id" :empty-text="emptyText" :data="normalEndList" v-loading="listLoading" highlight-current-row style="width: 100%">
 				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 				</el-table-column>
-				<el-table-column label="操作" width='230'>
-					<template scope="scope">
-                        <el-button v-if="scope.row.projectState=='R'" type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
-                        <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
-						<el-button v-if="scope.row.enterpriseRole === 'PRO_ENT_TYPE_DEALER'" type="text" size="small" @click="applyCredit(scope.row.pjId)">申请授信</el-button>
-                        <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
-                    </template>
-				</el-table-column>
 			</el-table>
 			<section class="main-pagination">
 				<el-pagination @current-change="flipPage1" :current-page="pagination1.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination1.total">
 				</el-pagination>
 			</section>
 		</el-tab-pane>
-		<el-tab-pane label="异常结束">
+		<!--<el-tab-pane label="异常结束">
 			<el-table row-key="id" :empty-text="emptyText" :data="abnormalEndList" v-loading="listLoading" highlight-current-row style="width: 100%">
 				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 				</el-table-column>
@@ -36,7 +28,7 @@
 				<el-pagination @current-change="flipPage2" :current-page="pagination2.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination2.total">
 				</el-pagination>
 			</section>
-		</el-tab-pane>
+		</el-tab-pane>-->
 	</el-tabs>
 </div>
 </template>
