@@ -117,23 +117,31 @@ export default {
                         eid : this.loginInfo.enterpriseId,
                         page : 1,
                         size : 6,
+                        state: 'R'
                     };
             projectsAuditListRequest(params).then(response=>{
-                this.totalPj = response.headers.get('x-total-count');
+                
                 response.json().then(result=>{
-                    for(var item in result){
-                        let count=0;
-                        if(result[item].projectState=='R'){
-                            count++;
-                            this.projectList.push(result[item])
-                            console.log(this.projectList)
-                        }
-                        if(item==result.length-1){
+                    this.projectList.push(result[item])
+                    if(item==result.length-1){
                             if(count==0){
                                 this.noProjects=true;
                             }
                         }
-                    }
+//                    for(var item in result){
+//                        let count=0;
+//                        if(result[item].projectState=='R'){
+//                            count++;
+//                            this.projectList.push(result[item])
+//                            console.log(this.projectList)
+//                        }
+//                        if(item==result.length-1){
+//                            if(count==0){
+//                                this.noProjects=true;
+//                            }
+//                        }
+//                    }
+                    this.totalPj = this.projectList.length;
                 })
             })
 //                    const resp = await projectsAuditListRequest(params);

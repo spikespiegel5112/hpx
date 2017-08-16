@@ -50,6 +50,9 @@ import {
 	modifyProjectInvitStatusRequest
 } from '@/api/enterpriseApi'
 import {
+    getProjectList
+} from '@/api/getData'
+import {
 	addProjectRequest,
 	pjCapitalListRequest,
 	capitalApply
@@ -119,18 +122,18 @@ export default {
 			capitalSelection: [],
 			//table columns
 			columns: [{
-				label: '产品',
-				prop: 'productName',
+				label: '产品编码',
+				prop: 'productCode',
 				sortable: true,
 				minWidth: 50,
 			}, {
 				label: '项目名称',
-				prop: 'projectName',
+				prop: 'name',
 				sortable: true,
 				minWidth: 70,
 			}, {
-				label: '参与角色',
-				prop: 'enterpriseTypeName',
+				label: '备注',
+				prop: 'remark',
 				sortable: true,
 			}, {
 				label: '项目起始日',
@@ -167,10 +170,10 @@ export default {
                     state: 'E'
                 }
 			}
-			options.params = Object.assign(this.pagination.params, this.query);
+			options.params = Object.assign(options.params, this.pagination1.params);
 			console.log(options);
 			getProjectList(options).then(response => {
-				this.pagination.total = Number(response.headers.get('x-total-count'))
+				this.pagination1.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
 					this.normalEndList = result
@@ -184,7 +187,7 @@ export default {
 					state: 'F'
 				}
 			}
-			options.params = Object.assign(options.params, this.pagination2.params)
+			options.params = Object.assign(options.params, this.pagination1.params);
 			projectListRequest(options).then(response => {
 				this.pagination2.total = Number(response.headers.get('x-total-count'))
 				console.log(response);
@@ -202,6 +205,10 @@ export default {
 		flipPage1(pageIndex) {
 			this.pagination1.params.page = pageIndex;
 			this.getList1();
+		},
+        flipPage2(pageIndex) {
+			this.pagination2.params.page = pageIndex;
+			this.getList2();
 		},
 
 	}

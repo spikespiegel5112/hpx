@@ -66,7 +66,7 @@ export default {
 			path: 'history-project',
             name: 'historyProject',
 			component: historyProject,
-			meta: ['项目管理', '我的项目', '历史记录'],
+			meta: ['项目管理', '历史记录'],
 		},{
 			path: 'account-management',
 			component: accountManagement,

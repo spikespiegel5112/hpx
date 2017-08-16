@@ -157,20 +157,9 @@ export default {
 			})
 		},
 		sendSmsCode() {
-			console.log(this.$refs['formData'].validateField('code'))
-			//            this.$refs['formData'].validateField('code')(valid => {
-			//				if (valid) {
-			//					enterpriseAccountOpenRequest(options).then(response => {
-			//						response.json().then(result => {
-			//							console.log(result)
-			//
-			//						})
-			//					})
-			//				}
-			//			})
-			//			openAccSendSmsRequest().then(response => {
-			//                console.log(response)
-			//			})
+			openAccSendSmsRequest().then(response => {
+				console.log(response)
+			})
 		},
 		refresh() {
 			this.kaptchaImagePath = `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime()
