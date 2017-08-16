@@ -102,27 +102,22 @@ export default {
 			totalPj: 0,
 			upcomingList: [],
 			noticeList: [],
-
 		}
 	},
-	activated() {
-		this.initProjectList()
-		this.getNoticeList();
+	created() {
         this.showUpcomingList()
-	},
-	deactivated() {
-		this.projectList = [];
-        this.noProjects=false;
-	},
-	computed: {
-		...mapState(['loginInfo']),
-		lastLoginTime() {
-			return moment(this.loginInfo.latestLoginTime).format('YYYY-MM-DD hh:mm:ss')
-		}
-	},
-	methods: {
-		...mapActions(['getCurrentProjectId']),
-		initProjectList() {
+        this.initProjectList()
+        this.getNoticeList();
+    },
+    computed : {
+        ...mapState(['loginInfo']),
+        lastLoginTime(){
+            return moment(this.loginInfo.latestLoginTime).format('YYYY-MM-DD hh:mm:ss')
+        }
+    },
+    methods:{
+        ...mapActions(['getCurrentProjectId','getCurrentProjectRole']),
+        initProjectList() {
 			let options = {
 				params: {
 					eid: this.loginInfo.enterpriseId,
@@ -142,40 +137,50 @@ export default {
 				})
 			})
 		},
-		toProject(item) {
-			console.log(item.state)
-			if (item.projectState == 'R') {
-				this.getCurrentProjectId(item.pjId);
-				this.$router.push({
-					path: `/porderf/${item.pjId}/demander`
-				})
-			} else {
-				this.$message.error('当前项目未激活')
-			}
-		},
-		getNoticeList() {
-			let options = {
-				params: {
-					size: 7,
-					page: 1
-				}
-			}
-			noticeListRequest(options).then(response => {
-				response.json().then(result => {
-					this.noticeList = result;
-				})
-			})
-		},
-		async showUpcomingList() {
-			try {
-				console.log(6)
-				const resp = await getUpcomingList(this.loginInfo.id);
-				const res = await resp.json();
-			} catch (e) {
+        toProject(item){
+                this.getCurrentProjectId(item.pjId);
+                this.getCurrentProjectRole(item.enterpriseRole);
+                let projectPath,roleTypePath;
+                switch(item.productCode){
+                    case 'POF':
+                    projectPath = `/porderf/${item.pjId}`;
+                    break;
+                };
+                if(!projectPath || !item.enterpriseRole){
+                    this.$message.error('请检测项目配置情况或联系管理员!');
+                    return;
+                }
+                this.$router.push({
+                    path:projectPath
+                })
+        },
+        getNoticeList(){
+            let options={
+                params:{
+                    size:7,
+                    page:1
+                }
+            }
+            noticeListRequest(options).then(response=>{
+                response.json().then(result=>{
+                    this.noticeList=result;
+                })
+            })
+        },
+        async showUpcomingList(){
+            try{
+                const params = {
+                    optionStatus : 'F',
+                    page : 1,
+                    size : 5,
+                };
+                const resp = await getUpcomingList(params);
+                const res = await resp.json();
+            }catch(e){
 
-			}
-		}
-	}
+            }
+        }
+	},
 }
 </script>
 

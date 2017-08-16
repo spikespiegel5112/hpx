@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import {getAdminInfo,getLoginInfo} from '@/api/getData'
 import { eidAccStatus } from '@/api/coreApi'
-
+import {app} from '@/main'
 Vue.use(Vuex)
 
 const state = {
@@ -12,7 +12,7 @@ const state = {
 	loginInfo : null,
 	isLogin : false,
 	projectId:null,
-	projectInfo :null,
+	projectRole :null,
 	accStatusInfo : null,
 	statusStep : 1,
 }
@@ -32,8 +32,15 @@ const mutations = {
 	saveProjectId(state,pjId){
 		state.projectId = pjId;
 	},
+	saveProjectRole(state,roleType){
+		state.projectRole = roleType;
+	},
 	saveAccStatusInfo(state,info){
 		state.accStatusInfo = info;
+	},
+	//进入登陆页面 去除状态accStatusInfo
+	removeAccStatusInfo(state){
+		state.accStatusInfo = null;
 	},
 	saveAccStep(state,step){
 		state.statusStep = step;
@@ -77,6 +84,9 @@ const actions = {
 			return false;
 		}
 	},
+	async getCurrentProjectRole({commit},pjRole){
+		commit('saveProjectRole',pjRole)
+	},
 	async getAccStatusInfo(store){
 		try{
 			const resp = await eidAccStatus(store.state.loginInfo.enterpriseId);
@@ -108,12 +118,13 @@ const actions = {
 			}
 			return true;	
 		}catch(e){
+			console.log(e)
+			// app.$message.error(e)
 			return false;
 		}
 	},
-	revisePsw(store){
-		const test = store.commit('changeLoginState');
-		console.log(test)
+	removeStateInfo({commit}){
+		commit('removeAccStatusInfo')
 	}
 
 }

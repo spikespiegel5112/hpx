@@ -12,10 +12,14 @@
 </template>
 
 <script>
+	import store from '@/store'
 	import siderBar from '@/components/siderBar';
     export default {
 		components : {
 			siderBar
+		},
+		beforeRouteEnter(from,to,next){
+			console.log(store)
 		}
     }
 </script>

@@ -3,7 +3,7 @@
 
 <head>
     <title>海平线，全球供应链生态服务商</title>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,8 +19,12 @@
 
 <body>
     <div id="app" class="fillcontain">
-        <router-view></router-view>
+        <transition mode="out-in" enter-active-class="fadeIn" leave-active-class="fadeOut" appear>
+            <router-view></router-view>
+        </transition>
     </div>
 </body>
-
+<style>
+    
+</style>
 </html>
