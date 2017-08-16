@@ -123,7 +123,8 @@ export default {
 					eid: this.loginInfo.enterpriseId,
 					page: 1,
 					size: 6,
-					projectState: 'R'
+					projectState: 'R',
+                    state: 'T'
 				}
 			}
 			projectListRequest(options).then(response => {
