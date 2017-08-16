@@ -217,7 +217,8 @@ export default {
 				params: {
 					eid: this.$store.state.loginInfo.enterpriseId,
 					inviteStatus: 'T',
-					state: 'T'
+					state: 'T',
+                    projectState: 'R'
 				}
 			}
 			
