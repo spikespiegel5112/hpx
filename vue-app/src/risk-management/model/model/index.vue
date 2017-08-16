@@ -109,10 +109,9 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <section class="main-pagination">
-                <my-Pagination :callback="getList" :total="total">
-                </my-Pagination>
-            </section>
+
+            <my-Pagination  @pageChange="pageChange" :total="total">
+            </my-Pagination>
         </section>
 
     </div>
@@ -154,6 +153,10 @@ export default {
                     }],
             // 模型总数
             total : 0,
+            pagination : {
+                page: 1,
+                size: 10
+            },
             // table
             tableList: [],
             listLoading:false,
@@ -179,14 +182,19 @@ export default {
         headTop,
         myPagination,
     },
-    created() {
-        this.initData();
+    created(){
         this.getIndustry();
+    },
+    activated() {
+        this.initData();
     },
     computed: {
         ...mapState(["loginInfo"])
     },
     methods: {
+        pageChange(data){
+            this.pagination = data;
+        },
         async getIndustry () {
              const resp = await industryList();
              const res = await resp.json();
@@ -195,10 +203,10 @@ export default {
         async initData () {
             this.getList();
         },
-        async getList(pagination={page:1,size:10}){
+        async getList(){
             this.listLoading = true;
             try{
-                const params = Object.assign({},pagination, this.query);
+                const params = Object.assign({},this.pagination, this.query);
                 const resp = await modelList(this.loginInfo.enterpriseId,params);
                 const res = await resp.json();
                 res.map((v) => {
@@ -266,7 +274,15 @@ export default {
         add () {
             this.$router.push({path: this.$route.path + '/detail'})
         },
-    }
+    },
+     watch : {
+            pagination : {
+                handler : function(){
+                    this.getList();
+                },
+                deep:true,
+            }
+        }
 }
 </script>
 
