@@ -106,12 +106,13 @@ export default {
 		}
 	},
 	activated() {
-		this.showUpcomingList()
-		this.getNoticeList();
 		this.initProjectList()
+		this.getNoticeList();
+        this.showUpcomingList()
 	},
 	deactivated() {
 		this.projectList = [];
+        this.noProjects=false;
 	},
 	computed: {
 		...mapState(['loginInfo']),
@@ -130,7 +131,6 @@ export default {
 					projectState: 'R'
 				}
 			}
-			console.log(options)
 			projectListRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result)
