@@ -152,7 +152,12 @@ export default {
 		this.initData();
 	},
 	deactivated() {
-		this.bindRoleData = {};
+		this.bindRoleData = {
+            entRole: '',
+            pid: '',
+            productCode:'',
+            role: ''
+        };
 	},
 	methods: {
 		initData() {
