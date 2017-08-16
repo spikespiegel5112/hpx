@@ -66,6 +66,10 @@ import {
 	getBindedEnterpriseTypesRequest
 } from '@/api/enterpriseApi'
 import {
+	modifyProjectInfo,
+	deleteProject
+} from '@/api/coreApi'
+import {
 	mapState
 } from 'vuex'
 

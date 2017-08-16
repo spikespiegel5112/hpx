@@ -212,9 +212,10 @@ export default {
 			if (code == 'T') {
 				auditProjectRequest(options).then(response => {
 					this.getList();
+					const msg = decodeURI(response.headers.get('x-hpx-alert'));
 					this.$message({
 						type: 'success',
-						message: '审核通过'
+						message: msg
 					});
 					this.auditDialogFlag = false;
 				})

@@ -7,9 +7,11 @@
                     添加服务
                 </div>
                 <ul class="section-serviceType">
-                    <li v-for="(item , i) in serviceList" :key="i+''" style="position:relative;">
+                    <li v-for="(item , key) in serviceList" :key="key+''" style="position:relative;">
                         <dl>
-                            <dt @click="modelShow(item.code)"><img :src="serviceListMock[i].pic" /></dt>
+                            <dt @click="modelShow(item.code)">
+                                <img :src="serviceListMock[key] ? serviceListMock[key].pic : ''" />
+                            </dt>
                             <dd>
                                 <h4>{{item.name}}</h4>
                                 <p class="service-remark">{{item.description}}</p>
@@ -42,6 +44,7 @@
                         :on-change="filesChange"
                         :on-success="successUpload"
                         :on-error="errorUplaod"
+                        :file-list="fileList"
                     >
                         <div class="upload-container">
                             <img v-if="imageUrl" :src="imageUrl" class="avatar">
@@ -100,6 +103,7 @@ export default {
                 const respMock = await servicesTypeList();
                 const resMock = await respMock.json();
                 this.serviceListMock = resMock.data;
+                console.log(this.serviceListMock)
             }catch(e){
                 this.$message.error(e)
             }
@@ -122,9 +126,10 @@ export default {
                 context :'',
                 uploadimg:''
             }
-            this.modalVisible = true;
-            this.serviceCode = code;
+            this.fileId = '';
             this.fileList = [];
+            this.serviceCode = code;
+            this.modalVisible = true;
         },
         handleRemove(file, fileList) {
             console.log(file, fileList);
