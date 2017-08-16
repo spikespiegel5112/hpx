@@ -39,14 +39,15 @@
 			</el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
-			<el-table-column label="状态" prop="enterpriseStatus" width='90px'>
+			<el-table-column label="状态" prop="enterpriseStatus" width='100px'>
 				<template scope="scope">
 					<el-tag :type="projectStateColor(scope)">{{projectState(scope)}}</el-tag>
 				</template>
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-				    <el-button type="text" size="small" @click='activate(scope)'>{{scope.row.state=='P'?'激活':'暂停'}}</el-button>
+				    <el-button v-if="scope.row.state!='E'||scope.row.state!='F'" type="text" size="small" @click='activate(scope)'>{{scope.row.state=='P'?'激活':'暂停'}}</el-button>
+				    <el-button type="text" size="small" @click='closeProject(scope)'>结束项目</el-button>
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
 <!--					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>-->
 					<el-button type="text" size="small" @click="goToConfigProject(scope)">配置</el-button>
@@ -130,7 +131,7 @@ import {
     getRolesByProjectRequest,
 	getUnbindedRolesListRequest,
 	bindProjectRequest,
-    activateProjectRequest
+    AuditingProjectRequest
 } from '@/api/enterpriseApi'
 import {
 	modifyProjectInfo,
@@ -153,7 +154,7 @@ export default {
 				label: '产品编码',
 				prop: 'productCode',
 //				sortable: true,
-                width:110
+                width: 90
 			}, {
 				label: '项目编号',
 				prop: 'code',
@@ -498,7 +499,7 @@ export default {
         },
         activate(scope){
             console.log(scope)
-            var options={
+            let options={
                 body:{},
                 id:scope.row.id,
                 state:''
@@ -516,15 +517,42 @@ export default {
                         type: 'success'
                     });
             }
-            activateProjectRequest(options).then(response=>{
+            AuditingProjectRequest(options).then(response=>{
                 console.log(response);
                 if(response.status==200){
                     this.getList();
                 }
             })
+        },
+        closeProject(scope){
+            this.$confirm('此操作将结束该项目, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+                let options={
+                    body:{},
+                    id:scope.row.id,
+                    state:'E'
+                }
+                AuditingProjectRequest(options).then(response=>{
+                    console.log(response);
+                    if(response.status==200){
+                        this.getList();
+                        this.$message({
+                            type: 'success',
+                            message: '已结束此项目!'
+                        });
+                    }
+                })
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消操作'
+				});
+			});
         }
 	}
-    
 }
 </script>
 

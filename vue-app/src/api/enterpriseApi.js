@@ -98,7 +98,7 @@ export const enterpriseAccountOpenRequest = options => fetch(`/core/core/api/v1/
 /*
 ** 审核企业项目
 */
-export const activateProjectRequest = options => fetch(`/core/core/api/v1/projects/${options.id}/activation/${options.state}`, options.body, 'patch');
+export const AuditingProjectRequest = options => fetch(`/core/core/api/v1/projects/${options.id}/activation/${options.state}`, options.body, 'patch');
 
 /*
 ** 取得项目未绑定的产品类型
