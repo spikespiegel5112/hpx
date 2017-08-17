@@ -37,7 +37,7 @@
             </el-form>
             </el-col>
         </section>
-    
+
         <section class="main-table-container">
             <el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
                 <el-table-column label="序号" type="index" prop="num" width="80" align="center">
@@ -106,12 +106,29 @@
         </el-dialog>
         <!--配置角色页面-->
         <el-dialog title="配置角色" v-model="configureVisible" :close-on-click-modal="false">
-             <el-checkbox-group 
-                v-model="checkedCities1"
-                :min="1"
-                :max="2">
-                <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-            </el-checkbox-group>
+             <!--<el-checkbox-group-->
+                <!--v-model="checkedCities1"-->
+                <!--:min="1"-->
+                <!--:max="2">-->
+                <!--<el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>-->
+            <!--</el-checkbox-group>-->
+            <template>
+                <el-transfer
+                    width="300"
+                    v-model="configProjectData.role"
+                    :data="roleListTransferData">
+                </el-transfer>
+            </template>
+
+
+            <!--<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">-->
+                <!--<el-form-item prop="role">-->
+                    <!--<el-select v-model="configProjectData.role">-->
+                        <!--<el-option v-for="item in roleList" :value="item.code" :key="item.code" :label="item.name">-->
+                        <!--</el-option>-->
+                    <!--</el-select>-->
+                <!--</el-form-item>-->
+            <!--</el-form>-->
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="configureVisible = false">取消</el-button>
                 <el-button type="primary" @click.native="editSubmit('editeData')">提交</el-button>
@@ -124,6 +141,9 @@
 const cityOptions = ['上海', '北京', '广州', '深圳'];
 import headTop from '../../components/headTop'
 import myPagination from '../../components/myPagination'
+import {
+    getRolesListRequest,
+} from '@/api/enterpriseApi'
 import { getEUserList, getEnterpriseList, abledUser, addUser, editUser, getroleList } from '@/api/coreApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
@@ -175,15 +195,15 @@ export default {
                 }, {
                     label: '手机号码',
                     prop: 'phone',
-                }, 
+                },
                 // {
                 //     label: '邮箱',
                 //     prop: 'email',
-                // }, 
+                // },
                 // {
                 //     label: '性别',
                 //     prop: 'gender',
-                // }, 
+                // },
                 {
                     label: '注册时间',
                     prop: 'registerTime',
@@ -222,7 +242,7 @@ export default {
 
             //模态框
             modalTitle: '',
-            editeModalVisible: false,     
+            editeModalVisible: false,
             editeData: {
                 eid: '',
                 id: '',
@@ -255,7 +275,14 @@ export default {
             },
             // 配置角色
             configureVisible: false,
-            roleList: [],     
+            roleList: [],
+            configProjectData:{
+                role:''
+            },
+            configProjectRules:[{
+                required: true, message: '请选择企业', trigger: 'change'
+            }],
+            roleListTransferData:[]
         }
     },
     components: {
@@ -265,9 +292,7 @@ export default {
     created() {
         this.initData();
     },
-    mounted() {
 
-    },
     computed: {
         ...mapState(["loginInfo"])
     },
@@ -277,6 +302,7 @@ export default {
         },
         async initData() {
             this.getList();
+            this.getRolesList();
         },
         async getList() {
             this.listLoading = true;
@@ -348,7 +374,7 @@ export default {
             this.editeData = { ...row };
             this.configureVisible = true;
         },
-        
+
         async editSubmit(formName) {
             this.editeData.eid = this.editeData.eid.toString();
             this.editeData.gender = this.editeData.gender === '女' ? 'F' : 'T';
@@ -372,6 +398,24 @@ export default {
                 }
             });
         },
+        getRolesList(){
+            let options={
+                eid:this.$store.state.loginInfo.enterpriseId
+            }
+            getRolesListRequest(options).then(response=>{
+                response.json().then(result=>{
+                    console.log(result)
+                    this.roleList=result
+                    for(var index in this.roleList){
+                        this.roleListTransferData.push({
+                            label:this.roleList[index].name,
+                            key: this.roleList[index].code
+                        })
+                    }
+
+                })
+            })
+        }
     },
      watch : {
             pagination : {

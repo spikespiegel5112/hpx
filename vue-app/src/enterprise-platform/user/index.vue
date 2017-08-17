@@ -27,7 +27,7 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style="float: right"> 
+                    <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style="float: right">
                         <el-form-item>
                             <el-button type="primary" icon="search" @click="search">查询</el-button>
                         </el-form-item>
@@ -42,7 +42,7 @@
 			</el-form>
 		</el-col>
         </section>
-        
+
         <section class="main-table-container">
             <el-table
                 row-key="id"
@@ -52,17 +52,17 @@
                 highlight-current-row
                 border
                 style="width: 100%">
-                <el-table-column 
+                <el-table-column
                     label="序号"
                     type="index"
                     prop="num"
                     width="80"
                     align="center"
-                >             
+                >
                 </el-table-column>
-                <el-table-column 
+                <el-table-column
                     align="center"
-                    v-for="(value,i) in columns" 
+                    v-for="(value,i) in columns"
                     :key="i"
                     :label="value.label"
                     :prop="value.prop"
@@ -70,7 +70,7 @@
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
-                >             
+                >
                 </el-table-column>
                 <el-table-column label="状态" prop="enabled" align="center" width="100px" >
                     <template scope="scope">
@@ -92,37 +92,37 @@
         <!--编辑界面-->
 		<el-dialog :title="modalTitle" v-model="editeModalVisible" :close-on-click-modal="false">
 			<el-form :model="editeData" label-width="110px" :rules="editRules" ref="editeData">
-                <el-form-item 
-                label="用户名" 
-                prop="name" 
+                <el-form-item
+                label="用户名"
+                prop="name"
                 >
 					<el-input v-model="editeData.name" ></el-input>
 				</el-form-item>
-				<el-form-item 
-                label="手机号码" 
+				<el-form-item
+                label="手机号码"
                 prop="phone"
                 >
 					<el-input v-model="editeData.phone" ></el-input>
 				</el-form-item>
-                <el-form-item 
-                label="邮箱" 
+                <el-form-item
+                label="邮箱"
                 prop="email"
                 >
 					<el-input v-model="editeData.email" ></el-input>
 				</el-form-item>
-                 <el-form-item 
-                label="密码" 
+                 <el-form-item
+                label="密码"
                 prop="encryptPassword"
                 >
 					<el-input type="password" v-model="editeData.encryptPassword" ></el-input>
 				</el-form-item>
-                <el-form-item 
-                label="确认密码" 
+                <el-form-item
+                label="确认密码"
                 prop="passwordOk"
                 >
 					<el-input type="password" v-model="editeData.passwordOk" ></el-input>
 				</el-form-item>
-                <el-form-item 
+                <el-form-item
                 label="性别"
                 prop="gender"
                 :rules="[
@@ -167,7 +167,7 @@
                     callback(new Error('手机号码格式不对'))
                 } else {
                     callback();
-                } 
+                }
             }
             var checkPass = (rule, value, callback) => {
                 if (!value) {
@@ -205,7 +205,7 @@
                     },{
                     label : '注册时间',
                     prop  : 'registerTime',
-                    formatter : (row, column) => moment(row.registerTime).format('YYYY-MM-DD')                    
+                    formatter : (row, column) => moment(row.registerTime).format('YYYY-MM-DD')
                     },
                 ],
                 //总页数
@@ -321,7 +321,7 @@
                     this.emptyText = "获取数据失败";
                     this.listLoading = false;
                 }
-                
+
             },
 
             async search () {
@@ -355,7 +355,7 @@
                     encryptPassword: '',
                     passwordOk: '',};
                this.modalTitle = '新增',
-               this.editeModalVisible = true; 
+               this.editeModalVisible = true;
             },
            edite (index,row) {
                 this.editeData = {...row};
@@ -366,7 +366,7 @@
                 this.editeData.gender = this.editeData.gender === '女' ? 'F' : 'T';
                 this.$refs[formName].validate(async (valid) => {
                     if (!valid) return false;
-                    
+
                     const eid = this.loginInfo.enterpriseId;
                     const id = this.editeData.id;
                     try{

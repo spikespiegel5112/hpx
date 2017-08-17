@@ -503,24 +503,37 @@ export default {
                 id:scope.row.id,
                 state:''
             }
+            let message={
+                text:'',
+                type:''
+            }
             if(scope.row.state=='R'){
                 options.state='P';
-                this.$message({
-                        message: '已暂停此项目',
-                        type: 'success'
-                    });
+                message={
+                    text:'已暂停此项目',
+                    type:'success'
+                }
             }else{
                 options.state='R';
-                this.$message({
-                        message: '已激活此项目',
-                        type: 'success'
-                    });
+                message={
+                    text:'已激活此项目',
+                    type:'success'
+                }
             }
             AuditingProjectRequest(options).then(response=>{
                 console.log(response);
                 if(response.status==200){
+                    this.$message({
+                        message: message.text,
+                        type: message.type
+                    });
                     this.getList();
                 }
+            }).catch(err=>{
+                this.$message({
+                    message: err,
+                    type: 'error'
+                });
             })
         },
         closeProject(scope){

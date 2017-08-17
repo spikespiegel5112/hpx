@@ -114,7 +114,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="configProjectFlag = false">取消</el-button>
-                <el-button type="primary" @click.native="configProjectSubmit">提交</el-button>
+                <el-button type="primary" @click.native="editRoleSubmit">提交</el-button>
             </div>
         </el-dialog>
     </div>
@@ -343,7 +343,6 @@
                 })
             },
             createRoleSubmit() {
-
                 this.$refs['roleData'].validate(valid => {
                     if (valid) {
                         try {
@@ -388,7 +387,7 @@
                 }
             },
 
-            configProjectSubmit() {
+            editRoleSubmit() {
                 this.$refs['configProjectData'].validate(async (valid) => {
                     if (valid) {
                         try {
