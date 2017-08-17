@@ -26,7 +26,7 @@ export const projectListRequest = options => fetch(`/core/core/api/v1/enterprise
  * 企业接受（拒绝）邀请
  */
 
-export const modifyProjectInvitStatusRequest = (options) =>{
+export const modifyProjectInvitStatusRequest = options =>{
     return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}/invite/${options.inviteStatus}`, {}, 'patch');
 }
 
@@ -38,11 +38,19 @@ export const enterpriseRolesListRequest = options =>{
 }
 
 /**
- * 取得角色信息列表, 支持分页
+ * 取得未绑定角色列表信息
  */
 
 export const getUnbindedRolesListRequest = () =>{
     return fetch(`/core/core/api/v1/enterprise/roles`, {});
+}
+
+/**
+ * 取得角色信息列表, 支持分页
+ */
+
+export const getRolesListRequest = options =>{
+    return fetch(`/core/core/api/v1/enterprise/${options.eid}/roles`,options.params);
 }
 
 /**
@@ -89,6 +97,11 @@ export const getRolesByEnterpriseRequest = options => fetch(`/core/core/api/v1/p
 ** 获取企业项目任意角色
 */
 export const getRolesByProjectRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.pid}`, options.params);
+
+/*
+** 新增角色信息
+*/
+export const createRoleRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/roles`, options.params, 'put');
 
 /*
 ** 新增企业开户申请

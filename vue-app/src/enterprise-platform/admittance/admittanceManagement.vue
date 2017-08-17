@@ -94,7 +94,7 @@ export default {
 		const dateFormat = "YYYY-MM-DD";
 		return {
 			eid: this.$store.state.loginInfo.enterpriseId,
-            enterpriseId2: this.$store.state.loginInfo.enterpriseId2,
+//            enterpriseId2: this.$store.state.loginInfo.enterpriseId2,
 			pid: '',
 			//table columns
 			columns: [{
@@ -276,7 +276,7 @@ export default {
             this.enterpriseId2 = scope.row.enterpriseId2;
 			this.evaluateEnterpriseDialogFlag = true;
 			this.getIndustryList();
-            
+
             this.modelList=[];
             this.formData.industryType = '';
             this.formData.modelType = '';
@@ -299,7 +299,7 @@ export default {
                     })
                 }
             })
-			
+
 		},
         aaa(value){
 //            alert(value)

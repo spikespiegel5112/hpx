@@ -124,7 +124,8 @@ export default {
 					page: 1,
 					size: 6,
 					projectState: 'R',
-                    state: 'T'
+                    state: 'T',
+                    inviteStatus: 'F'
 				}
 			}
 			projectListRequest(options).then(response => {
