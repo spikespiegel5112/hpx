@@ -29,20 +29,22 @@
         <section class="main-table-container">
             <el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading"
                       highlight-current-row style="width: 100%">
-                <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+                <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop"
+                                 :sortable="value.sortable" :width="value.width ? value.width : 'auto'"
+                                 :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
                 </el-table-column>
                 <el-table-column label="操作">
                     <template scope="scope">
-                        <el-button v-if="scope.row.state!='E'&&scope.row.state!='F'" type="text" size="small" @click='activate(scope)'>{{scope.row.state == 'P' ? '激活' : '暂停'}}
-                        </el-button>
                         <el-button type="text" size="small" @click='editRole(scope)'>修改</el-button>
+                        <el-button type="text" size="small" @click='deleteRole(scope)'>删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
 
             <section class="main-pagination">
                 <!-- 特殊情况分页自己按注释的  -->
-                <el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+                <el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]"
+                               layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
                 </el-pagination>
             </section>
         </section>
@@ -134,7 +136,8 @@
         AuditingProjectRequest,
 
 
-        createRoleRequest
+        createRoleRequest,
+        deleteRoleRequest
     } from '@/api/enterpriseApi'
     import {
         modifyProjectInfo,
@@ -340,7 +343,7 @@
                 })
             },
             createRoleSubmit() {
-                this.$refs['roleData'].resetField();
+
                 this.$refs['roleData'].validate(valid => {
                     if (valid) {
                         try {
@@ -356,13 +359,14 @@
                             }
                             console.log(options)
                             createRoleRequest(options).then(response => {
-                                if (response.status==200){
+                                if (response.status == 200) {
                                     this.$message({
-                                        message:'角色创建成功',
-                                        type:'success'
+                                        message: '角色创建成功',
+                                        type: 'success'
                                     })
                                     this.newRoleDialogFlag = false;
                                     this.initData();
+                                    this.$refs['roleData'].resetFields();
                                 }
                             })
                         } catch (e) {
@@ -384,35 +388,6 @@
                 }
             },
 
-
-            configProject(scope) {
-                this.configProjectData.eid = scope.row.ownerEnterpriseId;
-                this.configProjectData.pid = scope.row.id;
-
-                let options1 = {
-                    pid: scope.row.id,
-                    params: {}
-                }
-                options1.params = Object.assign(options1.params, this.pagination.params)
-                getRolesByProjectRequest(options1).then(response => {
-                    response.json().then(result => {
-                        console.log(result);
-                        this.projectRoleList = result;
-                    })
-                })
-
-
-                let options2 = {
-                    eid: this.$store.state.loginInfo.enterpriseId,
-                }
-                getUnbindedRolesListRequest(options2).then(response => {
-                    response.json().then(result => {
-                        console.log(result);
-                        this.allRoleList = result;
-                    })
-                })
-                this.configProjectFlag = true
-            },
             configProjectSubmit() {
                 this.$refs['configProjectData'].validate(async (valid) => {
                     if (valid) {
@@ -448,13 +423,20 @@
                     }
                 })
             },
-            deleteProjectFunction(scope) {
-                this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+            deleteRole(scope) {
+
+                this.$confirm('确认删除该角色?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    deleteProject(scope.row.id).then(() => {
+                    let options={
+                        procode:scope.row.code,
+                        ercode:scope.row.productEnterpriseRoleCode,
+                        id:scope.row.id
+                    }
+                    console.log(options)
+                    deleteRoleRequest(options).then(() => {
                         this.getList();
                         this.$message({
                             type: 'success',
@@ -479,27 +461,7 @@
                 this.query.name = '';
                 this.getList();
             },
-            projectStateColor(scope) {
-                let stateColor;
-                switch (scope.row.state) {
-                    case 'B':
-                        stateColor = 'blue';
-                        break;
-                    case 'R':
-                        stateColor = 'Success';
-                        break;
-                    case 'E':
-                        stateColor = 'Black';
-                        break;
-                    case 'P':
-                        stateColor = 'Warning';
-                        break;
-                    case 'F':
-                        stateColor = 'danger';
-                        break;
-                }
-                return stateColor;
-            },
+
 
             getProductEnterpriseType(productCode) {
                 let options = {
@@ -549,34 +511,7 @@
                     }
                 })
             },
-            closeProject(scope) {
-                this.$confirm('此操作将结束该角色, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    let options = {
-                        body: {},
-                        id: scope.row.id,
-                        state: 'E'
-                    }
-                    AuditingProjectRequest(options).then(response => {
-                        console.log(response);
-                        if (response.status == 200) {
-                            this.getList();
-                            this.$message({
-                                type: 'success',
-                                message: '已结束此角色!'
-                            });
-                        }
-                    })
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消操作'
-                    });
-                });
-            },
+
             aaa(value) {
                 alert(value)
             }

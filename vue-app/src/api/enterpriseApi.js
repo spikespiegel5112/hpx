@@ -104,6 +104,12 @@ export const getRolesByProjectRequest = options => fetch(`/core/core/api/v1/ente
 export const createRoleRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/roles`, options.params, 'put');
 
 /*
+** 删除角色信息-物理删除
+*/
+export const deleteRoleRequest = options => fetch(`/core/core/api/v1/products/${options.procode}/ent_roles/${options.ercode}/roles/${options.id}`, {}, 'delete');
+
+
+/*
 ** 新增企业开户申请
 */
 export const enterpriseAccountOpenRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts/${options.code}`, options.body, 'put');
