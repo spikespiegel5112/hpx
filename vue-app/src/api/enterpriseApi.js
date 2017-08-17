@@ -9,11 +9,11 @@ export const accountInfosListRequest = () =>{
 }
 
 /**
- * 获取企业子账户信息
+ * 根据企业id获取银行信息, 支持分页
  */
 
 export const accountStatementListRequest = options =>{
-    return fetch(`/core/core/api/v1/financialManager/${options.accoundId}/accountStatement`);
+    return fetch(`/core/core/api/v1/financialManager/${options.accoundId}/accountStatement/`);
 }
 
 /**

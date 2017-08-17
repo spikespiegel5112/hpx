@@ -4,26 +4,28 @@
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
+<!--
 				<el-row>
 					<el-col :span="24">
 						<el-button type="primary" @click="openAccountFlag=true">线上开户</el-button>
 					</el-col>
 				</el-row>
+-->
 				<div class="enterprise_accountoverview_wrapper">
-
+                    <a class='el-icon-arrow-left arrow'></a>
 					<div class="carousel">
-						<a class='arrowleft iconfont icon-backward2'></a>
+						
 						<ul class="swiper-wrapper">
 							<li class="swiper-slide" v-for="(item, index) in accountList" :key="item.key">
 								<div class="title">
-									<label for="">{{item.bankName}}</label>
-									<span>尾号：{{item.bankNo.substr(1,4)}}</span>
+									<label for="">{{item.bankType}}</label>
+									<span>尾号：{{item.custActNo.substr(1,4)}}</span>
 									<i>{{index+1}}</i>
 								</div>
 								<div class="detail">
 									<div class="balance">
 										<label for="">可用余额（元）：</label>
-										<span>{{item.bankAmt}}</span>
+										<span>{{item.kyamt}}</span>
 									</div>
 									<div class="operation">
 										<el-button type="primary" size="small">转入</el-button>
@@ -32,9 +34,10 @@
 								</div>
 							</li>
 						</ul>
-						<a class='arrowright iconfont icon-forward2'></a>
+						<div class="swiper-pagination"></div>
 					</div>
-					<div class="swiper-pagination"></div>
+					<a class='el-icon-arrow-right arrow'></a>
+					
 				</div>
 				<div class="accountdetail">
 					<ul>
@@ -122,6 +125,183 @@ export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
+            accountListJSON:[
+  {
+    "custActNo": "3110210012851063129",
+    "custNo": "HPX888817082903201391",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501849035000,
+    "custBNo": "10002",
+    "custName": "linke0794",
+    "stamt": "0.00",
+    "updater": "-1",
+    "djamt": "0.00",
+    "createTime": 1501763250000,
+    "sjamt": "0.00",
+    "actType": "1",
+    "id": 48,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063133",
+    "custNo": "HPX888817085804094103",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1502177355000,
+    "custBNo": "10002",
+    "custName": "linke0795",
+    "stamt": "0.00",
+    "updater": "1",
+    "djamt": "0.00",
+    "createTime": 1501810619000,
+    "sjamt": "0.00",
+    "actType": "1",
+    "id": 49,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063141",
+    "custNo": "HPX888817081404096039",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501849033000,
+    "custBNo": "10002",
+    "custName": "linke0796",
+    "stamt": "0.00",
+    "updater": "-1",
+    "djamt": "0.00",
+    "createTime": 1501810874000,
+    "sjamt": "0.00",
+    "actType": "1",
+    "id": 50,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063145",
+    "custNo": "HPX888817082404096488",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501849031000,
+    "custBNo": "10002",
+    "custName": "linke0797",
+    "stamt": "0.00",
+    "updater": "-1",
+    "djamt": "0.00",
+    "createTime": 1501811124000,
+    "sjamt": "0.00",
+    "actType": "1",
+    "id": 51,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063153",
+    "custNo": "HPX888817081804098678",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501849030000,
+    "custBNo": "10002",
+    "custName": "linke0798",
+    "stamt": "0.00",
+    "updater": "-1",
+    "djamt": "0.00",
+    "createTime": 1501811358000,
+    "sjamt": "0.00",
+    "actType": "1",
+    "id": 53,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063157",
+    "custNo": "HPX888817080604104864",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501813269000,
+    "custBNo": "10002",
+    "custName": "linke0799",
+    "stamt": "0.00",
+    "updater": "1",
+    "djamt": "0.00",
+    "createTime": 1501813267000,
+    "sjamt": "0.00",
+    "creater": "1",
+    "actType": "1",
+    "id": 54,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063161",
+    "custNo": "HPX888817083704103846",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501813299000,
+    "custBNo": "10002",
+    "custName": "linke0800",
+    "stamt": "0.00",
+    "updater": "1",
+    "djamt": "0.00",
+    "createTime": 1501813298000,
+    "sjamt": "0.00",
+    "creater": "1",
+    "actType": "1",
+    "id": 55,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063165",
+    "custNo": "HPX888817084604102909",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501813308000,
+    "custBNo": "10002",
+    "custName": "linke0801",
+    "stamt": "0.00",
+    "updater": "1",
+    "djamt": "0.00",
+    "createTime": 1501813307000,
+    "sjamt": "0.00",
+    "creater": "1",
+    "actType": "1",
+    "id": 56,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063169",
+    "custNo": "HPX888817080204102008",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501814825000,
+    "custBNo": "10002",
+    "custName": "linke0802",
+    "stamt": "0.00",
+    "updater": "1",
+    "djamt": "0.00",
+    "createTime": 1501814823000,
+    "sjamt": "0.00",
+    "creater": "1",
+    "actType": "1",
+    "id": 57,
+    "status": "1"
+  },
+  {
+    "custActNo": "3110210012851063173",
+    "custNo": "HPX888817082704107079",
+    "kyamt": "0.00",
+    "bankType": "ZX",
+    "updateTime": 1501814909000,
+    "custBNo": "10002",
+    "custName": "linke0803",
+    "stamt": "0.00",
+    "updater": "1",
+    "djamt": "0.00",
+    "createTime": 1501814908000,
+    "sjamt": "0.00",
+    "creater": "1",
+    "actType": "1",
+    "id": 58,
+    "status": "1"
+  }
+],
 			eid: this.$store.state.loginInfo.enterpriseId,
 			enterpriseName: this.$store.state.loginInfo.enterpriseName,
 			//table columns
@@ -287,7 +467,8 @@ export default {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result)
-					this.accountList = result;
+                    this.accountList = this.accountListJSON;
+//					this.accountList = result;
 					setTimeout(() => {
 						this.carousel();
 					}, 200)
@@ -299,7 +480,9 @@ export default {
 				slidesPerView: 2,
 				pagination: '.swiper-pagination',
 				paginationClickable: true,
-				spaceBetween: 30
+                prevButton:'.el-icon-arrow-left',
+                nextButton:'.el-icon-arrow-right',
+				spaceBetween: 20
 			})
 		},
 		getTurnoverList() {
