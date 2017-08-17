@@ -46,7 +46,7 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
-				    <el-button v-if="scope.row.state!='E'&&scope.row.state!='F'" type="text" size="small" @click='activate(scope)'>{{scope.row.state=='P'?'激活':'暂停'}}</el-button>
+				    <el-button v-if="scope.row.state!='E'&&scope.row.state!='F'" type="text" size="small" @click='activate(scope)'>{{scope.row.state=='P'||scope.row.state=='B'?'激活':'暂停'}}</el-button>
 				    <el-button v-if="scope.row.state!='E'&&scope.row.state!='F'" type="text" size="small" @click='closeProject(scope)'>结束项目</el-button>
 					<el-button type="text" size="small" @click='editProjet(scope)'>修改</el-button>
 <!--					<el-button type="text" size="small" @click="configProject(scope)">配置</el-button>-->
@@ -260,7 +260,7 @@ export default {
 					trigger: 'blur'
 				}]
 			},
-            
+
 			//配置项目模态框
 			configProjectFlag: false,
 			projectRoleList: [],
