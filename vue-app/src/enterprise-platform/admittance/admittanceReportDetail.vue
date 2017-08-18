@@ -10,8 +10,8 @@
 				<div class="gradechart_wrapper">
 					<label>评分：</label>
 					<div>
-						<span class='indicator' :style="{left:scoreIndicatorValue.left+'px'}"></span>
-						<i :style="{left:scoreIndicatorValue.left-5+'px',textAlign:'center',width:'30px'}">{{reportData.score}}</i>
+						<span class='indicator' :style="{left:scoreIndicatorValue.left+'%'}"></span>
+						<i :style="{left:scoreIndicatorValue.left-1+'%',textAlign:'center',width:'30px'}">{{reportData.score}}</i>
 					</div>
 				</div>
 			</div>
@@ -108,7 +108,7 @@ export default {
 					this.scoreData = this.reportData.tpScoreGradeHistory;
 					console.log(this.scoreData);
 					this.evaluatingData = this.reportData.tpGradeModelInfoHistoryExtend.tpLabelInfoHistoryExtend;
-                    
+
                     this.basicInfo.industry= this.reportData.tpGradeModelInfoHistoryExtend.industryName
 					for (var item in this.evaluatingData) {
 						this.tpModelData[item] = this.evaluatingData[item].tpModelTargetInfoHistory;
@@ -119,7 +119,8 @@ export default {
 					}
 					this.chart();
                     this.getGrade();
-					this.scoreIndicatorValue.left = 370 * result.score * 0.01;
+//					this.scoreIndicatorValue.left = 370 * result.score * 0.01;
+                    this.scoreIndicatorValue.left = result.score;
 					console.log(this.scoreIndicatorValue);
 				})
 			})
@@ -178,13 +179,13 @@ export default {
 ////                                x: 0.5,
 ////                                y: 0.5,
 ////                                r: 0.5,
-//                                
+//
 //                                globalCoord: false // 缺省为 false
 //                            },
 //							shadowBlur: 200,
 //							shadowColor: 'rgba(255, 255, 255, 0.5)'
 //						},
-                        
+
 						radius: ['100%']
 					},
 					animationType: 'scale',

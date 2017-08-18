@@ -112,6 +112,23 @@
                 <!--:max="2">-->
                 <!--<el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>-->
             <!--</el-checkbox-group>-->
+
+            <template>
+                <el-table
+                    :data="roleListTransferData"
+                    style="width: 100%">
+                    <el-table-column
+                        prop="date"
+                        label="日期"
+                        width="180">
+                    </el-table-column>
+                    <el-table-column
+                        prop="address"
+                        label="地址">
+                    </el-table-column>
+                </el-table>
+            </template>
+
             <template>
                 <el-transfer
                     width="300"

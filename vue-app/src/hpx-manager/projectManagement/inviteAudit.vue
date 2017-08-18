@@ -1,7 +1,7 @@
 <template>
 <div class="fillcontain">
 	<head-top></head-top>
-    
+
     <!--  搜索条件  -->
 	<section class='search-criteria-container'>
 		<el-form :inline="true" :model="query" ref="query">
@@ -19,10 +19,10 @@
 			</el-row>
 		</el-form>
 	</section>
-    
+
 	<section class="main-table-container">
 		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			<el-table-column type="index" width='5	0'>
+			<el-table-column type="index" width='50'>
 			</el-table-column>
 			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
 			</el-table-column>
@@ -120,7 +120,7 @@ export default {
 				total: 0
 			},
             query:{},
-            
+
 			//审核弹框
 			auditDialogFlag: false
 		}
