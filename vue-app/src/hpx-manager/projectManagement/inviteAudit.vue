@@ -153,7 +153,7 @@ export default {
 					state: 'F'
 				}
 			}
-			options = Object.assign(options.params, this.pagination.params);
+			options.params = Object.assign(options.params, this.pagination.params);
 			console.log(options);
 			projectListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'));
