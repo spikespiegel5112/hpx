@@ -89,6 +89,7 @@
     import { servicesList , auithcertification ,servicesAidth} from '@/api/coreApi'
     import { loadUrl } from '@/api/publicApi'
     import { mapState } from 'vuex'
+    import moment from 'moment'
     export default {
         data(){
             return {
@@ -104,6 +105,12 @@
                     label : '审批状态',
                     prop  : 'approval',
                     formatter : (row,column) => this.serviceType(row.approval,'approval')
+                    },{label : '申请时间',
+                    prop  : 'createTime',
+                    formatter : (row,column) => moment(row.createTime).format('YYYY-MM-DD')
+                    },{label : '审核时间',
+                    prop  : 'approvalTime',
+                    formatter : (row,column) => moment(row.approvalTime).format('YYYY-MM-DD')
                     }
                 ],
                 //总页数
@@ -133,7 +140,7 @@
                         approval : 'R'
                     },
                 ],
-                //搜索条件的个数
+                //搜索条件的个数 
                 criteriaNum : 2,
 
                 //模态框
@@ -178,6 +185,7 @@
                     const params = Object.assign({},this.query,this.pagination);
                     const resp = await servicesList(params);
                     const res = await resp.json();
+                    console.log("服务列表", res)
                     const total = resp.headers.get('x-total-count')
                     this.tableList = [...res];
                     this.total = parseInt(total);
@@ -190,11 +198,7 @@
                 }
             },
             handleClose(done) {
-                this.$confirm('确认关闭？')
-                .then(_ => {
                     done();
-                })
-                .catch(_ => {});
             },
             async search () {
                 this.getList();
@@ -268,7 +272,6 @@
                 }).then((data) => {
                     (async () => {
                         try{
-                            console.log(id,index,type)
                             const resp = await servicesAidth(id,type);
                             if(resp.status === 200){
                                 this.$message({

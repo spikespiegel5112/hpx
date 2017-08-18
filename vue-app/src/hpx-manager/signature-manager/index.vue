@@ -1,6 +1,8 @@
 <template>
     <div>
-        <p style="margin: 30px 0;">所有企业电子签章列表</p>
+        <head-top></head-top>
+        <p style="margin: 30px 0 0 0;">所有企业电子签章列表</p>
+        <hr style="margin-bottom: 30px;" />
         <el-input style="width: 20%; marginLeft: 80%;marginBottom: 5px;" placeholder="请输入公司名称" icon="search" v-model="query.enterpriseName" :on-icon-click="search">
         </el-input>
         <el-table 
@@ -19,7 +21,7 @@
                 <template scope="scope">
                     <img :src="'data:image/png;base64,' + scope.row.picData" @click="handlePic(scope.row.picData)" style='width: 100px' />
                     <el-dialog
-                        title=""
+                        title="签章图片"
                         :visible.sync="pic.dialogVisible"
                         size="small"
                         :before-close="handleClose">
@@ -44,20 +46,25 @@
                 </template>
             </el-table-column>
         </el-table>
-        <my-Pagination :callback="getList" :total="total">
+        <my-Pagination @pageChange="pageChange" :total="total">
         </my-Pagination>
     </div>
 </template>
 
 <script>
 import { getEpSignatureList, abledEpSignature, delEpSignature } from '@/api/coreApi';
-import myPagination from '../../components/myPagination';
+import myPagination from '@/components/myPagination';
+import headTop from '@/components/headTop'
 import { mapState } from 'vuex';
 export default {
     data() {
         return {
             visible2: false,
             searchInput: '',
+            pagination : {
+                page : 1,
+                size : 10
+            },
             total: 0,
             pic: {
                  dialogVisible: false,
@@ -78,45 +85,45 @@ export default {
         },
     components: {
             myPagination,
+            headTop
     	},
     methods: {
+        pageChange(data){
+            this.pagination = data;
+        },
         async initData(){
-                this.listLoading = true;
-                try{
-                    this.getList();
-                    this.listLoading = false;
-                    if(!this.tableList.length){
-                        this.emptyText = "暂无数据";
-                    }
-                }catch(e){
-                    this.emptyText = "获取数据失败";
-                    this.listLoading = false;
-                }
+            this.getList();
             },
-        async getList(pagination={page:1,size:10}){
-            const eid = this.loginInfo.enterpriseId;
-            const params = Object.assign({},this.query,pagination);
-            const resp = await getEpSignatureList(params, eid);
-            const res = await resp.json();
-            const total = resp.headers.get('x-total-count')
-            let tmp = {};
-            res.map((v) =>{
-                 Object.assign(v, {confirmVisible: false}, {abled: v.enabled === 'T' ? '启用' : '禁用'});
-            })
-            this.tableList = [...res];
-            Object.keys(this.tableList).forEach( (k) => {
-                    this.tableList[k].visible2 = false;
-            })
-            this.total = parseInt(total - 0);
+        async getList(){
+            this.listLoading = true;
+            try{
+                const eid = this.loginInfo.enterpriseId;
+                const params = Object.assign({},this.query,this.pagination);
+                const resp = await getEpSignatureList(params, eid);
+                const res = await resp.json();
+                const total = resp.headers.get('x-total-count')
+                let tmp = {};
+                res.map((v) =>{
+                    Object.assign(v, {confirmVisible: false}, {abled: v.enabled === 'T' ? '启用' : '禁用'});
+                })
+                this.tableList = [...res];
+                Object.keys(this.tableList).forEach( (k) => {
+                        this.tableList[k].visible2 = false;
+                })
+                this.total = parseInt(total);
+                this.listLoading = false;
+                if(!this.tableList.length){
+                    this.emptyText = "暂无数据";
+                }
+            }catch(e){
+                this.emptyText = "获取数据失败";
+                this.listLoading = false;
+            }
         },
         async search () {
-                try{
-                    this.getList();
-                }catch(e){
-                    console.log(e)
-                }
+                this.getList();
             },
-        async abled(name, id, enabled){
+        async abled(name, id, enabled){ 
             const abled = enabled === "T" ? "F" : "T"; 
             const resp = await abledEpSignature(name, id, abled);
             if(resp.status === 200) {
@@ -148,6 +155,14 @@ export default {
         },
         handleClose() {
             this.pic.dialogVisible = false;
+        }
+    },
+    watch : {
+        pagination : {
+            handler : function(){
+                this.getList();
+            },
+            deep : true
         }
     }
 }

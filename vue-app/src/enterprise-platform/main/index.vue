@@ -4,11 +4,9 @@
 			<sider-bar index="/platform"></sider-bar>
 		</div>
 		<div class="router-container" style="height: 100%;overflow: auto;">
-			<!-- <transition name="router-fade" mode="in-out"> -->
-				<keep-alive>
-					<router-view></router-view>
-				</keep-alive>
-			<!-- </transition> -->
+			  <keep-alive>  
+				<router-view></router-view>
+			  </keep-alive>  
 		</div>
   	</div>
 </template>

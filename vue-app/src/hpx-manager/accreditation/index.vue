@@ -78,10 +78,10 @@
                     <el-tag type="primary">请确定企业资料审核通过,在下方填写审核说明</el-tag>
                 </div>
                 <el-form-item v-show="auditState === 'T'" label="输入金额" prop="amount">
-					<el-input v-model="editeData.amount" auto-complete="off"></el-input>
+					<el-input v-model="editeData.amount"></el-input>
 				</el-form-item>
                 <el-form-item label="审核说明" prop="nodes">
-					<el-input type="textarea" v-model="editeData.nodes" auto-complete="off"></el-input>
+					<el-input type="textarea" v-model="editeData.nodes"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -157,7 +157,7 @@
                 editeModalVisible : false,
                 editeData : {
                     nodes : '',
-                    amount : 0,
+                    amount : '',
                 },
                 rowId : '',
                 rowType : 'T',
@@ -218,6 +218,7 @@
                 this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
             del (id,type) {
+                this.editeData.amount = '';
                 this.editeModalVisible = true;
                 this.rowId = id;
                 this.auditState = type

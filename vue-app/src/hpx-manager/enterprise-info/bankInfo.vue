@@ -8,8 +8,8 @@
                 <el-col v-for="(value,keys) in bankInfoForm" :key="keys + ''" :span="12">
                     <span v-if="keys === 'bankProvince'" class="check-info-label">省份</span>
                     <span v-if="keys === 'bankCity'" class="check-info-label">城市</span>
-                    <span v-if="keys === 'bankCountry'" class="check-info-label">县区</span>
-                    <span v-if="keys === 'bankCode'" class="check-info-label">银行</span>
+                    <!-- <span v-if="keys === 'bankCountry'" class="check-info-label">县区</span> -->
+                    <!-- <span v-if="keys === 'bankCode'" class="check-info-label">银行</span> -->
                     <span v-if="keys === 'bankName'" class="check-info-label">支行</span>
                     <span v-if="keys === 'accountName'" class="check-info-label">银行账户名</span>
                     <span v-if="keys === 'bankAccount'" class="check-info-label">银行账户号</span>
@@ -22,7 +22,7 @@
 </template>
 <script>
 
-import { eidAccCountInfo } from '@/api/coreApi'
+import { showAccCountInfo } from '@/api/coreApi'
 import { mapState } from 'vuex';
 export default {
     data() {
@@ -30,8 +30,8 @@ export default {
             bankInfoForm: {
                 bankProvince: '',
                 bankCity: '',
-                bankCountry: '',
-                bankCode: '',
+                // bankCountry: '',
+                // bankCode: '',
                 bankName: '',
                 accountName: '',
                 bankAccount: '',
@@ -50,7 +50,7 @@ export default {
     methods: {
         async getAccount() {
             try {
-                const resp = await eidAccCountInfo(this.eid);
+                const resp = await showAccCountInfo(this.eid);
                 const res = await resp.json();
                 Object.keys(this.bankInfoForm).forEach((key) => {
                     this.bankInfoForm[key] = res[key]

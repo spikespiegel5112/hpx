@@ -1,5 +1,6 @@
 <template>
     <div class="cer-baseInfo-container">
+        <head-top></head-top>
         <el-card class="cer-base-card">
             <div slot="header" class="card-header">
                 <span>基本信息</span>
@@ -261,10 +262,12 @@ import myJs from '@/config/mUtils'
 import moment from 'moment';
 import bankInfo from './bankInfo'
 import filesInfo from './filesInfo'
+import headTop from '@/components/headTop'
 export default {
     components : {
         bankInfo,
         filesInfo,
+        headTop
     },
     data() {
         const checkNumber = (rule, value, callback) => {

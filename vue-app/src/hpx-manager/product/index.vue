@@ -6,17 +6,17 @@
         <section class='search-criteria-container'>
 			<el-form :inline="true" :model="query"  ref="query">
                 <el-row>
-                    <el-col :span="6">
+                    <el-col :span="5">
                         <el-form-item prop="name">
                             <el-input v-model="query.name" size="large" placeholder="产品名称"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="5">
                         <el-form-item prop="code">
                             <el-input v-model="query.code" size="large" placeholder="产品编码"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="5">
                         <el-form-item prop="availableStatus">
                             <el-select v-model="query.availableStatus" size="large" placeholder="状态">
                                 <el-option
@@ -28,7 +28,7 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6" :offset="6 * (3 - (criteriaNum % 4))" style="float: right"> 
+                    <el-col :span="6" style="float: right"> 
                         <el-form-item>
                             <el-button type="primary" icon="search" @click="search">查询</el-button>
                         </el-form-item>
@@ -87,7 +87,7 @@
                 </el-table-column>
             </el-table>
             <section class="main-pagination">
-                <my-Pagination :callback="getList" :total="total">
+                <my-Pagination @pageChange="pageChange" :total="total">
                 </my-Pagination>
             </section>
         </section>
@@ -145,7 +145,7 @@
     import myPagination from '../../components/myPagination'
     import { getProductList, abledProduct, delProduct, getProductEpRoleList, addProduct, editProduct } from '@/api/coreApi'
     import { mapState } from 'vuex'
-    import moment from 'moment'
+    import moment from 'moment' 
     export default {
         data(){
             return {
@@ -167,6 +167,10 @@
                 ],
                 //总页数
                 total : 0,
+                 pagination : {
+                    page : 1,
+                    size : 10
+                },
                 //table
                 tableList: [],
                 listLoading:false,
@@ -218,29 +222,29 @@
             ...mapState(["loginInfo"])
         },
         methods: {
+            pageChange(data){
+                this.pagination = data;
+            },
             async initData(){
+                    this.getList();
+            },
+            async getList(){
                 this.listLoading = true;
                 try{
-                    this.getList();
+                     const params = Object.assign({},this.query, this.pagination);
+                    const resp = await getProductList(params);
+                    const res = await resp.json();
+                    res.map((v) => {
+                        Object.assign(v, {abled: v.available === 'F' ? '禁用' : '启用'},{confirmVisible: false})
+                    })
+                    const total = resp.headers.get('x-total-count');
+                    this.tableList = [...res];
+                    this.total = parseInt(total);
                     this.listLoading = false;
-                    if(!this.tableList.length){
-                        this.emptyText = "暂无数据";
-                    }
-                }catch(e){
-                    this.emptyText = "获取数据失败";
+                }catch(e) {
                     this.listLoading = false;
                 }
-            },
-            async getList(pagination={page:1,size:10}){
-                const params = Object.assign({},this.query,pagination);
-                const resp = await getProductList(params);
-                const res = await resp.json();
-                res.map((v) => {
-                    Object.assign(v, {abled: v.available === 'F' ? '禁用' : '启用'},{confirmVisible: false})
-                })
-                const total = resp.headers.get('x-total-count');
-                this.tableList = [...res];
-                this.total = parseInt(total);
+               
             },
             async search () {
                 try{
@@ -337,6 +341,14 @@
                 }                
             }
         },
+        watch : {
+            pagination : {
+                handler : function() {
+                    this.getList();
+                },
+                deep : true
+            }
+        }
     }
 </script>
 

@@ -12,8 +12,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item prop="activated">
-                            <el-select v-model="query.activated" size="large" placeholder="激活状态">
+                        <el-form-item prop="enterpriseStatus">
+                            <el-select v-model="query.enterpriseStatus" size="large" placeholder="状态">
                                 <el-option
                                     v-for="item in activatedOptions"
                                     :key="item.activated"
@@ -51,13 +51,12 @@
                     :key="i"
                     :label="value.label"
                     :prop="value.prop"
-                    :sortable="value.sortable"
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
                 >
                 </el-table-column>
-                <el-table-column label="状态" prop="enterpriseStatus">
+                <el-table-column label="状态" prop="enterpriseStatus" sortable="true">
                     <template scope="scope">
                         <el-tag :type="scope.row.enterpriseStatus === 'T'?'success':'danger'">{{scope.row.enterpriseStatus === 'T' ? '启用' : '停用' }}</el-tag>
                     </template>
@@ -72,10 +71,8 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <section class="main-pagination">
-                <my-Pagination @pageChange="pageChange" :total="total">
-                </my-Pagination>
-            </section>
+            <my-Pagination @pageChange="pageChange" :total="total">
+            </my-Pagination>
         </section>
         <!--编辑界面-->
 		<el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
@@ -126,35 +123,29 @@
                 columns : [{
                     label : '企业编号',
                     prop  : 'id',
-                    sortable : true,
                     },{
                     label : '企业名称',
                     prop  : 'name',
-                    sortable : true,
                     minWidth : 120,
-                    },{
-                    label : '企业状态',
-                    prop  : 'activated',
-                    sortable : true,
-                    formatter : (row,column) => row.activated === 'T' ? "已注册" : "未注册"
                     },{
                     label : '行业',
                     prop  : 'industry',
-                    sortable : true,
                     },{
                     label : '地址',
                     prop  : 'address',
-                    sortable : true,
                     minWidth : 200
                     },{
                     label : '联系方式',
                     prop  : 'contactsNumber',
-                    sortable : true,
                     minWidth:100
                     }
                 ],
                 //总页数
                 total : 0,
+                pagination : {
+                    page : 1,
+                    size : 10
+                },
                 //table
                 tableList: [],
                 listLoading:false,
@@ -163,16 +154,16 @@
                 //search params
                 query : {
                     name : '',
-                    activated : '',
+                    enterpriseStatus : '',
                     auditState : 'T',
                 },
                 activatedOptions : [
                     {
-                        value : '已注册',
+                        value : '启用',
                         activated : 'T'
                     },
                     {
-                        value : '未注册',
+                        value : '禁用',
                         activated : 'F'
                     }
                 ],
@@ -219,7 +210,6 @@
             async getList(){
                 this.listLoading = true;
                 try{
-                    this.listLoading = false;
                     const params = Object.assign({},this.query,this.pagination);
                     const resp = await getEnterprisesList(params);
                     const res = await resp.json();
@@ -229,6 +219,7 @@
                     if(!this.tableList.length){
                         this.emptyText = "暂无数据";
                     }
+                    this.listLoading = false;
                 }catch(e){
                     this.emptyText = "获取数据失败";
                     this.listLoading = false;
