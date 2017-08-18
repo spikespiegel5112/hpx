@@ -51,9 +51,9 @@
                     },{
                     label : '付款方',
                     prop  : 'payerAccountName',
-                    },,{
+                    },{
                     label : '收款银行账号',
-                    prop  : 'payeeBankSccount',
+                    prop  : 'payeeBankAccount',
                     minWidth : 130,
                     },{
                     label : '收款方',
@@ -83,6 +83,10 @@
             myPagination,
     	},
         created(){
+        },
+        activated(){
+            this.tableList = [];
+            this.getList();
         },
         mounted(){
 

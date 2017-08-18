@@ -28,7 +28,7 @@
 <script>
     import headTop from '@/components/headTop'
     import orderList from './orderList';
-    import { ordersDetail , ordersDetailDownload ,demanderInterestRate , ordersDetailRevise} from '@/api/orderApi'
+    import { ordersDetail , ordersDetailDownload ,getInterest , ordersDetailRevise ,orderSure} from '@/api/orderApi'
     import { mapState } from 'vuex'
     export default {
         data(){
@@ -47,7 +47,7 @@
             headTop,
             orderList
         },
-        activated(){
+        created(){
             this.getInterestRate();
         },
         computed : {
@@ -75,7 +75,7 @@
             },
             async getInterestRate(){
                 try{
-                    const resp = await demanderInterestRate(this.demanderId,this.projectId);
+                    const resp = await getInterest(this.demanderId,this.projectId);
                     const res = await resp.json();
                     this.interestRate = res.marginRatio;
                 }catch(e){
@@ -103,8 +103,13 @@
                 }
 
             },
-            dealSubmit(){
+            async dealSubmit(){
+                try{
+                    const resp = await orderSure(this.orderId);
+                    
+                }catch(e){
 
+                }
             }
         },
     }

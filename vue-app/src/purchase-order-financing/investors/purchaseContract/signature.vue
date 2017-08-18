@@ -950,7 +950,7 @@
 
  <script>
   import headTop from '../../../components/headTop'
-	import { getPurchaseContractDetail, getAppendixList, getAllSignature, coSmgCode } from '@/api/orderApi'
+	import { getPurchaseContractDetail, getAppendixList, getAllSignature, coSmgCode, subSignature } from '@/api/orderApi'
 	import { mapState } from 'vuex'
 	export default {
 	    data() {
@@ -1012,7 +1012,6 @@
 			async smgCode() {
 					try {
 						const resp = await coSmgCode(this.loginInfo.phone, this.formData.strCode);
-						console.log("哈哈哈", resp.status)
 						let start = 59;
 						this.smsButton = {
 							...this.smsButton,
@@ -1043,12 +1042,23 @@
 				this.strCode.src = `/core/core/api/v1/getKaptchaImage?v=${new Date().getTime()}`;
 			},
 			async onSubmit() {
+				
+				console.log('数据见军军', this.formData.signature, this.formData.code)
 				if(this.formData.signature === '' || this.formData.code === '') {
 					this.$message.error('请完善信息！');
 					return false;
 				}
-				console.log('submit单打独斗!');
-				const resp = await subSinature();
+				const rId = this.$route.params.id;
+				const signId = this.formData.signature;
+				const code = this.formData.code;
+				let params = {
+					rId,
+					fileName: 'buySignature',
+					signId,
+					code
+				}
+				console.log('submit单打独斗!',rId, signId ,code );
+				const resp = await subSignature(params);
 			},
 		}
 	}

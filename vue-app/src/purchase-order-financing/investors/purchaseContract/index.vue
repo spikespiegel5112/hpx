@@ -32,7 +32,16 @@
             <el-button type="primary" @click="signature">签章</el-button>
             <el-button type="primary" >预览</el-button>
             <el-button type="primary" @click="receipt">确认收货</el-button>
-          
+            <el-upload
+                :action="uploadContractUrl()"
+                list-type="picture"
+                :auto-upload="false"
+                accept="image/gif, image/jpeg, image/png, image/jpg"
+                :on-change="(file,filesList)=>filesChange(selectContractList[0].index,file,filesList)"
+                :on-remove="()=>removeFile(selectContractList[0].index)"
+            >
+                <el-button icon="upload" type="primary" size="small">上传文件</el-button>
+            </el-upload>
         </section>
 
         <section class="main-table-container">
@@ -51,10 +60,10 @@
                             :removeFile="removeFile"
                         >
                         </upload-pic>
-                        <el-button v-if="scope.row.fileId" type="text" @click="clickLoad(scope.row.fileId)">点击下载查看</el-button>
+                        <!--<el-button v-if="scope.row.fileId" type="text" @click="clickLoad(scope.row.fileId)">点击下载查看</el-button>-->
                     </template>
                 </el-table-column> 
-                <el-table-column label="操作" align="center" class-name="acc-action-upload"> 
+                <!--<el-table-column label="操作" align="center" class-name="acc-action-upload"> 
                     <template scope="scope">
                          <el-upload
                             v-if="allEdite"
@@ -71,7 +80,7 @@
                              {{scope.row.id ? "已经上传" : "未上传"}}
                          </div>
                     </template>
-                </el-table-column>
+                </el-table-column>-->
             </el-table>
             <my-Pagination @pageChange="pageChange" :total="total">
             </my-Pagination>
@@ -157,7 +166,10 @@ export default {
             //table
             tableList: [],
             supplierList: [],
-            selectContractList: [],
+            selectContractList: [{
+                id:'',
+                index: ''
+            }],
             listLoading: false,
             emptyText: "暂无数据",
 
@@ -210,11 +222,11 @@ export default {
                 const params = Object.assign({}, this.query, this.pagination);
                 const resp = await getPurchaseContractList(params);
                 const res = await resp.json();
-                
                 for(let i = 0,len = res.length; i < len ; i++){
                     res[i].fileName = '';
                     res[i].fileLength = '';
                     res[i].thumbUrl = '';
+                    res[i].index = i;
                 };
                 const param = Object.assign({enterpriseRole:'PRO_ENT_TYPE_SUPPLIER',state:'T'});
                 const result = await roleList(this.projectId,param);
@@ -240,7 +252,7 @@ export default {
             this.getList();
         },
 
-         handleSelectionChange(val) {
+        handleSelectionChange(val) {
             this.selectContractList = val;
         },
 
@@ -255,11 +267,11 @@ export default {
         },
 
         check(index, row) {
-            this.$router.push({ path: this.$route.path + '/detail/' + row.id })
+            this.$router.push({ path: this.$route.path + '/detail/' + row.id });
         },
         edite(index, row) {
             this.editeModalVisible = true;
-            this.editeData = Object.assign({}, { ...row })
+            this.editeData = Object.assign({}, { ...row });
         },
         receipt() {
             if(this.selectContractList.length > 1) {
@@ -277,15 +289,16 @@ export default {
             this.$refs[formName].resetFields();
         },
 
-        uploadContractUrl (id) {
-            return uploadContract(id)
+        uploadContractUrl () {
+            return uploadContract(this.selectContractList[0].id)
         },
 
         filesChange(index,file,filesList){
-            console.log(file,filesList,index)
+            console.log('上传',file,filesList,index)
             this.tableList[index].fileName = file.name;
             this.tableList[index].fileLength = file.size;
             this.tableList[index].thumbUrl = file.url; 
+            console.log("上传后", this.tableList);
         },
         removeFile(index){
             this.tableList[index].fileName = '';

@@ -86,7 +86,7 @@
                         :min-width="value.minWidth ? value.minWidth : 'auto'">
                     </el-table-column>
                 </el-table>
-                <my-Pagination @pageChange="pageChangeTwo" :total="totalTwo">
+                <my-Pagination @pageChangeTwo="pageChangeTwo" :total="totalTwo">
                  </my-Pagination>
                 </el-tab-pane>
             </el-tabs>
@@ -278,7 +278,7 @@
                     this.demanderList = temp;
 
                     //当前风险
-                    const params = Object.assign({capital:this.loginInfo.enterpriseId,status:'0'},this.query,this.pagination);
+                    const params = Object.assign({capital:this.loginInfo.enterpriseId,status:'1'},this.query,this.pagination);
                     const resp = await warningList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
@@ -290,7 +290,7 @@
                     }
 
                     //已处理风险
-                    const paramsTwo = Object.assign({capital:this.loginInfo.enterpriseId,status:'1'},this.query,this.pagination);
+                    const paramsTwo = Object.assign({capital:this.loginInfo.enterpriseId,status:'0'},this.query,this.pagination);
                     const respTwo = await warningList(paramsTwo);
                     const resTwo = await respTwo.json();
                     const totalTwo = respTwo.headers.get('x-total-count')
@@ -351,6 +351,12 @@
         */
         watch : {
             pagination : {
+                handler : function(){
+                    this.getList();
+                },
+                deep:true,
+            },
+            paginationTwo : {
                 handler : function(){
                     this.getList();
                 },

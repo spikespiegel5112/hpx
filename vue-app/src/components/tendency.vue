@@ -33,7 +33,7 @@
                         trigger: 'axis'
                     },
                     legend: {
-                        data:['API请求量', '新注册用户', '新增订单', '新增管理员']
+                        data:['API请求量', '新注册用户', '新增项目', '新增管理员']
                     },
                     toolbox: {
                         show: true,

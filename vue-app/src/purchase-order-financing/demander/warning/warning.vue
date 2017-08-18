@@ -88,7 +88,7 @@
                         :min-width="value.minWidth ? value.minWidth : 'auto'">
                     </el-table-column>
                 </el-table>
-                <my-Pagination @pageChange="pageChangeTwo" :total="totalTwo">
+                <my-Pagination @pageChangeTwo="pageChangeTwo" :total="totalTwo">
                  </my-Pagination>
                 </el-tab-pane>
             </el-tabs>
@@ -123,7 +123,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import {roleList,warningList} from '@/api/orderApi'
+    import {roleList,warningList,updateWarningStatus,saveRiskPendingPayment} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -259,7 +259,7 @@
                     this.capitalList = temp;
 
                     //当前风险
-                    const params = Object.assign({demander:this.loginInfo.enterpriseId,status:'0'},this.query,this.pagination);
+                    const params = Object.assign({demander:this.loginInfo.enterpriseId,status:'1'},this.query,this.pagination);
                     const resp = await warningList(params);
                     const res = await resp.json();
                     const total = resp.headers.get('x-total-count')
@@ -271,7 +271,7 @@
                     }
 
                     //已处理风险
-                    const paramsTwo = Object.assign({demander:this.loginInfo.enterpriseId,status:'1'},this.query,this.pagination);
+                    const paramsTwo = Object.assign({demander:this.loginInfo.enterpriseId,status:'0'},this.query,this.paginationTwo);
                     const respTwo = await warningList(paramsTwo);
                     const resTwo = await respTwo.json();
                     const totalTwo = respTwo.headers.get('x-total-count')
@@ -299,10 +299,14 @@
             async marginSubmit(formName) {
                 try{
                     //生成待付款信息
-
-                   this.MarginModal = false;
-                   this.$message.success('操作成功')
-                   this.getList();
+                    const savePayment = await saveRiskPendingPayment(this.margin);
+                    //修改风控预警状态
+                   const updateStatus = await updateWarningStatus(this.margin.id);
+                   if(updateStatus.status == 200 && savePayment.status ==200){
+                        this.MarginModal = false;
+                        this.$message.success('操作成功')
+                        this.getList();
+                   }
                 }catch(e){
                     this.MarginModal = false;
                     this.$message.error('操作失败')
@@ -322,6 +326,13 @@
         */
         watch : {
             pagination : {
+                handler : function(){
+                    this.getList();
+                },
+                deep:true,
+            },
+
+            paginationTwo : {
                 handler : function(){
                     this.getList();
                 },

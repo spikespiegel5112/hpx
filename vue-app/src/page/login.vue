@@ -45,7 +45,7 @@
 			}
 		},
 		created () {
-			// 更新企业状态
+			// 初始化登陆和流程状态
 			this.$store.dispatch('loginNot');
 			this.$store.dispatch('removeStateInfo');
 			console.log(this.$store.state)

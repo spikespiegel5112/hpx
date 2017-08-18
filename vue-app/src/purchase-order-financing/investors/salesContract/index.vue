@@ -26,40 +26,24 @@
                     </el-col>
                 </el-row>
             </el-form>
-            </el-col>
+            <el-button type="primary" @click="signature">签章</el-button>
+            <el-button type="primary" @click="edite">预览</el-button>
+            <el-button type="primary" @click="uploadContract">上传文件</el-button>
+            <el-button type="primary" @click="selectfinancingDetail">查看融资详情</el-button>
+            <el-button type="primary" >已处置</el-button>
         </section>
 
         <section class="main-table-container">
-            <el-table row-key="id" max-height="250" border :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-                <el-table-column fixed prop="name" width = '160px' label="合同名称"></el-table-column>
-                <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-                </el-table-column>
-                <el-table-column fixed="right" width="238" label="操作">
-                    <template scope="scope">
-                        <el-button type="text" size="small" @click="signature(scope.$index, scope.row)" >签章</el-button>
-                        <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">预览</el-button>
-                        <el-button type="text" size="small" @click="receipt(scope.$index, scope.row)">查看融资详情</el-button>
-                        <!--<el-button type="text" size="small" @click="uploadContract(scope.$index, scope.row)">上传合同</el-button>-->
-                         <!--action="/order/contract/uploadingContract/"+{scope.row.id}-->
-                        <!--<el-upload
-                            :action="`/order/contract/uploadingContract/${scope.row.id}`"
-                            :file-list="excelList"
-                            :on-change="excelChange"
-                            :before-upload="excelBefore"
-                            :on-success="excelSuccess"
-                        >
-                        <el-button size="small" type="text">上传合同</el-button>
-                    </el-upload>-->
-                         <el-upload
-                            :action="uploadActionUrl(scope.row.code)"
-                            list-type="picture"
-                            :auto-upload="false"
-                            accept="image/gif, image/jpeg, image/png, image/jpg"
-                            :on-change="(file,filesList)=>filesChange(scope.$index,file,filesList)"
-                            :on-remove="()=>removeFile(scope.$index)">
-                            <el-button icon="upload" type="primary" size="small">上传文件</el-button>
-                         </el-upload>
-                    </template>
+            <el-table @selection-change="handleSelectionChange" row-key="id"  border :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+                <el-table-column type="selection"></el-table-column>
+                <el-table-column 
+                v-for="(value,i) in columns" 
+                :key="i" :label="value.label" 
+                :prop="value.prop" 
+                :sortable="value.sortable" 
+                :width="value.width ? value.width : 'auto'" 
+                :formatter="value.formatter" 
+                :min-width="value.minWidth ? value.minWidth : 'auto'">
                 </el-table-column>
             </el-table>
             <!--
@@ -145,32 +129,27 @@ export default {
             columns: [{
                     label: '合同编号',
                     prop: 'code',
-                    width: '160px'
                 }, {
                     label: '订单编号',
                     prop: 'orderCode',
-                    width: '160px'
                 }, {
                     label: '供应商',
                     prop: 'firstParty',
-                    width: '160px'
                 }, {
                     label: '合同金额',
                     prop: 'money',
-                    width: '160px'
                 }, {
                     label: '收货状态',
                     prop: 'receivingStatus',
-                    width: '160px'
+                    formatter : (row,column) => row.receivingStatus === '0' ? "待收货" :
+                    row.receivingStatus === '1' ?"已收货" :""
                 }, {
                     label: '创建时间',
                     prop: 'createTime',
-                    width: '160px',
                     formatter: (row, column) => moment(column.createTime).format('YYYY-MM-DD')
                 }, {
                     label: '收货日期',
                     prop: 'receivingDate',
-                    width: '160px',
                     formatter: (row, column) => moment(column.receivingDate).format('YYYY-MM-DD')
                 }, {
                     label: '文件',
@@ -189,6 +168,7 @@ export default {
             //table
             tableList: [],
             demanderList: [],
+            selectContractList: [],
             listLoading: false,
             emptyText: "暂无数据",
 
@@ -299,61 +279,62 @@ export default {
         },
 
         // 上传合同
-        excelChange(file,list){
-                this.excelList = list;
-            },
-        excelBefore(){
-                if(this.excelList.length > 1){
-                    this.$message({
-                        type:'info',
-                        message:'每次只能上传一个 '
-                    });
-                    return false;
-                }
-            },
-        excelSuccess(response){
-                this.excelPath = response
-                this.$message({
-                    type : 'success',
-                    message : '上传成功'
-                })
-            },
-
-        handleSelectionChange(val) {
-            // this.multipleSelection = val;
-        },
-        signature(index, row) {
-            //this.$router.push({ path: this.$route.path + '/signature/' + row.id})
+        uploadContract() {
+            console.log("上传")
+            if(this.selectContractList.length > 1) {
+                this.$message.error("只能选择一个合同上传文件");
+                return;
+            }
+            const id = this.selectContractList[0].id;
         },
 
-        check(index, row) {
-            //this.$router.push({ path: this.$route.path + '/detail/' + row.id })
+
+         handleSelectionChange(val) {
+            console.log("选取数据", val);
+            this.selectContractList = val;
         },
-        edite(index, row) {
-            this.editeModalVisible = true;
-            this.editeData = Object.assign({}, { ...row })
+        //签章
+        signature() {
+            if(this.selectContractList.length > 1) {
+                this.$message.error("只能选择一个合同进行签章");
+                return;
+            }
+            const id = this.selectContractList[0].id;
+            //this.$router.push({ path: this.$route.path + '/signature/' + id})
+        },
+
+        //预览
+        edite() {
+            // this.editeModalVisible = true;
+            // this.editeData = Object.assign({}, { ...row })
         },
         //查看融资详情
-        async receipt(index, row) {
+        async selectfinancingDetail() {
+            if(this.selectContractList.length > 1) {
+                this.$message.error("只能选择一个合同进行查看融资详情");
+                return;
+            }
+            this.financingDetail = {};
+            const id = this.selectContractList[0].id;
             this.FinancingDetailVisible = true;
-            const resp = await getFinancingDetail(row.id);
+            const resp = await getFinancingDetail(id);
             const res = await resp.json();
             this.financingDetail = res;
         },
-        uploadActionUrl (code) {
-            return uploadContract(this.loginInfo.enterpriseId,code)
-        },
-        filesChange(index,file,filesList){
-            console.log(file,filesList,index)
-            this.tableList[index].fileName = file.name;
-            this.tableList[index].fileLength = file.size;
-            this.tableList[index].thumbUrl = file.url; 
-        },
-        removeFile(index){
-            this.tableList[index].fileName = '';
-            this.tableList[index].fileLength = '';
-            this.tableList[index].thumbUrl = ''; 
-        },
+        // uploadActionUrl (code) {
+        //     return uploadContract(this.loginInfo.enterpriseId,code)
+        // },
+        // filesChange(index,file,filesList){
+        //     console.log(file,filesList,index)
+        //     this.tableList[index].fileName = file.name;
+        //     this.tableList[index].fileLength = file.size;
+        //     this.tableList[index].thumbUrl = file.url; 
+        // },
+        // removeFile(index){
+        //     this.tableList[index].fileName = '';
+        //     this.tableList[index].fileLength = '';
+        //     this.tableList[index].thumbUrl = ''; 
+        // },
     },
     /*
     ** 分页需改3

@@ -226,6 +226,12 @@
                 return labelImport();
             }
         },
+        beforeUpdate(a,b){
+            console.log(this.$data,9999,a,b)
+        },
+        updated(a,b){
+            console.log(a,b)
+        },
         methods: {
             pageChange(data){
                 this.pagination = data;
@@ -315,6 +321,7 @@
                             message:'删除成功'
                         });
                         this.getList()
+                        console.log(this.tableList)
                     }
                 }catch(e){
                     this.$message.error(e)
@@ -362,7 +369,7 @@
                 handler : function(){
                     this.getList();
                 },
-                // deep:true,
+                deep:true,
             }
         }
     }

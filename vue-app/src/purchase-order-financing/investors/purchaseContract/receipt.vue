@@ -8,8 +8,6 @@
             <el-button type="primary" :disabled="fDisabled" @click="apply('T')">退款申请</el-button>
             <el-button type="primary" :disabled="zDisabled" @click="apply('G')">补购申请</el-button>
             <el-button type="primary" :disabled="nDisabled" @click="disHandled">暂不处理</el-button>
-            <!--<el-button type="primary" :disabled="disabled" @click="addReceiptGoods">新增收货</el-button>-->
-            <!--<el-button type="primary" @click="editActualCount">编辑实收数量</el-button>-->
             </el-col>
         </section>
     
@@ -49,7 +47,7 @@
                     <p>&yen; {{money}}</p>
                 </div>
                 <div class="button">
-                    <el-button type="primary">确认收货</el-button>
+                    <el-button type="primary" @click="confirmReceipt">确认收货</el-button>
                     <p style="font-size: 12px;font-weight: 400;margin-top:20px;color:red;">只有当少发和多发都处理了才能确认收货</p>
                 </div>
             </div>
@@ -59,7 +57,7 @@
 
 <script>
 import headTop from '../../../components/headTop'
-import { getReceiptList, saleManager, changeReceivedAmount } from '@/api/orderApi'
+import { getReceiptList, saleManager, changeReceivedAmount, noTreatment, confirmReceipt } from '@/api/orderApi'
 import { mapState } from 'vuex'
 export default {
     data() {
@@ -124,8 +122,9 @@ export default {
                 const resp = await getReceiptList(tContractId);
                 const res = await resp.json();
                 res.map((v) => {
-                    Object.assign(v,{isEdit: true}, {processStatus: v.processStatus === '0' ? '未处理' : v.processStatus === '1' ? '已处理' : '暂不处理'})
+                    Object.assign(v,{isEdit: false}, {processStatus: v.processStatus === '0' ? '未处理' : v.processStatus === '1' ? '已处理' : '暂不处理'}, {differenceType: v.differenceType === '0' ? '正常' : v.differenceType === '1' ? '少发' : '多发' })
                 })
+
                 this.tableList = [...res];
                 this.listLoading = false;
                 if (!this.tableList.length) {
@@ -138,18 +137,29 @@ export default {
         },
 
         async save(index, row) {
+            this.money = 0;
+            this.count = 0;
             if (row.receivedAmount === '') {
                 this.$message.error('数据不能为空');
             }
             this.tableList[index].isEdit = false;
-            this.tableList[index].differenceAmount = (this.tableList[index].receivedAmount - 0) - (this.tableList[index].amount - 0);
-            this.tableList[index].differenceMoney = (this.tableList[index].differenceAmount - 0) * (this.tableList[index].univalence - 0);
+            this.tableList[index].differenceAmount = this.tableList[index].receivedAmount - this.tableList[index].amount;
+            this.tableList[index].differenceMoney = this.tableList[index].differenceAmount * this.tableList[index].univalence;
             this.tableList[index].differenceType = this.tableList[index].differenceAmount === 0 ? '正常' : this.tableList[index].differenceAmount > 0 ? '多发' : '少发';
-            this.money += this.tableList[index].receivedAmount * this.tableList[index].univalence;
-            this.count += this.tableList[index].receivedAmount;
+            this.money = this.tableList[index].receivedAmount * this.tableList[index].univalence;
+            this.count = this.tableList[index].receivedAmount;
             try {
-                const resp = await changeReceivedAmount(row.id, this.tableList[index].receivedAmount);
+                let params = {receivedAmount: (this.tableList[index].receivedAmount - 0), differenceAmount: this.tableList[index].differenceAmount, differenceMoney: this.tableList[index].differenceMoney, differenceType: this.tableList[index].differenceType === "少发" ? '1' : this.tableList[index].differenceType === "多发" ? '2' : '0' }
+                const resp = await changeReceivedAmount(row.id, params);
                 const res = await resp.json();
+                if(row.differenceAmount < 0) {
+                        this.fDisabled = false;
+                    } else if (row.differenceAmount > 0) {
+                        this.zDisabled = false;
+                    } else {
+                        this.fDisabled = true;
+                        this.zDisabled = true;
+                    }
             }catch(e) {
 
             }
@@ -191,7 +201,14 @@ export default {
             if(this.selectProduct.length > 0) {
                 this.nDisabled = false;
                 this.selectProduct.map((v) =>{
-                    v.differenceAmount < 0 ? this.fDisabled = false : this.zDisabled = false;
+                    if(v.differenceAmount < 0) {
+                        this.fDisabled = false;
+                    } else if (v.differenceAmount > 0) {
+                        this.zDisabled = false;
+                    } else {
+                        this.fDisabled = true;
+                        this.zDisabled = true;
+                    }
                 })
             } else {
                 this.fDisabled = true;
@@ -199,15 +216,34 @@ export default {
                 this.nDisabled = true;
             }
         },
-        disHandled() {
-            console.log("暂不处理");
+        async disHandled() {
+            console.log("暂不处理",this.selectProduct);
+            try{
+                let idList = [];
+                this.selectProduct.map((v) => {
+                    idList.push({id: v.id});
+                })
+                console.log("ID选中", idList);
+                   
+                    const resp = await noTreatment(idList);
+
+                // })
+            } catch(e) {
+                this.$message.error(e);
+            }
+            
         },
-        addReceiptGoods() {
-            console.log("新增收货");
+        async confirmReceipt() {
+            const id = this.$route.params.id;
+            // this.tableList.map((v) =>{
+            //     if(v.differenceStatus === "0") {
+            //         this.$message.error('只有当少发和多发都处理了或者暂不处理才能确认收货');
+            //         return;
+            //     }
+            // })
+            // const resp = await confirmReceipt(id);
+            // console.log("确认了", resp.status);
         },
-        editActualCount() {
-            console.log("编辑实收数量");
-        }
     },
 }
 </script>

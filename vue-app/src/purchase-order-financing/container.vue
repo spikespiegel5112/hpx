@@ -4,9 +4,9 @@
 			<sider-bar index="/manager"></sider-bar>
 		</div>
 		<div class="router-container" style="height: 100%;overflow: auto;">
-			<keep-alive>
+			 <keep-alive> 
 				<router-view></router-view>
-			</keep-alive>
+			 </keep-alive> 
 		</div>
   	</div>
 </template>

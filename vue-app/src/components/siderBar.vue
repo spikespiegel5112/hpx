@@ -1,8 +1,11 @@
 <template>
+	<div v-loading.fullscreen.lock="loading">
 	<div v-if="menuList.length" class="menu-wrap">
 		<el-menu :default-active="defaultActive" mode='vertical' style="min-height: 100%;" theme="dark" unique-opened router>
 			<el-menu-item :index="index">
-				<i class="el-icon-menu"></i>首页</el-menu-item>
+				<i class="fa fa-home icon-style"></i>
+				<span class="icon-indent">首页</span>
+			</el-menu-item>
 			<template v-for="(subMenu,i) in menuList">
 				<template v-if="subMenu.vRolePermissionCustom.length">
 					<el-submenu :index="subMenu.permissionsId+''">
@@ -11,7 +14,7 @@
 						<el-menu-item v-for="(item,num) in subMenu.vRolePermissionCustom" :key="num" :index="item.link">
 							{{item.name}}
 						</el-menu-item>
-					</el-submenu>
+					</el-submenu> 
 				</template>
 				<template v-else>
 					<el-menu-item :index="subMenu.link">
@@ -21,8 +24,7 @@
 			</template>
 		</el-menu>
 	</div>
-	<div v-else style="height:100%;">
-		<div></div>
+	<div v-else style="min-height:100%;"></div>
 	</div>
 </template>
 <script>
@@ -46,7 +48,8 @@ export default {
 			this.loading = true;
 			try {
 				const path = this.$route.path.split('/')[1];
-				let resp, res;
+				console.log(path)
+				let resp, res = [];
 				if (path !== 'platform' && path !== 'manager') {
 					const { pjId } = this.$route.params;
 					this.getCurrentProjectId(pjId);
@@ -70,12 +73,12 @@ export default {
 				this.loading = false;
 			} catch (e) {
 				this.loading = false;
-				// this.$alert(`${e}将跳转至登录页面`, '提示', {
-				// 	confirmButtonText: '确定',
-				// 	callback: action => {
-				// 		this.$router.push({path:'/'})
-				// 	}
-				// });
+				this.$alert(`${e}将跳转至登录页面`, '提示', {
+					confirmButtonText: '确定',
+					callback: action => {
+						this.$router.push({path:'/'})
+					}
+				});		
 			}
 		})()
 	},
@@ -127,4 +130,11 @@ export default {
 	width: 200px;
 	overflow-y: scroll;
 }
+.icon-style{
+	font-size: 16px!important;
+}
+.icon-indent{
+	padding-left: 10px;
+}
 </style>
+

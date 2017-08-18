@@ -36,10 +36,6 @@
         <!--标签列表部分-->
         <section class='main-table-container'>
             <p style="margin-top: 30px; text-align: center;width: 70px;padding-bottom: 10px; margin: 40px 0 10px 0">标签列表</p>
-            <!--<el-card class="box-card">
-                <div slot="header" class="clearfix">
-                    <span style="line-height:  56px; font-seize: 18px; margin-left: 20px">标签列表</span>
-                </div>-->
                 <el-button @click="dialogVisible = true" icon="plus" style="margin-bottom:20px">选择标签</el-button>
                 <el-dialog title="所有标签" :visible.sync="dialogVisible" :before-close="handleClose">
                     <el-input placeholder="请输入标签名称" icon="search" v-model="searchInput" style="margin-bottom: 10px" :on-icon-click="handleIconClick">
@@ -211,6 +207,12 @@ export default {
             this.modelMsg = '编辑模型信息';
             const result = await modelData(id, eid);
             const resu = await result.json();
+            resu.labelInfos.map((v) => {
+                Object.assign(v, {isWeightEdite: false});
+            });
+            resu.scoreGrades.map((v) => {
+                Object.assign(v, {isEdite: false});
+            });
             this.addForm.gradeCardName = resu.gradeCardName;
             this.addForm.industryid = resu.industryid;
             this.addForm.gradeCardDescribe = resu.gradeCardDescribe;

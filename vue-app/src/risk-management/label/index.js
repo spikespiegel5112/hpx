@@ -9,11 +9,11 @@ const router = {
         {
             path : '',
             component :label,
-            meta:["test","test"]
+            meta:["风控管理","标签"]
 		},{
             path : 'detail/:id',
             component :detail,
-            meta:["test","test"]
+            meta:["风控管理","标签","标签详情"]
 		}
     ]
 }

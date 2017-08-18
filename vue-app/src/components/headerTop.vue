@@ -1,8 +1,29 @@
 <template>
   <header class="main-header animated">
-
+    <!-- <el-row>
+        <el-col :span="10" style="width:200px;line-height:50px;">
+          <a href="javascript:void(0);" class="logo">
+            <span class="logo-lg">&nbsp;<b>HPX-manager</b></span>
+          </a>          
+        </el-col>
+        <el-col :span="10">
+          <div class="tools" @click.prevent="collapse">
+					  <i class="el-icon-d-arrow-left"></i>
+				</div>
+        </el-col>
+        <el-col :span="4">
+          <el-dropdown trigger="hover">
+            <span class="el-dropdown-link userinfo-inner">{{loginInfo.name || loginInfo.enterpriseName}}</span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>我的消息</el-dropdown-item>
+              <el-dropdown-item>设置</el-dropdown-item>
+              <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+    </el-row> -->
     <!-- Logo -->
-    <a href="#" class="logo">
+    <a href="javascript:void(0);" class="logo">
       <span class="logo-lg">&nbsp;<b>HPX-manager</b></span>
     </a>
 
@@ -35,21 +56,26 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu"  @mouseenter.stop.prevent="showProfileBox=true"
                 @mouseleave.stop.prevent="showProfileBox=false">
-            <a href="#" class="dropdown-toggle">
-              <span class="hidden-xs">{{loginInfo.name}}</span>
+            <a href="javascript:void(0)" class="dropdown-toggle">
+              <span class="hidden-xs">{{loginInfo.name || loginInfo.enterpriseName || '我的用户'}}</span>
             </a>
             <ul class="dropdown-menu" v-if="showProfileBox">
               <!-- User image -->
               <li class="user-header">
                 <p>
-                  {{loginInfo.name}} - Web Developer
+                  {{loginInfo.name || loginInfo.enterpriseName || '我的用户'}} - Web Developer
                 </p>
               </li>
               <!-- Menu Body -->
               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
+                    <a href="javascript:void(0);">职位:{{loginInfo.position || '老大'}}</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <router-link to="/platform/secure">个人设置</router-link>
                   </div>
                 </div>
                 <!-- /.row -->
@@ -141,7 +167,7 @@ destroyed() {
 }
 }
 </script>
-<style scoped>
+<style leng="less" scoped>
   .animated {
     animation-duration: .2s;
   }
@@ -156,9 +182,17 @@ destroyed() {
     left:0;
     min-width: 100%;
     box-shadow: 0 2px 3px hsla(0, 0%, 7%, .1), 0 0 0 1px hsla(0, 0%, 7%, .1);
-    z-index: 1030;
+    z-index: 1013;
     animation-name: slideInDown;
     animation-fill-mode: both;
+    background: #20a0ff;
+  }
+
+  .user-body .row{
+      line-height: 20px;
+      border-left:2px solid #20a0ff;
+      padding-left: 5px;
+      margin-top: 10px;
   }
 
   .main-header .navbar .sidebar-toggle {
@@ -599,7 +633,7 @@ destroyed() {
   }
 
   .main-header .navbar {
-    background-color: #3c8dbc;
+    background-color: #20a0ff;
   }
 
   .main-header .navbar .nav > li > a {
@@ -636,14 +670,14 @@ destroyed() {
   }
 
   .main-header .logo {
-    background-color: #367fa9;
+    background-color: #20a0ff;
     color: #ffffff;
     border-bottom: 0 solid transparent;
   }
 
-  .main-header .logo:hover {
+  /* .main-header .logo:hover {
     background-color: #357ca5;
-  }
+  } */
 
   .main-header li.user-header {
     background-color: #3c8dbc;

@@ -11,18 +11,18 @@ export const serialize = (ob) => {
 function interceptor(resp) {
   //通用拦截处理
   const status = resp.status;
-
+console.log(window.location)
   let err = resp.headers.get('x-hpx-error-desc');
   err = decodeURIComponent(err);
   if(status >= 200 && status < 300){
     	return resp;
   }else{
 	if(status == 400){//bad request
-		console.log(err)
       	throw err;
     }else if(status == 401){//未认证
       	throw err;
-    }else if(status == 403){//没有权限
+	}else if(status == 403){//没有权限
+		window.location.href = window.origin + '/#/'
       	throw err;
     }else if(status >= 500){
 		
@@ -59,7 +59,7 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 				'Content-Type': 'application/json'
 			},	
 			mode: "cors",
-			cache: "force-cache"
+			cache: "no-cache"
 		}
 
 		if (type == 'FORM') {

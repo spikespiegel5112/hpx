@@ -74,6 +74,8 @@
                     },{
                     label : '差异类型',
                     prop  : 'differenceType',
+                    formatter : (row,column) => row.differenceType === '0' ? "正常" :
+                     row.differenceType === '1' ?"少发" : row.differenceType === '2' ?"多发" :""
                     }
                 ],
                 //总页数

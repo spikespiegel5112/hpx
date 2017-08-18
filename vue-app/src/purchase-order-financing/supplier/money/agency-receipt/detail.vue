@@ -8,11 +8,9 @@
                 :empty-text="emptyText"
                 :data="tableList"
                 v-loading="listLoading"
-                highlight-current-row
                 style="width: 100%">
                 <el-table-column
-                  type="index"
-                  width="100">
+                  type="index">
                 </el-table-column>
                 <el-table-column
                     v-for="(value,i) in columns"
@@ -51,9 +49,9 @@
                     },{
                     label : '付款方',
                     prop  : 'payerAccountName',
-                    },,{
+                    },{
                     label : '收款银行账号',
-                    prop  : 'payeeBankSccount',
+                    prop  : 'payeeBankAccount',
                     minWidth : 130,
                     },{
                     label : '收款方',
@@ -83,6 +81,10 @@
             myPagination,
     	},
         created(){
+        },
+        activated(){
+            this.tableList = [];
+            this.getList();
         },
         mounted(){
 

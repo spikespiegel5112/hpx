@@ -7,6 +7,7 @@ import testD from '@/purchase-order-financing/test-demander'
 import zfdenabderList from '@/purchase-order-financing/investors/customerManagement/demanderList'
 import zfsupplierList from '@/purchase-order-financing/investors/customerManagement/supplierList'
 import purchaseContract from '@/purchase-order-financing/investors/purchaseContract'
+import salesContract from '@/purchase-order-financing/investors/salesContract'
 import investors from '@/purchase-order-financing/investors'
 import signature from '@/purchase-order-financing/investors/purchaseContract/signature'
 import receipt from '@/purchase-order-financing/investors/purchaseContract/receipt'
@@ -25,18 +26,29 @@ import gf_replacementManagement from '@/purchase-order-financing/supplier/after-
 import gf_replacementManagementDetail from '@/purchase-order-financing/supplier/after-sale-management/replacementManagement/replacementManagementDetail'
 import gf_buyInManagement from '@/purchase-order-financing/supplier/after-sale-management/buyInManagement/buyInManagement'
 import gf_buyInManagementDetail from '@/purchase-order-financing/supplier/after-sale-management/buyInManagement/buyInManagementDetail'
+import gf_myContract from '@/purchase-order-financing/supplier/myContract/index'
+import gf_myContractDetail from '@/purchase-order-financing/supplier/myContract/receivingDetail'
 
 import gf_agencyReceipt from '@/purchase-order-financing/supplier/money/agency-receipt/agency-receipt'
 import gf_agencyReceiptDetail from '@/purchase-order-financing/supplier/money/agency-receipt/detail'
-
 import gf_agencyReceiptRecord from '@/purchase-order-financing/supplier/money/agency-receipt-record/agency-receipt-record'
 import gf_agencyReceiptRecordDetail from '@/purchase-order-financing/supplier/money/agency-receipt-record/detail'
-
 import gf_paymentReceipt from '@/purchase-order-financing/supplier/money/payment-receipt/payment-receipt'
 import gf_paymentReceiptDetail from '@/purchase-order-financing/supplier/money/payment-receipt/detail'
-
 import gf_paymentReceiptRecord from '@/purchase-order-financing/supplier/money/payment-receipt-record/payment-receipt-record'
 import gf_paymentReceiptRecordDetail from '@/purchase-order-financing/supplier/money/payment-receipt-record/detail'
+
+import xf_agencyReceipt from '@/purchase-order-financing/demander/money/agency-receipt/agency-receipt'
+import xf_agencyReceiptDetail from '@/purchase-order-financing/demander/money/agency-receipt/detail'
+import xf_agencyReceiptRecord from '@/purchase-order-financing/demander/money/agency-receipt-record/agency-receipt-record'
+import xf_agencyReceiptRecordDetail from '@/purchase-order-financing/demander/money/agency-receipt-record/detail'
+import xf_paymentReceipt from '@/purchase-order-financing/demander/money/payment-receipt/payment-receipt'
+import xf_paymentReceiptDetail from '@/purchase-order-financing/demander/money/payment-receipt/detail'
+import xf_paymentReceiptRecord from '@/purchase-order-financing/demander/money/payment-receipt-record/payment-receipt-record'
+import xf_paymentReceiptRecordDetail from '@/purchase-order-financing/demander/money/payment-receipt-record/detail'
+import xf_order from '@/purchase-order-financing/demander/order/index'
+import xf_orderDetail from '@/purchase-order-financing/demander/order/orderDetail'
+import xf_myContract from '@/purchase-order-financing/demander/myContract/index'
 
 import gf_address from '@/purchase-order-financing/supplier/address/address'
 import zf_address from '@/purchase-order-financing/investors/address/address'
@@ -46,6 +58,11 @@ import zf_productMaintenance from '@/purchase-order-financing/investors/product-
 
 import xf_warning from '@/purchase-order-financing/demander/warning/warning'
 import zf_warning from '@/purchase-order-financing/investors/warning/warning'
+
+import zf_deliveryNote from '@/purchase-order-financing/investors/delivery-note/delivery-note'
+import zf_deliveryNoteDetail from '@/purchase-order-financing/investors/delivery-note/detail'
+import xf_deliveryNote from '@/purchase-order-financing/demander/delivery-note/delivery-note'
+import xf_deliveryNoteDetail from '@/purchase-order-financing/demander/delivery-note/detail'
 // 路径path 1 以purchase-order-financing为标准 2 需方 命名 前面 加上xf_  资方 zf_ 供应商 gf_
 
 //货品维护
@@ -58,7 +75,7 @@ export default {
     path : '/porderf/:pjId',
     component : wrapComponent,
     children : [{
-			path: '/',
+			path: '',
 			component: investors,
 			meta: ['首页', '资方'],
         },{
@@ -72,15 +89,19 @@ export default {
         },{
 			path: 'zf_demander',
 			component: zfdenabderList,
-			meta: ['需方列表', '资方'],
+			meta: ['资方', '需方列表'],
         },{
 			path: 'zf_supplier',
 			component: zfsupplierList,
-			meta: ['供应商列表', '资方'],
+			meta: ['资方', '供应商列表'],
         },{
 			path: 'zf_purchaseContract',
 			component: purchaseContract,
 			meta: ['资方', '采购合同'],
+        },{
+			path: 'zf_salesContract',
+			component: salesContract,
+			meta: ['资方', '销售合同'],
         },{
 			path: 'zf_purchaseContract/signature/:id?',
 			component: signature,
@@ -96,7 +117,7 @@ export default {
         },{
 			path: 'zf_orders',
 			component: business.orderManager,
-			meta: ['业务管理', '订单管理'],
+			meta: ['资方', '订单管理'],
         },{
 			path: 'zf_refundManagement',
 			component: zf_refundManagement,
@@ -104,7 +125,7 @@ export default {
         },{
 			path: 'zf_refundManagement/zf_refundManagementDetail/:tAfterSaleId',
 			component: zf_refundManagementDetail,
-			meta: ['售后管理', '退款管理明细'],
+			meta: ['售后管理', '退款管理', '退款管理明细'],
         },{
 			path: 'zf_replacementManagement',
 			component: zf_replacementManagement,
@@ -112,7 +133,7 @@ export default {
         },{
 			path: 'zf_replacementManagement/zf_replacementManagementDetail/:tAfterSaleId',
 			component: zf_replacementManagementDetail,
-			meta: ['售后管理', '补发管理明细'],
+			meta: ['售后管理', '补发管理', '补发管理明细'],
         },{
 			path: 'zf_buyInManagement',
 			component: zf_buyInManagement,
@@ -120,19 +141,19 @@ export default {
         },{
 			path: 'zf_buyInManagement/zf_buyInManagementDetail/:tAfterSaleId',
 			component: zf_buyInManagementDetail,
-			meta: ['售后管理', '补购管理明细'],
+			meta: ['售后管理', '补购管理', '补购管理明细'],
         },{
 			path: 'zf_orders/detail/:orderId/:demanderId',
 			component: business.orderDetail,
-			meta: ['业务管理', '订单管理','订单详情'],
+			meta: ['资方', '订单管理','订单详情'],
         },{
 			path: 'zf_orders/createcp/:orderId/:demanderId',
 			component: business.orderCreateCp,
-			meta: ['业务管理', '订单管理','生成采购合同'],
+			meta: ['资方', '订单管理','生成采购合同'],
         },{
 			path: 'zf_orders/createsc/:orderId/:demanderId',
 			component: business.orderCreateSc,
-			meta: ['业务管理', '订单管理','生成销售合同'],
+			meta: ['资方', '订单管理','生成销售合同'],
         },{
 			path: 'gf_agencyReceipt',
 			component: gf_agencyReceipt,
@@ -140,7 +161,7 @@ export default {
         },{
 			path: 'gf_agencyReceipt/gf_agencyReceiptDetail/:paymentId',
 			component: gf_agencyReceiptDetail,
-			meta: ['供应商', '待收款明细'],
+			meta: ['供应商', '待收款', '待收款明细'],
         },{
 			path: 'gf_agencyReceiptRecord',
 			component: gf_agencyReceiptRecord,
@@ -148,7 +169,7 @@ export default {
         },{
 			path: 'gf_agencyReceiptRecord/gf_agencyReceiptRecordDetail/:paymentId',
 			component: gf_agencyReceiptRecordDetail,
-			meta: ['供应商', '历史收款明细'],
+			meta: ['供应商', '历史收款', '历史收款明细'],
         },{
 			path: 'gf_paymentReceipt',
 			component: gf_paymentReceipt,
@@ -156,7 +177,7 @@ export default {
         },{
 			path: 'gf_paymentReceipt/gf_paymentReceiptDetail/:paymentId',
 			component: gf_paymentReceiptDetail,
-			meta: ['供应商', '待付款明细'],
+			meta: ['供应商', '待付款', '待付款明细'],
         },{
 			path: 'gf_paymentReceiptRecord',
 			component: gf_paymentReceiptRecord,
@@ -164,7 +185,39 @@ export default {
         },{
 			path: 'gf_paymentReceiptRecord/gf_paymentReceiptRecordDetail/:paymentId',
 			component: gf_paymentReceiptRecordDetail,
-			meta: ['供应商', '历史付款明细'],
+			meta: ['供应商', '历史付款', '历史付款明细'],
+        },{
+			path: 'xf_agencyReceipt',
+			component: xf_agencyReceipt,
+			meta: ['需方', '待收款'],
+        },{
+			path: 'xf_agencyReceipt/xf_agencyReceiptDetail/:paymentId',
+			component: xf_agencyReceiptDetail,
+			meta: ['需方', '待收款', '待收款明细'],
+        },{
+			path: 'xf_agencyReceiptRecord',
+			component: xf_agencyReceiptRecord,
+			meta: ['需方', '历史收款'],
+        },{
+			path: 'xf_agencyReceiptRecord/xf_agencyReceiptRecordDetail/:paymentId',
+			component: xf_agencyReceiptRecordDetail,
+			meta: ['需方', '历史收款', '历史收款明细'],
+        },{
+			path: 'xf_paymentReceipt',
+			component: xf_paymentReceipt,
+			meta: ['需方', '待付款'],
+        },{
+			path: 'xf_paymentReceipt/xf_paymentReceiptDetail/:paymentId',
+			component: xf_paymentReceiptDetail,
+			meta: ['需方', '待付款', '待付款明细'],
+        },{
+			path: 'xf_paymentReceiptRecord',
+			component: xf_paymentReceiptRecord,
+			meta: ['需方', '历史付款'],
+        },{
+			path: 'xf_paymentReceiptRecord/xf_paymentReceiptRecordDetail/:paymentId',
+			component: xf_paymentReceiptRecordDetail,
+			meta: ['需方', '历史付款', '历史付款明细'],
         },{
 			path: 'gf_address',
 			component: gf_address,
@@ -189,6 +242,45 @@ export default {
 			path: 'zf_warning',
 			component: zf_warning,
 			meta: ['资方', '风控预警'],
+        },{
+			path: 'zf_deliveryNote',
+			component: zf_deliveryNote,
+			meta: ['资方', '提货单'],
+        },{
+			path: 'zf_deliveryNote/zf_deliveryNoteDetail/:tOrderDetailId',
+			component: zf_deliveryNoteDetail,
+			meta: ['资方', '提货单', '提货单明细'],
+        },{
+			path: 'xf_deliveryNote',
+			component: xf_deliveryNote,
+			meta: ['需方', '提货单'],
+        },{
+			path: 'xf_deliveryNote/xf_deliveryNoteDetail/:tOrderDetailId',
+			component: xf_deliveryNoteDetail,
+			meta: ['需方', '提货单', '提货单明细'],
+        },{
+			path: 'gf_myContract',
+			component: gf_myContract,
+			meta: ['供应商', '我的合同'],
+        },{
+			path: 'gf_myContract/gf_myContractDetail/:tContractId',
+			component: gf_myContractDetail,
+			meta: ['供应商', '我的合同', '收货单清单'],
+        },{
+			path: 'xf_order',
+			component: xf_order,
+			meta: ['需方', '订单管理'],
+        },{
+			path: 'xf_order/xf_orderDetail/:id',
+			component: xf_orderDetail,
+			meta: ['需方', '订单管理','查看明细'],
+        },{
+			path: 'xf_myContract',
+			component: xf_myContract,
+			meta: ['需方', '我的合同'],
         }
+
+
+		
     ]
 }

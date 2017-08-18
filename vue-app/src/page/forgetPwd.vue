@@ -30,7 +30,7 @@
                     <el-form-item>
                         <div class="sub-button">
                             <el-button type="primary" :disabled="subButton.disabled" @click="submitForm('ruleForm')">{{subButton.msg}}</el-button>
-                            <el-button @click="resetForm('ruleForm')">重置</el-button>
+                            <el-button type="text" style="margin-left: 20px;" @click="back">返回登录</el-button>
                         </div>
                     </el-form-item>
                 </el-form>
@@ -175,6 +175,9 @@ export default {
                 }
             });
         },
+        back(){
+            this.$router.push('/');
+        },
         resetForm(formName) {
             this.$refs[formName].resetFields();
         }
@@ -248,8 +251,8 @@ export default {
 }
 
 .sub-button {
-    margin-left: 50%;
-    transform: translateX(-50%);
+    /* margin-left: 50%; */
+    /* transform: translateX(-10%); */
     margin-top: 30px;
 }
 
