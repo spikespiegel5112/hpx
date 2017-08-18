@@ -49,7 +49,7 @@ const router = {
             component: projectsMaintenance,
             meta: ['项目管理', '项目维护'],
         }, {
-            path: 'pro-role',
+            path: 'role',
             name: 'projectRoleManagement',
             component: projectRoleManagement,
             meta: ['项目管理', '项目角色管理'],

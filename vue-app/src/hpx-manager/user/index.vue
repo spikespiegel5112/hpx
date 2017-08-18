@@ -481,6 +481,37 @@ export default {
                 }
             })
         },
+        debindRoleToUser(){
+            let roleCodeArr=[];
+            for (var index in this.selectedRoleListData){
+                roleCodeArr.push({
+                    roleCode:this.selectedRoleListData[index]
+                })
+            }
+
+            let options={
+                body:roleCodeArr,
+                eid: this.$store.state.loginInfo.enterpriseId,
+                uid: this.configRoleUid,
+                pid: 1
+            }
+            console.log(this.selectedRoleListData)
+            console.log(options)
+            addRoleInfoToUserRequest(options).then(response=>{
+                if(response.status==200){
+                    this.selectedRoleListData=[];
+                    this.$message({
+                        message: '绑定成功！',
+                        type: 'success'
+                    })
+                }else{
+                    this.$message({
+                        message: '绑定失败！',
+                        type: 'errpr'
+                    })
+                }
+            })
+        },
         getUserRoleInfo(){
             let options={
                 eid:this.$store.state.loginInfo.enterpriseId,
