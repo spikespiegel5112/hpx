@@ -21,10 +21,21 @@ const product = r => require.ensure([], () => r(require('@/hpx-manager/product')
 const noticeList = r => require.ensure([], () => r(require('@/hpx-manager/product/noticeList')), 'noticeList');
 const noticeEdit = r => require.ensure([], () => r(require('@/hpx-manager/product/noticeEdit')), 'noticeEdit');
 
+const userManager = r => require.ensure([], () => r(require('@/hpx-manager/user-manager')), 'userManager');
 const user = r => require.ensure([], () => r(require('@/hpx-manager/user')), 'user');
 const agreement = r => require.ensure([], () => r(require('@/hpx-manager/agreement')), 'agreement');
 const dictionary = r => require.ensure([], () => r(require('@/hpx-manager/dictionary')), 'dictionary');
 const signatureManager = r => require.ensure([], () => r(require('@/hpx-manager/signature-manager')), 'signatureManager');
+
+/**
+ * 权限 测试
+ */
+const menu = r => require.ensure([], () => r(require('@/view/menu')), 'menu');
+const resource = r => require.ensure([], () => r(require('@/view/resource')), 'resource');
+const role = r => require.ensure([], () => r(require('@/view/role')), 'role');
+const userN = r => require.ensure([], () => r(require('@/view/user')), 'userN');
+const NotFoundView = r => require.ensure([], () => r(require('@/page/404')), 'NotFoundView');
+
 
 const router = {
     path: '/manager',
@@ -58,12 +69,14 @@ const router = {
             name: 'projectCreate',
             component: projectCreate,
             meta: ['项目管理', '新建项目'],
-        },{
-             path: 'item/typerolebinding',
+        },
+        {
+             path: 'typerolebinding',
              name: 'enterpriseTypeRoleBinding',
              component: enterpriseTypeRoleBinding,
              meta: ['项目管理', '项目维护', '企业类型角色绑定'],
-        },{
+        },
+        {
             path: 'invite-audit',
             component: inviteAudit,
             meta: ['项目管理', '邀请审核'],
@@ -92,6 +105,10 @@ const router = {
             component: enterpriseInfo,
             meta: ['企业管理', '企业信息'],
         },{
+            path: 'user-manager',
+            component: userManager,
+            meta: ['企业管理', '企业用户'],
+        },{
             path: 'protocol',
             component: agreement,
             meta: ['协议授权管理'],
@@ -114,7 +131,32 @@ const router = {
 			path: 'signature',
 			component: signatureManager,
 			meta: ['签章管理'],
-		}]
+        },
+        {
+            path : 'menu',
+            component:menu,
+            meta: ['权限管理', '菜单管理'],
+        },
+        {
+            path : 'resource',
+            component:resource,
+            meta: ['权限管理', '资源管理'],
+        },
+        {
+            path : 'role',
+            component:role,
+            meta: ['权限管理', '角色管理'],
+        },
+        {
+            path : 'auth-user',
+            component:user,
+            meta: ['权限管理', '用户管理'],
+        },
+        {
+            path: '*',
+            component: NotFoundView
+        }
+    ]
 }
 
 export default router;
