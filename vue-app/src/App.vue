@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import "font-awesome/css/font-awesome.css";
 import headerTop from '@/components/headerTop'
 export default {
 	components : {
