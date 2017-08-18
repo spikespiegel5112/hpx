@@ -84,6 +84,11 @@ html {
     // background-color: #F5F5F5;
 }
 
+//fa 字体图标
+.fa{
+    // font-size: 20px;
+}
+
 .fillcontain {
     height: 100%;
     width: 100%;
@@ -131,7 +136,9 @@ html {
 }
 
 .router-container {
-    margin: 50px 30px 30px 230px;
+    margin: 0 30px 30px 230px;
+    padding-top:50px;
+    min-height : 100%;
     // margin-left:200px;
     // background:#e9e9e9;
 }
@@ -288,4 +295,15 @@ div.el-table {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+// el-table 字号
+.el-table{
+    table{
+        .cell,th>div{
+            padding-left:15px;
+            padding-right:15px;
+        }
+    }
+
 }
