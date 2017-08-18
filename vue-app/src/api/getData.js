@@ -296,7 +296,7 @@ export const getInviteRecordsList = options =>{
 }
 
 /**
- * 取得企业项目邀请记录列表
+ * 取得企业项目邀请（受邀请）列表, 支持分页
  */
 
 export const projectsAuditListRequest = data => fetch('/core/core/api/v1/enterprise/projects/vo/', data);

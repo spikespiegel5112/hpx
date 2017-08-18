@@ -58,8 +58,8 @@
 import headTop from '@/components/headTop'
 import moment from 'moment'
 import {
-	projectsAuditListRequest
-} from '@/api/getData'
+	projectListRequest
+} from '@/api/enterpriseApi'
 import {
 	auditProjectRequest
 } from '@/api/coreApi'
@@ -155,7 +155,7 @@ export default {
 			}
 			options = Object.assign(options.params, this.pagination.params);
 			console.log(options);
-			projectsAuditListRequest(options).then(response => {
+			projectListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'));
 				response.json().then(result => {
 					console.log(result);
@@ -164,11 +164,7 @@ export default {
 			})
 		},
 		async search() {
-			try {
-				this.getList();
-			} catch (e) {
-
-			}
+            this.getList();
 		},
 		resetForm(formName) {
 			this.$refs[formName].resetFields();

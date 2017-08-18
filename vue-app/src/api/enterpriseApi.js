@@ -62,9 +62,9 @@ export const enterpriseListRequest = options =>{
 }
 
 /**
- * 取得企业项目邀请记录列表
+ * 平台项目列表, 支持分页
  */
-export const projectsAuditListRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${inviteStatus}/state/${state}`, options.params);
+export const enterpriseProjectsRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${inviteStatus}/state/${state}`, options.params);
 
 /**
  * 获取企业准入信息
