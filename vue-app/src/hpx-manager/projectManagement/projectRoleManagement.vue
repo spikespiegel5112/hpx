@@ -328,7 +328,7 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId
 			};
 
-			options.params = Object.assign(this.pagination.params, this.query)
+			options.params = Object.assign(this.pagination.params, this.queryt)
 			console.log(options);
 			getRolesListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))

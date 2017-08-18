@@ -233,6 +233,21 @@ export const getEUserList = (params) => fetch(`/core/core/api/v1/user`,params);
 export const getEnterpriseList = () => fetch(`/core/core/api/v1/enterprises`,{});
 
 /**
+ * 新增用户授权
+ */
+export const addRoleInfoToUserRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/users/${options.uid}/projects/${options.pid}/roles/userRole`, options.body, 'put');
+
+/**
+ * 取得指定用户授权
+ */
+export const getRoleInfoByUser = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/users/${options.uid}/projects/${options.pid}/roles/${options.roleCode}/userRole/${options.id}`);
+
+/**
+ * 取得用户角色, 支持分页
+ */
+export const getRoleListByUserRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/users/${options.uid}/projects/${options.pid}/roles/userRole`,{});
+
+/**
  * 审核项目
  */
 

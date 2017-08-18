@@ -53,7 +53,7 @@
                     <template scope="scope">
                         <el-button type="text" size="small" @click="abled(scope.row.id, scope.row.eid)">{{scope.row.enabled === 'F' ? '禁用' : '启用'}}</el-button>
                         <el-button type="text" size="small" @click="edite(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" size="small" @click="configure(scope.$index, scope.row)">配置角色</el-button>
+                        <el-button type="text" size="small" @click="configureRole(scope)">配置角色</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -101,54 +101,39 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editeModalVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="editSubmit('editeData')">提交</el-button>
+                <el-button type="primary" @click.native="bindRoleToUser()">提交</el-button>
             </div>
         </el-dialog>
         <!--配置角色页面-->
-        <el-dialog title="配置角色" v-model="configureVisible" :close-on-click-modal="false">
-             <!--<el-checkbox-group-->
-                <!--v-model="checkedCities1"-->
-                <!--:min="1"-->
-                <!--:max="2">-->
-                <!--<el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>-->
-            <!--</el-checkbox-group>-->
-
-            <template>
-                <el-table
-                    :data="roleListTransferData"
-                    style="width: 100%">
-                    <el-table-column
-                        prop="date"
-                        label="日期"
-                        width="180">
-                    </el-table-column>
-                    <el-table-column
-                        prop="address"
-                        label="地址">
-                    </el-table-column>
-                </el-table>
-            </template>
-
+        <el-dialog title="配置角色" v-model="configureRoleVisible" :close-on-click-modal="true">
+            <!--<template>-->
+                <!--<el-table :data="roleList" style="width: 100%">-->
+                    <!--<el-table-column prop="name" label="角色名" width="180">-->
+                    <!--</el-table-column>-->
+                    <!--<el-table-column prop="code" label="Code">-->
+                    <!--</el-table-column>-->
+                    <!--<el-table-column label="操作">-->
+                        <!--<template scope="scope">-->
+                            <!--<el-button type="text" size="small" @click="bindRoleToUser(scope)">绑定</el-button>-->
+                        <!--</template>-->
+                    <!--</el-table-column>-->
+                <!--</el-table>-->
+            <!--</template>-->
+            <!--<section class="main-pagination">-->
+                <!--<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10]" layout="total, prev, pager, next, jumper" :total="roleListPagination.total">-->
+                <!--</el-pagination>-->
+            <!--</section>-->
             <template>
                 <el-transfer
                     width="300"
-                    v-model="configProjectData.role"
-                    :data="roleListTransferData">
+                    v-model="selectedRoleListData"
+                    :data="unselectedRoleListData">
                 </el-transfer>
             </template>
 
-
-            <!--<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">-->
-                <!--<el-form-item prop="role">-->
-                    <!--<el-select v-model="configProjectData.role">-->
-                        <!--<el-option v-for="item in roleList" :value="item.code" :key="item.code" :label="item.name">-->
-                        <!--</el-option>-->
-                    <!--</el-select>-->
-                <!--</el-form-item>-->
-            <!--</el-form>-->
             <div slot="footer" class="dialog-footer">
-                <el-button @click.native="configureVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="editSubmit('editeData')">提交</el-button>
+                <el-button @click.native="configureRoleVisible = false">取消</el-button>
+                <el-button type="primary" @click.native="bindRoleToUser">提交</el-button>
             </div>
         </el-dialog>
     </div>
@@ -161,7 +146,7 @@ import myPagination from '../../components/myPagination'
 import {
     getRolesListRequest,
 } from '@/api/enterpriseApi'
-import { getEUserList, getEnterpriseList, abledUser, addUser, editUser, getroleList } from '@/api/coreApi'
+import { getEUserList, getEnterpriseList, abledUser, addUser, editUser, getroleList,addRoleInfoToUserRequest,getRoleListByUser, getRoleListByUserRequest } from '@/api/coreApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
 import { checkEmail, checkPhone, checkPassword } from '../../config/mUtils'
@@ -291,15 +276,19 @@ export default {
                 ],
             },
             // 配置角色
-            configureVisible: false,
+            configureRoleVisible: false,
             roleList: [],
-            configProjectData:{
-                role:''
+            configRoleUid:null,
+            selectedRoleListData:[],
+            unselectedRoleListData:[],
+            //角色列表分页信息
+            roleListPagination: {
+                params: {
+                    page: 1,
+                    size: 10
+                },
+                total: 0
             },
-            configProjectRules:[{
-                required: true, message: '请选择企业', trigger: 'change'
-            }],
-            roleListTransferData:[]
         }
     },
     components: {
@@ -319,7 +308,6 @@ export default {
         },
         async initData() {
             this.getList();
-            this.getRolesList();
         },
         async getList() {
             this.listLoading = true;
@@ -329,6 +317,7 @@ export default {
                 const res = await resp.json();
                 const result = await getEnterpriseList();
                 const resu = await result.json();
+                console.log(resu)
                 this.enterpriseList = resu;
                 res.map((v) => {
                     v.gender = v.gender === 'F' ? '女' : '男';
@@ -387,10 +376,7 @@ export default {
             this.modalTitle = '编辑',
             this.editeModalVisible = true;
         },
-        configure(index, row) {
-            this.editeData = { ...row };
-            this.configureVisible = true;
-        },
+
 
         async editSubmit(formName) {
             this.editeData.eid = this.editeData.eid.toString();
@@ -415,24 +401,102 @@ export default {
                 }
             });
         },
+        configureRole(scope) {
+            this.configRoleUid=scope.row.id;
+            this.getRolesList();
+            this.selectedRoleListData=[];
+            this.unselectedRoleListData=[];
+            this.configureRoleVisible = true;
+        },
         getRolesList(){
             let options={
+                params:{},
                 eid:this.$store.state.loginInfo.enterpriseId
             }
+            options.params=Object.assign(options.params)
+            console.log(options)
             getRolesListRequest(options).then(response=>{
+                this.roleListPagination.total=Number(response.headers.get('x-total-count'))
                 response.json().then(result=>{
-                    console.log(result)
-                    this.roleList=result
+//                    console.log(result)
+                    this.roleList=result;
+                    this.unselectedRoleListData=[];
                     for(var index in this.roleList){
-                        this.roleListTransferData.push({
+                        this.unselectedRoleListData.push({
                             label:this.roleList[index].name,
                             key: this.roleList[index].code
                         })
                     }
-
+                    console.log(this.unselectedRoleListData)
                 })
             })
-        }
+
+            let options2={
+                eid:this.$store.state.loginInfo.enterpriseId,
+                uid:this.configRoleUid,
+                pid:1
+            }
+            console.log(options2)
+//            this.selectedRoleListData=[1,2,3,4,5];
+            this.selectedRoleListData=[];
+            getRoleListByUserRequest(options2).then(response=>{
+                response.json().then(result=>{
+                    console.log(result)
+                    for(let index in result){
+                        this.selectedRoleListData.push(result[index].roleCode);
+                    }
+                    console.log(this.selectedRoleListData)
+                })
+            })
+
+        },
+        bindRoleToUser(){
+            let roleCodeArr=[];
+            for (var index in this.selectedRoleListData){
+                roleCodeArr.push({
+                    roleCode:this.selectedRoleListData[index]
+                })
+            }
+
+            let options={
+                body:roleCodeArr,
+                eid: this.$store.state.loginInfo.enterpriseId,
+                uid: this.configRoleUid,
+                pid: 1
+            }
+            console.log(this.selectedRoleListData)
+            console.log(options)
+            addRoleInfoToUserRequest(options).then(response=>{
+                if(response.status==200){
+                    this.selectedRoleListData=[];
+                    this.$message({
+                        message: '绑定成功！',
+                        type: 'success'
+                    })
+                }else{
+                    this.$message({
+                        message: '绑定失败！',
+                        type: 'errpr'
+                    })
+                }
+            })
+        },
+        getUserRoleInfo(){
+            let options={
+                eid:this.$store.state.loginInfo.enterpriseId,
+                uid:this.configRoleUid,
+                pid:1
+            }
+            getRoleInfoByUser(options).then(response=>{
+                response.json().then(result=>{
+                    console.log(result)
+                })
+            })
+        },
+        flipPage(pageIndex) {
+            this.roleListPagination.params.page = pageIndex;
+            this.getRolesList();
+        },
     },
      watch : {
             pagination : {

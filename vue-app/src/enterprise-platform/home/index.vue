@@ -123,9 +123,9 @@ export default {
 					eid: this.loginInfo.enterpriseId,
 					page: 1,
 					size: 6,
+					state:'T',
 					projectState: 'R',
-                    state: 'T',
-                    inviteStatus: 'T'
+					inviteStatus: 'T'
 				}
 			}
 			projectListRequest(options).then(response => {
@@ -143,15 +143,15 @@ export default {
                 this.getCurrentProjectId(item.pjId);
                 this.getCurrentProjectRole(item.enterpriseRole);
                 let projectPath,roleTypePath;
-                switch(item.productCode){
-                    case 'POF':
+                // switch(item.productCode){
+                    // case 'POF':
                     projectPath = `/porderf/${item.pjId}`;
-                    break;
-                };
-                if(!projectPath || !item.enterpriseRole){
-                    this.$message.error('请检测项目配置情况或联系管理员!');
-                    return;
-                }
+                    // break;
+                // };
+                // if(!projectPath || !item.enterpriseRole){
+                //     this.$message.error('请检测项目配置情况或联系管理员!');
+                //     return;
+                // }
                 this.$router.push({
                     path:projectPath
                 })
