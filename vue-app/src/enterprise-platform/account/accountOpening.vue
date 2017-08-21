@@ -8,20 +8,28 @@
                         <span style="padding:0 20px;line-height: 36px;">线上开户</span>
                     </div>
                     <el-form :model="formData" :rules="rules" ref="formData" label-width="120px">
+                        <el-form-item label="实体名称" prop='stAccountName'>
+                            <el-input v-model="formData.stAccountName" disabled></el-input>
+                        </el-form-item>
                         <el-form-item label="账户类型" prop='platBankType'>
-                            <el-select v-model="formData.platBankType" placeholder="请选择" disabled>
+                            <el-select v-model="formData.platBankType" placeholder="请选择">
                                 <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="银行卡号" prop='stBankAccount'>
+                        <el-form-item label="银行类型" prop='paSbankCode'>
+                            <el-select v-model="formData.paSbankCode" placeholder="请选择" disabled>
+                                <el-option v-for='elem in stSameBankList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="实体账号" prop='stBankAccount'>
                             <el-input v-model.number="formData.stBankAccount"></el-input>
                         </el-form-item>
-                        <el-form-item label="账户名称" prop='stBankName'>
-                            <el-input v-model="formData.stBankName"></el-input>
+
+                        <el-form-item label="银行类型" prop='stSameBank'>
+                            <el-select v-model="formData.stSameBank" placeholder="请选择">
+                                <el-option v-for='elem in stSameBankList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
+                            </el-select>
                         </el-form-item>
-                        <!--<el-form-item label="客户号" prop='hostNo'>-->
-                            <!--<el-input v-model.number="formData.hostNo"></el-input>-->
-                        <!--</el-form-item>-->
 
 
                         <el-row>
@@ -47,9 +55,9 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-form-item label="开户银行" prop='stBankName'>
-                            <el-select v-model="formData.stBankName" placeholder="请选择">
-                                <el-option v-for='elem in stBankList' :key="elem.code" :label='elem.bankname' :value="elem.bankclscode"></el-option>
+                        <el-form-item label="开户银行" prop='stBankCode'>
+                            <el-select v-model="formData.stBankCode" placeholder="请选择" @change="selectOpeningBank">
+                                <el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankno"></el-option>
                             </el-select>
                         </el-form-item>
 
@@ -110,21 +118,31 @@
                 stBankCityList: [],
                 stBankCountryList: [],
                 stBankList: [],
+                stSameBankList: [],
                 formData: {
                     eid: this.$store.state.loginInfo.enterpriseId,
                     code: '',
                     platBankType: '',
                     stBankAccount: '',
-                    stBankName: '',
+                    stAccountName: this.$store.state.loginInfo.enterpriseName,
                     phone: this.$store.state.loginInfo.phone,
                     stBankProvince: '',
                     stBankCity: '',
                     stBankCountry: '',
+                    stBankCode:'',//开户行code
+                    stBankName:'',//开户行名称
+                    paSbankCode:'',//总行code
+                    stSameBank:''//本行他行code
                 },
                 rules: {
-                    platBankType: [{
+                    paSbankCode: [{
                         required: true,
                         message: '请选择账户类型',
+                        trigger: 'change'
+                    }],
+                    platBankType: [{
+                        required: true,
+                        message: '请选择银行类型',
                         trigger: 'change'
                     }],
                     stBankAccount: [{
@@ -134,13 +152,13 @@
                         required: true,
                         message: '请输入账户卡号'
                     }],
-                    stBankName: [{
+                    stAccountName: [{
                         required: true,
                         message: '请输入账户名称'
                     }],
-                    hostNo: [{
-                        type: 'number',
-                        message: '客户号必须为数字值'
+                    stSameBank: [{
+                        required: true,
+                        message: '请选择银行类型'
                     }],
                     code: [{
                         required: true,
@@ -161,7 +179,7 @@
                         message: '请选择开户行区县',
                         'label-width': '50px'
                     }],
-                    stBankName: [{
+                    stBankCode: [{
                         required: true,
                         message: '请选择开户行'
                     }],
@@ -171,11 +189,12 @@
             }
         },
         mounted() {
-            this.getBankList();
+            this.getAccountTypeList();
             this.getProvince();
+            this.getBankTypeList();
         },
         methods: {
-            getBankList() {
+            getAccountTypeList() {
                 let options = {
                     code: 'BANK_TYPE'
                 }
@@ -183,7 +202,17 @@
                     response.json().then(result=>{
                         console.log(result);
                         this.bankTypeList = result;
-                        this.formData.platBankType='302'
+                    })
+                })
+            },
+            getBankTypeList(){
+                let options={
+                    code:'SAME_BANK'
+                }
+                getDictionaryByCodeRequest(options).then(response=>{
+                    response.json().then(result=>{
+                        console.log(result)
+                        this.stSameBankList=result;
                     })
                 })
             },
@@ -194,11 +223,18 @@
                     body: {
                         platBankType: this.formData.platBankType,
                         stBankAccount: this.formData.stBankAccount,
-                        stBankName: this.formData.stBankName,
-                        hostNo: this.formData.hostNo,
-                        phone: this.$store.state.loginInfo.phone
+                        stAccountName: this.formData.stAccountName,
+//                        stAccountCode: this.formData.stAccountCode,
+                        stBankProvince:this.formData.stBankProvince,
+                        stBankCity:this.formData.stBankCity,
+                        stBankCountry:this.formData.stBankCountry,
+                        stBankName:this.formData.stBankName,
+                        stBankCode:this.formData.stBankCode,
+                        paSbankCode:this.formData.paSbankCode,
+                        stSameBank:this.formData.stSameBank
                     }
                 }
+                console.log(options)
                 this.$refs['formData'].validate(valid => {
                     if (valid) {
                         enterpriseAccountOpenRequest(options).then(response => {
@@ -226,10 +262,7 @@
                 this.formData.stBankCountry='';
                 this.getCountry();
             },
-            selectCountry(){
-                this.formData.stBankName='';
-                this.getBank();
-            },
+
             getProvince() {
                 provinces().then(response => {
                     response.json().then(result => {
@@ -260,7 +293,12 @@
                     })
                 })
             },
+            selectCountry(){
+                this.getBank();
+            },
             getBank(){
+                this.stBankList=[];
+                this.formData.stBankCode='';
                 let options={
                     code:this.formData.stBankCity.substring(0,4),
                     bankclscode:this.formData.platBankType.substring(0,3)
@@ -275,6 +313,16 @@
                         this.stBankList = result;
                     })
                 })
+            },
+            selectOpeningBank(value){
+                alert(this.formData.stBankCode)
+                for(var index in this.stBankList){
+                    if(this.formData.stBankCode==this.stBankList[index].bankno){
+
+                        this.formData.stBankName=this.stBankList[index].bankname;
+                        alert(this.formData.stBankName)
+                    }
+                }
             },
             aaa(value){
                 alert(value)
