@@ -125,7 +125,7 @@
             <!--</section>-->
             <template>
                 <el-transfer
-                    width="300"
+                    width="600"
                     v-model="selectedRoleListData"
                     :data="unselectedRoleListData">
                 </el-transfer>
@@ -469,6 +469,7 @@ export default {
             addRoleInfoToUserRequest(options).then(response=>{
                 if(response.status==200){
                     this.selectedRoleListData=[];
+                    this.configureRoleVisible=false;
                     this.$message({
                         message: '绑定成功！',
                         type: 'success'
@@ -478,6 +479,7 @@ export default {
                         message: '绑定失败！',
                         type: 'errpr'
                     })
+                    this.configureRoleVisible=false;
                 }
             })
         },

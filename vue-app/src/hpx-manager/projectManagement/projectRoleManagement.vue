@@ -27,16 +27,19 @@
 	</section>
 
 	<section class="main-table-container">
-		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-			<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-			</el-table-column>
-			<el-table-column label="操作">
-				<template scope="scope">
+        <transition name="el-fade-in-linear">
+            <el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+                <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template scope="scope">
                         <el-button type="text" size="small" @click='editRole(scope)'>修改</el-button>
                         <el-button type="text" size="small" @click='deleteRole(scope)'>删除</el-button>
                     </template>
-			</el-table-column>
-		</el-table>
+                </el-table-column>
+            </el-table>
+        </transition>
+
 
 		<section class="main-pagination">
 			<!-- 特殊情况分页自己按注释的  -->

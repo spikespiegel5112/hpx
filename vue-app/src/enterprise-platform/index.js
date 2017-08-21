@@ -9,7 +9,7 @@ const editPhone = r => require.ensure([], () => r(require('@/enterprise-platform
 const editPwd = r => require.ensure([], () => r(require('@/enterprise-platform/security-setting/edit-pwd')), 'edit-pwd');
 const certification = r => require.ensure([], () => r(require('@/enterprise-platform/certification-ep')), 'certification-ep');
 const servicesOpen = r => require.ensure([], () => r(require('@/enterprise-platform/services-open')), 'enterprise-platform-serivces');
-const accountOpening = r => require.ensure([], () => r(require('@/enterprise-platform/services-open/accountOpening')), 'accountOpening');
+
 const servicesRecord = r => require.ensure([], () => r(require('@/enterprise-platform/services-open/servicesRecord')), 'servicesRecord');
 const enterpriseSignature = r => require.ensure([], () => r(require('@/enterprise-platform/enterprise-signature')), 'enterpriseSignature');
 const user = r => require.ensure([], () => r(require('@/enterprise-platform/user')), 'user');
@@ -22,6 +22,9 @@ const historyProject = r => require.ensure([], () => r(require('@/enterprise-pla
 
 // 邀请记录
 const inviteRecord = r => require.ensure([], () => r(require('@/enterprise-platform/projectManagement/inviteRecord')), 'inviteRecord');
+
+//线上开户
+const accountOpening = r => require.ensure([], () => r(require('@/enterprise-platform/account/accountOpening')), 'accountOpening');
 
 //账户总览
 const accountManagement = r => require.ensure([], () => r(require('@/enterprise-platform/account/accountManagement')), 'accountManagement');
@@ -103,7 +106,7 @@ export default {
             path: 'accountopening',
             name: 'accountOpening',
             component: accountOpening,
-            meta: ["服务开通","线上开户"],
+            meta: ["线上开户"],
         },{
             path: 'services-record',
             component: servicesRecord,
