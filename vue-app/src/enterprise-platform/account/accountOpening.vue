@@ -12,20 +12,20 @@
                             <el-input v-model="formData.stAccountName" disabled></el-input>
                         </el-form-item>
                         <el-form-item label="账户类型" prop='platBankType'>
-                            <el-select v-model="formData.platBankType" placeholder="请选择">
+                            <el-select v-model="formData.platBankType" placeholder="请选择" disabled>
                                 <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="银行类型" prop='paSbankCode'>
-                            <el-select v-model="formData.paSbankCode" placeholder="请选择" disabled>
-                                <el-option v-for='elem in stSameBankList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
+                        <el-form-item label="总行名称" prop='paSbankCode'>
+                            <el-select v-model="formData.paSbankCode" placeholder="请选择">
+                                <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="实体账号" prop='stBankAccount'>
                             <el-input v-model.number="formData.stBankAccount"></el-input>
                         </el-form-item>
 
-                        <el-form-item label="银行类型" prop='stSameBank'>
+                        <el-form-item label="是否他行" prop='stSameBank'>
                             <el-select v-model="formData.stSameBank" placeholder="请选择">
                                 <el-option v-for='elem in stSameBankList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
                             </el-select>
@@ -55,7 +55,7 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-form-item label="开户银行" prop='stBankCode'>
+                        <el-form-item label="开户支行" prop='stBankCode'>
                             <el-select v-model="formData.stBankCode" placeholder="请选择" @change="selectOpeningBank">
                                 <el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankno"></el-option>
                             </el-select>
@@ -122,7 +122,7 @@
                 formData: {
                     eid: this.$store.state.loginInfo.enterpriseId,
                     code: '',
-                    platBankType: '',
+                    platBankType: 'ZX',
                     stBankAccount: '',
                     stAccountName: this.$store.state.loginInfo.enterpriseName,
                     phone: this.$store.state.loginInfo.phone,
@@ -142,7 +142,7 @@
                     }],
                     platBankType: [{
                         required: true,
-                        message: '请选择银行类型',
+                        message: '请选择总行名称',
                         trigger: 'change'
                     }],
                     stBankAccount: [{
@@ -158,7 +158,7 @@
                     }],
                     stSameBank: [{
                         required: true,
-                        message: '请选择银行类型'
+                        message: '请选择总行名称'
                     }],
                     code: [{
                         required: true,
@@ -301,7 +301,7 @@
                 this.formData.stBankCode='';
                 let options={
                     code:this.formData.stBankCity.substring(0,4),
-                    bankclscode:this.formData.platBankType.substring(0,3)
+                    bankclscode:this.formData.paSbankCode.substring(0,3)
                 }
                 console.log(options)
 //                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
