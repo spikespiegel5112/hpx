@@ -144,7 +144,7 @@ const router = {
         },
         {
             path : 'role',
-            component:role,
+            component:projectRoleManagement,
             meta: ['权限管理', '角色管理'],
         },
         {

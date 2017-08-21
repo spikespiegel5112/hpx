@@ -9,51 +9,47 @@
                     </div>
                     <el-form :model="formData" :rules="rules" ref="formData" label-width="120px">
                         <el-form-item label="账户类型" prop='platBankType'>
-                            <el-select v-model="formData.platBankType" placeholder="请选择">
-                                <el-option v-for='elem in bankTypeList' :key="elem.code" :label='elem.name'
-                                           :value="elem.code"></el-option>
+                            <el-select v-model="formData.platBankType" placeholder="请选择" disabled>
+                                <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="开户地址" prop='citicAccNo'>
+                        <el-form-item label="银行卡号" prop='citicAccNo'>
                             <el-input v-model.number="formData.citicAccNo"></el-input>
                         </el-form-item>
                         <el-form-item label="账户名称" prop='citicAccName'>
                             <el-input v-model="formData.citicAccName"></el-input>
                         </el-form-item>
-                        <el-form-item label="客户号" prop='hostNo'>
-                            <el-input v-model.number="formData.hostNo"></el-input>
-                        </el-form-item>
+                        <!--<el-form-item label="客户号" prop='hostNo'>-->
+                            <!--<el-input v-model.number="formData.hostNo"></el-input>-->
+                        <!--</el-form-item>-->
 
 
                         <el-row>
                             <el-col :span="8">
-                                <el-form-item label="开户地址" prop='st_bank_province'>
-                                    <el-select v-model="formData.st_bank_province" placeholder="请选择" @change="selectProvince">
-                                        <el-option v-for='elem in st_bank_provinceList' :key="elem.nodeNodecode" :label='elem.nodeNodename' :value="elem.nodeNodecode"></el-option>
+                                <el-form-item label="开户地址" prop='stBankProvince'>
+                                    <el-select v-model="formData.stBankProvince" placeholder="请选择" @change="selectProvince">
+                                        <el-option v-for='elem in stBankProvinceList' :key="elem.nodeNodecode" :label='elem.nodeNodename' :value="elem.nodeNodecode"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="8">
-                                <el-form-item label="市" prop='st_bank_country'>
-                                    <el-select v-model="formData.st_bank_city" placeholder="请选择" @change="selectCity">
-                                        <el-option v-for='elem in st_bank_cityList' :key="elem.cityAreacode" :label='elem.cityAreaname' :value="elem.cityAreacode"></el-option>
+                                <el-form-item label="市" prop='stBankCity'>
+                                    <el-select v-model="formData.stBankCity" placeholder="请选择" @change="selectCity">
+                                        <el-option v-for='elem in stBankCityList' :key="elem.cityAreacode" :label='elem.cityAreaname' :value="elem.cityAreacode"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="8">
-                                <el-form-item label="区县" prop='st_bank_city'>
-                                    <el-select v-model="formData.st_bank_country" placeholder="请选择">
-                                        <el-option v-for='elem in st_bank_countryList' :key="elem.cityAreacode" :label='elem.cityAreaname' :value="elem.cityAreacode"></el-option>
+                                <el-form-item label="区县" prop='stBankCountry'>
+                                    <el-select v-model="formData.stBankCountry" placeholder="请选择" @change="selectCountry">
+                                        <el-option v-for='elem in stBankCountryList' :key="elem.cityAreacode" :label='elem.cityAreaname' :value="elem.cityAreacode"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                         </el-row>
-
-
-                        <el-form-item label="开户银行" prop='platBankType'>
-                            <el-select v-model="formData.platBankType" placeholder="请选择">
-                                <el-option v-for='elem in bankTypeList' :key="elem.code" :label='elem.name'
-                                           :value="elem.code"></el-option>
+                        <el-form-item label="开户银行" prop='stBankName'>
+                            <el-select v-model="formData.stBankName" placeholder="请选择">
+                                <el-option v-for='elem in stBankList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
                             </el-select>
                         </el-form-item>
 
@@ -110,22 +106,21 @@
         },
         data() {
             return {
-                st_bank_provinceList: [],
-                st_bank_cityList: [],
-                st_bank_countryList: [],
+                stBankProvinceList: [],
+                stBankCityList: [],
+                stBankCountryList: [],
+                stBankList: [],
                 formData: {
                     eid: this.$store.state.loginInfo.enterpriseId,
                     code: '',
                     platBankType: '',
                     citicAccNo: '',
                     citicAccName: '',
-                    hostNo: null,
                     phone: this.$store.state.loginInfo.phone,
-                    st_bank_province: '',
-                    st_bank_city: '',
-                    st_bank_country: '',
-                    st_bank_country: ''
-
+                    stBankProvince: '',
+                    stBankCity: '',
+                    stBankCountry: '',
+                    stBankName: ''
                 },
                 rules: {
                     platBankType: [{
@@ -152,20 +147,24 @@
                         required: true,
                         message: '请输入短信验证码'
                     }],
-                    st_bank_province: [{
+                    stBankProvince: [{
                         required: true,
-                        message: '请输入短信验证码',
+                        message: '请选择开户行省份',
                         'label-width': '50px'
                     }],
-                    st_bank_city: [{
+                    stBankCity: [{
                         required: true,
-                        message: '请输入短信验证码',
+                        message: '请选择开户行城市',
                         'label-width': '50px'
                     }],
-                    st_bank_country: [{
+                    stBankCountry: [{
                         required: true,
-                        message: '请输入短信验证码',
+                        message: '请选择开户行区县',
                         'label-width': '50px'
+                    }],
+                    stBankName: [{
+                        required: true,
+                        message: '请选择开户行'
                     }],
                 },
                 bankTypeList: [],
@@ -181,10 +180,11 @@
                 let options = {
                     code: 'BANK_TYPE'
                 }
-                getDictionaryByCodeRequest(options).then(response => {
-                    response.json().then(result => {
+                bankTypes().then(response=>{
+                    response.json().then(result=>{
                         console.log(result);
                         this.bankTypeList = result;
+                        this.formData.platBankType='302'
                     })
                 })
             },
@@ -220,43 +220,63 @@
                 this.kaptchaImagePath = `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime()
             },
             selectProvince(){
+                this.formData.stBankCity='';
                 this.getCity();
             },
             selectCity(){
+                this.formData.stBankCountry='';
                 this.getCountry();
+            },
+            selectCountry(){
+                this.formData.stBankName='';
+                this.getBank();
             },
             getProvince() {
                 provinces().then(response => {
                     response.json().then(result => {
                         console.log(result)
-                        this.st_bank_provinceList = result;
+                        this.stBankProvinceList = result;
                     })
                 })
             },
             getCity() {
                 let options={
-                    code:this.formData.st_bank_province
+                    code:this.formData.stBankProvince
                 }
                 cities(options.code).then(response => {
                     response.json().then(result => {
                         console.log(result)
-                        this.st_bank_cityList = result;
+                        this.stBankCityList = result;
                     })
                 })
             },
             getCountry() {
                 let options={
-                    code:this.formData.st_bank_city
-                }
+                    code:this.formData.stBankCity
+            }
                 countries(options.code).then(response => {
                     response.json().then(result => {
                         console.log(result)
-                        alert('dsdss')
-                        this.st_bank_countryList = result;
+                        this.stBankCountryList = result;
                     })
                 })
             },
-
+            getBank(){
+                let options={
+                    code:this.formData.stBankCountry,
+                    bankclscode:this.formData.platBankType
+                }
+                console.log(options)
+                bankdes(options.bankclscode, options.code).then(response => {
+                    response.json().then(result => {
+                        console.log(result)
+                        this.stBankList = result;
+                    })
+                })
+            },
+            aaa(value){
+                alert(value)
+            }
         }
     }
 </script>
