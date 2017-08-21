@@ -60,11 +60,6 @@ const router = {
             component: projectsMaintenance,
             meta: ['项目管理', '项目维护'],
         }, {
-            path: 'pro-role',
-            name: 'projectRoleManagement',
-            component: projectRoleManagement,
-            meta: ['项目管理', '项目角色管理'],
-        },{
             path: 'create-pro',
             name: 'projectCreate',
             component: projectCreate,
@@ -144,6 +139,7 @@ const router = {
         },
         {
             path : 'role',
+            name: 'projectRoleManagement',
             component:projectRoleManagement,
             meta: ['权限管理', '角色管理'],
         },

@@ -19,7 +19,7 @@
 						<el-button type="primary" icon="resetTable" @click="resetTable">重置</el-button>
 					</el-form-item>
 					<el-form-item>
-						<el-button icon="plus" type="primary" @click='newRoleDialogFlag = true;'>新增</el-button>
+						<el-button icon="plus" type="primary" @click='createRole'>新增</el-button>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -40,9 +40,7 @@
             </el-table>
         </transition>
 
-
 		<section class="main-pagination">
-			<!-- 特殊情况分页自己按注释的  -->
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
@@ -78,44 +76,36 @@
 		</div>
 	</el-dialog>
 	<!--编辑界面-->
-	<el-dialog title="修改角色" :visible.sync='editProjectDialogFlag' :close-on-click-modal="true">
-		<el-form :model="roleData" label-width="120px" :rules="editRoleRules" ref="editData">
-			<el-form-item label="产品类型" prop="productCode">
-				<el-input v-model="editData.productCode" auto-complete="off" readonly></el-input>
-			</el-form-item>
-			<el-form-item label="角色名称" prop="name">
-				<el-input v-model="editData.name" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="角色说明">
-				<el-input v-model="editData.remark"></el-input>
-			</el-form-item>
-			<el-form-item label="角色开始时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.startTime"></el-date-picker>
-			</el-form-item>
-			<el-form-item label="角色终止时间">
-				<el-date-picker type="date" placeholder="选择日期" v-model="editData.endTime"></el-date-picker>
-			</el-form-item>
-		</el-form>
+	<el-dialog title="修改角色" :visible.sync='editRoleDialogFlag' :close-on-click-modal="true">
+        <el-form :model="roleData" label-width="130px" :rules="createRoleRules" ref="roleData">
+            <el-form-item label="角色名称" prop="name">
+                <el-input v-model="roleData.name" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="角色Code" prop="code">
+                <el-input v-model="roleData.code" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="角色描述" prop="description">
+                <el-input v-model="roleData.description"></el-input>
+            </el-form-item>
+            <el-form-item label="是否可用">
+                <el-radio-group v-model="roleData.available" @change='aaa'>
+                    <el-radio label="T">是</el-radio>
+                    <el-radio label="F">否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="是否允许再次授权">
+                <el-radio-group v-model="roleData.reGrant" @change='aaa'>
+                    <el-radio label="T">是</el-radio>
+                    <el-radio label="F">否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+        </el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="editProjectDialogFlag = false">取消</el-button>
+			<el-button @click.native="editRoleDialogFlag = false">取消</el-button>
 			<el-button type="primary" @click.native="editRoleSubmit">提交</el-button>
 		</div>
 	</el-dialog>
-	<!--角色配置-->
-	<el-dialog title="角色配置" :visible.sync='configProjectFlag' :close-on-click-modal="false">
-		<el-form :model="configProjectData" label-width="120px" :rules="configProjectRules" ref="configProjectData">
-			<el-form-item v-for="elem in projectRoleList" :key="elem.key" :label="elem.enterpriseName" prop="role">
-				<el-select v-model="configProjectData.role">
-					<el-option v-for="item in allRoleList" :value="item.code" :key="item.code" :label="item.name">
-					</el-option>
-				</el-select>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="configProjectFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="editRoleSubmit">提交</el-button>
-		</div>
-	</el-dialog>
+
 </div>
 </template>
 
@@ -136,6 +126,7 @@ import {
 
 
 	createRoleRequest,
+    editRoleRequest,
 	deleteRoleRequest
 } from '@/api/enterpriseApi'
 import {
@@ -237,14 +228,11 @@ export default {
 			//搜索条件的个数
 			criteriaNum: 3,
 			//编辑角色模态框
-			editProjectDialogFlag: false,
+			editRoleDialogFlag: false,
 			editRoleEid: 0,
 			editData: {
-				productCode: '',
-				name: '',
-				remark: '',
-				startTime: '',
-				endTime: ''
+                productCode:'',
+                id:null
 			},
 			editRoleRules: {
 				name: [{
@@ -263,49 +251,6 @@ export default {
 					trigger: 'blur'
 				}],
 			},
-			//编辑角色模态框
-			editProjectDialogFlag: false,
-			editRoleEid: 0,
-			editData: {
-				productCode: '',
-				name: '',
-				remark: '',
-				startTime: '',
-				endTime: ''
-			},
-			editRules: {
-				productCode: [{
-					required: true,
-					message: '请输入角色创建时间',
-					trigger: 'blur'
-				}],
-				createTime: [{
-					required: true,
-					message: '请输入角色创建时间',
-					trigger: 'blur'
-				}],
-				name: [{
-					required: true,
-					message: '请输入角色名称',
-					trigger: 'blur'
-				}]
-			},
-
-			//配置角色模态框
-			configProjectFlag: false,
-			projectRoleList: [],
-			allRoleList: [],
-			configProjectData: {
-				eid: '',
-				epid: '',
-				role: '',
-			},
-			configProjectRules: {
-				role: [{
-					required: true,
-					message: '请选择企业角色类型'
-				}]
-			}
 		}
 	},
 	activated() {
@@ -341,6 +286,10 @@ export default {
 				})
 			})
 		},
+        createRole(){
+            this.newRoleDialogFlag = true;
+            this.$refs['roleData'].resetFields();
+        },
 		createRoleSubmit() {
 			this.$refs['roleData'].validate(valid => {
 				if (valid) {
@@ -374,31 +323,32 @@ export default {
 			})
 		},
 		editRole(scope) {
-			this.editRoleEid = scope.row.id;
-			this.editProjectDialogFlag = true;
-			this.editData.productCode = scope.row.productCode;
-			this.editData = {
-				name: scope.row.name,
-				code: scope.row.code,
-				description: scope.row.description,
-				available: scope.row.available,
-				reGrant: scope.row.reGrant
+			this.editRoleDialogFlag = true;
+			this.roleData = {
+                name: scope.row.name,
+                code: scope.row.code,
+                description: scope.row.description,
+                available: scope.row.available,
+                reGrant: scope.row.reGrant
 			}
+			this.editData={
+                productCode:scope.row.code,
+                id:scope.row.id
+            }
 		},
-
 		editRoleSubmit() {
-			this.$refs['configProjectData'].validate(async(valid) => {
+			this.$refs['roleData'].validate(async(valid) => {
 				if (valid) {
 					try {
 						let options = {
-							eid: this.configProjectData.eid,
-							pid: this.configProjectData.pid,
+                            productCode: this.editData.productCode,
+							id: this.editData.id,
 							body: {
-								code: this.configProjectData.role
+								code: this.roleData
 							}
 						}
 						console.log(options);
-						bindProjectRequest(options).then(response => {
+                        editRoleRequest(options).then(response => {
 							response.json().then(result => {
 								console.log(result);
 								this.configProjectFlag = false;
@@ -422,15 +372,14 @@ export default {
 			})
 		},
 		deleteRole(scope) {
-
+            alert(scope.row.code)
 			this.$confirm('确认删除该角色?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
 				let options = {
-					procode: scope.row.code,
-					ercode: scope.row.productEnterpriseRoleCode,
+                    productCode: scope.row.code,
 					id: scope.row.id
 				}
 				console.log(options)
@@ -440,7 +389,12 @@ export default {
 						type: 'success',
 						message: '删除成功!'
 					});
-				})
+				}).catch(error=>{
+                    this.$message({
+                        type: 'error',
+                        message: error
+                    });
+                })
 			}).catch(() => {
 				this.$message({
 					type: 'info',

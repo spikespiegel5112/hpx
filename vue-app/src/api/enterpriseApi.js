@@ -104,9 +104,14 @@ export const getRolesByProjectRequest = options => fetch(`/core/core/api/v1/ente
 export const createRoleRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/roles`, options.params, 'put');
 
 /*
-** 删除角色信息-物理删除
+** 修改企业角色信息
 */
-export const deleteRoleRequest = options => fetch(`/core/core/api/v1/products/${options.procode}/ent_roles/${options.ercode}/roles/${options.id}`, {}, 'delete');
+export const editRoleRequest = options => fetch(`/core/core/api/v1/products/${options.productCode}/ent_roles/${options.id}`, options.params, 'patch');
+
+/*
+** 删除企业角色信息-物理删除
+*/
+export const deleteRoleRequest = options => fetch(`/core/core/api/v1/products/${options.productCode}/ent_roles/${options.id}`, {}, 'delete');
 
 
 /*
