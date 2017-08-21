@@ -263,10 +263,13 @@
             },
             getBank(){
                 let options={
-                    code:this.formData.stBankCountry,
-                    bankclscode:this.formData.platBankType
+                    code:this.formData.stBankCountry.substring(0,3),
+                    bankclscode:this.formData.platBankType.substring(0,4)
                 }
                 console.log(options)
+//                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
+
+
                 bankdes(options.bankclscode, options.code).then(response => {
                     response.json().then(result => {
                         console.log(result)
