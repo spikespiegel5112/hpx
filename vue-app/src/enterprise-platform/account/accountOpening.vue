@@ -13,11 +13,11 @@
                                 <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="银行卡号" prop='citicAccNo'>
-                            <el-input v-model.number="formData.citicAccNo"></el-input>
+                        <el-form-item label="银行卡号" prop='stBankAccount'>
+                            <el-input v-model.number="formData.stBankAccount"></el-input>
                         </el-form-item>
-                        <el-form-item label="账户名称" prop='citicAccName'>
-                            <el-input v-model="formData.citicAccName"></el-input>
+                        <el-form-item label="账户名称" prop='stBankName'>
+                            <el-input v-model="formData.stBankName"></el-input>
                         </el-form-item>
                         <!--<el-form-item label="客户号" prop='hostNo'>-->
                             <!--<el-input v-model.number="formData.hostNo"></el-input>-->
@@ -49,7 +49,7 @@
                         </el-row>
                         <el-form-item label="开户银行" prop='stBankName'>
                             <el-select v-model="formData.stBankName" placeholder="请选择">
-                                <el-option v-for='elem in stBankList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
+                                <el-option v-for='elem in stBankList' :key="elem.code" :label='elem.bankname' :value="elem.bankclscode"></el-option>
                             </el-select>
                         </el-form-item>
 
@@ -114,13 +114,12 @@
                     eid: this.$store.state.loginInfo.enterpriseId,
                     code: '',
                     platBankType: '',
-                    citicAccNo: '',
-                    citicAccName: '',
+                    stBankAccount: '',
+                    stBankName: '',
                     phone: this.$store.state.loginInfo.phone,
                     stBankProvince: '',
                     stBankCity: '',
                     stBankCountry: '',
-                    stBankName: ''
                 },
                 rules: {
                     platBankType: [{
@@ -128,14 +127,14 @@
                         message: '请选择账户类型',
                         trigger: 'change'
                     }],
-                    citicAccNo: [{
+                    stBankAccount: [{
                         type: 'number',
                         message: '账户卡号必须为数字值'
                     }, {
                         required: true,
                         message: '请输入账户卡号'
                     }],
-                    citicAccName: [{
+                    stBankName: [{
                         required: true,
                         message: '请输入账户名称'
                     }],
@@ -194,8 +193,8 @@
                     code: this.formData.code,
                     body: {
                         platBankType: this.formData.platBankType,
-                        citicAccNo: this.formData.citicAccNo,
-                        citicAccName: this.formData.citicAccName,
+                        stBankAccount: this.formData.stBankAccount,
+                        stBankName: this.formData.stBankName,
                         hostNo: this.formData.hostNo,
                         phone: this.$store.state.loginInfo.phone
                     }
@@ -253,7 +252,7 @@
             getCountry() {
                 let options={
                     code:this.formData.stBankCity
-            }
+                }
                 countries(options.code).then(response => {
                     response.json().then(result => {
                         console.log(result)
@@ -263,8 +262,8 @@
             },
             getBank(){
                 let options={
-                    code:this.formData.stBankCountry.substring(0,3),
-                    bankclscode:this.formData.platBankType.substring(0,4)
+                    code:this.formData.stBankCity.substring(0,4),
+                    bankclscode:this.formData.platBankType.substring(0,3)
                 }
                 console.log(options)
 //                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
