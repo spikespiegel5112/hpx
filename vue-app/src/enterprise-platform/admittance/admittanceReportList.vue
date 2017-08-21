@@ -8,7 +8,7 @@
 			<el-row>
 				<el-col :span="4">
 					<el-form-item prop="name">
-						<el-select v-model="queryOption" placeholder="请选择" @change='clearQuery'>
+						<el-select v-model="queryOption" placeholder="请选择">
 							<el-option v-for="item in queryOptions" :key='item.value' :label="item.name" :value="item.name">
 							</el-option>
 						</el-select>
@@ -29,6 +29,9 @@
 					<el-form-item>
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" icon="circle-close" @click="clearQuery">重置</el-button>
+                    </el-form-item>
 				</el-col>
 			</el-row>
 		</el-form>
@@ -56,7 +59,6 @@
 
 <script>
 import headTop from '../../components/headTop'
-import myPagination from '@/components/myPagination'
 import {
 	templateReportListRequest,
 } from '@/api/templateApi'
@@ -114,7 +116,7 @@ export default {
 			},
 			//table
 			tableList: [],
-			listLoading: false,
+			listLoading: true,
 			emptyText: "暂无数据",
 			//报告model
 			tableList: [],
@@ -122,19 +124,16 @@ export default {
 		}
 	},
 	components: {
-		headTop,
-		myPagination
+		headTop
 	},
 	activated() {
 		this.initData();
 	},
 	methods: {
 		async initData() {
-			this.listLoading = true;
 			this.pagination.page = 1;
 			try {
 				this.getList();
-				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
 				}
@@ -144,17 +143,19 @@ export default {
 			}
 		},
 		getList() {
-			let params = Object.assign(this.queryParams, this.pagination.params)
+            this.listLoading=true;
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
-				params: params
+				params: {}
 			}
+            options.params = Object.assign(this.queryParams, this.pagination.params)
 			console.log(options);
 			templateReportListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
 					this.tableList = result;
+					this.listLoading=false;
 				})
 			})
 		},
@@ -166,6 +167,7 @@ export default {
 			for (var key in this.queryParams) {
 				this.queryParams[key] = '';
 			}
+			this.getList();
 		},
 		getDateRange(value) {
 			this.queryParams.startTime = value.substr(0, 10);

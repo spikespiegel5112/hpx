@@ -16,7 +16,7 @@
 						<el-button type="primary" icon="search" @click="search">查询</el-button>
 					</el-form-item>
 					<el-form-item>
-						<el-button type="primary" icon="resetTable" @click="resetTable">重置</el-button>
+						<el-button type="primary" icon="circle-close" @click="resetTable">重置</el-button>
 					</el-form-item>
 					<el-form-item>
 						<el-button icon="plus" type="primary" @click='createRole'>新增</el-button>

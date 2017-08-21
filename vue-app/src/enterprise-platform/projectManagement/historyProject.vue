@@ -3,10 +3,12 @@
 	<head-top></head-top>
 	<el-tabs type="border-card">
 		<el-tab-pane label="正常结束">
-			<el-table row-key="id" :empty-text="emptyText" :data="normalEndList" v-loading="listLoading" highlight-current-row style="width: 100%">
-				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-				</el-table-column>
-			</el-table>
+            <transition name="el-fade-in">
+                <el-table v-show="normalEndListFlag" row-key="id" :empty-text="emptyText" :data="normalEndList" v-loading="listLoading" highlight-current-row style="width: 100%">
+                    <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+                    </el-table-column>
+                </el-table>
+            </transition>
 			<section class="main-pagination">
 				<el-pagination @current-change="flipPage1" :current-page="pagination1.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination1.total">
 				</el-pagination>
@@ -81,6 +83,7 @@ export default {
 				}]
 			},
 			//table
+            normalEndListFlag: false,
 			normalEndList: [],
 			normalEndListTotal: 0, //总数
 			abnormalEndList: [],
@@ -153,10 +156,10 @@ export default {
 	methods: {
 		...mapActions(['getCurrentProjectId']),
 		initData() {
-
 			this.getList1();
 		},
 		getList1() {
+            this.normalEndListFlag=false;
 			let options = {
 				params: {
                     state: 'E'
@@ -168,7 +171,8 @@ export default {
 				this.pagination1.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
-					this.normalEndList = result
+					this.normalEndList = result;
+					this.normalEndListFlag=true;
 				})
 			})
 		},
@@ -184,7 +188,7 @@ export default {
 				this.pagination2.total = Number(response.headers.get('x-total-count'))
 				console.log(response);
 				response.json().then(result => {
-					
+
 					this.abnormalEndList = [];
 					for (var item in result) {
 						that.abnormalEndList.push(result[item]);

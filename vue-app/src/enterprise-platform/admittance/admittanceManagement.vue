@@ -36,16 +36,18 @@
 	</section> -->
 
 	<section class="main-table-container">
-		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
-			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-			</el-table-column>
-			<el-table-column align="center" label="操作">
-				<template scope='scope'>
-<!--					<el-button type="text" size="small" @click='getEnterpriseReport(scope)'>企业填报信息</el-button>-->
-					<el-button type="text" size="small" @click='evaluateEnterprise(scope)'>企业准入</el-button>
-				</template>
-			</el-table-column>
-		</el-table>
+        <el-table row-key="id" :empty-text="emptyText" :data="admittanceList" v-loading="listLoading" highlight-current-row border style="width: 100%">
+            <el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+            </el-table-column>
+            <el-table-column align="center" label="操作">
+                <template scope='scope'>
+                    <!--					<el-button type="text" size="small" @click='getEnterpriseReport(scope)'>企业填报信息</el-button>-->
+                    <el-button type="text" size="small" @click='evaluateEnterprise(scope)'>企业准入</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+
+
 		<el-dialog title="请选择评估模型" :visible.sync="evaluateEnterpriseDialogFlag">
 			<el-form :inline="true" :model='formData' :rules='rules' ref='formData'>
 				<el-form-item label="请选择行业" prop='industryType' inline>
@@ -164,8 +166,8 @@ export default {
 				total: 0
 			},
 			//table
-			tableList: [],
-			listLoading: false,
+			admittanceList: [],
+			listLoading: true,
 			emptyText: "暂无数据",
 			//搜索条件的个数
 			criteriaNum: 3,
@@ -188,7 +190,7 @@ export default {
 		this.initData();
 	},
 	deactivated() {
-		this.tableList = [];
+		this.admittanceList = [];
         this.industryList = [];
         this.modelList = [];
 		this.formData.industryType = '';
@@ -200,11 +202,9 @@ export default {
 	methods: {
 		async initData() {
 			this.listLoading = true;
-			this.pagination.page = 1;
-			this.getList();
 			try {
-				this.listLoading = false;
-				if (!this.tableList.length) {
+                this.getList();
+				if (!this.admittanceList.length) {
 					this.emptyText = "暂无数据";
 				}
 			} catch (e) {
@@ -217,6 +217,7 @@ export default {
 			this.getList();
 		},
 		getList() {
+            this.listLoading = true;
 			let params = {
 				params: this.pagination.params
 			}
@@ -228,7 +229,8 @@ export default {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result)
-					this.tableList = result;
+					this.admittanceList = result;
+                    this.listLoading = false;
 				})
 			})
 		},

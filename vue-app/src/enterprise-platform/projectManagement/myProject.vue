@@ -3,34 +3,39 @@
 	<head-top></head-top>
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的项目">
-			<el-table row-key="id" :empty-text="emptyText" :data="myProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
-				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-				</el-table-column>
-				<el-table-column label="操作" width='230'>
-					<template scope="scope">
-                        <el-button v-if="scope.row.projectState=='R'" type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
-                        <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
-						<el-button v-if="scope.row.enterpriseRole === 'PRO_ENT_TYPE_DEALER'" type="text" size="small" @click="applyCredit(scope.row.pjId)">申请授信</el-button>
-                        <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
-                    </template>
-				</el-table-column>
-			</el-table>
+            <transition name="el-fade-in">
+                <el-table row-key="id" :empty-text="emptyText" :data="myProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
+                    <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+                    </el-table-column>
+                    <el-table-column label="操作" width='230'>
+                        <template scope="scope">
+                            <el-button v-if="scope.row.projectState=='R'" type="text" size="small" @click='editProjet(scope)'>进入项目</el-button>
+                            <el-button type="text" size="small" @click="inviteEnterprise(scope)">邀请</el-button>
+                            <el-button v-if="scope.row.enterpriseRole === 'PRO_ENT_TYPE_DEALER'" type="text" size="small" @click="applyCredit(scope.row.pjId)">申请授信</el-button>
+                            <el-button type="text" size="small" @click="auditRecord(scope)">邀请记录</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </transition>
 			<section class="main-pagination">
 				<el-pagination @current-change="flipPage1" :current-page="pagination1.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination1.total">
 				</el-pagination>
 			</section>
 		</el-tab-pane>
 		<el-tab-pane label="受邀项目">
-			<el-table row-key="id" :empty-text="emptyText" :data="invitedProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
-				<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-				</el-table-column>
-				<el-table-column label="操作" width='200'>
-					<template scope="scope">
-						<el-button type="text" size="small" @click="dealWithInvite(scope, 'T')">接受</el-button>
-						<el-button type="text" size="small" @click="dealWithInvite(scope, 'F')">拒绝</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
+            <transition name="el-fade-in">
+                <el-table v-show="!listLoading" row-key="id" :empty-text="emptyText" :data="invitedProjectList" v-loading="listLoading" highlight-current-row style="width: 100%">
+                    <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+                    </el-table-column>
+                    <el-table-column label="操作" width='200'>
+                        <template scope="scope">
+                            <el-button type="text" size="small" @click="dealWithInvite(scope, 'T')">接受</el-button>
+                            <el-button type="text" size="small" @click="dealWithInvite(scope, 'F')">拒绝</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </transition>
+
 
 			<section class="main-pagination">
 				<el-pagination @current-change="flipPage2" :current-page="pagination2.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination2.total">
@@ -122,11 +127,12 @@ export default {
 				}]
 			},
 			//table
+            listLoading: false,
 			myProjectList: [],
 			myProjectListTotal: 0, //总数
+            invitedProjectListFlag: false,
 			invitedProjectList: [],
 			invitedProjectTotal: 0, //总数
-			listLoading: false,
 			enterpriseList: [],
 			roleList: [],
 			//分页信息
@@ -204,15 +210,14 @@ export default {
 	methods: {
         ...mapActions(['getCurrentProjectId']),
         initData() {
-			 
-			 
-             this.getList1();
-             
-             
-			
+            this.getList1();
 		},
+        deactivated(){
+            this.myProjectList=[];
+            this.invitedProjectList = [];
+        },
 		getList1() {
-			let that = this;
+            this.listLoading=true;
 			let options = {
 				params: {
 					eid: this.$store.state.loginInfo.enterpriseId,
@@ -221,7 +226,7 @@ export default {
                     projectState: 'R'
 				}
 			}
-			
+
 			options.params = Object.assign(options.params, this.pagination1.params)
 			console.log(options);
 			projectListRequest(options).then(response => {
@@ -231,14 +236,15 @@ export default {
 					this.myProjectList = [];
 					this.invitedProjectList = [];
 					for (var item in result) {
-						that.myProjectList.push(result[item]);
+						this.myProjectList.push(result[item]);
 					}
+					this.listLoading=false;
                     this.getList2();
 				})
 			})
 		},
 		getList2() {
-			let that = this;
+            this.listLoading=true;
 			let options = {
 				params: {
 					eid: this.$store.state.loginInfo.enterpriseId,
@@ -251,12 +257,13 @@ export default {
 				this.pagination2.total = Number(response.headers.get('x-total-count'))
 				console.log(response);
 				response.json().then(result => {
-					
 					this.invitedProjectList = [];
 					for (var item in result) {
-						that.invitedProjectList.push(result[item]);
+						this.invitedProjectList.push(result[item]);
 					}
-                    console.log(that.invitedProjectList);
+                    this.listLoading=false;
+
+                    console.log(this.invitedProjectList);
 				})
 			})
 		},
@@ -268,7 +275,7 @@ export default {
 			this.getEnterpriseList();
 			this.getEnterpriseTypeNameList(scope);
 		},
-        async applyCredit(pjId){          
+        async applyCredit(pjId){
 			this.inviteData.pid = pjId;
 			try{
 				const resp = await pjCapitalListRequest(pjId,this.$store.state.loginInfo.enterpriseId)
@@ -278,7 +285,7 @@ export default {
 			}catch(e){
 
 			}
-			
+
 		},
 		submitInvite() {
 			this.$refs['inviteData'].validate(async valid => {

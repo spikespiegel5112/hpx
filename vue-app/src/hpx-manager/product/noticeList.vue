@@ -35,21 +35,24 @@
 	</section>
 
 	<section class="main-table-container">
-		<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row border style="width: 100%">
-			<el-table-column label="序号" type="index" prop="num" width="80" align="center">
-			</el-table-column>
-			<el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-			</el-table-column>
-			<el-table-column align="center" label="操作">
-				<template scope="scope">
-                    <el-button type="text" size="small" @click="reviewNotice(scope)">查看</el-button>
-                    <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
-					<el-button v-if="scope.row.istop=='1'"  type="text" size="small" @click="setTop(scope)">置顶</el-button>
-					<el-button v-else-if="scope.row.istop=='0'"  type="text" size="small" @click="setTop(scope)">取消置顶</el-button>
-					<el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
-                </template>
-			</el-table-column>
-		</el-table>
+        <transition name="el-fade-in">
+            <el-table v-show="noticeListFlag" row-key="id" :empty-text="emptyText" :data="noticeList" v-loading="listLoading" highlight-current-row border style="width: 100%">
+                <el-table-column label="序号" type="index" prop="num" width="80" align="center">
+                </el-table-column>
+                <el-table-column align="center" v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+                </el-table-column>
+                <el-table-column align="center" label="操作">
+                    <template scope="scope">
+                        <el-button type="text" size="small" @click="reviewNotice(scope)">查看</el-button>
+                        <el-button type="text" size="small" @click="modifyNotice(scope)">修改</el-button>
+                        <el-button v-if="scope.row.istop=='1'"  type="text" size="small" @click="setTop(scope)">置顶</el-button>
+                        <el-button v-else-if="scope.row.istop=='0'"  type="text" size="small" @click="setTop(scope)">取消置顶</el-button>
+                        <el-button type="text" size="small" @click="deleteNotice(scope)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </transition>
+
 		<section class="main-pagination">
 			<el-pagination @current-change="flipPage" :current-page="pagination.params.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
@@ -107,7 +110,8 @@ export default {
 				total: 0
 			},
 			//table
-			tableList: [],
+            noticeListFlag: false,
+			noticeList: [],
 			listLoading: false,
 			emptyText: "暂无数据",
 			//模态框
@@ -130,7 +134,7 @@ export default {
 				this.getList();
 				this.getNoticeType();
 				this.listLoading = false;
-				if (!this.tableList.length) {
+				if (!this.noticeList.length) {
 					this.emptyText = "暂无数据";
 				}
 			} catch (e) {
@@ -139,6 +143,7 @@ export default {
 			}
 		},
 		getList() {
+            this.noticeListFlag=false;
 			let options = {
 				params: {}
 			}
@@ -148,7 +153,8 @@ export default {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
-					this.tableList = result
+					this.noticeList = result;
+					this.noticeListFlag=true;
 				})
 			})
 		},
@@ -200,7 +206,7 @@ export default {
 				type: 'warning'
 			}).then(() => {
 				deletenoticeListRequest(scope.row.id).then(() => {
-					this.tableList = [];
+					this.noticeList = [];
 					this.getList();
 					this.deleteNoticeFlag = false;
 				})
