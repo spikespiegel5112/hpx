@@ -11,10 +11,10 @@
 					</el-col>
 				</el-row>
 -->
-				<div class="enterprise_accountoverview_wrapper">
+				<div class="enterprise_accountoverview_wrapper" v-loading="carouselLoadingFlag">
                     <a class='el-icon-arrow-left arrow'></a>
 					<div class="carousel">
-						
+
 						<ul class="swiper-wrapper">
 							<li class="swiper-slide" v-for="(item, index) in accountList" :key="item.key">
 								<div class="title">
@@ -37,7 +37,7 @@
 						<div class="swiper-pagination"></div>
 					</div>
 					<a class='el-icon-arrow-right arrow'></a>
-					
+
 				</div>
 				<div class="accountdetail">
 					<ul>
@@ -76,7 +76,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-            
+
 			<el-form-item label="短信验证码" prop='code'>
 				<el-row>
 					<el-col :span="19">
@@ -382,6 +382,7 @@ export default {
 				},
 				total: 0
 			},
+            carouselLoadingFlag:true,
 			//搜索条件的个数
 			criteriaNum: 3,
 			//模态框
@@ -458,6 +459,7 @@ export default {
 			this.getAccountList();
 		},
 		getAccountList() {
+		    this.carouselLoadingFlag=true;
 			let params = Object.assign(this.pagination.params)
 			console.log(params)
 			let options = {
@@ -471,6 +473,7 @@ export default {
 //					this.accountList = result;
 					setTimeout(() => {
 						this.carousel();
+                        this.carouselLoadingFlag=false;
 					}, 200)
 				})
 			})
