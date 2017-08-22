@@ -58,13 +58,13 @@
 				<el-input v-model="roleData.description"></el-input>
 			</el-form-item>
 			<el-form-item label="是否可用">
-				<el-radio-group v-model="roleData.available" @change='aaa'>
+				<el-radio-group v-model="roleData.available">
 					<el-radio label="T">是</el-radio>
 					<el-radio label="F">否</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item label="是否允许再次授权">
-				<el-radio-group v-model="roleData.reGrant" @change='aaa'>
+				<el-radio-group v-model="roleData.reGrant">
 					<el-radio label="T">是</el-radio>
 					<el-radio label="F">否</el-radio>
 				</el-radio-group>
@@ -88,13 +88,13 @@
                 <el-input v-model="roleData.description"></el-input>
             </el-form-item>
             <el-form-item label="是否可用">
-                <el-radio-group v-model="roleData.available" @change='aaa'>
+                <el-radio-group v-model="roleData.available">
                     <el-radio label="T">是</el-radio>
                     <el-radio label="F">否</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="是否允许再次授权">
-                <el-radio-group v-model="roleData.reGrant" @change='aaa'>
+                <el-radio-group v-model="roleData.reGrant">
                     <el-radio label="T">是</el-radio>
                     <el-radio label="F">否</el-radio>
                 </el-radio-group>
@@ -126,7 +126,7 @@ import {
 
 
 	createRoleRequest,
-    editRoleRequest,
+    modifyRoleRequest,
 	deleteRoleRequest
 } from '@/api/enterpriseApi'
 import {
@@ -364,30 +364,63 @@ export default {
             }
 		},
 		editRoleSubmit() {
-			this.$refs['roleData'].validate(async(valid) => {
+			this.$refs['roleData'].validate(valid => {
 				if (valid) {
 					try {
 						let options = {
                             productCode: this.editData.productCode,
 							id: this.editData.id,
-							body: {
-								code: this.roleData
-							}
+							body: this.roleData
 						}
 						console.log(options);
-                        editRoleRequest(options).then(response => {
-							response.json().then(result => {
-								console.log(result);
-								this.configProjectFlag = false;
-							})
-						})
-						this.initData();
+                        modifyRoleRequest(options).then(response => {
+							if(response.status==204){
+                                this.editRoleDialogFlag=false;
+							    this.$message.success('角色信息修改成功')
+                                this.getList();
+                            }
+						}).catch(error=>{
+                            this.$message({
+                                type:'error',
+                                message:error
+                            })
+                        })
+
 					} catch (e) {
 						this.$message.error(e)
 					}
 				}
 			})
 		},
+        deleteRole(scope) {
+            this.$confirm('确认删除该角色?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                let options = {
+                    id: scope.row.id
+                }
+                console.log(options)
+                deleteRoleRequest(options).then(() => {
+                    this.$message({
+                        type: 'warning',
+                        message: '删除成功!'
+                    });
+                    this.getList();
+                }).catch(error=>{
+                    this.$message({
+                        type: 'error',
+                        message: error
+                    });
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            });
+        },
 		goToConfigProject(scope) {
 			this.$router.push({
 				name: 'enterpriseTypeRoleBinding',
@@ -398,38 +431,7 @@ export default {
 				}
 			})
 		},
-		deleteRole(scope) {
-            alert(scope.row.code)
-			this.$confirm('确认删除该角色?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-				let options = {
-                    procode: scope.row.code,
-                    ercode: scope.row.code,
-					id: scope.row.id
-				}
-				console.log(options)
-				deleteRoleRequest(options).then(() => {
-					this.getList();
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
-				}).catch(error=>{
-                    this.$message({
-                        type: 'error',
-                        message: error
-                    });
-                })
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: '已取消删除'
-				});
-			});
-		},
+
 		search() {
 			this.getList();
 		},
@@ -491,10 +493,6 @@ export default {
 				}
 			})
 		},
-
-		aaa(value) {
-//			alert(value)
-		}
 	}
 }
 </script>
