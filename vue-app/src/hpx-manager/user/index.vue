@@ -127,7 +127,9 @@
                 <el-transfer
                     width="600"
                     v-model="selectedRoleListData"
-                    :data="unselectedRoleListData">
+                    :data="unselectedRoleListData"
+                    v-loading='configureRoleLoadingFlag'
+                    :titles="['未绑定角色', '已绑定角色']">
                 </el-transfer>
             </template>
 
@@ -276,6 +278,7 @@ export default {
                 ],
             },
             // 配置角色
+            configureRoleLoadingFlag: true,
             configureRoleVisible: false,
             roleList: [],
             configRoleUid:null,
@@ -334,9 +337,7 @@ export default {
                 this.emptyText = "获取数据失败";
                 this.listLoading = false;
             }
-
         },
-
         async search() {
             this.getList();
         },
@@ -376,8 +377,6 @@ export default {
             this.modalTitle = '编辑',
             this.editeModalVisible = true;
         },
-
-
         async editSubmit(formName) {
             this.editeData.eid = this.editeData.eid.toString();
             this.editeData.gender = this.editeData.gender === '女' ? 'F' : 'T';
@@ -409,6 +408,7 @@ export default {
             this.configureRoleVisible = true;
         },
         getRolesList(){
+            this.configureRoleLoadingFlag=true;
             let options={
                 params:{},
                 eid:this.$store.state.loginInfo.enterpriseId
@@ -427,6 +427,7 @@ export default {
                             key: this.roleList[index].code
                         })
                     }
+                    this.configureRoleLoadingFlag=false;
                     console.log(this.unselectedRoleListData)
                 })
             })

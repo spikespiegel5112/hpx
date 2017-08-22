@@ -180,8 +180,11 @@ export default {
 				prop: 'productEnterpriseRoleCode',
 				sortable: true,
 			}, {
-				label: 'reGrant',
+				label: '是否允许再次授权',
 				prop: 'reGrant',
+                formatter:(row)=>{
+				    return row.reGrant=='T'?'是':'否';
+                }
 			}],
 			//table
 			tableList: [],
