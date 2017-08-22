@@ -18,14 +18,14 @@
 						<ul class="swiper-wrapper">
 							<li class="swiper-slide" v-for="(item, index) in accountList" :key="item.key">
 								<div class="title">
-									<label for="">{{item.bankType}}</label>
-									<span>尾号：{{item.custActNo.substr(1,4)}}</span>
+									<label for="">{{item.bankName}}</label>
+									<span>尾号：{{item.bankNo.substr(1,4)}}</span>
 									<i>{{index+1}}</i>
 								</div>
 								<div class="detail">
 									<div class="balance">
 										<label for="">可用余额（元）：</label>
-										<span>{{item.kyamt}}</span>
+										<span>{{item.bankAmt}}</span>
 									</div>
 									<div class="operation">
 										<el-button type="primary" size="small">转入</el-button>
@@ -469,8 +469,8 @@ export default {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result)
-                    this.accountList = this.accountListJSON;
-//					this.accountList = result;
+//                    this.accountList = this.accountListJSON;
+					this.accountList = result;
 					setTimeout(() => {
 						this.carousel();
                         this.carouselLoadingFlag=false;

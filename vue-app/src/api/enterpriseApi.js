@@ -4,9 +4,7 @@ import fetch from '@/config/fetch'
  * 获取企业子账户信息
  */
 
-export const accountInfosListRequest = () =>{
-    return fetch(`/core/core/api/v1/financialManager/accountInfos`);
-}
+export const accountInfosListRequest = () => fetch(`/core/core/api/v1/financialManager/accountInfos`);
 
 /**
  * 根据企业id获取银行信息, 支持分页

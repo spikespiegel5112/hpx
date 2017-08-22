@@ -2,7 +2,7 @@
 <div class="fillcontain">
 <!--	<head-top></head-top>-->
 	<commonDetailTitle title='企业准入报告' routerName='admittanceReportList'></commonDetailTitle>
-	<section class="admittance_report_container">
+	<section class="admittance_report_container" v-loading="chartFlag">
 		<h1 class='maintitle'>{{reportData.enterpriseName}}</h1>
 		<div class="summarize block_wrapper">
 			<div class="chart_wrapper">
@@ -24,7 +24,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="block_wrapper">
+		<div class="block_wrapper" v-loading="reportFlag">
 			<div class="title">基本信息</div>
 			<ul>
 				<li>企业名称：{{reportData.enterpriseName}}</li>
@@ -60,6 +60,8 @@ export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
+            chartFlag:true,
+            reportFlag:true,
 			reportData: {},
 			evaluatingData: [],
 			tpModelData: [],
@@ -96,12 +98,14 @@ export default {
             }
         },
 		getReport() {
-			let params = {
+            this.chartFlag=true;
+            this.reportFlag=true;
+			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				id: this.$route.params.reportId
 			}
-			console.log(params);
-			templateReportDetailRequest(params).then(response => {
+			console.log(options);
+			templateReportDetailRequest(options).then(response => {
 				response.json().then(result => {
 					console.log(result);
 					this.reportData = result;
@@ -117,6 +121,8 @@ export default {
 							value: this.evaluatingData[item].totalScore,
 						})
 					}
+                    this.reportFlag=false;
+                    this.chartFlag=false;
 					this.chart();
                     this.getGrade();
 //					this.scoreIndicatorValue.left = 370 * result.score * 0.01;

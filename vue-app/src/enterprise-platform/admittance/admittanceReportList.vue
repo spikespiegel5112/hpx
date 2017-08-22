@@ -143,7 +143,7 @@ export default {
 			}
 		},
 		getList() {
-//            this.listLoading=true;
+            this.listLoading=true;
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				params: {}
@@ -155,7 +155,7 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.tableList = result;
-//					this.listLoading=false;
+					this.listLoading=false;
 				})
 			})
 		},

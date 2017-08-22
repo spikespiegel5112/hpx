@@ -32,7 +32,6 @@
 				</el-col>
 			</el-row>
 		</el-form>
-		</el-col>
 	</section>
 
 	<section class="main-table-container">
@@ -52,6 +51,8 @@
 		<section class="main-pagination">
 			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
 			</my-Pagination>
+            <el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+            </el-pagination>
 		</section>
 	</section>
 </div>
@@ -90,9 +91,11 @@ export default {
 			}],
 			//总页数
 			pagination: {
+			    params:{
+                    page: 1,
+                    size: 10,
+                }
 				total: 0,
-				page: 1,
-				size: 10,
 			},
 			//table
 			tableList: [],
@@ -101,7 +104,8 @@ export default {
 
 			//search params
 			query: {
-
+                name:'',
+                code:''
 			},
 			//搜索条件的个数
 			criteriaNum: 3,
@@ -121,11 +125,10 @@ export default {
 	},
 	methods: {
 		async initData() {
-			this.listLoading = true;
+
 			this.pagination.page = 1;
 			try {
 				this.getList();
-				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
 				}
@@ -134,18 +137,21 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		async getList(pagination = {
-			page: 1,
-			size: 10,
-		}) {
+		getList() {
+            this.listLoading = true;
+		    let options={
+                params:{}
+            }
 			console.log(pagination);
-			const params = Object.assign({}, this.query, pagination);
+            options.params = Object.assign(this.query, this.pagination.params);
 			console.log(params)
-			const resp = await noticeListRequest(params);
-			const res = await resp.json();
-			const total = resp.headers.get('x-total-count')
-			this.tableList = [...res];
-			this.pagination.total = parseInt(total);
+            noticeListRequest(options).then(response=>{
+                this.pagination.total=Number(response.headers.get('x-total-count'))
+                response.then(result=>{
+                    this.tableList=result
+                    this.listLoading = false;
+                })
+            })
 		},
 		async search() {
 			try {

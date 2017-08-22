@@ -39,7 +39,7 @@
 			</el-card>
 		</el-col>
 		<el-col :span="7">
-			<el-card>
+			<el-card v-loading="noticeListLoadingFlag">
 				<div slot="header" class="card-header">
 					<span>新闻公告</span>
 					<el-button type="text" class="p-home-action">
@@ -54,7 +54,7 @@
 			</el-card>
 		</el-col>
 		<el-col :span="17">
-			<el-card>
+			<el-card v-loading="projectListLoadingFlag">
 				<div slot="header" class="card-header">
 					<span>我的项目</span>
 					<el-button type="text" class="p-home-action">
@@ -97,6 +97,8 @@ export default {
 	},
 	data() {
 		return {
+		    projectListLoadingFlag:false,
+            noticeListLoadingFlag:false,
 			projectList: [],
 			noProjects: false,
 			totalPj: 0,
@@ -118,6 +120,7 @@ export default {
     methods:{
         ...mapActions(['getCurrentProjectId','getCurrentProjectRole']),
         initProjectList() {
+            this.projectListLoadingFlag=true;
 			let options = {
 				params: {
 					eid: this.loginInfo.enterpriseId,
@@ -136,6 +139,7 @@ export default {
 						this.noProjects = true;
 					}
 					this.totalPj = this.projectList.length;
+                    this.projectListLoadingFlag=false;
 				})
 			})
 		},
@@ -157,6 +161,7 @@ export default {
                 })
         },
         getNoticeList(){
+            this.noticeListLoadingFlag=true;
             let options={
                 params:{
                     size:7,
@@ -166,6 +171,7 @@ export default {
             noticeListRequest(options).then(response=>{
                 response.json().then(result=>{
                     this.noticeList=result;
+                    this.noticeListLoadingFlag=false;
                 })
             })
         },
