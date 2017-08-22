@@ -258,10 +258,10 @@ export default {
 	},
 	methods: {
 		initData() {
-			this.listLoading = true;
+
 			try {
 				this.getList();
-				this.listLoading = false;
+
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
 				}
@@ -270,7 +270,8 @@ export default {
 				this.listLoading = false;
 			}
 		},
-		getList() {
+        getList() {
+            this.listLoading = true;
 			let options = {
 				params: {},
 				eid: this.$store.state.loginInfo.enterpriseId
@@ -283,12 +284,35 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.tableList = result;
+                    this.listLoading = false;
 				})
 			})
 		},
+//        getList() {
+//            this.listLoading = true;
+//            let options = {
+//                params: {},
+//                eid: this.$store.state.loginInfo.enterpriseId
+//            };
+//
+//            options.params = Object.assign(this.pagination.params, this.queryt)
+//            console.log(options);
+//            getUnbindedRolesListRequest().then(response => {
+//                this.pagination.total = Number(response.headers.get('x-total-count'))
+//                response.json().then(result => {
+//                    console.log(result);
+//                    this.tableList = result;
+//                    this.listLoading = false;
+//                })
+//            })
+//        },
         createRole(){
             this.newRoleDialogFlag = true;
-            this.$refs['roleData'].resetFields();
+            for(var index in this.roleData){
+                this.roleData[index]=''
+            }
+            this.roleData.available='T';
+            this.roleData.reGrant='T';
         },
 		createRoleSubmit() {
 			this.$refs['roleData'].validate(valid => {
@@ -379,7 +403,8 @@ export default {
 				type: 'warning'
 			}).then(() => {
 				let options = {
-                    productCode: scope.row.code,
+                    procode: scope.row.code,
+                    ercode: scope.row.code,
 					id: scope.row.id
 				}
 				console.log(options)
@@ -465,7 +490,7 @@ export default {
 		},
 
 		aaa(value) {
-			alert(value)
+//			alert(value)
 		}
 	}
 }

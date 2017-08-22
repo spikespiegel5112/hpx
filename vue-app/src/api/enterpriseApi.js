@@ -73,70 +73,70 @@ export const veyiterpriseAccessRequest = options => {
     return fetch(`/core/core/api/v1/enterprises/veyiterpriseAccess/${options.id}`, options.params);
 }
 
-/*
-** 平台项目列表, 支持分页
-*/
+/**
+ * 平台项目列表, 支持分页
+ */
 export const enterpriseProjectListRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.inviteStatus}/state/${options.state}`);
 
-/*
-** 绑定企业项目和角色
-*/
+/**
+ * 绑定企业项目和角色
+ */
 export const bindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.entRole}/roles/${options.pid}/${options.productCode}`, options.body, 'put');
 
-/*
-** 解绑企业项目和角色
-*/
+/**
+ * 解绑企业项目和角色
+ */
 export const debindProjectRequest = options => fetch(`/core/core/api/v1/entProject/${options.entRole}/roles/${options.pid}/remove`, options.body, 'put');
 
-/*
-** 取得指企业角色信息
-*/
+/**
+ * 取得指企业角色信息
+ */
 export const getRolesByEnterpriseRequest = options => fetch(`/core/core/api/v1/products/${options.code}/ent_roles/${options.id}`, options.id);
 
-/*
-** 获取企业项目任意角色
-*/
+/**
+ * 获取企业项目任意角色
+ */
 export const getRolesByProjectRequest = options => fetch(`/core/core/api/v1/enterpriseProjects/${options.pid}`, options.params);
 
-/*
-** 新增角色信息
-*/
+/**
+ * 新增角色信息
+ */
 export const createRoleRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/roles`, options.params, 'put');
 
-/*
-** 修改企业角色信息
-*/
+/**
+ * 修改企业角色信息
+ */
 export const editRoleRequest = options => fetch(`/core/core/api/v1/products/${options.productCode}/ent_roles/${options.id}`, options.params, 'patch');
 
-/*
-** 删除企业角色信息-物理删除
-*/
-export const deleteRoleRequest = options => fetch(`/core/core/api/v1/products/${options.productCode}/ent_roles/${options.id}`, {}, 'delete');
+/**
+ * 删除企业角色信息-物理删除
+ */
+export const deleteRoleRequest = options => fetch(`/core/core/api/v1/products/${options.procode}/ent_roles/${options.ercode}/roles/${options.id}`, {}, 'delete');
 
 
-/*
-** 新增企业开户申请
-*/
+/**
+ * 新增企业开户申请
+ */
 export const enterpriseAccountOpenRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts/${options.code}`, options.body, 'put');
 
-/*
-** 审核企业项目
-*/
+/**
+ * 审核企业项目
+ */
 export const AuditingProjectRequest = options => fetch(`/core/core/api/v1/projects/${options.id}/activation/${options.state}`, options.body, 'patch');
 
-/*
-** 取得项目未绑定的产品类型
-*/
+/**
+ * 取得项目未绑定的产品类型
+ */
 export const getUnbindedEnterpriseTypesRequest = options => fetch(`/core/core/api/v1/project/${options.pid}/product/${options.code}`);
 
-/*
-** 取得项目已绑定的产品类型
-*/
+/**
+ * 取得项目已绑定的产品类型
+ */
 export const getBindedEnterpriseTypesRequest = options => fetch(`/core/core/api/v1/project/${options.pid}/product/${options.code}/binding`);
 
-/*
-** 开户发送短信验证码
-*/
+/**
+ * 开户发送短信验证码
+ */
 export const openAccSendSmsRequest = () => fetch(`/core/core/api/v1/sms/openAccSendSms`,{},'post');
 
 

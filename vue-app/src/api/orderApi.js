@@ -53,6 +53,16 @@ export const getSalesContractList = (query) => fetch(`/order/contract/listS`, qu
 export const getFinancingDetail = (id) => fetch(`/order/contract/queryFinancingSituation/${id}`);
 
 /**
+ * 供方--我的合同--获取我的合同列表
+ */
+export const getMyContractList = (query) => fetch(`/order/contract/listMy`, query);
+
+/**
+ * 供方--我的合同--查看收货单明细
+ */
+export const getMyContractDetail = (query) => fetch(`/order/contract/queryReceivingDetail`, query);
+
+/**
  * 资方--采购合同--签章预览
  */
 // 获取合同详情
@@ -95,13 +105,19 @@ export const supplementOrder = (id) => fetch(`/order/refund/get/${id}`, {});
 
 
 /**
- * 订单 
+* 资方--获取订单列表 ordersList
  */
-// 列表 ordersList
-export const ordersList = (params) => fetch(`/order/salesOrder/search`, params)
+export const ordersList = (params) => fetch(`/order/salesOrder/searchSupplier`, params)
 
-// 订单详情 ordersDetail
-export const ordersDetail = (orderId) => fetch(`/order/salesOrder/getDetail/${orderId}`)
+
+/**
+ * 需方--获取订单列表 ordersDemanderList
+ */
+export const ordersDemanderList = (params) => fetch(`/order/salesOrder/searchDemander`, params)
+
+/**
+ * 获取订单详情 ordersDetail
+ */export const ordersDetail = (id) => fetch(`/order/salesOrder/getDetail/${id}`)
 
 // 下载订单详情 ordersDetailDownload
 export const ordersDetailDownload = (orderId) => `/order/salesOrder/downloadDetail/${orderId}`;
@@ -230,6 +246,11 @@ export const addWarning =(params) => fetch(`/order/riskControl/add`,params,'post
  * 修改风控预警状态(确认追加保证金)
  */
 export const updateWarningStatus =(id) => fetch(`/order/riskControl/updateStatus/${id}`,{},'patch')
+
+/**
+ * 根据风控生成待付款
+ */
+export const saveRiskPendingPayment =(params) => fetch(`/order/payment/saveRiskPendingPayment`,params,'patch')
 
 /**
  * 提货单列表
