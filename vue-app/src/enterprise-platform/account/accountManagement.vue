@@ -4,28 +4,28 @@
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
-<!--
+
 				<el-row>
 					<el-col :span="24">
-						<el-button type="primary" @click="openAccountFlag=true">线上开户</el-button>
+						<el-button type="primary" @click="updateAccount">更新实体卡号</el-button>
 					</el-col>
 				</el-row>
--->
-				<div class="enterprise_accountoverview_wrapper" v-loading="carouselLoadingFlag">
-                    <a class='el-icon-arrow-left arrow'></a>
-					<div class="carousel">
 
+				<div class="enterprise_accountoverview_wrapper" v-loading="carouselLoadingFlag">
+					<a class='el-icon-arrow-left arrow'></a>
+					<div class="carousel">
 						<ul class="swiper-wrapper">
-							<li class="swiper-slide" v-for="(item, index) in accountList" :key="item.key">
+							<li class="swiper-slide" v-for="(item, index) in accountList" :key="item.key" @click="selectCard(index)">
 								<div class="title">
 									<label for="">{{item.bankName}}</label>
-									<span>尾号：{{item.bankNo.substr(1,4)}}</span>
+									<span>尾号：{{item.custActNo}}</span>
+									<!--<span>尾号：{{item.custActNo.substr(1,4)}}</span>-->
 									<i>{{index+1}}</i>
 								</div>
 								<div class="detail">
 									<div class="balance">
 										<label for="">可用余额（元）：</label>
-										<span>{{item.bankAmt}}</span>
+										<span>{{item.kyamt}}</span>
 									</div>
 									<div class="operation">
 										<el-button type="primary" size="small">转入</el-button>
@@ -62,37 +62,75 @@
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
-		<!-- <section class="main-pagination">
-			<my-Pagination :callback="getList" :query="query" :total="pagination.total">
-			</my-Pagination>
-		</section> -->
 	</section>
 	<!--项目配置-->
-	<el-dialog title="线上开户" :visible.sync='openAccountFlag' :close-on-click-modal="true">
-		<el-form :model="openAccountFormData" label-width="120px" :rules="openAccountRules" ref="openAccountFormData">
+	<el-dialog :visible.sync='updateAccountFlag'>
+		<el-form :model="updateAccountFormData" :rules="rules" ref="updateAccountFormData" label-width="120px" v-loading="accountOpeningFlag">
+			<el-form-item label="实体名称" prop='stAccountName'>
+				<el-input v-model="updateAccountFormData.stAccountName" disabled></el-input>
+			</el-form-item>
 			<el-form-item label="账户类型" prop='platBankType'>
-				<el-select v-model="openAccountFormData.platBankType">
-					<el-option v-for="item in accountTypeList" :value="item.code" :key="item.name" :label="item.name">
-					</el-option>
+				<el-select v-model="updateAccountFormData.platBankType" placeholder="请选择" disabled>
+					<el-option v-for='elem in accountTypeList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
 				</el-select>
 			</el-form-item>
-
-			<el-form-item label="短信验证码" prop='code'>
-				<el-row>
-					<el-col :span="19">
-						<el-input v-model="openAccountFormData.code"></el-input>
-					</el-col>
-					<el-col :span="3">
-						<el-button type="primary" @click='getSmsCode'>发送验证码</el-button>
-					</el-col>
-				</el-row>
-
+			<el-form-item label="总行名称" prop='stBankCode'>
+				<el-select v-model="updateAccountFormData.stBankCode" placeholder="请选择">
+					<el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
+				</el-select>
 			</el-form-item>
+			<el-form-item label="实体账号" prop='stBankAccount'>
+				<el-input v-model.number="updateAccountFormData.stBankAccount"></el-input>
+			</el-form-item>
+			<el-form-item label="是否他行" prop='stSameBank'>
+				<el-select v-model="updateAccountFormData.stSameBank" placeholder="请选择">
+					<el-option v-for='elem in stSameBankList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
+				</el-select>
+			</el-form-item>
+			<el-row>
+				<el-col :span="8">
+					<el-form-item label="开户地址" prop='stBankProvince'>
+						<el-select v-model="updateAccountFormData.stBankProvince" placeholder="请选择" @change="selectProvince">
+							<el-option v-for='elem in stBankProvinceList' :key="elem.nodeNodecode" :label='elem.nodeNodename' :value="elem.nodeNodecode"></el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+				<el-col :span="8">
+					<el-form-item label="市" prop='stBankCity'>
+						<el-select v-model="updateAccountFormData.stBankCity" placeholder="请选择" @change="selectCity">
+							<el-option v-for='elem in stBankCityList' :key="elem.cityAreacode" :label='elem.cityAreaname' :value="elem.cityAreacode"></el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+				<el-col :span="8">
+					<el-form-item label="区县" prop='stBankCountry'>
+						<el-select v-model="updateAccountFormData.stBankCountry" placeholder="请选择" @change="selectCountry">
+							<el-option v-for='elem in stBankCountryList' :key="elem.cityAreacode" :label='elem.cityAreaname' :value="elem.cityAreacode"></el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-form-item label="开户支行" prop='stBankName'>
+				<el-select v-model="updateAccountFormData.stBankName" placeholder="请选择">
+					<el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankname"></el-option>
+				</el-select>
+			</el-form-item>
+			<el-row type="flex">
+				<el-col :span="21">
+					<el-form-item label="短信验证码" prop='code' :span="10">
+						<el-input v-model="updateAccountFormData.code" :span="8"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="2" class="row-bg" justify="end">
+					<el-button type="primary" @click='sendSmsCode' :span="2">发送验证码</el-button>
+				</el-col>
+			</el-row>
 		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="openAccountFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="submitOpenAccount">提交</el-button>
-		</div>
+		<el-row type="flex" justify="center">
+			<el-col :span='1'>
+				<el-button type="primary" @click='openAccountSubmit'>提交</el-button>
+			</el-col>
+		</el-row>
 	</el-dialog>
 
 
@@ -104,7 +142,6 @@ import swiper from '@/assets/js/swiper'
 import headTop from '@/components/headTop'
 import {
 	reSmgCode,
-	openAccSendSmsRequest
 } from '@/api/getData';
 import {
 	getDictionaryByCodeRequest
@@ -112,10 +149,17 @@ import {
 import {
 	accountInfosListRequest,
 	accountStatementListRequest,
-	enterpriseAccountOpenRequest
+	enterpriseAccountOpenRequest,
+	updateAccountRequest,
+	openAccSendSmsRequest
 } from '@/api/enterpriseApi'
 import {
-	getKaptchaImageRequest
+	getKaptchaImageRequest,
+	provinces,
+	bankTypes,
+	cities,
+	countries,
+	bankdes,
 } from '@/api/publicApi'
 import {
 	mapState
@@ -125,201 +169,32 @@ export default {
 	data() {
 		const dateFormat = "YYYY-MM-DD";
 		return {
-            accountListJSON:[
-  {
-    "custActNo": "3110210012851063129",
-    "custNo": "HPX888817082903201391",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501849035000,
-    "custBNo": "10002",
-    "custName": "linke0794",
-    "stamt": "0.00",
-    "updater": "-1",
-    "djamt": "0.00",
-    "createTime": 1501763250000,
-    "sjamt": "0.00",
-    "actType": "1",
-    "id": 48,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063133",
-    "custNo": "HPX888817085804094103",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1502177355000,
-    "custBNo": "10002",
-    "custName": "linke0795",
-    "stamt": "0.00",
-    "updater": "1",
-    "djamt": "0.00",
-    "createTime": 1501810619000,
-    "sjamt": "0.00",
-    "actType": "1",
-    "id": 49,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063141",
-    "custNo": "HPX888817081404096039",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501849033000,
-    "custBNo": "10002",
-    "custName": "linke0796",
-    "stamt": "0.00",
-    "updater": "-1",
-    "djamt": "0.00",
-    "createTime": 1501810874000,
-    "sjamt": "0.00",
-    "actType": "1",
-    "id": 50,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063145",
-    "custNo": "HPX888817082404096488",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501849031000,
-    "custBNo": "10002",
-    "custName": "linke0797",
-    "stamt": "0.00",
-    "updater": "-1",
-    "djamt": "0.00",
-    "createTime": 1501811124000,
-    "sjamt": "0.00",
-    "actType": "1",
-    "id": 51,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063153",
-    "custNo": "HPX888817081804098678",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501849030000,
-    "custBNo": "10002",
-    "custName": "linke0798",
-    "stamt": "0.00",
-    "updater": "-1",
-    "djamt": "0.00",
-    "createTime": 1501811358000,
-    "sjamt": "0.00",
-    "actType": "1",
-    "id": 53,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063157",
-    "custNo": "HPX888817080604104864",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501813269000,
-    "custBNo": "10002",
-    "custName": "linke0799",
-    "stamt": "0.00",
-    "updater": "1",
-    "djamt": "0.00",
-    "createTime": 1501813267000,
-    "sjamt": "0.00",
-    "creater": "1",
-    "actType": "1",
-    "id": 54,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063161",
-    "custNo": "HPX888817083704103846",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501813299000,
-    "custBNo": "10002",
-    "custName": "linke0800",
-    "stamt": "0.00",
-    "updater": "1",
-    "djamt": "0.00",
-    "createTime": 1501813298000,
-    "sjamt": "0.00",
-    "creater": "1",
-    "actType": "1",
-    "id": 55,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063165",
-    "custNo": "HPX888817084604102909",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501813308000,
-    "custBNo": "10002",
-    "custName": "linke0801",
-    "stamt": "0.00",
-    "updater": "1",
-    "djamt": "0.00",
-    "createTime": 1501813307000,
-    "sjamt": "0.00",
-    "creater": "1",
-    "actType": "1",
-    "id": 56,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063169",
-    "custNo": "HPX888817080204102008",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501814825000,
-    "custBNo": "10002",
-    "custName": "linke0802",
-    "stamt": "0.00",
-    "updater": "1",
-    "djamt": "0.00",
-    "createTime": 1501814823000,
-    "sjamt": "0.00",
-    "creater": "1",
-    "actType": "1",
-    "id": 57,
-    "status": "1"
-  },
-  {
-    "custActNo": "3110210012851063173",
-    "custNo": "HPX888817082704107079",
-    "kyamt": "0.00",
-    "bankType": "ZX",
-    "updateTime": 1501814909000,
-    "custBNo": "10002",
-    "custName": "linke0803",
-    "stamt": "0.00",
-    "updater": "1",
-    "djamt": "0.00",
-    "createTime": 1501814908000,
-    "sjamt": "0.00",
-    "creater": "1",
-    "actType": "1",
-    "id": 58,
-    "status": "1"
-  }
-],
+			accountOpeningFlag: false,
 			eid: this.$store.state.loginInfo.enterpriseId,
 			enterpriseName: this.$store.state.loginInfo.enterpriseName,
+			accountTypeList: [],
+			bankTypeList: [],
+			stBankProvinceList: [],
+			stBankCityList: [],
+			stBankCountryList: [],
+			stBankList: [],
+			stSameBankList: [],
 			//table columns
-            columns: [{
+			columns: [{
 				label: '银行流水号',
 				prop: 'accountNo',
-//				sortable: true,
-                width:110
+				//				sortable: true,
+				width: 110
 			}, {
 				label: '交易时间',
 				prop: 'tranDate',
-//				sortable: true,
+				//				sortable: true,
 				minWidth: 100,
 			}, {
 				label: '借方发生额(元)',
 				prop: 'tranAmt',
-//				sortable: true,
-                minWidth: 80,
+				//				sortable: true,
+				minWidth: 80,
 			}, {
 				label: '贷方发生额(元)',
 				prop: 'accBalAmt',
@@ -329,14 +204,14 @@ export default {
 				prop: 'accBalAmt',
 				sortable: true,
 			}, {
-//				label: '对方账号',
-//				prop: 'modifiedTime',
-//				sortable: true,
-//			}, {
-//				label: '对方户名',
-//				prop: 'modifiedTime',
-//				sortable: true,
-//			}, {
+				//				label: '对方账号',
+				//				prop: 'modifiedTime',
+				//				sortable: true,
+				//			}, {
+				//				label: '对方户名',
+				//				prop: 'modifiedTime',
+				//				sortable: true,
+				//			}, {
 				label: '凭证号',
 				prop: 'verifyCode',
 				sortable: true,
@@ -374,7 +249,7 @@ export default {
 			query: {
 
 			},
-            //分页信息
+			//分页信息
 			pagination: {
 				params: {
 					page: 1,
@@ -382,52 +257,101 @@ export default {
 				},
 				total: 0
 			},
-            carouselLoadingFlag:true,
+			carouselLoadingFlag: true,
 			//搜索条件的个数
 			criteriaNum: 3,
 			//模态框
 			deleteNoticeFlag: false,
-			//线上开户
-			openAccountFlag: false,
+			selectedCardIndex: 0,
+			//更新实体卡号
+			updateAccountFlag: false,
 			kaptchaImagePath: '',
 			accountTypeList: [],
 			bankList: [],
-			openAccountFormData: {
-				platBankType: '',
-				hostNo:'',
-				code:''
+			updateAccountFormData: {
+				eid: this.$store.state.loginInfo.enterpriseId,
+				code: '',
+				platBankType: 'ZX',
+				stBankAccount: '',
+				stAccountName: this.$store.state.loginInfo.enterpriseName,
+				phone: this.$store.state.loginInfo.phone,
+				stBankProvince: '',
+				stBankCity: '',
+				stBankCountry: '',
+				stBankCode: '', //开户行code
+				stBankName: '', //开户行名称
+				paSbankCode: '', //总行code
+				stSameBank: '' //本行他行code
 			},
-			openAccountRules: {
+			rules: {
+				stAccountName: [{
+					required: true,
+					message: '请输入实体名称'
+				}],
+				paSbankCode: [{
+					required: true,
+					message: '请选择账户类型',
+					trigger: 'change'
+				}],
 				platBankType: [{
 					required: true,
-					message: '请选择项目账户类型',
+					message: '请选择账户类型',
 					trigger: 'change'
 				}],
-				costActNo: [{
+				stBankCode: [{
 					required: true,
-					message: '请输入项目虚拟卡号',
-					trigger: 'change'
+					message: '请选择总行名称'
 				}],
-				hostNo: [{
+				stBankAccount: [{
+					type: 'number',
+					message: '账户卡号必须为数字值'
+				}, {
 					required: true,
-					message: '请输入项目客户号',
-					trigger: 'change'
+					message: '请输入账户卡号'
+				}],
+				stSameBank: [{
+					required: true,
+					message: '请选择总行名称'
+				}],
+				stBankProvince: [{
+					required: true,
+					message: '请选择开户行省份',
+					'label-width': '50px'
+				}],
+				stBankCity: [{
+					required: true,
+					message: '请选择开户行城市',
+					'label-width': '50px'
+				}],
+				stBankCountry: [{
+					required: true,
+					message: '请选择开户行区县',
+					'label-width': '50px'
+				}],
+				stBankName: [{
+					required: true,
+					message: '请选择开户行'
 				}],
 				code: [{
 					required: true,
-					message: '请输入短信验证码',
-					trigger: 'change'
-				}]
+					message: '请输入短信验证码'
+				}],
 			}
 		}
 	},
 	components: {
 		headTop
 	},
-	mounted() {
+	activated() {
 		this.initData();
 		this.getBankList();
 		this.getKptchaImage();
+
+
+		this.getAccountTypeList();
+		this.getBankTypeList();
+		this.getProvince();
+		this.getSameBankList();
 	},
 	computed: {
 		last4Digits(value) {
@@ -442,8 +366,9 @@ export default {
 		initData() {
 			this.listLoading = true;
 			this.pagination.page = 1;
-			this.getAccountList();
+
 			try {
+				this.getAccountList();
 				this.getTurnoverList();
 				this.listLoading = false;
 				if (!this.tableList.length) {
@@ -456,24 +381,22 @@ export default {
 		},
 		flipPage(pageIndex) {
 			this.pagination.params.page = pageIndex;
-			this.getAccountList();
 		},
 		getAccountList() {
-		    this.carouselLoadingFlag=true;
+			this.carouselLoadingFlag = true;
 			let params = Object.assign(this.pagination.params)
 			console.log(params)
 			let options = {
-				params: {}
+				eid: this.$store.state.loginInfo.enterpriseId
 			}
-			accountInfosListRequest().then(response => {
+			accountStatementListRequest(options).then(response => {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result)
-//                    this.accountList = this.accountListJSON;
-					this.accountList = result;
+					this.accountList = result.responseValue.data.content;
 					setTimeout(() => {
 						this.carousel();
-                        this.carouselLoadingFlag=false;
+						this.carouselLoadingFlag = false;
 					}, 200)
 				})
 			})
@@ -483,8 +406,8 @@ export default {
 				slidesPerView: 2,
 				pagination: '.swiper-pagination',
 				paginationClickable: true,
-                prevButton:'.el-icon-arrow-left',
-                nextButton:'.el-icon-arrow-right',
+				prevButton: '.el-icon-arrow-left',
+				nextButton: '.el-icon-arrow-right',
 				spaceBetween: 20
 			})
 		},
@@ -492,13 +415,13 @@ export default {
 			let options = {
 				accoundId: this.$store.state.loginInfo.enterpriseId
 			}
-            console.log(options)
-			 accountStatementListRequest(options).then(result => {
-			 	result.json().then(response => {
-			 		console.log(response);
-			 		this.tableList = response;
-			 	})
-			 })
+			console.log(options)
+			//			 accountStatementListRequest(options).then(result => {
+			//			 	result.json().then(response => {
+			//			 		console.log(response);
+			//			 		this.tableList = response;
+			//			 	})
+			//			 })
 		},
 		getBankList() {
 			let options = {
@@ -512,14 +435,14 @@ export default {
 			})
 		},
 		submitOpenAccount() {
-			this.$refs['openAccountFormData'].validate(valid => {
+			this.$refs['updateAccountFormData'].validate(valid => {
 				if (valid) {
 					let options = {
 						body: {
-//                            hostNo:this.openAccountFormData.hostNo,
-                            platBankType:this.openAccountFormData.platBankType
-                        },
-						code: this.openAccountFormData.code,
+							//                            hostNo:this.updateAccountFormData.hostNo,
+							platBankType: this.updateAccountFormData.platBankType
+						},
+						code: this.updateAccountFormData.code,
 						eid: this.$store.state.loginInfo.enterpriseId
 					}
 					console.log(options)
@@ -547,7 +470,7 @@ export default {
 			this.code = '';
 			// let options = {
 			// 	phone: this.$store.state.loginInfo.phone,
-			// 	strCode: this.openAccountFormData.strCode
+			// 	strCode: this.updateAccountFormData.strCode
 			// }
 			// console.log(options);
 			openAccSendSmsRequest().then(response => {
@@ -563,6 +486,175 @@ export default {
 					type: 'error'
 				});
 			})
+		},
+		updateAccount() {
+			this.updateAccountFlag = true;
+			updateAccountFormData= {
+				eid: this.$store.state.loginInfo.enterpriseId,
+				code: '',
+				platBankType: 'ZX',
+				stBankAccount: '',
+				stAccountName: this.$store.state.loginInfo.enterpriseName,
+				phone: this.$store.state.loginInfo.phone,
+				stBankProvince: '',
+				stBankCity: '',
+				stBankCountry: '',
+				stBankCode: '', //开户行code
+				stBankName: '', //开户行名称
+				paSbankCode: '', //总行code
+				stSameBank: '' //本行他行code
+			}
+		},
+		updateAccountSubmit() {
+			let options = {
+				eid: this.$store.state.loginInfo.enterpriseId,
+				id: '',
+				body: {}
+			}
+			options.body = this.updateAccountFormData;
+			updateAccountRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result)
+				})
+			})
+		},
+		selectProvince() {
+			this.formData.stBankCity = '';
+			this.getCity();
+		},
+		selectCity() {
+			this.formData.stBankCountry = '';
+			this.getCountry();
+		},
+
+		getProvince() {
+			provinces().then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.stBankProvinceList = result;
+				})
+			})
+		},
+		getCity() {
+			let options = {
+				code: this.formData.stBankProvince
+			}
+			cities(options.code).then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.stBankCityList = result;
+				})
+			})
+		},
+		getCountry() {
+			let options = {
+				code: this.formData.stBankCity
+			}
+			countries(options.code).then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.stBankCountryList = result;
+				})
+			})
+		},
+		selectCountry() {
+			this.getBank();
+		},
+		getBank() {
+			this.stBankList = [];
+			this.formData.stBankName = '';
+			let options = {
+				code: this.formData.stBankCity.substring(0, 4),
+				bankclscode: this.formData.stBankCode.substring(0, 3)
+			}
+			console.log(options)
+			//                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
+
+
+			bankdes(options.bankclscode, options.code).then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.stBankList = result;
+				})
+			})
+		},
+		sendSmsCode() {
+			openAccSendSmsRequest().then(response => {
+				console.log(response)
+			})
+		},
+		openAccountSubmit() {
+			let options = {
+				eid: this.$store.state.loginInfo.enterpriseId,
+				code: this.formData.code,
+				body: {
+					platBankType: this.formData.platBankType,
+					stBankAccount: this.formData.stBankAccount,
+					stAccountName: this.formData.stAccountName,
+					//                        stAccountCode: this.formData.stAccountCode,
+					stBankProvince: this.formData.stBankProvince,
+					stBankCity: this.formData.stBankCity,
+					stBankCountry: this.formData.stBankCountry,
+					stBankName: this.formData.stBankName,
+					stBankCode: this.formData.stBankCode,
+					paSbankCode: this.formData.paSbankCode,
+					stSameBank: this.formData.stSameBank
+				}
+			}
+			console.log(options)
+			this.$refs['formData'].validate(valid => {
+				if (valid) {
+					enterpriseAccountOpenRequest(options).then(response => {
+						if (response.status == 200) {
+							this.$message({
+								type: 'success',
+								message: '开户提交成功'
+							})
+						}
+					}).catch(error => {
+						this.$message.error(error);
+					})
+				}
+			})
+		},
+		getBankTypeList() {
+			this.accountOpeningFlag = true;
+			bankTypes().then(response => {
+				response.json().then(result => {
+					console.log(result);
+					this.bankTypeList = result;
+					this.accountOpeningFlag = false;
+				})
+			})
+		},
+		getAccountTypeList() {
+			this.accountOpeningFlag = true;
+			let options = {
+				code: 'BANK_TYPE'
+			}
+			getDictionaryByCodeRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.accountTypeList = result;
+					this.accountOpeningFlag = false;
+				})
+			})
+		},
+		getSameBankList() {
+			this.accountOpeningFlag = true;
+			let options = {
+				code: 'SAME_BANK'
+			}
+			getDictionaryByCodeRequest(options).then(response => {
+				response.json().then(result => {
+					console.log(result)
+					this.stSameBankList = result;
+					this.accountOpeningFlag = false;
+				})
+			})
+		},
+		selectCard(index) {
+			this.selectedCardIndex = index;
 		}
 	}
 }
@@ -573,6 +665,6 @@ export default {
 @import "../../style/enterprise";
 @import "../../assets/css/swiper.css";
 .table_container {
-	padding: 20px;
+    padding: 20px;
 }
 </style>

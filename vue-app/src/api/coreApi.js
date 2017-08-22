@@ -275,7 +275,8 @@ export const addProjectRequest = (options) => {
     return fetch(`/core/core/api/v1/enterprise/${options.eid}/projects/${options.pid}`, options.body, 'put');
 }
 
-
+// 获取指定企业项目信息
+export const entPjInfo = (eid,pid) => fetch(`/core/core/api/v1/enterprise/${eid}/projects/${pid}`);
 /**
  * 协议授权管理--获取用户列表
  */

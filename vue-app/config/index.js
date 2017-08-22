@@ -30,7 +30,7 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/core': {
-                target: 'http://10.38.8.89:9000',
+                target: 'http://10.38.8.30:9000',
                 // target: 'http://10.38.8.48:9000',
 //                target: 'http://120.132.124.88:9000',
                 changeOrigin: true,
@@ -38,24 +38,24 @@ module.exports = {
                     '^/core': ''
                 }
             },
-            // '/credit': {
-            //     // target: 'http://10.38.8.89:9000',
-            //     // target: 'http://120.132.124.88:9000',
-            //     changeOrigin: true,
-            //     pathRewrite: {
-            //         '^/credit': '/credit/api/v1'
-            //     },
-            // },
+             '/credit': {
+                  target: 'http://10.38.8.30:9000',
+                 // target: 'http://120.132.124.88:9000',
+                 changeOrigin: true,
+                 pathRewrite: {
+                     '^/credit': '/credit/api/v1'
+                 },
+             },
             //直连
-           '/credit': {
-               target: 'http://10.38.8.122:9003',
-               changeOrigin: true,
-               pathRewrite: {
-                   '^/credit': '/api/v1'
-               },
-           },
+//           '/credit': {
+//               target: 'http://10.38.8.122:9003',
+//               changeOrigin: true,
+//               pathRewrite: {
+//                   '^/credit': '/api/v1'
+//               },
+//           },
             '/order': {
-               target: 'http://10.38.8.89:9000',
+               target: 'http://10.38.8.30:9000',
 //                  target: 'http://10.38.8.48:9000',
 //                target: 'http://120.132.124.88:9000',
                 changeOrigin: true,

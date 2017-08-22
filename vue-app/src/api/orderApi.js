@@ -91,33 +91,38 @@ export const uploadContract = (id) => `/order/contract/uploadingContract/${id}`;
 // 补发申请,退款申请,补购申请
 export const saleManager = (type,params) => fetch(`/order/refund/add?receiptsType=${type}`, params,'post');
 // 修改实收数量
-export const changeReceivedAmount = (id, amount) => fetch(`/order/contract/updateReceivedAmount/${id}?amount=${amount}`, {}, 'patch');
+export const changeReceivedAmount = (id, amount) => fetch(`/order/contract/updateReceivedAmount/${id}`, amount, 'patch');
 // 暂不处理
 export const noTreatment = (idList) => fetch(`/order/contract/noTreatment`, idList, 'patch');
+// 更改处理状态
+export const treatment = (idList) => fetch(`/order/contract/treatment`, idList, 'patch');
+
 // 确认收货
 export const confirmReceipt = (id) => fetch(`/order/contract/confirm/${id}`, {}, 'patch');
-
 
 /**
  * 资方--采购合同--生成补货单
  */
 export const supplementOrder = (id) => fetch(`/order/refund/get/${id}`, {});
 
-
 /**
 * 资方--获取订单列表 ordersList
  */
 export const ordersList = (params) => fetch(`/order/salesOrder/searchSupplier`, params)
 
-
 /**
- * 需方--获取订单列表 ordersDemanderList
+ * 需方--获取订单列表 
  */
-export const ordersDemanderList = (params) => fetch(`/order/salesOrder/searchDemander`, params)
+export const ordersDemanderList = (params) => fetch(`/order/salesOrder/searchDemander`, params);
 
-/**
- * 获取订单详情 ordersDetail
- */export const ordersDetail = (id) => fetch(`/order/salesOrder/getDetail/${id}`)
+// 需方--提货明细
+export const pickGoodsDetail = (id) => fetch(`/order/deliveryNote/getDetail?tOrderDetailId=${id}`, {});
+// 需方--提交提货
+export const subPickGoods = (id) => fetch(`/order/deliveryNote/add`, {}, 'put');
+
+
+// 获取订单详情 ordersDetail
+export const ordersDetail = (id) => fetch(`/order/salesOrder/getDetail/${id}`)
 
 // 下载订单详情 ordersDetailDownload
 export const ordersDetailDownload = (orderId) => `/order/salesOrder/downloadDetail/${orderId}`;
@@ -127,6 +132,19 @@ export const ordersDetailRevise = (params) => fetch(`/order/salesOrder/updateDet
  
 //确定订单
 export const orderSure = (orderId) => fetch(`/order/salesOrder/confirm/${orderId}`,{} ,'patch');
+
+//生成合同
+
+export const AddContract = (orderId,params) => fetch(`/order/contract/add/${orderId}`,params ,'post');
+
+//获取审批信息
+export const approInfo = (id,projectId) => fetch(`/order/${projectId}/queryApprovalStatus/${id}`);
+
+// 订单审批 
+export const applyOrder = (id,type) => fetch(`/order/salesOrder/OrderApproval/${id}?type=${type}`,params,'patch');
+
+// 订单新增
+export const addOrder = (params) => fetch(`/order/salesOrder/add`,params,'put');
 
 
 /**

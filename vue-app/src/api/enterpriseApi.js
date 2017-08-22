@@ -3,21 +3,21 @@ import fetch from '@/config/fetch'
 /**
  * 获取企业子账户信息
  */
-
 export const accountInfosListRequest = () => fetch(`/core/core/api/v1/financialManager/accountInfos`);
 
 /**
  * 根据企业id获取银行信息, 支持分页
  */
+export const accountStatementListRequest = options => fetch(`/core/core/api/v1/financialManager/${options.eid}/accountStatement/`);
 
-export const accountStatementListRequest = options =>{
-    return fetch(`/core/core/api/v1/financialManager/${options.accoundId}/accountStatement/`);
-}
+/**
+ * 更新实体卡号
+ */
+export const updateAccountRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts/change/${options.id}`, options.body, 'patch');
 
 /**
  * 取得企业项目邀请（受邀请）列表, 支持分页
  */
-
 export const projectListRequest = options => fetch(`/core/core/api/v1/enterprise/projects/vo`, options.params);
 
 /**
