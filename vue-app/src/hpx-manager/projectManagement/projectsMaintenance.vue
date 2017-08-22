@@ -202,7 +202,7 @@ export default {
 			}],
 			//table
 			tableList: [],
-			listLoading: false,
+			listLoading: true,
 			emptyText: "暂无数据",
 			//分页信息
 			pagination: {
@@ -282,10 +282,9 @@ export default {
 	},
 	methods: {
 		initData() {
-			this.listLoading = true;
+
 			try {
 				this.getList();
-				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
 				}
@@ -295,6 +294,7 @@ export default {
 			}
 		},
 		getList() {
+            this.listLoading = true;
 			let options = {
 				params: {}
 			}
@@ -304,7 +304,8 @@ export default {
 				this.pagination.total = Number(response.headers.get('x-total-count'))
 				response.json().then(result => {
 					console.log(result);
-					this.tableList = result
+					this.tableList = result;
+                    this.listLoading = false;
 				})
 			})
 		},
