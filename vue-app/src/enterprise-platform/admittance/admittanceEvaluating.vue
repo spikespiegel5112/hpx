@@ -11,7 +11,7 @@
 			</el-form>
 		</el-col>
 	</el-row>
-	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key'>
+	<el-collapse v-for="(tagItem, index) in treeData.labelInfos" :key='tagItem.key' v-loading="addmittanceEvaluatingFlag">
 		<el-collapse-item :title="tagItem.scoreCardName" :name="index">
 			<el-form label-position="left" :model='formData.labels[index]' ref="validData" label-width="60%">
 				<el-form-item v-for="(scoreItem, index2) in tagItem.targetInfos" :key='scoreItem.key' :label="scoreItem.name" style="width: 70%;" :label-position="labelPosition" :rules="[{
@@ -57,6 +57,7 @@ import moment from 'moment'
 export default {
 	data() {
 		return {
+            addmittanceEvaluatingFlag:true,
 			labelPosition: 'center',
 			treeData: [],
 			selectModelTree: [],
@@ -111,6 +112,7 @@ export default {
 	},
 	methods: {
 		getTree() {
+		    this.addmittanceEvaluatingFlag=true;
 			let that = this;
 			let params = {
 				id: this.$route.params.modelId,
@@ -131,8 +133,6 @@ export default {
 							});
 							console.log(labelIndex)
 							validDataStr += "'subItem':'',"
-
-
 						}
 						this.$set(that.formData.labels, labelIndex, {
 							labelId: result.labelInfos[labelIndex].id,
@@ -150,6 +150,7 @@ export default {
 
 					console.log(result);
 					that.treeData = result;
+					this.addmittanceEvaluatingFlag=false;
 				})
 			})
 		},

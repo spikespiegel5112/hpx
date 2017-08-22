@@ -6,6 +6,7 @@
         <el-input style="width: 20%; marginLeft: 80%;marginBottom: 5px;" placeholder="请输入公司名称" icon="search" v-model="query.enterpriseName" :on-icon-click="search">
         </el-input>
         <el-table 
+        class="signature-table"
         :data="tableList" 
         border 
         style="width: 100%"  
@@ -168,13 +169,13 @@ export default {
 }
 </script>
 
-<style lang="less" scope>
-.el-table__row {
+<style lang="less">
+.signature-table .el-table__row {
     height: 120px;
     text-align: center;
 }
 
-.el-table th.is-leaf {
+.signature-table .el-table th.is-leaf {
     text-align: center;
 }
 </style>

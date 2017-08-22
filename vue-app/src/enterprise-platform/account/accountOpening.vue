@@ -7,17 +7,17 @@
                     <div slot="header">
                         <span style="padding:0 20px;line-height: 36px;">线上开户</span>
                     </div>
-                    <el-form :model="formData" :rules="rules" ref="formData" label-width="120px">
+                    <el-form :model="formData" :rules="rules" ref="formData" label-width="120px" v-loading="accountOpeningFlag">
                         <el-form-item label="实体名称" prop='stAccountName'>
                             <el-input v-model="formData.stAccountName" disabled></el-input>
                         </el-form-item>
                         <el-form-item label="账户类型" prop='platBankType'>
                             <el-select v-model="formData.platBankType" placeholder="请选择" disabled>
-                                <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
+                                <el-option v-for='elem in accountTypeList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="总行名称" prop='paSbankCode'>
-                            <el-select v-model="formData.paSbankCode" placeholder="请选择">
+                        <el-form-item label="总行名称" prop='stBankCode'>
+                            <el-select v-model="formData.stBankCode" placeholder="请选择">
                                 <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
                             </el-select>
                         </el-form-item>
@@ -55,12 +55,11 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-form-item label="开户支行" prop='stBankCode'>
-                            <el-select v-model="formData.stBankCode" placeholder="请选择" @change="selectOpeningBank">
-                                <el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankno"></el-option>
+                        <el-form-item label="开户支行" prop='stBankName'>
+                            <el-select v-model="formData.stBankName" placeholder="请选择">
+                                <el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankname"></el-option>
                             </el-select>
                         </el-form-item>
-
 
                         <el-row type="flex">
                             <el-col :span="21">
@@ -114,6 +113,7 @@
         },
         data() {
             return {
+                accountOpeningFlag:true,
                 stBankProvinceList: [],
                 stBankCityList: [],
                 stBankCountryList: [],
@@ -135,6 +135,10 @@
                     stSameBank:''//本行他行code
                 },
                 rules: {
+                    stAccountName: [{
+                        required: true,
+                        message: '请输入实体名称'
+                    }],
                     paSbankCode: [{
                         required: true,
                         message: '请选择账户类型',
@@ -142,8 +146,12 @@
                     }],
                     platBankType: [{
                         required: true,
-                        message: '请选择总行名称',
+                        message: '请选择账户类型',
                         trigger: 'change'
+                    }],
+                    stBankCode: [{
+                        required: true,
+                        message: '请选择总行名称'
                     }],
                     stBankAccount: [{
                         type: 'number',
@@ -152,17 +160,9 @@
                         required: true,
                         message: '请输入账户卡号'
                     }],
-                    stAccountName: [{
-                        required: true,
-                        message: '请输入账户名称'
-                    }],
                     stSameBank: [{
                         required: true,
                         message: '请选择总行名称'
-                    }],
-                    code: [{
-                        required: true,
-                        message: '请输入短信验证码'
                     }],
                     stBankProvince: [{
                         required: true,
@@ -179,33 +179,52 @@
                         message: '请选择开户行区县',
                         'label-width': '50px'
                     }],
-                    stBankCode: [{
+                    stBankName: [{
                         required: true,
                         message: '请选择开户行'
                     }],
+                    code: [{
+                        required: true,
+                        message: '请输入短信验证码'
+                    }],
                 },
+                accountTypeList:[],
                 bankTypeList: [],
                 kaptchaImagePath: `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime(),
             }
         },
         mounted() {
             this.getAccountTypeList();
-            this.getProvince();
             this.getBankTypeList();
+            this.getProvince();
+            this.getSameBankList();
         },
         methods: {
-            getAccountTypeList() {
-                let options = {
-                    code: 'BANK_TYPE'
-                }
+            getBankTypeList() {
+                this.accountOpeningFlag=true;
                 bankTypes().then(response=>{
                     response.json().then(result=>{
                         console.log(result);
                         this.bankTypeList = result;
+                        this.accountOpeningFlag=false;
                     })
                 })
             },
-            getBankTypeList(){
+            getAccountTypeList(){
+                this.accountOpeningFlag=true;
+                let options={
+                    code:'BANK_TYPE'
+                }
+                getDictionaryByCodeRequest(options).then(response=>{
+                    response.json().then(result=>{
+                        console.log(result)
+                        this.accountTypeList=result;
+                        this.accountOpeningFlag=false;
+                    })
+                })
+            },
+            getSameBankList(){
+                this.accountOpeningFlag=true;
                 let options={
                     code:'SAME_BANK'
                 }
@@ -213,6 +232,7 @@
                     response.json().then(result=>{
                         console.log(result)
                         this.stSameBankList=result;
+                        this.accountOpeningFlag=false;
                     })
                 })
             },
@@ -238,10 +258,14 @@
                 this.$refs['formData'].validate(valid => {
                     if (valid) {
                         enterpriseAccountOpenRequest(options).then(response => {
-                            response.json().then(result => {
-                                console.log(result)
-
-                            })
+                            if(response.status==200){
+                                this.$message({
+                                    type:'success',
+                                    message:'开户提交成功'
+                                })
+                            }
+                        }).catch(error=>{
+                            this.$message.error(error);
                         })
                     }
                 })
@@ -298,10 +322,10 @@
             },
             getBank(){
                 this.stBankList=[];
-                this.formData.stBankCode='';
+                this.formData.stBankName='';
                 let options={
                     code:this.formData.stBankCity.substring(0,4),
-                    bankclscode:this.formData.paSbankCode.substring(0,3)
+                    bankclscode:this.formData.stBankCode.substring(0,3)
                 }
                 console.log(options)
 //                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
