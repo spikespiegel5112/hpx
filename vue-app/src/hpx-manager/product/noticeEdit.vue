@@ -1,7 +1,7 @@
 <template>
 <div class='fillcontain'>
 	<commonDetailTitle routerName='noticeList' :title="title"></commonDetailTitle>
-	<el-form :model="formData" :rules="rules" ref="formData" label-width="80px">
+	<el-form :model="formData" :rules="rules" ref="formData" label-width="80px" v-loading="noticeFlag">
 		<el-form-item label="标题" prop='title'>
 			<el-input v-model="formData.title"></el-input>
 		</el-form-item>
@@ -25,7 +25,7 @@
 			</el-radio-group>
 		</el-form-item>
 	</el-form>
-	<div class="common_editor_wrapper">
+	<div class="common_editor_wrapper" v-loading="noticeFlag">
 		<VueEditor v-model='formData.content'></VueEditor>
 	</div>
 	<el-button v-if="operationType=='add'" type="primary" size="large" @click='publishNotice'>发布</el-button>
@@ -99,6 +99,7 @@ export default {
 					trigger: 'blur'
 				}]
 			},
+            noticeFlag:false,
 			noticeId: null,
 			operationType: '',
 			publishDirection: [],
@@ -126,11 +127,25 @@ export default {
 	methods: {
 		getRouteParams() {
 			this.formData.creator = this.$store.state.loginInfo.name;
-
 			this.noticeId = this.$route.params.noticeId.split('&')[1];
-
 			this.operationType = this.$route.params.noticeId.split('&')[0];
 		},
+        getNoticeContent() {
+            this.noticeFlag=true;
+            if (this.noticeId != 0) {
+                reviewnoticeListRequest({
+                    id: this.noticeId
+                }).then(response => {
+                    response.json().then(result => {
+                        this.formData = Object.assign(this.formData, result)
+                        console.log(this.formData);
+                        this.publishDirection = result.direction.split(',');
+                        this.formData.direction = this.publishDirection;
+                        this.noticeFlag=false;
+                    })
+                })
+            }
+        },
 		publishNotice() {
 			//测试数据
 			let body = {
@@ -155,8 +170,6 @@ export default {
 			console.log(this.formData);
 			this.$refs['formData'].validate(valid => {
 				if (valid) {
-					// alert('submit!');
-
 					this.mergePublishDirection();
 					this.convertDateObjToDateString();
 					publishnoticeListRequest(this.formData).then(response => {
@@ -170,16 +183,12 @@ export default {
 								name: 'noticeList'
 							})
 							console.log(this.formData);
-						} else {
-
 						}
 					}).catch(err => {
-						{
-							this.$message({
-								message: '消息发布失败',
-								type: 'error'
-							});
-						}
+                        this.$message({
+                            message: '消息发布失败',
+                            type: 'error'
+                        });
 					})
 				}
 			});
@@ -190,36 +199,28 @@ export default {
 			this.$refs['formData'].validate((valid) => {
 				console.log(valid);
 				if (valid) {
-					// alert('submit!');
+				    let options={
+                        id: this.noticeId,
+                        body: this.formData
+                    }
 					this.mergePublishDirection();
 					this.convertDateObjToDateString();
-					modifynoticeListRequest({
-						id: this.noticeId,
-						body: this.formData
-					})
-					this.$router.push({
-						name: 'noticeList'
-					})
-				} else {
-					console.log('error submit!!');
-					return false;
+					modifynoticeListRequest(options).then(response=>{
+					    if(response.status==200){
+                            this.$message.success('新闻公告修改成功')
+                            this.$router.push({
+                                name: 'noticeList'
+                            })
+                        }
+                    }).catch(error=>{
+                        this.$message.error('新闻公告修改失败')
+                    })
 				}
-			});
+			}).catch(error=>{
+			    this.$message.error(error)
+            })
 		},
-		getNoticeContent() {
-			if (this.noticeId != 0) {
-				reviewnoticeListRequest({
-					id: this.noticeId
-				}).then(response => {
-					response.json().then(result => {
-						this.formData = Object.assign(this.formData, result)
-						console.log(this.formData);
-						this.publishDirection = result.direction.split(',');
-						this.formData.direction = this.publishDirection;
-					})
-				})
-			}
-		},
+
 		mergePublishDirection() {
 			this.formData.direction = this.formData.direction.sort().join(',');
 			console.log(this.formData.direction);
