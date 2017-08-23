@@ -4,6 +4,7 @@
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
+                <el-button type="primary" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>
 				<div class="enterprise_accountoverview_wrapper" v-loading="carouselLoadingFlag">
 					<a class='el-icon-arrow-left arrow'></a>
 					<div class="carousel">
@@ -31,7 +32,6 @@
 						<div class="swiper-pagination"></div>
 					</div>
 					<a class='el-icon-arrow-right arrow'></a>
-
 				</div>
 				<div class="accountdetail">
 					<ul>
@@ -69,8 +69,8 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="总行名称" prop='stBankCode'>
-				<el-select v-model="updateAccountFormData.stBankCode" placeholder="请选择">
-					<el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
+				<el-select v-model="updateAccountFormData.paSbankCode" placeholder="请选择">
+					<el-option v-for='elem in bankTypeList' :key="elem.sbankcode" :label='elem.bankname' :value="elem.sbankcode"></el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="实体账号" prop='stBankAccount'>
@@ -104,9 +104,9 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
-			<el-form-item label="开户支行" prop='stBankName'>
-				<el-select v-model="updateAccountFormData.stBankName" placeholder="请选择">
-					<el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankname"></el-option>
+			<el-form-item label="开户支行" prop='stBankCode'>
+				<el-select v-model="updateAccountFormData.stBankCode" placeholder="请选择" @change="selectBranch">
+					<el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankno"></el-option>
 				</el-select>
 			</el-form-item>
 			<el-row type="flex">
@@ -277,23 +277,20 @@ export default {
 					required: true,
 					message: '请输入实体名称'
 				}],
-				paSbankCode: [{
-					required: true,
-					message: '请选择账户类型',
-					trigger: 'change'
-				}],
 				platBankType: [{
 					required: true,
 					message: '请选择账户类型',
 					trigger: 'change'
 				}],
-				stBankCode: [{
+                paSbankCode: [{
 					required: true,
-					message: '请选择总行名称'
+					message: '请选择总行名称',
+                    trigger: 'change'
 				}],
 				stBankAccount: [{
 					type: 'number',
-					message: '账户卡号必须为数字值'
+					message: '账户卡号必须为数字值',
+                    trigger: 'change'
 				}, {
 					required: true,
 					message: '请输入账户卡号'
@@ -317,7 +314,7 @@ export default {
 					message: '请选择开户行区县',
 					'label-width': '50px'
 				}],
-				stBankName: [{
+                stBankCode: [{
 					required: true,
 					message: '请选择开户行'
 				}],
@@ -335,9 +332,6 @@ export default {
 		this.initData();
 		this.getBankList();
 		this.getKptchaImage();
-
-
-
 	},
 	computed: {
 		last4Digits(value) {
@@ -350,7 +344,6 @@ export default {
 	},
 	methods: {
 		initData() {
-			this.listLoading = true;
 			this.pagination.page = 1;
 
 			try {
@@ -450,7 +443,8 @@ export default {
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				params: {
-					custNo: this.accountList[index].custNo
+//					custNo: this.accountList[index].custNo
+                    custNo: 'HPX888817082423146684'
 				}
 			}
 			console.log(options)
@@ -459,10 +453,11 @@ export default {
                 response.json().then(result => {
 					console.log(result)
 					this.updateAccountFormData = result;
-//                    this.getAccountTypeList();
-//                    this.getBankTypeList();
-//                    this.getProvince();
-//                    this.getSameBankList();
+                    this.getAccountTypeList();
+                    this.getBankTypeList();
+                    this.getSameBankList();
+                    this.getProvince();
+
 
 				})
 			})
@@ -477,8 +472,8 @@ export default {
 					stAccountName: this.updateAccountFormData.stAccountName,
 					//                        stAccountCode: this.updateAccountFormData.stAccountCode,
 					stBankProvince: this.updateAccountFormData.stBankProvince,
-					stBankCity: this.updateAccountFormData.stBankCity,
-					stBankCountry: this.updateAccountFormData.stBankCountry,
+                    stBankCity: this.updateAccountFormData.stBankCity,
+                    stBankCountry: this.updateAccountFormData.stBankCountry,
 					stBankName: this.updateAccountFormData.stBankName,
 					stBankCode: this.updateAccountFormData.stBankCode,
 					paSbankCode: this.updateAccountFormData.paSbankCode,
@@ -525,13 +520,14 @@ export default {
 			})
 		},
 		selectProvince() {
-			this.updateAccountFormData.stBankCity = '';
+//			this.updateAccountFormData.stBankCity = '';
 			this.getCity();
 		},
 		getCity() {
 			let options = {
 				code: this.updateAccountFormData.stBankProvince
 			}
+			alert(options.code)
 			cities(options.code).then(response => {
 				response.json().then(result => {
 					console.log(result)
@@ -541,7 +537,7 @@ export default {
 			})
 		},
         selectCity() {
-            this.updateAccountFormData.stBankCountry = '';
+//            this.updateAccountFormData.stBankCountry = '';
             this.getCountry();
         },
 		getCountry() {
@@ -558,6 +554,7 @@ export default {
 		},
 		selectCountry() {
 			this.getBank();
+			this.selectBranch()
 		},
 		getBank() {
 			this.stBankList = [];
@@ -619,8 +616,19 @@ export default {
 		selectCard(index) {
 			this.selectedCardIndex = index;
 		},
+        selectBranch(value){
+            for(var index in this.stBankList){
+                if(value==this.stBankList[index].bankno){
+                    this.formData.stBankName=this.stBankList[index].bankname;
+                    alert(this.formData.stBankName)
+                }
+            }
+        },
         convertNumber(value){
 		    return Number(value);
+        },
+        aaa(value){
+            alert(value)
         }
 	}
 }
