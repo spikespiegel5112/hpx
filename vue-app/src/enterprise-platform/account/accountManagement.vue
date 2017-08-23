@@ -74,7 +74,7 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="实体账号" prop='stBankAccount'>
-				<el-input v-model.number="updateAccountFormData.stBankAccount"></el-input>
+				<el-input v-model.number="updateAccountFormData.stBankAccount" @change="convertNumber"></el-input>
 			</el-form-item>
 			<el-form-item label="是否他行" prop='stSameBank'>
 				<el-select v-model="updateAccountFormData.stSameBank" placeholder="请选择">
@@ -122,7 +122,7 @@
 		</el-form>
 		<el-row type="flex" justify="center">
 			<el-col :span='3'>
-				<el-button @click='updateAccountFlag==false'>取消</el-button>
+				<el-button @click='updateAccountFlag=false'>取消</el-button>
 			</el-col>
 			<el-col :span='3'>
 				<el-button type="primary" @click='updateAccount'>提交</el-button>
@@ -447,7 +447,7 @@ export default {
 				});
 			})
 		},
-		getAccountOpenInfoByCustNo(index) {
+		async getAccountOpenInfoByCustNo(index) {
 			this.updateAccountFlag = true;
 			console.log(this.accountList[index])
 			this.updateAccountCustNo = this.accountList[index].custNo;
@@ -458,13 +458,14 @@ export default {
 					custNo: this.accountList[index].custNo
 				}
 			}
-			getAccountOpenInfoByCustNoRequest(options).then(response => {
-                console.log('dsdsdsds')
+			await getAccountOpenInfoByCustNoRequest(options).then(response => {
                 console.log(response)
 				response.json().then(result => {
-
 					console.log(result)
 					this.updateAccountFormData = result;
+                    this.getProvince();
+                    this.getCity();
+                    this.getCountry();
 				})
 			})
 		},
@@ -618,7 +619,9 @@ export default {
 		selectCard(index) {
 			this.selectedCardIndex = index;
 		},
-
+        convertNumber(value){
+		    return Number(value);
+        }
 	}
 }
 </script>

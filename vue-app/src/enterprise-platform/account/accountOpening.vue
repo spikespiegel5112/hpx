@@ -16,8 +16,8 @@
                                 <el-option v-for='elem in accountTypeList' :key="elem.code" :label='elem.name' :value="elem.code"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="总行名称" prop='stBankCode'>
-                            <el-select v-model="formData.stBankCode" placeholder="请选择">
+                        <el-form-item label="总行名称" prop='paSbankCode'>
+                            <el-select v-model="formData.paSbankCode" placeholder="请选择">
                                 <el-option v-for='elem in bankTypeList' :key="elem.sbankcode" :label='elem.bankname' :value="elem.sbankcode"></el-option>
                             </el-select>
                         </el-form-item>
@@ -56,8 +56,8 @@
                             </el-col>
                         </el-row>
                         <el-form-item label="开户支行" prop='stBankName'>
-                            <el-select v-model="formData.stBankName" placeholder="请选择">
-                                <el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankname"></el-option>
+                            <el-select v-model="formData.stBankCode" placeholder="请选择" @change="selectBranch">
+                                <el-option v-for='elem in stBankList' :key="elem.bankno" :label='elem.bankname' :value="elem.bankno"></el-option>
                             </el-select>
                         </el-form-item>
 
@@ -141,7 +141,7 @@
                     }],
                     paSbankCode: [{
                         required: true,
-                        message: '请选择账户类型',
+                        message: '请选择总行名称',
                         trigger: 'change'
                     }],
                     platBankType: [{
@@ -237,7 +237,6 @@
                 })
             },
             openAccountSubmit() {
-                alert(this.formData.stBankCode)
                 let options = {
                     eid: this.$store.state.loginInfo.enterpriseId,
                     code: this.formData.code,
@@ -324,26 +323,29 @@
             getBank(){
                 this.stBankList=[];
                 this.formData.stBankName='';
-                let options={
-                    code:this.formData.stBankCity.substring(0,4),
-                    bankclscode:this.formData.stBankCode.substring(0,3)
-                }
-                console.log(options)
+                if(this.formData.paSbankCode==''){
+                    this.$message.warning('dsads')
+                }else{
+                    let options={
+                        code:this.formData.stBankCity.substring(0,4),
+                        bankclscode:this.formData.paSbankCode.substring(0,3)
+                    }
+                    console.log(options)
 //                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
 
 
-                bankdes(options.bankclscode, options.code).then(response => {
-                    response.json().then(result => {
-                        console.log(result)
-                        this.stBankList = result;
+                    bankdes(options.bankclscode, options.code).then(response => {
+                        response.json().then(result => {
+                            console.log(result)
+                            this.stBankList = result;
+                        })
                     })
-                })
-            },
-            selectOpeningBank(value){
-                alert(this.formData.stBankCode)
-                for(var index in this.stBankList){
-                    if(this.formData.stBankCode==this.stBankList[index].bankno){
+                }
 
+            },
+            selectBranch(value){
+                for(var index in this.stBankList){
+                    if(value==this.stBankList[index].bankno){
                         this.formData.stBankName=this.stBankList[index].bankname;
                         alert(this.formData.stBankName)
                     }
