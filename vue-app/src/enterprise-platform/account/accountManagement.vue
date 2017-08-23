@@ -337,10 +337,7 @@ export default {
 		this.getKptchaImage();
 
 
-		this.getAccountTypeList();
-		this.getBankTypeList();
-		this.getProvince();
-		this.getSameBankList();
+
 	},
 	computed: {
 		last4Digits(value) {
@@ -447,25 +444,26 @@ export default {
 				});
 			})
 		},
-		async getAccountOpenInfoByCustNo(index) {
+		getAccountOpenInfoByCustNo(index) {
 			this.updateAccountFlag = true;
-			console.log(this.accountList[index])
 			this.updateAccountCustNo = this.accountList[index].custNo;
-
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				params: {
 					custNo: this.accountList[index].custNo
 				}
 			}
-			await getAccountOpenInfoByCustNoRequest(options).then(response => {
+			console.log(options)
+			getAccountOpenInfoByCustNoRequest(options).then(response => {
                 console.log(response)
-				response.json().then(result => {
+                response.json().then(result => {
 					console.log(result)
 					this.updateAccountFormData = result;
-                    this.getProvince();
-                    this.getCity();
-                    this.getCountry();
+//                    this.getAccountTypeList();
+//                    this.getBankTypeList();
+//                    this.getProvince();
+//                    this.getSameBankList();
+
 				})
 			})
 		},
@@ -521,6 +519,8 @@ export default {
 				response.json().then(result => {
 					console.log(result)
 					this.stBankProvinceList = result;
+                    this.getCity();
+
 				})
 			})
 		},
@@ -536,6 +536,7 @@ export default {
 				response.json().then(result => {
 					console.log(result)
 					this.stBankCityList = result;
+                    this.getCountry();
 				})
 			})
 		},
@@ -551,6 +552,7 @@ export default {
 				response.json().then(result => {
 					console.log(result)
 					this.stBankCountryList = result;
+					this.getBank();
 				})
 			})
 		},
@@ -604,7 +606,6 @@ export default {
 			})
 		},
 		getSameBankList() {
-			this.accountOpeningFlag = true;
 			let options = {
 				code: 'SAME_BANK'
 			}
@@ -612,7 +613,6 @@ export default {
 				response.json().then(result => {
 					console.log(result)
 					this.stSameBankList = result;
-					this.accountOpeningFlag = false;
 				})
 			})
 		},

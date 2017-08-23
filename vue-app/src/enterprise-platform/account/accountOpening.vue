@@ -324,7 +324,8 @@
                 this.stBankList=[];
                 this.formData.stBankName='';
                 if(this.formData.paSbankCode==''){
-                    this.$message.warning('dsads')
+                    this.$message.warning('请选择总行名称')
+                    this.formData.stBankCountry='';
                 }else{
                     let options={
                         code:this.formData.stBankCity.substring(0,4),
