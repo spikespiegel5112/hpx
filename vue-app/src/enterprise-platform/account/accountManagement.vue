@@ -363,8 +363,6 @@ export default {
 		},
 		getAccountList() {
 			this.carouselLoadingFlag = true;
-			let params = Object.assign(this.pagination.params)
-			console.log(params)
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
@@ -373,6 +371,7 @@ export default {
 				response.json().then(result => {
 					console.log(result)
 					this.accountList = result.responseValue.data.content;
+					alert(result.responseValue.data.content[0].custNo)
 					setTimeout(() => {
 						this.carousel();
 						this.carouselLoadingFlag = false;
@@ -440,11 +439,12 @@ export default {
 		getAccountOpenInfoByCustNo(index) {
 			this.updateAccountFlag = true;
 			this.updateAccountCustNo = this.accountList[index].custNo;
+			alert(this.updateAccountCustNo)
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				params: {
-//					custNo: this.accountList[index].custNo
-                    custNo: 'HPX888817082423146684'
+					custNo: this.updateAccountCustNo
+//                    custNo: 'HPX888817082423146684'
 				}
 			}
 			console.log(options)
