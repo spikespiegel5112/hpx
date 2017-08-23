@@ -4,13 +4,6 @@
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
-
-				<el-row>
-					<el-col :span="24">
-						<el-button type="primary" @click="updateAccount">更新实体卡号</el-button>
-					</el-col>
-				</el-row>
-
 				<div class="enterprise_accountoverview_wrapper" v-loading="carouselLoadingFlag">
 					<a class='el-icon-arrow-left arrow'></a>
 					<div class="carousel">
@@ -30,6 +23,7 @@
 									<div class="operation">
 										<el-button type="primary" size="small">转入</el-button>
 										<el-button type="success" size="small">转出</el-button>
+										<el-button type="primary" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>
 									</div>
 								</div>
 							</li>
@@ -64,7 +58,7 @@
 		</section>
 	</section>
 	<!--项目配置-->
-	<el-dialog :visible.sync='updateAccountFlag'>
+	<el-dialog :visible.sync='updateAccountFlag' title="dsdsad">
 		<el-form :model="updateAccountFormData" :rules="rules" ref="updateAccountFormData" label-width="120px" v-loading="accountOpeningFlag">
 			<el-form-item label="实体名称" prop='stAccountName'>
 				<el-input v-model="updateAccountFormData.stAccountName" disabled></el-input>
@@ -117,7 +111,7 @@
 			</el-form-item>
 			<el-row type="flex">
 				<el-col :span="21">
-					<el-form-item label="短信验证码" prop='code' :span="10">
+					<el-form-item label="短信验证码" prop='code' :span="9">
 						<el-input v-model="updateAccountFormData.code" :span="8"></el-input>
 					</el-form-item>
 				</el-col>
@@ -127,8 +121,11 @@
 			</el-row>
 		</el-form>
 		<el-row type="flex" justify="center">
-			<el-col :span='1'>
-				<el-button type="primary" @click='openAccountSubmit'>提交</el-button>
+			<el-col :span='3'>
+				<el-button @click='updateAccountFlag==false'>取消</el-button>
+			</el-col>
+			<el-col :span='3'>
+				<el-button type="primary" @click='updateAccount'>提交</el-button>
 			</el-col>
 		</el-row>
 	</el-dialog>
@@ -151,7 +148,8 @@ import {
 	accountStatementListRequest,
 	enterpriseAccountOpenRequest,
 	updateAccountRequest,
-	openAccSendSmsRequest
+	openAccSendSmsRequest,
+	getAccountOpenInfoByCustNoRequest
 } from '@/api/enterpriseApi'
 import {
 	getKaptchaImageRequest,
@@ -249,22 +247,13 @@ export default {
 			query: {
 
 			},
-			//分页信息
-			pagination: {
-				params: {
-					page: 1,
-					size: 10
-				},
-				total: 0
-			},
 			carouselLoadingFlag: true,
-			//搜索条件的个数
-			criteriaNum: 3,
 			//模态框
-			deleteNoticeFlag: false,
 			selectedCardIndex: 0,
 			//更新实体卡号
 			updateAccountFlag: false,
+			updateAccountCustNo: '',
+
 			kaptchaImagePath: '',
 			accountTypeList: [],
 			bankList: [],
@@ -434,35 +423,6 @@ export default {
 				})
 			})
 		},
-		submitOpenAccount() {
-			this.$refs['updateAccountFormData'].validate(valid => {
-				if (valid) {
-					let options = {
-						body: {
-							//                            hostNo:this.updateAccountFormData.hostNo,
-							platBankType: this.updateAccountFormData.platBankType
-						},
-						code: this.updateAccountFormData.code,
-						eid: this.$store.state.loginInfo.enterpriseId
-					}
-					console.log(options)
-					enterpriseAccountOpenRequest(options).then(response => {
-						response.json().then(result => {
-							console.log(result);
-						})
-					})
-				}
-			})
-
-
-		},
-		async search() {
-			try {
-				this.getAccountList();
-			} catch (e) {
-
-			}
-		},
 		getKptchaImage() {
 			this.kaptchaImagePath = `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime()
 		},
@@ -487,23 +447,60 @@ export default {
 				});
 			})
 		},
-		updateAccount() {
+		getAccountOpenInfoByCustNo(index) {
 			this.updateAccountFlag = true;
-			updateAccountFormData= {
+			console.log(this.accountList[index])
+			this.updateAccountCustNo = this.accountList[index].custNo;
+
+			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
-				code: '',
-				platBankType: 'ZX',
-				stBankAccount: '',
-				stAccountName: this.$store.state.loginInfo.enterpriseName,
-				phone: this.$store.state.loginInfo.phone,
-				stBankProvince: '',
-				stBankCity: '',
-				stBankCountry: '',
-				stBankCode: '', //开户行code
-				stBankName: '', //开户行名称
-				paSbankCode: '', //总行code
-				stSameBank: '' //本行他行code
+				params: {
+					custNo: this.accountList[index].custNo
+				}
 			}
+			getAccountOpenInfoByCustNoRequest(options).then(response => {
+                console.log('dsdsdsds')
+                console.log(response)
+				response.json().then(result => {
+
+					console.log(result)
+					this.updateAccountFormData = result;
+				})
+			})
+		},
+		updateAccount() {
+			let options = {
+				eid: this.$store.state.loginInfo.enterpriseId,
+				code: this.updateAccountFormData.code,
+				body: {
+					platBankType: this.updateAccountFormData.platBankType,
+					stBankAccount: this.updateAccountFormData.stBankAccount,
+					stAccountName: this.updateAccountFormData.stAccountName,
+					//                        stAccountCode: this.updateAccountFormData.stAccountCode,
+					stBankProvince: this.updateAccountFormData.stBankProvince,
+					stBankCity: this.updateAccountFormData.stBankCity,
+					stBankCountry: this.updateAccountFormData.stBankCountry,
+					stBankName: this.updateAccountFormData.stBankName,
+					stBankCode: this.updateAccountFormData.stBankCode,
+					paSbankCode: this.updateAccountFormData.paSbankCode,
+					stSameBank: this.updateAccountFormData.stSameBank
+				}
+			}
+			console.log(options)
+			this.$refs['updateAccountFormData'].validate(valid => {
+				if (valid) {
+					enterpriseAccountOpenRequest(options).then(response => {
+						if (response.status == 200) {
+							this.$message({
+								type: 'success',
+								message: '开户提交成功'
+							})
+						}
+					}).catch(error => {
+						this.$message.error(error);
+					})
+				}
+			})
 		},
 		updateAccountSubmit() {
 			let options = {
@@ -518,15 +515,6 @@ export default {
 				})
 			})
 		},
-		selectProvince() {
-			this.formData.stBankCity = '';
-			this.getCity();
-		},
-		selectCity() {
-			this.formData.stBankCountry = '';
-			this.getCountry();
-		},
-
 		getProvince() {
 			provinces().then(response => {
 				response.json().then(result => {
@@ -535,9 +523,13 @@ export default {
 				})
 			})
 		},
+		selectProvince() {
+			this.updateAccountFormData.stBankCity = '';
+			this.getCity();
+		},
 		getCity() {
 			let options = {
-				code: this.formData.stBankProvince
+				code: this.updateAccountFormData.stBankProvince
 			}
 			cities(options.code).then(response => {
 				response.json().then(result => {
@@ -546,9 +538,13 @@ export default {
 				})
 			})
 		},
+        selectCity() {
+            this.updateAccountFormData.stBankCountry = '';
+            this.getCountry();
+        },
 		getCountry() {
 			let options = {
-				code: this.formData.stBankCity
+				code: this.updateAccountFormData.stBankCity
 			}
 			countries(options.code).then(response => {
 				response.json().then(result => {
@@ -562,10 +558,10 @@ export default {
 		},
 		getBank() {
 			this.stBankList = [];
-			this.formData.stBankName = '';
+			this.updateAccountFormData.stBankName = '';
 			let options = {
-				code: this.formData.stBankCity.substring(0, 4),
-				bankclscode: this.formData.stBankCode.substring(0, 3)
+				code: this.updateAccountFormData.stBankCity.substring(0, 4),
+				bankclscode: this.updateAccountFormData.stBankCode.substring(0, 3)
 			}
 			console.log(options)
 			//                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
@@ -581,40 +577,6 @@ export default {
 		sendSmsCode() {
 			openAccSendSmsRequest().then(response => {
 				console.log(response)
-			})
-		},
-		openAccountSubmit() {
-			let options = {
-				eid: this.$store.state.loginInfo.enterpriseId,
-				code: this.formData.code,
-				body: {
-					platBankType: this.formData.platBankType,
-					stBankAccount: this.formData.stBankAccount,
-					stAccountName: this.formData.stAccountName,
-					//                        stAccountCode: this.formData.stAccountCode,
-					stBankProvince: this.formData.stBankProvince,
-					stBankCity: this.formData.stBankCity,
-					stBankCountry: this.formData.stBankCountry,
-					stBankName: this.formData.stBankName,
-					stBankCode: this.formData.stBankCode,
-					paSbankCode: this.formData.paSbankCode,
-					stSameBank: this.formData.stSameBank
-				}
-			}
-			console.log(options)
-			this.$refs['formData'].validate(valid => {
-				if (valid) {
-					enterpriseAccountOpenRequest(options).then(response => {
-						if (response.status == 200) {
-							this.$message({
-								type: 'success',
-								message: '开户提交成功'
-							})
-						}
-					}).catch(error => {
-						this.$message.error(error);
-					})
-				}
 			})
 		},
 		getBankTypeList() {
@@ -655,7 +617,8 @@ export default {
 		},
 		selectCard(index) {
 			this.selectedCardIndex = index;
-		}
+		},
+
 	}
 }
 </script>

@@ -18,7 +18,7 @@
                         </el-form-item>
                         <el-form-item label="总行名称" prop='stBankCode'>
                             <el-select v-model="formData.stBankCode" placeholder="请选择">
-                                <el-option v-for='elem in bankTypeList' :key="elem.bankcode" :label='elem.bankname' :value="elem.bankcode"></el-option>
+                                <el-option v-for='elem in bankTypeList' :key="elem.sbankcode" :label='elem.bankname' :value="elem.sbankcode"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="实体账号" prop='stBankAccount'>
@@ -237,6 +237,7 @@
                 })
             },
             openAccountSubmit() {
+                alert(this.formData.stBankCode)
                 let options = {
                     eid: this.$store.state.loginInfo.enterpriseId,
                     code: this.formData.code,
