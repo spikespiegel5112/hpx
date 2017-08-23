@@ -4,7 +4,7 @@
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
-                <el-button type="primary" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>
+                <!--<el-button type="primary" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>-->
 				<div class="enterprise_accountoverview_wrapper" v-loading="carouselLoadingFlag">
 					<a class='el-icon-arrow-left arrow'></a>
 					<div class="carousel">
@@ -24,7 +24,7 @@
 									<div class="operation">
 										<el-button type="primary" size="small">转入</el-button>
 										<el-button type="success" size="small">转出</el-button>
-										<el-button type="primary" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>
+										<el-button type="primary" size="small" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>
 									</div>
 								</div>
 							</li>
@@ -58,7 +58,7 @@
 		</section>
 	</section>
 	<!--项目配置-->
-	<el-dialog :visible.sync='updateAccountFlag' title="dsdsad">
+	<el-dialog :visible.sync='updateAccountFlag' title="账户修改" width="720px">
 		<el-form :model="updateAccountFormData" :rules="rules" ref="updateAccountFormData" label-width="120px" v-loading="accountOpeningFlag">
 			<el-form-item label="实体名称" prop='stAccountName'>
 				<el-input v-model="updateAccountFormData.stAccountName" disabled></el-input>
@@ -110,13 +110,13 @@
 				</el-select>
 			</el-form-item>
 			<el-row type="flex">
-				<el-col :span="21">
-					<el-form-item label="短信验证码" prop='code' :span="9">
-						<el-input v-model="updateAccountFormData.code" :span="8"></el-input>
+				<el-col :span="20">
+					<el-form-item label="短信验证码" prop='code'>
+						<el-input v-model="updateAccountFormData.code"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="2" class="row-bg" justify="end">
-					<el-button type="primary" @click='sendSmsCode' :span="2">发送验证码</el-button>
+					<el-button type="primary" @click='sendSmsCode'>发送验证码</el-button>
 				</el-col>
 			</el-row>
 		</el-form>
@@ -261,7 +261,7 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				code: '',
 				platBankType: 'ZX',
-				stBankAccount: '',
+				stBankAccount: null,
 				stAccountName: this.$store.state.loginInfo.enterpriseName,
 				phone: this.$store.state.loginInfo.phone,
 				stBankProvince: '',
@@ -371,7 +371,7 @@ export default {
 				response.json().then(result => {
 					console.log(result)
 					this.accountList = result.responseValue.data.content;
-					alert(result.responseValue.data.content[0].custNo)
+//					alert(result.responseValue.data.content[0].custNo)
 					setTimeout(() => {
 						this.carousel();
 						this.carouselLoadingFlag = false;
@@ -415,27 +415,6 @@ export default {
 		getKptchaImage() {
 			this.kaptchaImagePath = `/core/core/api/v1/getKaptchaImage?v=` + new Date().getTime()
 		},
-		getSmsCode() {
-			this.code = '';
-			// let options = {
-			// 	phone: this.$store.state.loginInfo.phone,
-			// 	strCode: this.updateAccountFormData.strCode
-			// }
-			// console.log(options);
-			openAccSendSmsRequest().then(response => {
-				console.log(response);
-				response.json().then(result => {
-					console.log(result);
-				})
-			}).catch(e => {
-				console.log(e);
-				this.$message({
-					showClose: true,
-					message: e,
-					type: 'error'
-				});
-			})
-		},
 		getAccountOpenInfoByCustNo(index) {
 			this.updateAccountFlag = true;
 			this.updateAccountCustNo = this.accountList[index].custNo;
@@ -453,6 +432,7 @@ export default {
                 response.json().then(result => {
 					console.log(result)
 					this.updateAccountFormData = result;
+					this.updateAccountFormData.stBankAccount=Number(this.updateAccountFormData.stBankAccount)
                     this.getAccountTypeList();
                     this.getBankTypeList();
                     this.getSameBankList();
@@ -465,48 +445,38 @@ export default {
 		updateAccount() {
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
-				code: this.updateAccountFormData.code,
+				id: this.updateAccountFormData.id,
+                code: this.updateAccountFormData.code,
 				body: {
-					platBankType: this.updateAccountFormData.platBankType,
-					stBankAccount: this.updateAccountFormData.stBankAccount,
-					stAccountName: this.updateAccountFormData.stAccountName,
-					//                        stAccountCode: this.updateAccountFormData.stAccountCode,
-					stBankProvince: this.updateAccountFormData.stBankProvince,
+                    platBankType: this.updateAccountFormData.platBankType,
+                    stBankAccount: this.updateAccountFormData.stBankAccount,
+                    stAccountName: this.updateAccountFormData.stAccountName,
+                    //                        stAccountCode: this.updateAccountFormData.stAccountCode,
+                    stBankProvince: this.updateAccountFormData.stBankProvince,
                     stBankCity: this.updateAccountFormData.stBankCity,
                     stBankCountry: this.updateAccountFormData.stBankCountry,
-					stBankName: this.updateAccountFormData.stBankName,
-					stBankCode: this.updateAccountFormData.stBankCode,
-					paSbankCode: this.updateAccountFormData.paSbankCode,
-					stSameBank: this.updateAccountFormData.stSameBank
+                    stBankName: this.updateAccountFormData.stBankName,
+                    stBankCode: this.updateAccountFormData.stBankCode,
+                    paSbankCode: this.updateAccountFormData.paSbankCode,
+                    stSameBank: this.updateAccountFormData.stSameBank
 				}
 			}
 			console.log(options)
 			this.$refs['updateAccountFormData'].validate(valid => {
 				if (valid) {
-					enterpriseAccountOpenRequest(options).then(response => {
+                    updateAccountRequest(options).then(response => {
+
 						if (response.status == 200) {
 							this.$message({
 								type: 'success',
-								message: '开户提交成功'
+								message: response.headers.get('x-hpx-alert')
 							})
+                            console.log(response)
 						}
 					}).catch(error => {
 						this.$message.error(error);
 					})
 				}
-			})
-		},
-		updateAccountSubmit() {
-			let options = {
-				eid: this.$store.state.loginInfo.enterpriseId,
-				id: '',
-				body: {}
-			}
-			options.body = this.updateAccountFormData;
-			updateAccountRequest(options).then(response => {
-				response.json().then(result => {
-					console.log(result)
-				})
 			})
 		},
 		getProvince() {
@@ -527,7 +497,6 @@ export default {
 			let options = {
 				code: this.updateAccountFormData.stBankProvince
 			}
-			alert(options.code)
 			cities(options.code).then(response => {
 				response.json().then(result => {
 					console.log(result)
@@ -575,6 +544,7 @@ export default {
 			})
 		},
 		sendSmsCode() {
+		    alert('dsds')
 			openAccSendSmsRequest().then(response => {
 				console.log(response)
 			})
@@ -619,8 +589,8 @@ export default {
         selectBranch(value){
             for(var index in this.stBankList){
                 if(value==this.stBankList[index].bankno){
-                    this.formData.stBankName=this.stBankList[index].bankname;
-                    alert(this.formData.stBankName)
+                    this.updateAccountFormData.stBankName=this.stBankList[index].bankname;
+                    alert(this.updateAccountFormData.stBankName)
                 }
             }
         },

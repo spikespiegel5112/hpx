@@ -18,7 +18,7 @@ export const getAccountOpenInfoByCustNoRequest = options => fetch(`/core/core/ap
 /**
  * 更新实体卡号
  */
-export const updateAccountRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts/change/${options.id}`, options.body, 'patch');
+export const updateAccountRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts/change/${options.id}/${options.code}`, options.body, 'patch');
 
 /**
  * 取得企业项目邀请（受邀请）列表, 支持分页
