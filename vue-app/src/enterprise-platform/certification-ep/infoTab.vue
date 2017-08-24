@@ -4,9 +4,9 @@
             <div slot="header" class="card-header">
                 <span>基本信息</span>
                 <template v-if="allEdite">
-                <a v-show="isEdite.base" href="javascript:void(0);" style="float:right;" @click="edite('base')">{{doneText.editeText}}</a>
-                <a v-show="!isEdite.base" href="javascript:void(0);" style="float:right;" @click="editeDone('base')">{{doneText.sureText}}</a>
-            </template>
+                    <a v-show="isEdite.base" href="javascript:void(0);" style="float:right;" @click="edite('base')">{{doneText.editeText}}</a>
+                    <a v-show="!isEdite.base" href="javascript:void(0);" style="float:right;" @click="editeDone('base')">{{doneText.sureText}}</a>
+                </template>
             </div>
             <div>
                 <el-form :model="baseInfoForm" :rules="baseRules" ref="baseInfoForm" label-width="30%">
@@ -74,9 +74,9 @@
             <div slot="header" class="card-header">
                 <span>工商注册信息</span>
                 <template v-if="allEdite">
-                <a v-show="isEdite.business" href="javascript:void(0);" style="float:right;" @click="edite('business')">{{doneText.editeText}}</a>
-                <a v-show="!isEdite.business" href="javascript:void(0);" style="float:right;" @click="editeDone('business')">{{doneText.sureText}}</a>
-            </template>
+                    <a v-show="isEdite.business" href="javascript:void(0);" style="float:right;" @click="edite('business')">{{doneText.editeText}}</a>
+                    <a v-show="!isEdite.business" href="javascript:void(0);" style="float:right;" @click="editeDone('business')">{{doneText.sureText}}</a>
+                </template>
             </div>
             <div>
                 <el-form :model="businessInfoForm" :rules="businessRules" ref="businessInfoForm" label-width="30%">
@@ -164,9 +164,9 @@
             <div slot="header" class="card-header">
                 <span>联系方式</span>
                 <template v-if="allEdite">
-                <a v-show="isEdite.contacts" href="javascript:void(0);" style="float:right;" @click="edite('contacts')">{{doneText.editeText}}</a>
-                <a v-show="!isEdite.contacts" href="javascript:void(0);" style="float:right;" @click="editeDone('contacts')">{{doneText.sureText}}</a>
-            </template>
+                    <a v-show="isEdite.contacts" href="javascript:void(0);" style="float:right;" @click="edite('contacts')">{{doneText.editeText}}</a>
+                    <a v-show="!isEdite.contacts" href="javascript:void(0);" style="float:right;" @click="editeDone('contacts')">{{doneText.sureText}}</a>
+                </template>
             </div>
             <div>
                 <el-form :model="contactsInfoForm" :rules="contactsRules" ref="contactsInfoForm" label-width="30%">
@@ -228,9 +228,9 @@
             <div slot="header" class="card-header">
                 <span>税务信息</span>
                 <template v-if="allEdite">
-                <a v-show="isEdite.taxRegistration" href="javascript:void(0);" style="float:right;" @click="edite('taxRegistration')">{{doneText.editeText}}</a>
-                <a v-show="!isEdite.taxRegistration" href="javascript:void(0);" style="float:right;" @click="editeDone('taxRegistration')">{{doneText.sureText}}</a>
-            </template>
+                    <a v-show="isEdite.taxRegistration" href="javascript:void(0);" style="float:right;" @click="edite('taxRegistration')">{{doneText.editeText}}</a>
+                    <a v-show="!isEdite.taxRegistration" href="javascript:void(0);" style="float:right;" @click="editeDone('taxRegistration')">{{doneText.sureText}}</a>
+                </template>
             </div>
             <div>
                 <el-form :model="taxRegistrationInfoForm" :rules="taxRules" ref="taxRegistrationInfoForm" label-width="30%">
@@ -309,14 +309,14 @@ export default {
             },
             baseRules: {
                 name: [
-                    { required: true, message: '请输入企业名称' ,trigger: 'blur' },
+                    { required: true, message: '请输入企业名称', trigger: 'blur' },
                 ],
                 taxNumber: [
                     { required: true, message: '请输入税务登记证', trigger: 'blur' },
                     { validator: checkNumber, trigger: 'blur' }
                 ],
                 iscode31: [
-                    { required: true, message: '请选择是否三证合一',trigger: 'blur'  },
+                    { required: true, message: '请选择是否三证合一', trigger: 'blur' },
                 ],
                 licenceNo: [
                     { required: true, message: '请输入营业执照号', trigger: 'blur' },
@@ -324,7 +324,7 @@ export default {
                 ],
                 codeOrg: [
                     { required: true, message: '请输入组织机构代码', trigger: 'blur' },
-                    { validator: checkNumber , trigger: 'blur' }
+                    { validator: checkNumber, trigger: 'blur' }
                 ],
             },
             isCode31Options: [
@@ -363,7 +363,7 @@ export default {
             ],
             businessRules: {
                 regDate: [
-                    { required: true, message: '请选择日期'}
+                    { required: true, message: '请选择日期' }
                 ],
                 contactsEmail: [
                     { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
@@ -394,21 +394,21 @@ export default {
                     { validator: checkPhone, trigger: 'blur' }
                 ],
                 contactsEmail: [
-                    { required: true, message: '请输入邮箱',trigger: 'blur'  },
-                    { type: 'email', message: '邮箱格式不正确' ,trigger: 'blur' }
+                    { required: true, message: '请输入邮箱', trigger: 'blur' },
+                    { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
                 ],
                 city: [
-                    { required: true, message: '请输入城市' ,trigger: 'blur' },
+                    { required: true, message: '请输入城市', trigger: 'blur' },
                 ],
                 address: [
-                    { required: true, message: '请输入地址',trigger: 'blur'  },
+                    { required: true, message: '请输入地址', trigger: 'blur' },
                 ],
                 legalPerson: [
                     { required: true, message: '请输入法人姓名', trigger: 'blur' },
                 ],
                 legalCardNo: [
                     { required: true, message: '请输入身份证', trigger: 'blur' },
-                    { validator: checkCardNo, message:'身份证格式不正确',trigger: 'blur' }
+                    { validator: checkCardNo, message: '身份证格式不正确', trigger: 'blur' }
                 ]
             },
             taxRegistrationInfoForm: {
@@ -424,7 +424,7 @@ export default {
                     { required: true, message: '请输入税务类型', trigger: 'blur' },
                 ]
             },
-            entType:[]
+            entType: []
         }
     },
     created() {
@@ -432,14 +432,14 @@ export default {
         this.getDictionary();
     },
     computed: {
-        ...mapState(['loginInfo','accStatusInfo']),
-        allEdite(){
+        ...mapState(['loginInfo', 'accStatusInfo']),
+        allEdite() {
             return !this.accStatusInfo.authenticateStatus || this.accStatusInfo.authenticateStatus === 'F' ? true : false;
         }
     },
     methods: {
-        async getDictionary(){
-            const params = {code : 'ENT_TYPE'};
+        async getDictionary() {
+            const params = { code: 'ENT_TYPE' };
             const resp = await getDictionaryByCodeRequest(params);
             const res = await resp.json();
             this.entType = res;

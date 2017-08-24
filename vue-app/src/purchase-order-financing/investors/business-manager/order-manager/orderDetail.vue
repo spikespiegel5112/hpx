@@ -8,16 +8,16 @@
         <order-list :orderId="orderId" :edite="isEdite" @numChange="numChange" @orderDetail="orderDetail"></order-list>
         <div class="order-total">
             <p>
-                <span>共计数量:</span><span>{{this.totalNum}}件</span>
+                <span>共计数量:</span><span class="order-d-content">{{this.totalNum}}</span>件
             </p>
             <p>
-                <span>共计金额:</span><span>￥{{this.totalAmount}}</span>
+                <span>共计金额:</span><span class="order-d-content">{{this.totalAmount.toFixed(2)}}</span>￥
             </p>
             <p>
-                <span>保证金:</span><span>￥{{this.deposit.toFixed(2)}}</span>
+                <span>保证金:</span><span class="order-d-content">{{this.deposit.toFixed(2)}}</span>￥
             </p>
         </div>
-        <div class="order-action">
+        <div class="order-action-down">
             <el-button type="primary" @click="save">确定修改</el-button>
             <el-button type="primary" @click="dealSubmit">确定订单</el-button>
         </div>
@@ -48,6 +48,7 @@
             orderList
         },
         created(){
+            Object.assign(this.$data, this.$options.data())
             this.getInterestRate();
         },
         computed : {
@@ -103,13 +104,22 @@
                 }
 
             },
-            async dealSubmit(){
-                try{
-                    const resp = await orderSure(this.orderId);
-                    
-                }catch(e){
+            dealSubmit(){
+                this.$confirm('如果修改过数量请先确定修改再确定订单, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then( async () => {
+                    try {
+                        const resp = await orderSure(this.orderId);
+                        this.$message.success('操作成功!');
+                        this.$router.go(-1)
+                    } catch (e) {
+                        this.$message.error(e);
+                    }
+                }).catch(() => {
 
-                }
+                });
             }
         },
     }
@@ -117,18 +127,28 @@
 
 <style lang="less" scoped>
     .order-total{
+        text-align: right;
         margin:10px 0;
+        color: #666666;
         p{
+            display: inline-block;
             margin: 10px 0;
-            padding-left:20px;
+            padding:0 20px;
             span{
+                color: #666666;
                 display: inline-block;
+            }
+            .order-d-content{
+                width: 100px;
             }
         }
     }
     .order-action{
         padding-left:20px;
-        margin:10px 0;
+        margin:30px 0;
+    }
+    .order-action-down{
+        text-align: right;
     }
 
 </style>

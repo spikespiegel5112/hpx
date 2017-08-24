@@ -165,7 +165,7 @@
 
             //查看明细
             check (index,row){
-                this.$router.push({path: this.$route.path + '/xf_paymentReceiptRecordDetail/' + row.id})
+                this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
 
             async search () {

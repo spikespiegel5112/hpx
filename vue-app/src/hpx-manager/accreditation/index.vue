@@ -56,6 +56,7 @@
                     :width="value.width ? value.width : 'auto'"
                     :formatter="value.formatter"
                     :min-width="value.minWidth ? value.minWidth : 'auto'"
+                    :show-overflow-tooltip="true"
                 >
                 </el-table-column>
                 <el-table-column label="操作" min-width="100" align="center">

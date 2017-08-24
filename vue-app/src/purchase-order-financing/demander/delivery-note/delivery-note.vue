@@ -193,7 +193,7 @@
 
             //查看明细
             check (index,row){
-                 this.$router.push({path: this.$route.path + '/xf_deliveryNoteDetail/' + row.id})
+                 this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
 
             //修改提货单

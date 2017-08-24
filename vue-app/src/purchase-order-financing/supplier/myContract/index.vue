@@ -29,10 +29,18 @@
                     </el-col>
                 </el-row>
             </el-form>
-            <el-button type="primary" :disabled="uploadBtn" @click="signature">签章</el-button>
-            <el-button type="primary" :disabled="uploadBtn" >预览</el-button>
-            <el-button type="primary" :disabled="uploadBtn" @click="uploadContract">上传文件</el-button>
-            <el-button type="primary" :disabled="uploadBtn" @click="receiving">查看收货清单</el-button>
+            <el-button type="primary" :disabled="signatureBtn" @click="signature">签章</el-button>
+            <el-button type="primary" :disabled="viewBtn" >预览</el-button>
+            <!--<el-button type="primary" :disabled="uploadBtn" @click="uploadContract">上传文件</el-button>-->
+            <el-button type="primary" :disabled="lookBtn" @click="receiving">查看收货清单</el-button>
+            <el-upload
+                :action="uploadContractUrl()"
+                list-type="picture"
+                accept="image/gif, image/jpeg, image/png, image/jpg"
+                :on-change="(file,filesList)=>filesChange(selectContractList[0].index,file,filesList)"
+                :on-remove="()=>removeFile(selectContractList[0].index)">
+                <el-button :disabled="uploadBtn" type="primary">上传合同</el-button>
+            </el-upload>
         </section>
 
         <section class="main-table-container">
@@ -43,9 +51,6 @@
                 </el-table-column>
                
             </el-table>
-            <!--
-                    分页需改4
-                    -->
             <my-Pagination @pageChange="pageChange" :total="total">
             </my-Pagination>
         </section>
@@ -95,17 +100,16 @@ export default {
             ],
             //总页数
             total: 0,
-            //分页
-            /*
-            ** 分页需改1
-            */
             pagination: {},
 
             excelList: [],
             //table
             tableList: [],
             capitalList: [],
-            selectContractList: [],
+            selectContractList: [{
+                id:'',
+                index: ''
+            }],
             listLoading: false,
             emptyText: "暂无数据",
 
@@ -114,7 +118,10 @@ export default {
                 code: '',
                 secondPartyId: '',
             },
-            uploadBtn: true
+            uploadBtn: true,
+            signatureBtn: true,
+            viewBtn: true,
+            lookBtn: true
         }
     },
     components: {
@@ -129,9 +136,6 @@ export default {
     },
     computed: {
         ...mapState(["loginInfo","projectId"]),
-        // excelAction(){
-        //     return uploadContract();
-        // }
     },
     methods: {
         pageChange(data) {
@@ -169,24 +173,49 @@ export default {
             }
         },
 
-        // 上传合同
-        uploadContract() {
-            const id = this.selectContractList[0].id;
-        },
-
         //签章
         signature() {
-            console.log("签章222")
             const id = this.selectContractList[0].id;
             this.$router.push({ path: this.$route.path + '/signature/' + id})
         },
-
-        edite(index, row) {
-            this.editeModalVisible = true;
-            this.editeData = Object.assign({}, { ...row })
+        clickLoad(fileId){
+            window.location.href = loadUrl(fileId);
         },
+        async search () {
+             this.getList();
+        },
+
+        resetForm(formName) {
+             this.$refs[formName].resetFields();
+        },
+        //查看收货清单
+        receiving() {
+            const id = this.selectContractList[0].id;
+            this.$router.push({ path: this.$route.path + '/gf_myContractDetail/' + id})
+        },
+        handleSelectionChange(val) {
+            this.selectContractList = [...val];
+            if(this.selectContractList.length != 1){
+                    this.uploadBtn = true;
+                    this.signatureBtn = true;
+                    this.viewBtn = true;
+                    this.lookBtn = true;
+                } else {
+                    this.uploadBtn = false;
+                    this.signatureBtn = false;
+                    this.viewBtn = false;
+                    this.lookBtn = false;
+                    if(this.selectContractList[0].fSignatureStatus === '1') {
+                        this.signatureBtn = true;
+                    }
+                }
+        },
+        uploadContractUrl () {
+            const id = this.selectContractList[0].id;
+            return `/order/contract/uploadingContract/${id}`;
+        },
+
         filesChange(index,file,filesList){
-            console.log(file,filesList,index)
             this.tableList[index].fileName = file.name;
             this.tableList[index].fileLength = file.size;
             this.tableList[index].thumbUrl = file.url; 
@@ -196,37 +225,7 @@ export default {
             this.tableList[index].fileLength = '';
             this.tableList[index].thumbUrl = ''; 
         },
-        clickLoad(fileId){
-            window.location.href = loadUrl(fileId);
-        },
-        //查看收货清单
-        receiving() {
-            const id = this.selectContractList[0].id;
-            this.$router.push({ path: this.$route.path + '/gf_myContractDetail/' + id})
-        },
-
-        handleSelectionChange(val) {
-            if(this.selectContractList.length != 1){
-                    this.uploadBtn = true;
-                } else {
-                    this.uploadBtn = false;
-                }
-                if(val.differenceStatus === '1') {
-                    this.uploadBtn = true;
-            }
-            this.selectContractList = val;
-        },
-        async search () {
-                this.getList();
-        },
-
-        resetForm(formName) {
-             this.$refs[formName].resetFields();
-        },
     },
-    /*
-    ** 分页需改3
-    */
     watch: {
         pagination: {
             handler: function () {
@@ -236,7 +235,7 @@ export default {
         }
     }
 }
-</script>
+</script> 
 
 <style lang="less" scoped>
 @import '../../../style/mixin';

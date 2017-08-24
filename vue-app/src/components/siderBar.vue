@@ -2,6 +2,7 @@
 	<div v-loading.fullscreen.lock="loading">
 	<div v-if="menuList.length" class="menu-wrap">
 		<el-menu :default-active="defaultActive" mode='vertical' style="min-height: 100%;" theme="dark" unique-opened router>
+			<div style="height:50px;"></div>
 			<el-menu-item :index="index">
 				<i class="fa fa-home icon-style"></i>
 				<span class="icon-indent">首页</span>
@@ -40,7 +41,7 @@ import {
 export default {
 	data: () => ({
 		menuList: [],
-		laoding: false,
+		loading: false,
 	}),
 	props: ['index'],
 	created: function () {
@@ -48,7 +49,6 @@ export default {
 			this.loading = true;
 			try {
 				const path = this.$route.path.split('/')[1];
-				console.log(path)
 				let resp, res = [];
 				if (path !== 'platform' && path !== 'manager') {
 					const { pjId } = this.$route.params;
@@ -60,10 +60,10 @@ export default {
 							this.changePath(tmp, pjId);
 							res = [...tmp];
 						} catch (e) {
-							this.toHome();
+							this.toHome(e);
 						}
 					} else {
-						this.toHome();
+						this.toHome('无项目信息');
 					}
 				} else {
 					resp = await getMenuList(this.loginInfo.enterpriseId);
@@ -105,9 +105,9 @@ export default {
 				}
 			)
 		},
-		toHome() {
+		toHome(e) {
 			const path = this.loginInfo.enterpriseId === '1' ? '/manager' : '/platform';
-			this.$alert('没有选取项目或者没权限', '提示', {
+			this.$alert(`${e}`, '提示', {
 				confirmButtonText: '确定',
 				callback: action => {
 					this.$router.push({
@@ -124,7 +124,7 @@ export default {
 .menu-wrap {
 	height: 100%;
 	position: fixed;
-	top: 50px;
+	top: 0;
 	bottom: 0;
 	left: 0;
 	width: 200px;

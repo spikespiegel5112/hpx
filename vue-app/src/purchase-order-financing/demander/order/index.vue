@@ -182,7 +182,7 @@ export default {
 
         //新增订单
         addOrder(){
-
+            this.$router.push({path:`${this.$route.path}/add`})
         },
 
         //查看明细

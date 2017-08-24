@@ -13,7 +13,7 @@
 						<el-input type="password" placeholder="密码" v-model="loginForm.password"></el-input>
 					</el-form-item>
 					<el-form-item>
-				    	<el-button type="primary" @click="submitForm('loginForm')" class="submit_btn">登录</el-button>
+				    	<el-button type="primary" @click="submitForm('loginForm')" class="submit_btn" :loading="loading">登录</el-button>
 				  	</el-form-item>
 				</el-form>
 				<el-button style="float:right; margin-left: 20px;" @click="register" type="text">点击注册</el-button>
@@ -41,6 +41,7 @@
 						{ required: true, message: '请输入密码', trigger: 'blur' }
 					],
 				},
+				loading : false,
 				showLogin: false,
 			}
 		},
@@ -57,15 +58,16 @@
 
 		},
 		methods: {
-			...mapActions(['getAdminData']),
 			async submitForm(formName) {
 				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
 						(async () => {
+							this.loading = true;
 							try{
 								const resp = await login(this.loginForm);
 								console.log(resp)
 								const res = await resp.json();
+								this.loading = false;
 								this.$message({
 									type: 'success',
 									message: '登录成功'
@@ -85,6 +87,7 @@
 									type: 'error',
 									message: e
 								});
+								this.loading = false;
 							}
 						})()
 					}

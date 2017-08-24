@@ -10,9 +10,9 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                    <el-form-item prop="name" label="需方">
-                        <el-select v-model="query.firstParty" placeholder="需方" @change="addressies">
-                            <el-option v-for="item in firstPartyOptoons" :key="item.enterpriseId" :label="item.enterpriseName" :value="item.enterpriseId">
+                    <el-form-item prop="name" label="供应商">
+                        <el-select v-model="query.firstParty" placeholder="供应商" @change="addressies">
+                            <el-option v-for="item in firstPartyOptions" :key="item.enterpriseId" :label="item.enterpriseName" :value="item.enterpriseId">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -63,7 +63,7 @@
 <script>
 import headTop from '@/components/headTop'
 import orderList from './orderList';
-import { getSupplierList, eidAddress , AddContract} from '@/api/orderApi'
+import { roleList, eidAddress , AddContract} from '@/api/orderApi'
 import { mapState } from 'vuex'
 import moment from 'moment'
 export default {
@@ -82,7 +82,7 @@ export default {
                 fUser: '',
                 fPhone: ''
             },
-            firstPartyOptoons: [],
+            firstPartyOptions: [],
             addressOptions:[]
         }
     },
@@ -106,10 +106,11 @@ export default {
         test() {
             this.isEdite = !this.isEdite;
         },
-        async suppliers() {
-            const resp = await getSupplierList(this.projectId);
+         async suppliers(){
+            const param = {enterpriseRole:'PRO_ENT_TYPE_SUPPLIER',state:'T'};
+            const resp = await roleList(this.projectId,param);
             const res = await resp.json();
-            this.firstPartyOptoons = JSON.parse(JSON.stringify(res));
+            this.firstPartyOptions = JSON.parse(JSON.stringify(res));
         },
         async addressies(e) {
             const params = { orgId: e };
@@ -126,7 +127,7 @@ export default {
                             query.contractDate = query.contractDate ? moment(query.contractDate).format('YYYY-MM-DD') : '';
                             query.contractDate = query.deliveryDate ? moment(query.deliveryDate).format('YYYY-MM-DD') : '';
                             const params = Object.assign({},query,{contractType:'C'},{contractDetail : this.detail})
-                        
+
                             const resp = await AddContract(this.orderId,params);
                         }catch(e){
 

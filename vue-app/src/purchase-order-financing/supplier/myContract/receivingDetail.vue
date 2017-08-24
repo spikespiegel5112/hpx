@@ -1,6 +1,7 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
+        <div class="goods-list">收货清单</div>
 
         <section class="main-table-container">
             <el-table
@@ -9,10 +10,12 @@
                 :data="tableList"
                 v-loading="listLoading"
                 highlight-current-row
-                style="width: 100%">
+                style="width: 100%"
+                border>
                 <el-table-column
                   type="index"
-                  width="100">
+                  width="60"
+                  label="序号">
                 </el-table-column>
                 <el-table-column
                     v-for="(value,i) in columns"
@@ -25,11 +28,9 @@
                 >
                 </el-table-column>
             </el-table>
-           <!-- 
-            分页需改4
-            -->
             <my-Pagination @pageChange="pageChange" :total="total">
             </my-Pagination>
+            <el-button style="float: right; margin-top:30px;" type="primary" @click="goBack">返回</el-button>
         </section>
     </div>
 </template>
@@ -54,20 +55,19 @@
                     label : '型号',
                     prop  : 'model',
                     },{
+                    label : '单价',
+                    prop  : 'univalence',
+                    width : '60'
+                    },{
                     label : '计量单位',
                     prop  : 'unit',
                     },{
-                    label : '单价',
-                    prop  : 'univalence',
-                    },{
                     label : '数量',
                     prop  : 'amount',
+                    width : '60'
                     },{
                     label : '总价',
                     prop  : 'total',
-                    },{
-                    label : '备注',
-                    prop  : 'remark',
                     },{
                     label : '实收数量',
                     prop  : 'receivedAmount',
@@ -87,11 +87,13 @@
                     prop  : 'differenceStatus',
                     formatter : (row,column) => row.differenceStatus === '0' ? "未处理" :
                     row.differenceType === '1' ?"已处理" :""
+                    },{
+                    label : '备注',
+                    prop  : 'remark',
                     }
                 ],
                 //总页数
                 total : 0,
-                //分页
                 pagination : {},
                 //table
                 tableList: [],
@@ -108,27 +110,17 @@
             this.tableList = [];
             this.getList();
         },
-        mounted(){
-
-        },
         computed : {
             ...mapState(["loginInfo"]),
              tContractId(){
-                 console.log(this.$route.params.tContractId)
                 return this.$route.params.tContractId
             }
         },
         methods: {
-            /*
-            ** 分页需改2
-            */
             pageChange(data){
                 this.pagination = data;
             },
             async getList(){
-                /*
-                ** 分页需改5
-                */
                 this.listLoading = true;
                 try{
                     const params = Object.assign({tContractId:this.tContractId},this.pagination);
@@ -146,10 +138,10 @@
                     this.listLoading = false;
                 }
             },
+            goBack() {
+                history.back();
+            },
         },
-        /*
-        ** 分页需改3
-        */
         watch : {
             pagination : {
                 handler : function(){
@@ -163,5 +155,8 @@
 
 <style lang="less">
     // @import '../../style/mixin';
-
+    .goods-list {
+        margin: 30px 0 20px 0;
+        font-size: 18px;
+    }
 </style>

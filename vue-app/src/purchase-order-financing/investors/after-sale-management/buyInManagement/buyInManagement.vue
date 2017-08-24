@@ -210,7 +210,7 @@
             },
 
             check (index,row){
-                this.$router.push({path: this.$route.path + '/zf_buyInManagementDetail/' + row.id})
+                this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
 
             async search () {

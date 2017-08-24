@@ -1,112 +1,151 @@
 <template>
-<div class="fillcontain">
-	<head-top></head-top>
+	<div class="fillcontain">
+		<head-top></head-top>
 
-	<!--  搜索条件  -->
-	<section class='search-criteria-container'>
-		<el-form :inline="true" :model="query" ref="query">
-			<el-row>
-				<el-col :span="5">
-					<el-form-item prop="name">
-						<el-input v-model="query.name" size="large" placeholder="角色名称"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="7" :offset="6 * (3 - (criteriaNum % 4))">
-					<el-form-item>
-						<el-button type="primary" icon="search" @click="search">查询</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button type="primary" icon="circle-close" @click="resetTable">重置</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button icon="plus" type="primary" @click='createRole'>新增</el-button>
-					</el-form-item>
-				</el-col>
-			</el-row>
-		</el-form>
-	</section>
-
-	<section class="main-table-container">
-        <transition name="el-fade-in-linear">
-            <el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
-                <el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
-                </el-table-column>
-                <el-table-column label="操作">
-                    <template scope="scope">
-                        <el-button type="text" size="small" @click='editRole(scope)'>修改</el-button>
-                        <el-button type="text" size="small" @click='deleteRole(scope)'>删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </transition>
-
-		<section class="main-pagination">
-			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
-			</el-pagination>
+		<!--  搜索条件  -->
+		<section class='search-criteria-container'>
+			<el-form :inline="true" :model="query" ref="query">
+				<el-row>
+					<el-col :span="5">
+						<el-form-item prop="name">
+							<el-input v-model="query.name" size="large" placeholder="角色名称"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="7" :offset="6 * (3 - (criteriaNum % 4))">
+						<el-form-item>
+							<el-button type="primary" icon="search" @click="search">查询</el-button>
+						</el-form-item>
+						<el-form-item>
+							<el-button type="primary" icon="circle-close" @click="resetTable">重置</el-button>
+						</el-form-item>
+						<el-form-item>
+							<el-button icon="plus" type="primary" @click='createRole'>新增</el-button>
+						</el-form-item>
+					</el-col>
+				</el-row>
+			</el-form>
 		</section>
-	</section>
-	<!--新建角色-->
-	<el-dialog title="新建角色" :visible.sync='newRoleDialogFlag' :close-on-click-modal="true">
-		<el-form :model="roleData" label-width="130px" :rules="createRoleRules" ref="roleData">
-			<el-form-item label="角色名称" prop="name">
-				<el-input v-model="roleData.name" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="角色Code" prop="code">
-				<el-input v-model="roleData.code" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="角色描述" prop="description">
-				<el-input v-model="roleData.description"></el-input>
-			</el-form-item>
-			<el-form-item label="是否可用">
-				<el-radio-group v-model="roleData.available">
-					<el-radio label="T">是</el-radio>
-					<el-radio label="F">否</el-radio>
-				</el-radio-group>
-			</el-form-item>
-			<el-form-item label="是否允许再次授权">
-				<el-radio-group v-model="roleData.reGrant">
-					<el-radio label="T">是</el-radio>
-					<el-radio label="F">否</el-radio>
-				</el-radio-group>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="newRoleDialogFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="createRoleSubmit">提交</el-button>
-		</div>
-	</el-dialog>
-	<!--编辑界面-->
-	<el-dialog title="修改角色" :visible.sync='editRoleDialogFlag' :close-on-click-modal="true">
-        <el-form :model="roleData" label-width="130px" :rules="createRoleRules" ref="roleData">
-            <el-form-item label="角色名称" prop="name">
-                <el-input v-model="roleData.name" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="角色Code" prop="code">
-                <el-input v-model="roleData.code" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="角色描述" prop="description">
-                <el-input v-model="roleData.description"></el-input>
-            </el-form-item>
-            <el-form-item label="是否可用">
-                <el-radio-group v-model="roleData.available">
-                    <el-radio label="T">是</el-radio>
-                    <el-radio label="F">否</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否允许再次授权">
-                <el-radio-group v-model="roleData.reGrant">
-                    <el-radio label="T">是</el-radio>
-                    <el-radio label="F">否</el-radio>
-                </el-radio-group>
-            </el-form-item>
-        </el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="editRoleDialogFlag = false">取消</el-button>
-			<el-button type="primary" @click.native="editRoleSubmit">提交</el-button>
-		</div>
-	</el-dialog>
 
-</div>
+		<section class="main-table-container">
+			<transition name="el-fade-in-linear">
+				<el-table row-key="id" :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
+					<el-table-column v-for="(value,i) in columns" :key="i" :label="value.label" :prop="value.prop" :sortable="value.sortable" :width="value.width ? value.width : 'auto'" :formatter="value.formatter" :min-width="value.minWidth ? value.minWidth : 'auto'">
+					</el-table-column>
+					<el-table-column label="操作" width="180">
+						<template scope="scope">
+							<el-button type="text" size="small" @click='editRole(scope)'>修改</el-button>
+							<el-button type="text" size="small" @click='deleteRole(scope)'>删除</el-button>
+							<el-button type="text" size="small" @click="settingMenu($event,scope.row)" icon="setting">配置权限
+							</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</transition>
+
+			<section class="main-pagination">
+				<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
+				</el-pagination>
+			</section>
+		</section>
+		<!--新建角色-->
+		<el-dialog title="新建角色" :visible.sync='newRoleDialogFlag' :close-on-click-modal="true">
+			<el-form :model="roleData" label-width="130px" :rules="createRoleRules" ref="roleData">
+				<el-form-item label="角色名称" prop="name">
+					<el-input v-model="roleData.name" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="角色Code" prop="code">
+					<el-input v-model="roleData.code" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="角色描述" prop="description">
+					<el-input v-model="roleData.description"></el-input>
+				</el-form-item>
+				<el-form-item label="是否可用">
+					<el-radio-group v-model="roleData.available" @change='aaa'>
+						<el-radio label="T">是</el-radio>
+						<el-radio label="F">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="是否允许再次授权">
+					<el-radio-group v-model="roleData.reGrant" @change='aaa'>
+						<el-radio label="T">是</el-radio>
+						<el-radio label="F">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="newRoleDialogFlag = false">取消</el-button>
+				<el-button type="primary" @click.native="createRoleSubmit">提交</el-button>
+			</div>
+		</el-dialog>
+		<!--编辑界面-->
+		<el-dialog title="修改角色" :visible.sync='editRoleDialogFlag' :close-on-click-modal="true">
+			<el-form :model="roleData" label-width="130px" :rules="createRoleRules" ref="roleData">
+				<el-form-item label="角色名称" prop="name">
+					<el-input v-model="roleData.name" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="角色Code" prop="code">
+					<el-input v-model="roleData.code" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="角色描述" prop="description">
+					<el-input v-model="roleData.description"></el-input>
+				</el-form-item>
+				<el-form-item label="是否可用">
+					<el-radio-group v-model="roleData.available" @change='aaa'>
+						<el-radio label="T">是</el-radio>
+						<el-radio label="F">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="是否允许再次授权">
+					<el-radio-group v-model="roleData.reGrant" @change='aaa'>
+						<el-radio label="T">是</el-radio>
+						<el-radio label="F">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="editRoleDialogFlag = false">取消</el-button>
+				<el-button type="primary" @click.native="editRoleSubmit">提交</el-button>
+			</div>
+		</el-dialog>
+
+	<!-- 配置资源  -->
+		<el-dialog title="配置资源" v-model="dialogVisible" size="tiny" custom-class="config-dialog">
+			<el-form :inline="true">
+				<el-form-item>
+					<el-select :disabled="!isAdd" v-model="product" size="small" placeholder="选择产品">
+						<el-option v-for="item in productList" :key="item.id" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<el-button v-show="isAdd" type="primary" icon="search" @click="searchMenu" size="small">搜索</el-button>
+				</el-form-item>
+			</el-form>
+			<div class="select-tree" style="min-height:200px;">
+				<el-scrollbar tag="div" class='is-empty' wrap-class="el-select-dropdown__wrap" view-class="el-select-dropdown__list">
+					<el-tree 
+						:data="menuTree" 
+						ref="roleMenuTree" 
+						show-checkbox
+						node-key="code" 
+						:render-content="renderContent"
+						v-loading="dialogLoading" 
+						:props="defaultProps"
+						default-expand-all
+						@check-change="checkedChange"
+						check-strictly
+						:default-checked-keys="checkedP"
+						>
+					</el-tree>
+				</el-scrollbar>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="configRoleResources">确 定</el-button>
+			</span>
+		</el-dialog>
+
+	</div>
 </template>
 
 <script>
@@ -116,7 +155,7 @@ import moment from 'moment'
 import {
 	getProjectList
 } from '@/api/getData'
-
+import { getMenuList } from '@/api/resourceMenu'
 import {
 	getRolesListRequest,
 	getRolesByProjectRequest,
@@ -126,18 +165,20 @@ import {
 
 
 	createRoleRequest,
-    modifyRoleRequest,
-	deleteRoleRequest
+	editRoleRequest,
+	deleteRoleRequest,
+	modifyRoleRequest
 } from '@/api/enterpriseApi'
 import {
 	modifyProjectInfo,
-	deleteProject
+	deleteProject,
+	getProductList,
 } from '@/api/coreApi'
 import {
 	mapState
 } from 'vuex'
 
-
+import { getRoleAuth,putRoleAuth,patchRoleAuth } from '@/api/role-auth'
 export default {
 	components: {
 		headTop
@@ -182,9 +223,9 @@ export default {
 			}, {
 				label: '是否允许再次授权',
 				prop: 'reGrant',
-                formatter:(row)=>{
-				    return row.reGrant=='T'?'是':'否';
-                }
+				formatter: (row) => {
+					return row.reGrant == 'T' ? '是' : '否';
+				}
 			}],
 			//table
 			tableList: [],
@@ -234,8 +275,8 @@ export default {
 			editRoleDialogFlag: false,
 			editRoleEid: 0,
 			editData: {
-                productCode:'',
-                id:null
+				productCode: '',
+				id: null
 			},
 			editRoleRules: {
 				name: [{
@@ -254,6 +295,21 @@ export default {
 					trigger: 'blur'
 				}],
 			},
+			// 配置权限
+			dialogVisible: false,
+			product: '',
+			productList: [],
+			dialogLoading: false,
+			roleCode:'',
+			menuTree: [],
+			defaultProps: {
+				children: 'children',
+				label: 'name',
+				id: "code",
+			},
+			isAdd : true,
+			// 已有配置
+			checkedP:[]
 		}
 	},
 	activated() {
@@ -273,8 +329,8 @@ export default {
 				this.listLoading = false;
 			}
 		},
-        getList() {
-            this.listLoading = true;
+		getList() {
+			this.listLoading = true;
 			let options = {
 				params: {},
 				eid: this.$store.state.loginInfo.enterpriseId
@@ -287,36 +343,36 @@ export default {
 				response.json().then(result => {
 					console.log(result);
 					this.tableList = result;
-                    this.listLoading = false;
+					this.listLoading = false;
 				})
 			})
 		},
-//        getList() {
-//            this.listLoading = true;
-//            let options = {
-//                params: {},
-//                eid: this.$store.state.loginInfo.enterpriseId
-//            };
-//
-//            options.params = Object.assign(this.pagination.params, this.queryt)
-//            console.log(options);
-//            getUnbindedRolesListRequest().then(response => {
-//                this.pagination.total = Number(response.headers.get('x-total-count'))
-//                response.json().then(result => {
-//                    console.log(result);
-//                    this.tableList = result;
-//                    this.listLoading = false;
-//                })
-//            })
-//        },
-        createRole(){
-            this.newRoleDialogFlag = true;
-            for(var index in this.roleData){
-                this.roleData[index]=''
-            }
-            this.roleData.available='T';
-            this.roleData.reGrant='T';
-        },
+		//        getList() {
+		//            this.listLoading = true;
+		//            let options = {
+		//                params: {},
+		//                eid: this.$store.state.loginInfo.enterpriseId
+		//            };
+		//
+		//            options.params = Object.assign(this.pagination.params, this.queryt)
+		//            console.log(options);
+		//            getUnbindedRolesListRequest().then(response => {
+		//                this.pagination.total = Number(response.headers.get('x-total-count'))
+		//                response.json().then(result => {
+		//                    console.log(result);
+		//                    this.tableList = result;
+		//                    this.listLoading = false;
+		//                })
+		//            })
+		//        },
+		createRole() {
+			this.newRoleDialogFlag = true;
+			for (var index in this.roleData) {
+				this.roleData[index] = ''
+			}
+			this.roleData.available = 'T';
+			this.roleData.reGrant = 'T';
+		},
 		createRoleSubmit() {
 			this.$refs['roleData'].validate(valid => {
 				if (valid) {
@@ -352,23 +408,23 @@ export default {
 		editRole(scope) {
 			this.editRoleDialogFlag = true;
 			this.roleData = {
-                name: scope.row.name,
-                code: scope.row.code,
-                description: scope.row.description,
-                available: scope.row.available,
-                reGrant: scope.row.reGrant
+				name: scope.row.name,
+				code: scope.row.code,
+				description: scope.row.description,
+				available: scope.row.available,
+				reGrant: scope.row.reGrant
 			}
-			this.editData={
-                productCode:scope.row.code,
-                id:scope.row.id
-            }
+			this.editData = {
+				productCode: scope.row.code,
+				id: scope.row.id
+			}
 		},
 		editRoleSubmit() {
 			this.$refs['roleData'].validate(valid => {
 				if (valid) {
 					try {
 						let options = {
-                            productCode: this.editData.productCode,
+							productCode: this.editData.productCode,
 							id: this.editData.id,
 							body: this.roleData
 						}
@@ -431,7 +487,6 @@ export default {
 				}
 			})
 		},
-
 		search() {
 			this.getList();
 		},
@@ -493,6 +548,111 @@ export default {
 				}
 			})
 		},
+
+		aaa(value) {
+			//			alert(value)
+		},
+
+		// 配置权限
+		async getProduct() {
+			try {
+				const result = await getProductList();
+				const resu = await result.json();
+				this.productList = resu;
+			} catch (e) {
+				this.$message.error(e);
+			}
+		},
+		async settedAuth(){
+			try{
+				const resp = await getRoleAuth(this.roleCode);
+				const res = await resp.json();
+				res.forEach(
+					(value,key) => {
+						this.checkedP.push(value.code)
+					}
+				)
+				if(res.length){
+					this.product = res[0].productId;
+					console.log(this.product)
+					return 'Y';
+				}else{
+					return 'N';
+				}
+			}catch(e){
+				return 'E';
+			}
+		},
+		async settingMenu(e, row) {
+			this.product = '';
+			this.menuTree = [];
+			this.checkedP = [];
+			this.roleCode = row.code;
+			const resp = await this.settedAuth();
+			switch(resp){
+				case 'Y':
+				this.isAdd = false;
+				break;
+				case 'N':
+				this.isAdd = true;
+				break;
+				case 'E':
+				return false;
+				break;
+			};
+			this.getProduct();
+			this.proMenuList();
+			this.dialogVisible = true;
+		},
+		async searchMenu() {
+			this.proMenuList();
+		},
+		async proMenuList(){
+			console.log(this.product)
+			if(!this.product){
+				return;
+			};
+			this.dialogLoading = true;
+			try{
+				const resp = await getMenuList(this.product);
+				const res = await resp.json();
+				this.dialogLoading = false;
+				this.menuTree = res;
+			}catch(e){
+				this.dialogLoading = false;	
+				this.$message.error(e);
+			}
+		},	
+		renderContent(h, {node, data, store}) {
+			return (
+			<span>
+				<span>
+				<span>{data.name}{data.remark ? `--${data.remark}` : ''}</span>
+				</span>
+			</span>);
+		},
+		async configRoleResources(){
+			const checkedNodes = this.$refs['roleMenuTree'].getCheckedNodes();
+			checkedNodes.forEach(
+				(value,key) => {
+					checkedNodes[key].permissionCode = value.code;
+				}
+			);
+			try{
+				const resp = await putRoleAuth(this.roleCode,checkedNodes);
+				this.$message.success('操作成功!');
+				this.dialogVisible = false;
+			}catch(e){
+				this.$message.error(e);
+			}
+		},
+		checkedChange(node,isChecked,cIsChecked){
+			if(node.parentCode && isChecked){
+				this.$refs['roleMenuTree'].setChecked(node.parentCode,isChecked)
+			}else if(!node.parentCode && !isChecked){
+				this.$refs['roleMenuTree'].setChecked(node.code,isChecked,!isChecked)
+			}
+		}
 	}
 }
 </script>
@@ -501,6 +661,9 @@ export default {
 @import '../../style/mixin';
 
 .table_container {
-    padding: 20px;
+	padding: 20px;
+}
+.config-dialog{
+	width:500px;
 }
 </style>

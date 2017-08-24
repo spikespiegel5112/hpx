@@ -30,10 +30,10 @@
                 </el-table-column>
                 <el-table-column prop="processStatus" label="处理状态" align="center" >
                 </el-table-column>
-                 <el-table-column label="操作" align="center">
+                <el-table-column label="操作" align="center">
                     <template scope="scope">
                         <el-button v-if="scope.row.isEdit" type="text" size="small" @click="save(scope.$index, scope.row)">保存</el-button>
-                        <el-button v-else type="text" size="small" @click="edit(scope.$index, scope.row)">编辑</el-button>
+                        <el-button v-else type="text" :disabled="scope.row.isDisabled" size="small" @click="edit(scope.$index, scope.row)">编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -57,7 +57,7 @@
 
 <script>
 import headTop from '../../../components/headTop'
-import { getReceiptList, saleManager, changeReceivedAmount, noTreatment, confirmReceipt } from '@/api/orderApi'
+import { getReceiptList, saleManager, changeReceivedAmount, noTreatment, confirmReceipt, treatment } from '@/api/orderApi'
 import { mapState } from 'vuex'
 export default {
     data() {
@@ -102,7 +102,7 @@ export default {
     components: {
         headTop,
     },
-    created() {
+    activated() {
         this.initData();
     },
     mounted() {
@@ -122,14 +122,20 @@ export default {
                 const resp = await getReceiptList(tContractId);
                 const res = await resp.json();
                 res.map((v) => {
-                    Object.assign(v,{isEdit: false}, {processStatus: v.processStatus === '0' ? '未处理' : v.processStatus === '1' ? '已处理' : '暂不处理'}, {differenceType: v.differenceType === '0' ? '正常' : v.differenceType === '1' ? '少发' : '多发' })
+                    Object.assign(v,{isEdit: false}, {processStatus: v.processStatus === '0' ? '未处理' : v.processStatus === '1' ? '已处理' : '暂不处理'}, {differenceType: v.differenceType === '0' ? '正常' : v.differenceType === '1' ? '少发' : '多发' },{isDisabled: false})
                 })
-
                 this.tableList = [...res];
                 this.listLoading = false;
                 if (!this.tableList.length) {
                     this.emptyText = "暂无数据";
                 }
+                this.tableList.map((v) => {
+                    if(v.differenceStatus === "1") {
+                        v.isDisabled = true;
+                    } else {
+                        v.isDisabled = false;
+                    }
+                })
             } catch (e) {
                 this.emptyText = "获取数据失败";
                 this.listLoading = false;
@@ -189,6 +195,11 @@ export default {
                 })
                 const res = await saleManager(type, this.selectProduct);
                 const resp = await res.json();
+                let selectId = [];
+                this.selectProduct.forEach((v) => {
+                    selectId.push({id: v.id});
+                });
+                const result = await treatment(selectId);                
                 const id = resp.id;
                 this.$router.push({ path: this.$route.path + '/apply/' + id + '/' + type});
                 // 申请后数据不可编辑
@@ -215,34 +226,45 @@ export default {
                 this.zDisabled = true;
                 this.nDisabled = true;
             }
+            this.selectProduct.map((v) => {
+                if(v.differenceStatus === '1') {
+                    this.fDisabled = true;
+                    this.zDisabled = true;
+                    this.nDisabled = true;
+                }
+            })
         },
         async disHandled() {
-            console.log("暂不处理",this.selectProduct);
             try{
                 let idList = [];
                 this.selectProduct.map((v) => {
                     idList.push({id: v.id});
                 })
-                console.log("ID选中", idList);
-                   
-                    const resp = await noTreatment(idList);
-
-                // })
+                 const resp = await noTreatment(idList);
             } catch(e) {
                 this.$message.error(e);
             }
             
         },
         async confirmReceipt() {
-            const id = this.$route.params.id;
-            // this.tableList.map((v) =>{
-            //     if(v.differenceStatus === "0") {
-            //         this.$message.error('只有当少发和多发都处理了或者暂不处理才能确认收货');
-            //         return;
-            //     }
-            // })
-            // const resp = await confirmReceipt(id);
-            // console.log("确认了", resp.status);
+            try{
+                const id = this.$route.params.id;
+                this.tableList.map((v) =>{
+                    if(v.differenceStatus === "0") {
+                        this.$message.error('只有当少发和多发都处理了或者暂不处理才能确认收货');
+                        return;
+                    }
+                })
+                const resp = await confirmReceipt(id);
+                 this.$message({
+                    message: '确认收货成功',
+                    type: 'success'
+                });
+                this.$router.push('/purchaseContract')
+            }catch(e){
+                this.$message.error(e);
+            }
+           
         },
     },
 }

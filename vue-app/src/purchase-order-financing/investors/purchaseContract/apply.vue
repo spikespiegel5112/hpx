@@ -121,8 +121,7 @@
                 }
             },
             subApply() {
-                const type = this.$route.params.type;
-                console.log("补发提交", type);
+                history.back();
             },
 
         },

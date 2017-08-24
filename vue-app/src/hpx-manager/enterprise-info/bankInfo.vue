@@ -56,7 +56,7 @@ export default {
                     this.bankInfoForm[key] = res[key]
                 })
             } catch (e) {
-                this.$message.error(e)
+                // this.$message.error(e)
             }
         },
     }

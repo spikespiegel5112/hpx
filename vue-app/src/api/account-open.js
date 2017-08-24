@@ -16,3 +16,11 @@ export const putAccount = (eid,id,params) => fetch(`/core/core/api/v1/enterprise
 
 // 取得指定账户信息
 export const specifyAccount = (eid,id) => fetch(`/core/core/api/v1/enterprise/${eid}/accounts/${id}`);
+
+// 绑定实体卡号
+
+export const bindStAccount = (eid,id) => fetch(`/core/core/api/v1/enterprise/${eid}/accounts/bind/${id}`,{},'patch');
+
+// 获取 中信银行账户
+export const zxAccountSysList = (params) => fetch(`/core/core/api/v1/financialManager/accountStatement/`,params);
+ 

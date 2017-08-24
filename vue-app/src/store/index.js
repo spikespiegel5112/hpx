@@ -84,7 +84,7 @@ const actions = {
 			return false;
 		}
 	},
-	async getCurrentProjectRole({commit},pjRole){
+	getCurrentProjectRole({commit},pjRole){
 		commit('saveProjectRole',pjRole)
 	},
 	async getAccStatusInfo(store){

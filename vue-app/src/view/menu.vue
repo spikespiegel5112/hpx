@@ -1,12 +1,20 @@
 <template>
-  <div>
+  <div>    
     <head-top></head-top>
     <imp-panel>
 
-      <h3 class="box-title" slot="header" style="width: 100%;">
-        <el-button type="primary" icon="plus" @click="newAdd">新增</el-button>
-        <el-button type="danger" icon="delete" @click="batchDelete">删除</el-button>
-      </h3>
+      <el-row  slot="header">
+        <el-col :span="6">
+          <el-select v-model="query.product" size="large" @change="search" placeholder="选择产品">
+              <el-option v-for="item in productList" :key="item.id" :label="item.name" :value="item.id">
+              </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="primary" icon="plus" @click="newAdd" style="margin-left: 15px;">新增</el-button>
+          <el-button type="danger" icon="delete" @click="batchDelete">删除</el-button>
+        </el-col>
+      </el-row>
       <el-row slot="body">
         <el-col :span="6">
           <el-tree v-if="menuTree"
@@ -20,33 +28,39 @@
         <el-col :span="18">
           <el-card class="box-card" style="margin-left: 15px">
             <div class="text item">
-              <el-form :model="form" ref="form">
+              <el-form :model="form" ref="form" :rules="rules">
                 <el-form-item label="父级" :label-width="formLabelWidth">
-                  <!--<el-input v-model="form.parentId" auto-complete="off"></el-input>-->
-                  <el-select-tree v-model="form.parentId" :treeData="menuTree" :propNames="defaultProps" clearable
+                  <el-select-tree :disabled="!form.hasOwnProperty('parentCode')" v-model="form.parentCode" :treeData="menuTree" :propNames="defaultProps" clearable
                                   placeholder="请选择父级">
                   </el-select-tree>
                 </el-form-item>
-                <el-form-item label="名称" :label-width="formLabelWidth">
+                <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
                   <el-input v-model="form.name" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="链接" :label-width="formLabelWidth">
-                  <el-input v-model="form.href" auto-complete="off"></el-input>
+                  <el-input v-model="form.link" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="是否显示" :label-width="formLabelWidth">
-                  <el-radio class="radio" v-model="form.isShow" label="1">显示</el-radio>
-                  <el-radio class="radio" v-model="form.isShow" label="0">不显示</el-radio>
+                <el-form-item label="类型" :label-width="formLabelWidth" prop="type">
+                  <el-radio class="radio" v-model="form.type" label="MENU">菜单</el-radio>
+                  <el-radio class="radio" v-model="form.type" label="API">API</el-radio>
                 </el-form-item>
-                <el-form-item label="图标" :label-width="formLabelWidth">
-                  <i :class="form.icon" v-model="form.icon"></i>
+                <el-form-item label="是否生效" :label-width="formLabelWidth">
+                  <el-radio class="radio" v-model="form.available" label="T">有效</el-radio>
+                  <el-radio class="radio" v-model="form.available" label="F">无效</el-radio>
+                </el-form-item>
+                <el-form-item label="排序" :label-width="formLabelWidth" prop="ord">
+                  <el-slider v-model="form.ord"></el-slider>
+                </el-form-item>
+                <el-form-item label="图标" :label-width="formLabelWidth" prop="menuIcon">
+                  <i :class="form.menuIcon" v-model="form.menuIcon"></i>
                   <el-button type="text" @click="selectIconDialog=true">选择</el-button>
                 </el-form-item>
-                <el-form-item label="排序" :label-width="formLabelWidth">
-                  <el-slider v-model="form.sort"></el-slider>
+                <el-form-item label="备注" :label-width="formLabelWidth">
+                  <el-input v-model="form.remark" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="" :label-width="formLabelWidth">
-                  <el-button type="primary" @click="onSubmit" v-text="form.id?'修改':'新增'"></el-button>
-                  <el-button type="danger" @click="deleteSelected" icon="delete" v-show="form.id && form.id!=null">删除
+                  <el-button type="primary" @click="onSubmit('form')" v-text="form.id?'修改':'新增'"></el-button>
+                  <el-button type="danger" @click="resetForm('form')" icon="delete" v-show="form.id && form.id!=null">重置
                   </el-button>
                 </el-form-item>
               </el-form>
@@ -72,15 +86,18 @@
     </imp-panel>
   </div>
 </template>
-<script  type="text/babel">
+<script>
 
-  import panel from "@/components/panel.vue"
-  import selectTree from "@/components/selectTree.vue"
+  import panel from "@/components/panel"
+  import selectTree from "@/components/selectTree"
   import headTop from '@/components/headTop';
   import treeter from "@/config/treeter"
   import merge from 'element-ui/src/utils/merge';
-
   import * as api from "@/api/coreApi"
+  
+  import { getMenuList, addMenu, editMenu } from '@/api/resourceMenu'
+  import { getProductList } from '@/api/coreApi'
+  import fetch from '@/config/fetch'
 
   export default {
     mixins: [treeter],
@@ -96,60 +113,92 @@
         defaultProps: {
           children: 'children',
           label: 'name',
-          id: "id",
+          id: "code",
         },
-        maxId:7000000,
+        productList: [],
+        query: {
+          product: '',
+        },
         menuTree: [],
         form: {
           id: null,
+          code:null,
+          parentCode: '',
           name: '',
-          sort: 0,
-          icon:'',
-          href: '',
-          isShow: '',
-          delivery: false,
-          parentId: null,
-          desc: ''
+          link: '',
+          type: '',
+          available: '',
+          menuIcon:'',
+          ord: 0,
+          remark: '',
+        },
+        rules: {
+           name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+          ],
+          type: [
+            { required: true, message: '请选择类型', trigger: 'blur' }
+          ],
+          ord: [
+            { required: true, message: '请滑动选择排序号'}
+          ],
+          menuIcon: [
+            { required: true, message: '请选择菜单图标', trigger: 'blur' }
+          ]
         }
       }
     },
+    
+    created(){
+      this.getProduct();
+    },
     methods: {
       selectIcon(event){
-        this.form.icon = event.target.className;
+        this.form.menuIcon = event.target.className;
         this.selectIconDialog = false;
+      },
+       async getProduct(){
+        try{
+          const result = await getProductList();
+          const resu = await result.json();
+          this.productList = resu;
+        }catch (e) {
+          this.$message.error(e);
+        }
+      },
+      async search() {
+          try{
+            const productId = this.query.product;
+            const resp = await getMenuList(productId);
+            const res = await resp.json();
+            this.menuTree = res;
+          } catch(e) {
+            this.$message.error(e);
+          };
+      },
+      newAdd(){
+        this.form = {
+          id: null,
+          code:null,
+          parentCode: '',
+          name: '',
+          link: '',
+          type: '',
+          available: '',
+          ord: 0,
+          menuIcon: 0,
+        };
       },
       renderContent(h, {node, data, store}) {
         return (
           <span>
             <span>
-              <span><i class={data.icon}></i>&nbsp;{node.label}</span>
+              <span><i class={data.menuIcon}></i>&nbsp;{node.label}</span>
             </span>
           </span>);
       },
-      newAdd(){
-        this.form = {
-          id: null,
-          name: '',
-          sort: 0,
-          icon:'',
-          href: '',
-          isShow: '',
-          delivery: false,
-          parentId: null,
-          desc: ''
-        };
-      },
-      deleteSelected(){
-        this.$http.get(api.SYS_MENU_DELETE + "?menuIds=" + this.form.id)
-          .then(res => {
-            this.$message('操作成功');
-            this.deleteFromTree(this.menuTree, this.form.id);
-            this.newAdd();
-          }).catch(e =>{
-            this.$message('操作成功');
-            this.deleteFromTree(this.menuTree, this.form.id);
-            this.newAdd();
-        })
+      resetForm(formName){
+        this.form = Object.assign(this.form, {parentCode: '', name: '', link: '', type: '', icon: 0, available: '', ord: 0, remark: '',});
       },
       batchDelete(){
         var checkKeys = this.$refs.menuTree.getCheckedKeys();
@@ -157,95 +206,106 @@
           this.$message.warning('请选择要删除的资源');
           return;
         }
+        // const id = checkKeys.length > 1 ? checkKeys[checkKeys.length - 1] : checkKeys;
+        const keysArr = [...checkKeys];
+        const ids = [];
+        keysArr.map((v) => {
+          ids.push({id: v});
+        })
+        console.log("ddddd", ids)
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          this.$http.get(api.SYS_MENU_DELETE + "?menuIds=" + checkKeys.join(','))
-            .then(res => {
-              this.$message('操作成功');
-              this.load();
-            }).catch(e => {
-             this.$message('操作成功');
-            console.log(checkKeys);
-            this.batchDeleteFromTree(this.menuTree, checkKeys);
-          })
-        });
+        }).then(() => fetch(`/core/core/api/v1/permissions/delete`, ids, 'delete')
+          .then(res => {
+            this.$message('删除成功');
+            this.search();
+            this.form = {
+              id: null,
+              code:null,
+              parentCode: '',
+              name: '',
+              link: '',
+              type: '',
+              available: '',
+              menuIcon:'',
+              ord: 0,
+              remark: '',
+            };
+          }).catch(e =>{
+            this.$message.error(e);
+        }))
+    },
 
-      },
       handleNodeClick(data){
         this.form = merge({}, data);
       },
-      onSubmit(){
-        if (this.form.id == null) {
-          this.$http.post(api.SYS_MENU_ADD, this.form)
-            .then(res => {
-              this.$message('操作成功');
-              this.form.id = res.data.id;
-              this.appendTreeNode(this.menuTree, res.data);
-            }).catch(e => {
-                this.maxId += 1;
-                this.$message('操作成功');
-                this.form.id = this.maxId;
-                var  ddd = {
-                  id: this.form.id,
-                  name: this.form.name,
-                  sort: this.form.sort,
-                  icon:this.form.icon,
-                  href:this.form.href,
-                  isShow: this.form.isShow,
-                  delivery: this.form.delivery,
-                  parentId: this.form.parentId,
-                  desc: this.form.desc,
-                  children:[]
+      async onSubmit(formName){
+        if(this.query.product === '') {
+          this.$message.error('请先选择产品');
+          return;
+        };
+        this.$refs[formName].validate(async (valid) => {
+           const id = this.form.id;
+           const productId = this.query.product;
+           this.form = Object.assign(this.form,{productId: this.query.product})
+           if(valid) {
+              try{
+                const resp = id ? await editMenu(id, this.form) : await addMenu(this.form);
+                this.$message({
+                  type:'success',
+                  message:'提交成功'
+                })
+                this.search();
+                this.form = {
+                    id: null,
+                    code: null,
+                    parentCode: '',
+                    name: '',
+                    link: '',
+                    type: '',
+                    available: '',
+                    menuIcon: '',
+                    ord: 0,
+                    remark: '',
                 }
-                console.log(ddd)
-                this.appendTreeNode(this.menuTree, ddd);
-            this.menuTree.push({});
-            this.menuTree.pop();
-          })
-        } else {
-          this.$http.post(api.SYS_MENU_UPDATE, this.form)
-            .then(res => {
-              this.$message('操作成功');
-              this.updateTreeNode(this.menuTree, res.data);
-            }).catch(e=>{
-            this.$message('操作成功');
-            this.updateTreeNode(this.menuTree, merge({},this.form));
-          })
-        }
+              }catch(e){
+                this.$message.error(e);
+              };
+           };
+        });
       },
-      load(){
-        this.$http.get(api.TEST_DATA)
-          .then(res => {
-            this.menuTree = res.data.menuList;
-          }).catch((error) => {
-           console.log(error)
-        })
-      }
     },
-    created(){
-      this.load();
-    }
+   
   }
 </script>
 
 <style>
-  .select-tree .icons-wrapper{
-    display: block;
-  }
-  .select-tree .is-empty i{
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    display: inline-block;
-    cursor: pointer;
-  }
-  .select-tree .is-empty i:hover{
-    background-color: #0d6aad;
-    color: #ffffff;
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
   }
 
+  .clearfix:after {
+    clear: both
+  }
+
+
+   .select-tree .icons-wrapper{
+      display: block;
+    }
+    .select-tree .is-empty i{
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .select-tree .is-empty i:hover{
+      background-color: #0d6aad;
+      color: #ffffff;
+    }
 </style>

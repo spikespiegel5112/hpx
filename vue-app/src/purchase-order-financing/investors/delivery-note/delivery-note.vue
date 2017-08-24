@@ -193,7 +193,7 @@
 
             //查看明细
             check (index,row){
-                 this.$router.push({path: this.$route.path + '/zf_deliveryNoteDetail/' + row.id})
+                 this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
 
             //允许发货

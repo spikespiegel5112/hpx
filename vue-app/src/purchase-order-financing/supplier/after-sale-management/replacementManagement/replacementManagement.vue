@@ -212,7 +212,7 @@
             },
 
             check (index,row){
-                this.$router.push({path: this.$route.path + '/gf_replacementManagementDetail/' + row.id})
+                this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
 
              //通过

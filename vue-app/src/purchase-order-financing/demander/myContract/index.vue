@@ -29,11 +29,19 @@
                     </el-col>
                 </el-row>
             </el-form>
-            <el-button type="primary" @click="signature">签章</el-button>
-            <el-button type="primary" >预览</el-button>
-            <el-button type="primary" @click="uploadContract">上传文件</el-button>
-            <el-button type="primary" >提货</el-button>
-            <el-button type="primary" @click="selectfinancingDetail">查看融资详情</el-button>
+            <el-button :disabled="signatureBtn" type="primary" @click="signature">签章</el-button>
+            <el-button :disabled="viewBtn" type="primary" >预览</el-button>
+            <!--<el-button :disabled="uploadBtn" type="primary" @click="uploadContract">上传文件</el-button>-->
+            <el-button :disabled="goodsBtn" type="primary"  @click="pickGoods">提货</el-button>
+            <el-button :disabled="lookBtn" type="primary" @click="getFinancingDetail">查看融资详情</el-button>
+            <el-upload
+                :action="uploadContractUrl()"
+                list-type="picture"
+                accept="image/gif, image/jpeg, image/png, image/jpg"
+                :on-change="(file,filesList)=>filesChange(selectContractList[0].index,file,filesList)"
+                :on-remove="()=>removeFile(selectContractList[0].index)">
+                <el-button :disabled="uploadBtn" type="primary">上传合同</el-button>
+            </el-upload>
         </section>
 
         <section class="main-table-container">
@@ -51,9 +59,6 @@
                 </el-table-column>
                
             </el-table>
-            <!--
-                    分页需改4
-                    -->
             <my-Pagination @pageChange="pageChange" :total="total">
             </my-Pagination>
         </section>
@@ -61,7 +66,7 @@
 
         <!--查看融资详情-->
         <el-dialog title="查看融资详情" v-model="FinancingDetailVisible" :close-on-click-modal="false">
-            <el-form :model="financingDetail" label-width="100px" ref="financingDetail">
+            <!--<el-form :model="financingDetail" label-width="100px" ref="financingDetail">
                 <el-form-item label="库存总金额" prop="inventory_total_money">
                     <el-input v-model="financingDetail.inventory_total_money" :disabled="true"></el-input>
                 </el-form-item>
@@ -86,7 +91,16 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click.native="FinancingDetailVisible = false">确定</el-button>
-            </div>
+            </div>-->
+            <ul class="financing-detail" :model="financingDetail" >
+                <li>库存总金额 : <span>{{financingDetail.inventory_total_money}}</span></li>
+                <li>当前货值 : <span>{{financingDetail.current_value}}</span></li>
+                <li>涨跌幅 : <span>{{financingDetail.price_limit}}</span></li>
+                <li>已提货金额 : <span>{{financingDetail.delivery_money}}</span></li>
+                <li>本金 : <span>{{financingDetail.principal}}</span></li>
+                <li>未还本金 : <span>{{financingDetail.not_principal}}</span></li>
+                <li>预计收益 : <span>{{financingDetail.projected_cost}}</span></li>
+            </ul>
         </el-dialog>
     </div>
 </template>
@@ -146,17 +160,16 @@ export default {
             ],
             //总页数
             total: 0,
-            //分页
-            /*
-            ** 分页需改1
-            */
             pagination: {},
 
             excelList: [],
             //table
             tableList: [],
             capitalList: [],
-            selectContractList: [],
+            selectContractList: [{
+                id:'',
+                index: ''
+            }],
             listLoading: false,
             emptyText: "暂无数据",
 
@@ -166,16 +179,22 @@ export default {
                 secondPartyId: '',
             },
 
+            uploadBtn: true,
+            signatureBtn: true,
+            viewBtn: true,
+            lookBtn: true,
+            goodsBtn: true,
+
             //模态框
             FinancingDetailVisible : false,
             financingDetail :{
-                delivery_money: '',
-                principal: '',
-                not_principal: '',
-                projected_cost: '',
-                inventory_total_money: '',
-                price_limit: '',
-                current_value: ''
+            //     delivery_money: '',
+            //     principal: '',
+            //     not_principal: '',
+            //     projected_cost: '',
+            //     inventory_total_money: '',
+            //     price_limit: '',
+            //     current_value: ''
             },
         }
     },
@@ -191,14 +210,8 @@ export default {
     },
     computed: {
         ...mapState(["loginInfo","projectId"]),
-        // excelAction(){
-        //     return uploadContract();
-        // }
     },
     methods: {
-        /*
-        ** 分页需改2
-        */
         pageChange(data) {
             this.pagination = data;
         },
@@ -206,9 +219,6 @@ export default {
         //     this.getList();
         // },
         async getList() {
-            /*
-            ** 分页需改5
-            */
             this.listLoading = true;
             try {
                 const params = Object.assign({enterpriseRole:'PRO_ENT_TYPE_DEALER'}, this.query, this.pagination);
@@ -236,33 +246,64 @@ export default {
                 this.listLoading = false;
             }
         },
-
-        // 上传合同
-        uploadContract() {
-            console.log("上传")
-            if(this.selectContractList.length > 1) {
-                this.$message.error("只能选择一个合同上传文件");
-                return;
-            }
-            const id = this.selectContractList[0].id;
+        async search () {
+            this.getList();
         },
 
+        resetForm(formName) {
+             this.$refs[formName].resetFields();
+        },
         //签章
         signature() {
-            if(this.selectContractList.length > 1) {
-                this.$message.error("只能选择一个合同进行签章");
-                return;
-            }
             const id = this.selectContractList[0].id;
-            //this.$router.push({ path: this.$route.path + '/signature/' + id})
+            this.$router.push({ path: this.$route.path + '/signature/' + id});
+        },
+        clickLoad(fileId){
+            window.location.href = loadUrl(fileId);
         },
 
-        edite(index, row) {
-            this.editeModalVisible = true;
-            this.editeData = Object.assign({}, { ...row })
+        //查看融资详情
+        async getFinancingDetail() {
+            const id = this.selectContractList[0].id;
+            this.FinancingDetailVisible = true;
+            const resp = await getFinancingDetail(id);
+            const res = await resp.json();
+            this.financingDetail = res;
+            console.log("融资详情", this.financingDetail)
         },
+        // 提货
+        pickGoods() {
+            const id = this.selectContractList[0].id;
+            // 提货编号
+            const code = this.selectContractList[0].code;
+            this.$router.push({path: this.$route.path + '/pick-goods/' + id});
+        },
+
+        handleSelectionChange(val) {
+         this.selectContractList = val;
+            if(this.selectContractList.length != 1){
+                    this.uploadBtn = true;
+                    this.signatureBtn = true;
+                    this.viewBtn = true;
+                    this.lookBtn = true;
+                    this.goodsBtn = true;
+                } else {
+                    this.uploadBtn = false;
+                    this.signatureBtn = false;
+                    this.viewBtn = false;
+                    this.lookBtn = false;
+                    this.goodsBtn = false;
+                    if(this.selectContractList[0].fSignatureStatus === '1') {
+                        this.signatureBtn = true;
+                    }
+                }
+        },
+        uploadContractUrl () {
+            const id = this.selectContractList[0].id;
+            return `/order/contract/uploadingContract/${id}`;
+        },
+
         filesChange(index,file,filesList){
-            console.log(file,filesList,index)
             this.tableList[index].fileName = file.name;
             this.tableList[index].fileLength = file.size;
             this.tableList[index].thumbUrl = file.url; 
@@ -272,39 +313,8 @@ export default {
             this.tableList[index].fileLength = '';
             this.tableList[index].thumbUrl = ''; 
         },
-        clickLoad(fileId){
-            window.location.href = loadUrl(fileId);
-        },
-
-        //查看融资详情
-        async selectfinancingDetail() {
-             if(this.selectContractList.length > 1) {
-                this.$message.error("只能选择一个合同进行查看融资详情");
-                return;
-            }
-            this.financingDetail = {};
-            const id = this.selectContractList[0].id;
-            this.FinancingDetailVisible = true;
-            const resp = await getFinancingDetail(id);
-            const res = await resp.json();
-            this.financingDetail = res;
-        },
-
-        handleSelectionChange(val) {
-        //    console.log("选取数据", val);
-            this.selectContractList = val;
-        },
-        async search () {
-                this.getList();
-        },
-
-        resetForm(formName) {
-             this.$refs[formName].resetFields();
-        },
+        
     },
-    /*
-    ** 分页需改3
-    */
     watch: {
         pagination: {
             handler: function () {
@@ -320,5 +330,14 @@ export default {
 @import '../../../style/mixin';
 .el-table .cell, .el-table th>div {
     padding: 0 10px;
+}
+
+.financing-detail {
+    font-size: 16px;
+
+}
+
+.financing-detail li {
+    line-height: 40px;
 }
 </style>

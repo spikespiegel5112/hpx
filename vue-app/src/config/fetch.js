@@ -11,7 +11,6 @@ export const serialize = (ob) => {
 function interceptor(resp) {
   //通用拦截处理
   const status = resp.status;
-console.log(window.location)
   let err = resp.headers.get('x-hpx-error-desc');
   err = decodeURIComponent(err);
   if(status >= 200 && status < 300){
@@ -23,7 +22,7 @@ console.log(window.location)
       	throw err;
 	}else if(status == 403){//没有权限
 		window.location.href = window.origin + '/#/'
-      	throw err;
+		throw err;
     }else if(status >= 500){
 		
 		// err = decodeURIComponent( resp.headers.get('x-error-alert'))

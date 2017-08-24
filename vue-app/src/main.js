@@ -18,6 +18,10 @@ const authLogin = ['/','/register','/forgetPwd'];
 const authAcc = ['platform','porderf']
 
 router.beforeEach(async(to, from, next) => {
+    if(to.path === '/' || to.path === '/register' || to.path === '/forgetPwd'){
+        next();
+        return;
+    }
     const { isLogin } = store.state;
     let res = false;
     if (isLogin) {
@@ -25,9 +29,7 @@ router.beforeEach(async(to, from, next) => {
     } else {
         res = await store.dispatch("getUserData");
     }
-    // authLogin.indexOf(to.path) !== -1)
-
-    if (!res && to.path !== '/' && to.path !== '/register' && to.path !== '/forgetPwd') {
+    if (!res) {
         next({path: '/'})
     } else {
         const rootPath = to.path.split('/')[1];

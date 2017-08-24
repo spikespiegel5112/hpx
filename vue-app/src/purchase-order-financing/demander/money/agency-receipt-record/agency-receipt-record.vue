@@ -100,7 +100,7 @@
                     },{
                     label : '付款类型',
                     prop  : 'paymentType',
-                    formatter : (row,column) => row.paymentType === '0' ? "退款" : ""
+                    formatter : (row,column) => row.paymentType === '4' ? "退款" : ""
                     }
                 ],
                 //总页数
@@ -163,7 +163,7 @@
 
             //查看明细
             check (index,row){
-                this.$router.push({path: this.$route.path + '/xf_agencyReceiptRecordDetail/' + row.id})
+                this.$router.push({path: this.$route.path + '/detail/' + row.id})
             },
 
             async search () {

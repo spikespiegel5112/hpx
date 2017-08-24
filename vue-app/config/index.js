@@ -30,7 +30,7 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/core': {
-                target: 'http://10.38.8.97:9000',
+                target: 'http://10.38.8.52:9000',
 //                target: 'http://120.132.124.88:9000',
                 changeOrigin: true,
                 pathRewrite: {
@@ -38,7 +38,7 @@ module.exports = {
                 }
             },
              '/credit': {
-                  target: 'http://10.38.8.97:9000',
+                  target: 'http://10.38.8.52:9000',
                  // target: 'http://120.132.124.88:9000',
                  changeOrigin: true,
                  pathRewrite: {
@@ -54,7 +54,7 @@ module.exports = {
 //               },
 //           },
             '/order': {
-               target: 'http://10.38.8.97:9000',
+               target: 'http://10.38.8.52:9000',
 //                target: 'http://120.132.124.88:9000',
                 changeOrigin: true,
                 pathRewrite: {

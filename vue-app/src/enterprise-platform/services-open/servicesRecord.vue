@@ -137,7 +137,6 @@
 						{ required: true, message: '请输入审核说明' }
 					]
                 },
-                noticeHide : ''
             }
         },
     	components: {
@@ -148,7 +147,7 @@
 
         },
         activated(){
-            setTimeout(this.open,1000)
+
         },
         computed: {
             ...mapState(["loginInfo"]),
@@ -188,15 +187,7 @@
             async search () {
                 this.getList();
             },
-            //提示信息
-            open() {
-                 this.noticeHide = this.$notify.info({
-                    title: '消息',
-                    message: '审核前请先下载授权书检验',
-                    duration: 3000,
-                    offset: 100
-                });
-            },
+            
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
@@ -248,11 +239,6 @@
                 this.dialogVisible = true;
                 this.applyContext = row.context;
             },
-        },
-        //n路由离开即提示消失
-        beforeRouteLeave(to,from,next){
-            this.noticeHide.close();
-            next();
         },
         watch : {
             pagination : {

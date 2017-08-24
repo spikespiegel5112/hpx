@@ -12,7 +12,7 @@
                         <el-input v-model="query.code" placeholder="订单编号"></el-input>
                     </el-form-item>
                     <el-form-item class="order-search-item" prop="supplier">
-                        <el-select v-model="query.supplier" placeholder="需方">
+                        <el-select v-model="query.supplier" placeholder="供应商">
                             <el-option
                                 v-for="item in supplierOptions"
                                 :key="item.enterpriseId"
@@ -22,7 +22,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item class="order-search-item" prop="demander">
-                        <el-select v-model="query.demander" placeholder="资方">
+                        <el-select v-model="query.demander" placeholder="需方">
                             <el-option
                                 v-for="item in demanderOptions"
                                 :key="item.enterpriseId"
@@ -67,7 +67,8 @@
                 </el-table-column>
                 <el-table-column label="操作" align="center">
                     <template scope="scope">
-                        <el-button size="small" @click="approve(scope.$index,scope.row.id)">审批</el-button>
+                        <el-button size="small" v-show="scope.row.approvalStatus" @click="approve(scope.$index,scope.row)">审批</el-button>
+                        <el-button size="small" v-show="!scope.row.approvalStatus" @click="approve(scope.$index,scope.row)">审批信息</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -78,15 +79,25 @@
             </my-Pagination>
         </section>
         <!--编辑界面-->
-		<el-dialog title="审批" v-model="editeModalVisible" :close-on-click-modal="false">
-			<ul>
-                <li>
-
-                </li>
-            </ul>
+		<el-dialog title="审批" v-model="editeModalVisible" size="tiny" :close-on-click-modal="false">
+			<table class="apply-container">
+                <tr v-for="(value,key) in editeData" :key="key">
+                    <td class="apply-title" v-if="key === 'name'">需方名称</td>
+                    <td class="apply-title" v-if="key === 'account'">需方账号</td>
+                    <td class="apply-title" v-if="key === 'annual'">年化利率</td>
+                    <td class="apply-title" v-if="key === 'totalMoney'">订单金额</td>
+                    <td class="apply-title" v-if="key === 'financRate'">融资比例</td>
+                    <td class="apply-title" v-if="key === 'financMoney'">放款金额</td>
+                    <td class="apply-title" v-if="key === 'deliveryDeadline'">提货期限</td>
+                    <td class="apply-title" v-if="key === 'remainingCredit'">剩余额度</td>
+                    <td>{{value}}</td>
+                </tr>
+            </table>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="editeModalVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="editSubmit">提交</el-button>
+				<el-button v-show="approveStatus" @click.native="editeModalVisible = false">取消</el-button>
+                <el-button v-show="approveStatus" type="primary" @click.native="editSubmit('N')">拒绝</el-button>
+				<el-button v-show="approveStatus" type="primary" @click.native="editSubmit('Y')">通过</el-button>
+                <el-button v-show="!approveStatus" type="primary" @click.native="editeModalVisible = false">确定</el-button>
 			</div>
 		</el-dialog>
     </div>
@@ -95,7 +106,7 @@
 <script>
     import headTop from '@/components/headTop'
     import myPagination from '@/components/myPagination'
-    import { ordersList , getDemanderList , getSupplierList , approInfo} from '@/api/orderApi'
+    import { ordersList , roleList , approInfo , applyOrder} from '@/api/orderApi'
     import { mapState } from 'vuex'
     import moment from 'moment'
     export default {
@@ -128,7 +139,7 @@
                     label : '订单状态',
                     prop  : 'orderStatus',
                     sortable : true,
-                    formatter : (row,column) => row.orderStatus === '0' ? "待确定" : "已确定"
+                    formatter : (row,column) => row.orderStatus === '0' ?  "已确定" : "待确定" 
                     },{
                     label : '审批状态',
                     prop  : 'approvalStatus',
@@ -154,45 +165,23 @@
                 },
                 supplierOptions : [],
                 demanderOptions : [],
-                activatedOptions : [
-                    {
-                        value : '激活',
-                        activated : 'T'
-                    },
-                    {
-                        value : '未激活',
-                        activated : 'F'
-                    }
-                ],
-                auditStateOptions : [
-                    {
-                        value : '已认证',
-                        auditState : 'T'
-                    },
-                    {
-                        value : '未认证',
-                        auditState : 'F'
-                    }
-                ],
-
                 // checkbox
                 selection :[],
 
                 //模态框
                 editeModalVisible : false,
                 editeData : {
-                    id : '',
-                    name : '',
-                    activated : '',
-                    address : '',
-                    contactsNumber : '',
-                    birth:''
+                    account : '',
+                    annual : '',
+                    deliveryDeadline : '',
+                    financMoney : '',
+                    financRate : '',
+                    name:'',
+                    remainingCredit:'',
+                    totalMoney:''
                 },
-                editRules : {
-                    name : [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					]
-                }
+                applyOrderId : null,
+                approveStatus : true
             }
         },
     	components: {
@@ -200,9 +189,11 @@
             myPagination,
     	},
         created(){
-            // this.initData();
             this.demanders();
             this.suppliers();
+        },
+        activated(){
+            this.initData();
         },
         mounted(){
 
@@ -224,12 +215,14 @@
                 this.getList();
             },
             async suppliers(){
-                const resp = await getSupplierList(this.projectId);
+                const param = {enterpriseRole:'PRO_ENT_TYPE_SUPPLIER',state:'T'};
+                const resp = await roleList(this.projectId,param);
                 const res = await resp.json();
                 this.supplierOptions = JSON.parse(JSON.stringify(res));
             },
             async demanders(){
-                const resp = await getDemanderList(this.projectId);
+                const param = {enterpriseRole:'PRO_ENT_TYPE_DEALER',state:'T'};
+                const resp = await roleList(this.projectId,param);
                 const res = await resp.json();
                 this.demanderOptions = JSON.parse(JSON.stringify(res));
             },
@@ -275,16 +268,28 @@
             createSc (){
                 this.$router.push({path:`${this.$route.path}/createsc/${this.slectedId}/${this.demanderId}`})
             },
-            async approve (index,id){
+            async approve (index,row){
+                Object.assign(this.$data.editeData, this.$options.data().editeData)
                 try{
-                    const resp = await approInfo(id,this.projectId);
+                    this.approveStatus = !!row.approveStatus;
+                    this.applyOrderId = row.id;
+                    const resp = await approInfo(row.id,this.projectId);
                     const res = await resp.json(); 
+                    this.editeData = {...res}
                     this.editeModalVisible = true;
                 }catch(e){
-
+                    this.$message.error(e)
                 }
 
             },
+            async editSubmit(type){
+                try{
+                    const resp = await applyOrder(this.applyOrderId,type);
+                    this.$message.success('操作成功')
+                }catch(e){
+                    this.$message.error(e)
+                }
+            }
         },
         /*
         ** 分页需改3
@@ -303,5 +308,24 @@
 <style lang="less" scoped>
     .order-search-item{
         // width:120px;
+    }
+    .apply-container{
+        width:250px;
+        margin:0 auto;
+        color:#333333;
+        border-width: 1px;
+        border-color: #666666;
+        border-collapse: collapse;
+        td {
+            border-width: 1px;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+        }
+        .apply-title{
+            text-align: right;
+            width:100px;
+        }
     }
 </style>

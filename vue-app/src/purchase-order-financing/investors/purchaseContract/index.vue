@@ -1,7 +1,6 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
-
         <!--  搜索条件  -->
         <section class='search-criteria-container'>
             <el-form :inline="true" :model="query" ref="query">
@@ -29,21 +28,19 @@
                     </el-col>
                 </el-row>
             </el-form>
-            <el-button type="primary" @click="signature">签章</el-button>
-            <el-button type="primary" >预览</el-button>
-            <el-button type="primary" @click="receipt">确认收货</el-button>
+            <el-button type="primary" :disabled="uploadBtn"  @click="signature">签章</el-button>
+            <el-button type="primary" :disabled="uploadBtn" >预览</el-button>
+            <el-button type="primary" :disabled="uploadBtn"  @click="receipt">确认收货</el-button>
             <el-upload
                 :action="uploadContractUrl()"
                 list-type="picture"
-                :auto-upload="false"
                 accept="image/gif, image/jpeg, image/png, image/jpg"
                 :on-change="(file,filesList)=>filesChange(selectContractList[0].index,file,filesList)"
-                :on-remove="()=>removeFile(selectContractList[0].index)"
-            >
-                <el-button icon="upload" type="primary" size="small">上传文件</el-button>
+                :on-remove="()=>removeFile(selectContractList[0].index)">
+                <el-button :disabled="uploadBtn" type="primary">上传合同</el-button>
             </el-upload>
         </section>
-
+        <!--合同列表-->
         <section class="main-table-container">
             <el-table  @selection-change="handleSelectionChange" row-key="id" max-height="250" border :empty-text="emptyText" :data="tableList" v-loading="listLoading" highlight-current-row style="width: 100%">
                 <el-table-column type="selection"></el-table-column>
@@ -52,7 +49,7 @@
                 </el-table-column>
                 <el-table-column label="文件" align="center" prop="webPath" min-width="120px">
                     <template scope="scope">
-                          <upload-pic
+                        <upload-pic
                             v-show="scope.row.thumbUrl"
                             :index="scope.$index" 
                             :thumbUrl="scope.row.thumbUrl" 
@@ -85,36 +82,6 @@
             <my-Pagination @pageChange="pageChange" :total="total">
             </my-Pagination>
         </section>
-        <!--编辑界面-->
-        <el-dialog title="编辑" v-model="editeModalVisible" :close-on-click-modal="false">
-            <el-form :model="editeData" label-width="80px" ref="editeData">
-                <el-form-item label="企业编号" prop="id" readonly>
-                    <el-input v-model="editeData.id" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="企业名称" prop="name">
-                    <el-input v-model="editeData.name" auto-complete="off"></el-input>
-                </el-form-item>
-                <!--<el-form-item label='激活状态' prop="activated">
-                    <el-select v-model="editeData.activated">
-                        <el-option v-for="item in activatedOptions" :key="item.activated" :label="item.value" :value="item.activated">
-                        </el-option>
-                    </el-select>
-                </el-form-item>-->
-                <el-form-item label="联系方式">
-                    <el-input v-model="editeData.contactsNumber"></el-input>
-                </el-form-item>
-                <el-form-item label="更新时间">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="editeData.birth"></el-date-picker>
-                </el-form-item>
-                <el-form-item label="地址">
-                    <el-input type="textarea" v-model="editeData.address"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="editeModalVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="editSubmit">提交</el-button>
-            </div>
-        </el-dialog>
     </div>
 </template>
 
@@ -147,11 +114,11 @@ export default {
                 }, {
                     label: '创建时间',
                     prop: 'createTime',
-                    formatter: (row, column) => moment(column.createTime).format('YYYY-MM-DD')
+                    formatter: (row, column) => row.createtime != null ? moment(row.createtime).format('YYYY-MM-DD') :""
                 }, {
-                    label: '收货日期',
+                    label: '收货时间',
                     prop: 'receivingDate',
-                    formatter: (row, column) => moment(column.receivingDate).format('YYYY-MM-DD')
+                    formatter: (row, column) => row.receivingDate != null ? moment(row.receivingDate).format('YYYY-MM-DD') :""
                 }, 
                 // {
                 //     label: '文件',
@@ -180,17 +147,7 @@ export default {
             },
             //搜索条件的个数
             criteriaNum: 3,
-
-            //模态框
-            editeModalVisible: false,
-            editeData: {
-                id: '',
-                name: '',
-                activated: '',
-                address: '',
-                contactsNumber: '',
-                birth: ''
-            },
+           uploadBtn : true,
         }
     },
     components: {
@@ -199,9 +156,6 @@ export default {
     },
     activated() {
         this.initData();
-    },
-    mounted() {
-
     },
     computed: {
         ...mapState(["loginInfo","projectId"]),
@@ -227,6 +181,7 @@ export default {
                     res[i].fileLength = '';
                     res[i].thumbUrl = '';
                     res[i].index = i;
+                    res[i].receivingStatus = res[i].receivingStatus === "0" ? '未收货' : '已收货'; 
                 };
                 const param = Object.assign({enterpriseRole:'PRO_ENT_TYPE_SUPPLIER',state:'T'});
                 const result = await roleList(this.projectId,param);
@@ -254,14 +209,18 @@ export default {
 
         handleSelectionChange(val) {
             this.selectContractList = val;
+            if(this.selectContractList.length != 1){
+                this.uploadBtn = true;
+            } else {
+                this.uploadBtn = false;
+                if(this.selectContractList[0].differenceStatus === '1') {
+                    this.uploadBtn = true;
+                }
+            }
         },
 
-        // 上传合同
+        // 签章
         signature() {
-            if(this.selectContractList.length > 1) {
-                this.$message.error("只能选择一个合同进行签章");
-                return;
-            }
             const id = this.selectContractList[0].id;
             this.$router.push({ path: this.$route.path + '/signature/' + id})
         },
@@ -269,15 +228,7 @@ export default {
         check(index, row) {
             this.$router.push({ path: this.$route.path + '/detail/' + row.id });
         },
-        edite(index, row) {
-            this.editeModalVisible = true;
-            this.editeData = Object.assign({}, { ...row });
-        },
         receipt() {
-            if(this.selectContractList.length > 1) {
-                this.$message.error("只能选择一个合同确认收货");
-                return;
-            }
             const id = this.selectContractList[0].id;
             this.$router.push({ path: this.$route.path + '/receipt/' + id })
         },
@@ -290,15 +241,14 @@ export default {
         },
 
         uploadContractUrl () {
-            return uploadContract(this.selectContractList[0].id)
+            const id = this.selectContractList[0].id;
+            return `/order/contract/uploadingContract/${id}`;
         },
 
         filesChange(index,file,filesList){
-            console.log('上传',file,filesList,index)
             this.tableList[index].fileName = file.name;
             this.tableList[index].fileLength = file.size;
             this.tableList[index].thumbUrl = file.url; 
-            console.log("上传后", this.tableList);
         },
         removeFile(index){
             this.tableList[index].fileName = '';
@@ -306,9 +256,6 @@ export default {
             this.tableList[index].thumbUrl = ''; 
         },
     },
-    /*
-    ** 分页需改3
-    */
     watch: {
         pagination: {
             handler: function () {
