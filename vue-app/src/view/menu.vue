@@ -206,13 +206,11 @@
           this.$message.warning('请选择要删除的资源');
           return;
         }
-        // const id = checkKeys.length > 1 ? checkKeys[checkKeys.length - 1] : checkKeys;
         const keysArr = [...checkKeys];
         const ids = [];
         keysArr.map((v) => {
           ids.push({id: v});
         })
-        console.log("ddddd", ids)
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
