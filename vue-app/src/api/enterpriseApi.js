@@ -11,6 +11,11 @@ export const accountInfosListRequest = () => fetch(`/core/core/api/v1/financialM
 export const accountStatementListRequest = options => fetch(`/core/core/api/v1/financialManager/${options.eid}/accountStatement/`);
 
 /**
+ * 账户资金流水查询
+ */
+export const capitalFlowRequest = options => fetch(`/core/core/api/v1/financialManager/capitalFlow/${options.custNo}`,{});
+
+/**
  * 取得指定企业开户申请(根据账户编号)
  */
 export const getAccountOpenInfoByCustNoRequest = options => fetch(`/core/core/api/v1/enterprise/${options.eid}/accounts`, options.params);

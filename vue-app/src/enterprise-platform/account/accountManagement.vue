@@ -4,7 +4,7 @@
 	<el-tabs type="border-card">
 		<el-tab-pane label="我的账户">
 			<div class="enterprise_accountoverview_container">
-                <!--<el-button type="primary" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>-->
+				<!--<el-button type="primary" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>-->
 				<div class="enterprise_accountoverview_wrapper" v-loading="carouselLoadingFlag">
 					<a class='el-icon-arrow-left arrow'></a>
 					<div class="carousel">
@@ -22,9 +22,10 @@
 										<span>{{item.kyamt}}</span>
 									</div>
 									<div class="operation">
-										<el-button type="primary" size="small">转入</el-button>
-										<el-button type="success" size="small">转出</el-button>
+										<!--<el-button type="primary" size="small">转入</el-button>-->
+										<!--<el-button type="success" size="small">转出</el-button>-->
 										<el-button type="primary" size="small" @click="getAccountOpenInfoByCustNo(index)">更新实体卡号</el-button>
+										<el-button type="primary" size="small" @click="getTurnoverList(index)">查看交易流水</el-button>
 									</div>
 								</div>
 							</li>
@@ -52,7 +53,6 @@
 			</el-table-column>
 		</el-table>
 		<section class="main-pagination">
-			<!-- 特殊情况分页自己按注释的  -->
 			<el-pagination @current-change="flipPage" :current-page="pagination.page" :page-sizes="[10,20]" layout="total, sizes, prev, pager, next, jumper" :total="pagination.total">
 			</el-pagination>
 		</section>
@@ -129,8 +129,6 @@
 			</el-col>
 		</el-row>
 	</el-dialog>
-
-
 </div>
 </template>
 
@@ -149,7 +147,8 @@ import {
 	enterpriseAccountOpenRequest,
 	updateAccountRequest,
 	openAccSendSmsRequest,
-	getAccountOpenInfoByCustNoRequest
+	getAccountOpenInfoByCustNoRequest,
+	capitalFlowRequest
 } from '@/api/enterpriseApi'
 import {
 	getKaptchaImageRequest,
@@ -181,17 +180,18 @@ export default {
 			columns: [{
 				label: '银行流水号',
 				prop: 'accountNo',
-				//				sortable: true,
+				sortable: true,
 				width: 110
 			}, {
 				label: '交易时间',
 				prop: 'tranDate',
-				//				sortable: true,
+				sortable: true,
 				minWidth: 100,
+				formatter: (row, column) => row.tranDate == null ? "" : moment(row.tranDate).format('YYYY-MM-DD')
 			}, {
 				label: '借方发生额(元)',
 				prop: 'tranAmt',
-				//				sortable: true,
+				sortable: true,
 				minWidth: 80,
 			}, {
 				label: '贷方发生额(元)',
@@ -229,6 +229,7 @@ export default {
 				sortable: true,
 			}],
 			//分页信息
+
 			pagination: {
 				params: {
 					page: 1,
@@ -270,7 +271,8 @@ export default {
 				stBankCode: '', //开户行code
 				stBankName: '', //开户行名称
 				paSbankCode: '', //总行code
-				stSameBank: '' //本行他行code
+				stSameBank: '', //本行他行code,
+				custNo: ''
 			},
 			rules: {
 				stAccountName: [{
@@ -282,15 +284,15 @@ export default {
 					message: '请选择账户类型',
 					trigger: 'change'
 				}],
-                paSbankCode: [{
+				paSbankCode: [{
 					required: true,
 					message: '请选择总行名称',
-                    trigger: 'change'
+					trigger: 'change'
 				}],
 				stBankAccount: [{
 					type: 'number',
 					message: '账户卡号必须为数字值',
-                    trigger: 'change'
+					trigger: 'change'
 				}, {
 					required: true,
 					message: '请输入账户卡号'
@@ -314,7 +316,7 @@ export default {
 					message: '请选择开户行区县',
 					'label-width': '50px'
 				}],
-                stBankCode: [{
+				stBankCode: [{
 					required: true,
 					message: '请选择开户行'
 				}],
@@ -348,7 +350,7 @@ export default {
 
 			try {
 				this.getAccountList();
-				this.getTurnoverList();
+				//                this.getTurnoverList();
 				this.listLoading = false;
 				if (!this.tableList.length) {
 					this.emptyText = "暂无数据";
@@ -366,18 +368,23 @@ export default {
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId
 			}
-			accountStatementListRequest(options).then(response => {
-				this.pagination.total = Number(response.headers.get('x-total-count'))
-				response.json().then(result => {
-					console.log(result)
-					this.accountList = result.responseValue.data.content;
-//					alert(result.responseValue.data.content[0].custNo)
-					setTimeout(() => {
-						this.carousel();
-						this.carouselLoadingFlag = false;
-					}, 200)
-				})
-			})
+			try {
+                accountStatementListRequest(options).then(response => {
+                    this.pagination.total = Number(response.headers.get('x-total-count'))
+                    response.json().then(result => {
+                        console.log(result)
+                        this.accountList = result.responseValue.data.content;
+                        //					alert(result.responseValue.data.content[0].custNo)
+                        setTimeout(() => {
+                            this.carousel();
+                            this.carouselLoadingFlag = false;
+                        }, 200)
+                    })
+                })
+            }catch(error){
+                this.$message.error(error)
+            }
+
 		},
 		carousel() {
 			let swiper = new Swiper('.enterprise_accountoverview_wrapper .carousel', {
@@ -388,18 +395,6 @@ export default {
 				nextButton: '.el-icon-arrow-right',
 				spaceBetween: 20
 			})
-		},
-		getTurnoverList() {
-			let options = {
-				accoundId: this.$store.state.loginInfo.enterpriseId
-			}
-			console.log(options)
-			//			 accountStatementListRequest(options).then(result => {
-			//			 	result.json().then(response => {
-			//			 		console.log(response);
-			//			 		this.tableList = response;
-			//			 	})
-			//			 })
 		},
 		getBankList() {
 			let options = {
@@ -423,22 +418,23 @@ export default {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				params: {
 					custNo: this.updateAccountCustNo
-//                    custNo: 'HPX888817082423146684'
+					//                    custNo: 'HPX888817082423146684'
 				}
 			}
 			console.log(options)
 			getAccountOpenInfoByCustNoRequest(options).then(response => {
-                console.log(response)
-                response.json().then(result => {
-					console.log(result)
+				console.log(response)
+				response.json().then(result => {
+				    console.log('详情数据')
+					console.log('详情数据',result)
+                    alert(result.stBankName)
 					this.updateAccountFormData = result;
-					this.updateAccountFormData.stBankAccount=Number(this.updateAccountFormData.stBankAccount)
-                    this.getAccountTypeList();
-                    this.getBankTypeList();
-                    this.getSameBankList();
-                    this.getProvince();
-
-
+					this.updateAccountFormData.custNo = this.updateAccountCustNo;
+					this.updateAccountFormData.stBankAccount = Number(this.updateAccountFormData.stBankAccount)
+					this.getAccountTypeList();
+					this.getBankTypeList();
+					this.getSameBankList();
+					this.getProvince();
 				})
 			})
 		},
@@ -446,32 +442,33 @@ export default {
 			let options = {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				id: this.updateAccountFormData.id,
-                code: this.updateAccountFormData.code,
+				code: this.updateAccountFormData.code,
 				body: {
-                    platBankType: this.updateAccountFormData.platBankType,
-                    stBankAccount: this.updateAccountFormData.stBankAccount,
-                    stAccountName: this.updateAccountFormData.stAccountName,
-                    //                        stAccountCode: this.updateAccountFormData.stAccountCode,
-                    stBankProvince: this.updateAccountFormData.stBankProvince,
-                    stBankCity: this.updateAccountFormData.stBankCity,
-                    stBankCountry: this.updateAccountFormData.stBankCountry,
-                    stBankName: this.updateAccountFormData.stBankName,
-                    stBankCode: this.updateAccountFormData.stBankCode,
-                    paSbankCode: this.updateAccountFormData.paSbankCode,
-                    stSameBank: this.updateAccountFormData.stSameBank
+					platBankType: this.updateAccountFormData.platBankType,
+					stBankAccount: this.updateAccountFormData.stBankAccount,
+					stAccountName: this.updateAccountFormData.stAccountName,
+					//                        stAccountCode: this.updateAccountFormData.stAccountCode,
+					stBankProvince: this.updateAccountFormData.stBankProvince,
+					stBankCity: this.updateAccountFormData.stBankCity,
+					stBankCountry: this.updateAccountFormData.stBankCountry,
+					stBankName: this.updateAccountFormData.stBankName,
+					stBankCode: this.updateAccountFormData.stBankCode,
+					paSbankCode: this.updateAccountFormData.paSbankCode,
+					stSameBank: this.updateAccountFormData.stSameBank,
+                    custno: this.updateAccountFormData.custNo
 				}
 			}
 			console.log(options)
 			this.$refs['updateAccountFormData'].validate(valid => {
 				if (valid) {
-                    updateAccountRequest(options).then(response => {
-
+					updateAccountRequest(options).then(response => {
 						if (response.status == 200) {
 							this.$message({
 								type: 'success',
-								message: response.headers.get('x-hpx-alert')
+								message: decodeURIComponent(response.headers.get('x-hpx-alert'))
 							})
-                            console.log(response)
+							this.updateAccountFlag = false;
+							console.log(response)
 						}
 					}).catch(error => {
 						this.$message.error(error);
@@ -482,15 +479,15 @@ export default {
 		getProvince() {
 			provinces().then(response => {
 				response.json().then(result => {
-					console.log(result)
+//					console.log(result)
 					this.stBankProvinceList = result;
-                    this.getCity();
-
+					this.getCity();
 				})
 			})
 		},
 		selectProvince() {
-//			this.updateAccountFormData.stBankCity = '';
+			//			this.updateAccountFormData.stBankCity = '';
+			//            this.updateAccountFormData.stBankCountry = '';
 			this.getCity();
 		},
 		getCity() {
@@ -499,23 +496,23 @@ export default {
 			}
 			cities(options.code).then(response => {
 				response.json().then(result => {
-					console.log(result)
+//					console.log(result)
 					this.stBankCityList = result;
-                    this.getCountry();
+					this.getCountry();
 				})
 			})
 		},
-        selectCity() {
-//            this.updateAccountFormData.stBankCountry = '';
-            this.getCountry();
-        },
+		selectCity() {
+			//            this.updateAccountFormData.stBankCountry = '';
+			this.getCountry();
+		},
 		getCountry() {
 			let options = {
 				code: this.updateAccountFormData.stBankCity
 			}
 			countries(options.code).then(response => {
 				response.json().then(result => {
-					console.log(result)
+//					console.log(result)
 					this.stBankCountryList = result;
 					this.getBank();
 				})
@@ -534,8 +531,6 @@ export default {
 			}
 			console.log(options)
 			//                const bankclscode = this.bankInfoForm.bankCode.substring(0,3),citycode = this.bankInfoForm.bankCity.substring(0,4)
-
-
 			bankdes(options.bankclscode, options.code).then(response => {
 				response.json().then(result => {
 					console.log(result)
@@ -544,7 +539,7 @@ export default {
 			})
 		},
 		sendSmsCode() {
-		    alert('dsds')
+			alert('dsds')
 			openAccSendSmsRequest().then(response => {
 				console.log(response)
 			})
@@ -586,20 +581,37 @@ export default {
 		selectCard(index) {
 			this.selectedCardIndex = index;
 		},
-        selectBranch(value){
-            for(var index in this.stBankList){
-                if(value==this.stBankList[index].bankno){
-                    this.updateAccountFormData.stBankName=this.stBankList[index].bankname;
-                    alert(this.updateAccountFormData.stBankName)
-                }
-            }
-        },
-        convertNumber(value){
-		    return Number(value);
-        },
-        aaa(value){
-            alert(value)
-        }
+		selectBranch(value) {
+			for (var index in this.stBankList) {
+				if (value == this.stBankList[index].bankno) {
+					this.updateAccountFormData.stBankName = this.stBankList[index].bankname;
+					alert(this.updateAccountFormData.stBankName)
+				}
+			}
+		},
+		convertNumber(value) {
+			return Number(value);
+		},
+		getTurnoverList(index) {
+			this.updateAccountCustNo = this.accountList[index].custNo;
+			let options = {
+				custNo: this.updateAccountCustNo
+			}
+			console.log(options)
+			capitalFlowRequest(options).then(response => {
+				response.json().then(result => {
+					console.log('dsdsds',result);
+					if (result.responseStatus.message==500){
+                        this.$message.error('500')
+                    }else{
+                        this.tableList = result.responseValue.data.content;
+                    }
+				})
+			})
+		},
+		aaa(value) {
+			alert(value)
+		}
 	}
 }
 </script>

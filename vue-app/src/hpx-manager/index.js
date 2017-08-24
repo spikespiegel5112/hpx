@@ -7,7 +7,7 @@ const projectsMaintenance = r => require.ensure([], () => r(require('@/hpx-manag
 const projectRoleManagement = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectRoleManagement')), 'projectRoleManagement');
 const projectEdit = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectEdit')), 'projectEdit');
 const projectCreate = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/projectCreate')), 'projectCreate');
- const enterpriseTypeRoleBinding = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/enterpriseTypeRoleBinding')), 'projectCreate');
+ const enterpriseTypeRoleBinding = r => require.ensure([], () => r(require('@/hpx-manager/projectManagement/enterpriseTypeRoleBinding')), 'enterpriseTypeRoleBinding');
 
 const accreditation = r => require.ensure([], () => r(require('@/hpx-manager/accreditation')), 'hpx-manager-accreditation');
 const addedServices = r => require.ensure([], () => r(require('@/hpx-manager/added-services')), 'hpx-manager-addedServices');
@@ -57,6 +57,11 @@ const router = {
             name: 'projectsMaintenance',
             component: projectsMaintenance,
             meta: ['项目管理', '项目维护'],
+        }, {
+            path: 'projectCreate',
+            name: 'projectCreate',
+            component: projectCreate,
+            meta: ['项目管理', '项目维护', '新建项目'],
         }, {
             path: 'role',
             name: 'projectRoleManagement',
