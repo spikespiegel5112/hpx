@@ -258,6 +258,9 @@ export default {
 			kaptchaImagePath: '',
 			accountTypeList: [],
 			bankList: [],
+            tempData:{
+                stBankName: '', //开户行名称
+            },
 			updateAccountFormData: {
 				eid: this.$store.state.loginInfo.enterpriseId,
 				code: '',
@@ -431,6 +434,8 @@ export default {
 					this.updateAccountFormData = result;
 					this.updateAccountFormData.custNo = this.updateAccountCustNo;
 					this.updateAccountFormData.stBankAccount = Number(this.updateAccountFormData.stBankAccount)
+                    this.updateAccountFormData.stBankName = result.stBankName
+                    alert(this.updateAccountFormData.stBankName)
 					this.getAccountTypeList();
 					this.getBankTypeList();
 					this.getSameBankList();
@@ -524,7 +529,7 @@ export default {
 		},
 		getBank() {
 			this.stBankList = [];
-			this.updateAccountFormData.stBankName = '';
+//			this.updateAccountFormData.stBankName = '';
 			let options = {
 				code: this.updateAccountFormData.stBankCity.substring(0, 4),
 				bankclscode: this.updateAccountFormData.stBankCode.substring(0, 3)
